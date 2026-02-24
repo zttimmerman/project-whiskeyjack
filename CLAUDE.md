@@ -195,6 +195,18 @@ pause
 
 ---
 
+## Git Practices
+
+- **Commit atomically** — one logical change per commit (e.g. a new system, a bug fix, a scene setup); do not bundle unrelated changes
+- **Always commit `.tscn` files alongside their `.gd` files** — a script and its scene are one logical unit
+- **Commit `.uid` files** — Godot 4 generates these alongside scripts; they should be tracked
+- **Never commit `.godot/`** — already gitignored; contains editor cache and shader cache
+- **Never commit `.DS_Store`** — already gitignored
+- **Commit message format:** imperative subject line summarizing the "what", body bullet points for the "why" and notable details
+- **Ask before committing** — do not create commits unless explicitly asked
+
+---
+
 ## What Claude Should Always Do
 - Write complete, runnable GDScript — no pseudocode or placeholder stubs unless explicitly asked
 - Use Godot 4 syntax (not Godot 3) — e.g., `CharacterBody3D` not `KinematicBody`, `velocity` not `move_and_slide(velocity)`
