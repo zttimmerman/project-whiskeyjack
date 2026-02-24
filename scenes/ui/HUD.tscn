@@ -1,0 +1,53 @@
+[gd_scene format=3 uid="uid://bhud00tscn01"]
+
+[ext_resource type="Script" uid="uid://bhudscript001" path="res://scenes/ui/HUD.gd" id="1_hud"]
+
+[node name="HUD" type="Control"]
+script = ExtResource("1_hud")
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="HPPanel" type="Panel" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = -92.0
+offset_right = 248.0
+offset_bottom = -12.0
+
+[node name="MarginContainer" type="MarginContainer" parent="HPPanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HPPanel/MarginContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="HPBar" type="ProgressBar" parent="HPPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+size_flags_horizontal = 3
+show_percentage = false
+
+[node name="HPLabel" type="Label" parent="HPPanel/MarginContainer/VBoxContainer"]
+text = "HP 100 / 100"
+
+[node name="XPBar" type="ProgressBar" parent="HPPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 8)
+size_flags_horizontal = 3
+show_percentage = false
+
+[node name="LevelLabel" type="Label" parent="HPPanel/MarginContainer/VBoxContainer"]
+text = "LV 1"
+
+[node name="DeathOverlay" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 1)
+visible = false
+
+[node name="YouDiedLabel" type="Label" parent="DeathOverlay"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "YOU DIED"

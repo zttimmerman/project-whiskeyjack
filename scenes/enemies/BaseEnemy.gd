@@ -5,6 +5,7 @@ signal died
 enum State { IDLE, PATROL, CHASE, ATTACK, STAGGER, DEAD }
 
 @export var stats: CharacterStats
+@export var xp_reward: int = 10
 @export var detection_range: float = 10.0
 @export var attack_range: float = 1.5
 @export var gravity: float = 20.0
@@ -186,6 +187,7 @@ func die() -> void:
 	if state == State.DEAD:
 		return
 	_change_state(State.DEAD)
+	GameManager.award_player_xp(xp_reward)
 	emit_signal("died")
 	queue_free()
 

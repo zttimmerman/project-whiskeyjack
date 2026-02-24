@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://btestworld0001" path="res://scenes/world/TestWorld.gd" id="2_testworld"]
 [ext_resource type="Script" uid="uid://dwaci7nqyra4a" path="res://scripts/combat/HurtboxComponent.gd" id="3_hurtbox"]
 [ext_resource type="Script" uid="uid://bcharstats0001" path="res://scripts/stats/CharacterStats.gd" id="4_stats"]
+[ext_resource type="PackedScene" uid="uid://bhud00tscn01" path="res://scenes/ui/HUD.tscn" id="6_hud"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_l8xpf"]
 size = Vector2(20, 20)
@@ -64,3 +65,7 @@ stats = SubResource("CharacterStats_dummy")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="DummyTarget/HurtboxComponent" unique_id=890123456]
 shape = SubResource("CapsuleShape3D_dummy")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=999001002]
+
+[node name="HUD" parent="CanvasLayer" instance=ExtResource("6_hud")]

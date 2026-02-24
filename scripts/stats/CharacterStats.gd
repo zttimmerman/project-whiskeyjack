@@ -4,6 +4,7 @@ extends Resource
 signal health_changed(current_hp: int, max_hp: int)
 signal died
 signal leveled_up(new_level: int)
+signal xp_changed(current_xp: int, xp_to_next: int)
 
 @export var max_hp: int = 100
 @export var current_hp: int = 100
@@ -31,7 +32,9 @@ func heal(amount: int) -> void:
 func gain_experience(amount: int) -> void:
 	experience += amount
 	if experience >= experience_to_next_level:
-		level_up()
+		level_up()  # level_up emits health_changed + leveled_up, which cover XP display
+	else:
+		emit_signal("xp_changed", experience, experience_to_next_level)
 
 
 func level_up() -> void:
