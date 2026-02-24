@@ -39,6 +39,10 @@ var _combo_index: int = 0
 var _combo_timer: float = 0.0
 var _attack_timer: float = 0.0
 
+var _shake_timer: float = 0.0
+var _shake_duration: float = 0.0
+var _shake_intensity: float = 0.0
+
 
 func _ready() -> void:
 	add_to_group("player")
@@ -47,6 +51,8 @@ func _ready() -> void:
 	_cam_pitch = spring_arm.rotation.x
 	if stats:
 		stats.died.connect(die)
+	if is_instance_valid(hitbox):
+		hitbox.hit.connect(_on_hitbox_hit)
 	_populate_starting_items()
 
 
@@ -209,6 +215,13 @@ func _update_camera(delta: float) -> void:
 	camera_rig.rotation.y = _cam_yaw - rotation.y
 	spring_arm.rotation.x = _cam_pitch
 
+	# Camera shake — fades out linearly over the shake duration
+	if _shake_timer > 0.0:
+		_shake_timer -= delta
+		var t: float = _shake_timer / _shake_duration if _shake_duration > 0.0 else 0.0
+		camera_rig.rotation.y += randf_range(-_shake_intensity, _shake_intensity) * t
+		spring_arm.rotation.x += randf_range(-_shake_intensity, _shake_intensity) * t * 0.5
+
 
 # ── Lock-on ───────────────────────────────────────────────────────────────────
 
@@ -289,6 +302,17 @@ func _toggle_inventory() -> void:
 
 # ── Combat ────────────────────────────────────────────────────────────────────
 
+func _on_hitbox_hit(_target: Node, _damage: int) -> void:
+	if hitbox.is_heavy:
+		camera_shake(0.05, 0.3)
+
+
+func camera_shake(intensity: float, duration: float) -> void:
+	_shake_intensity = intensity
+	_shake_duration = duration
+	_shake_timer = duration
+
+
 func _tick_attack(delta: float) -> void:
 	if _attack_timer > 0.0:
 		_attack_timer -= delta
@@ -309,6 +333,7 @@ func _attack_light() -> void:
 	# Hits 1 & 2 deal base damage; finisher (index 2) deals 1.5× base
 	hitbox.damage = base if _combo_index < 2 else base + base / 2
 	hitbox.knockback_force = 4.0
+	hitbox.is_heavy = false
 	hitbox.activate()
 	_attack_timer = attack_active_time
 	_combo_timer = combo_window
@@ -324,6 +349,7 @@ func _attack_heavy() -> void:
 	var base: int = stats.attack if stats else 8
 	hitbox.damage = base * 3
 	hitbox.knockback_force = 10.0
+	hitbox.is_heavy = true
 	hitbox.activate()
 	_attack_timer = heavy_active_time
 

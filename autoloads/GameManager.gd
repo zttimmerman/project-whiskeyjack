@@ -30,6 +30,21 @@ func _try_connect_player() -> void:
 		p.died.connect(on_player_died)
 
 
+var _hit_stop_active: bool = false
+
+
+# Briefly freezes game time to sell the impact of a hit.
+# Uses real-time timer (ignore_time_scale=true) so the await completes despite time_scale=0.
+func trigger_hit_stop(duration: float) -> void:
+	if _hit_stop_active:
+		return
+	_hit_stop_active = true
+	Engine.time_scale = 0.0
+	await get_tree().create_timer(duration, true, false, true).timeout
+	Engine.time_scale = 1.0
+	_hit_stop_active = false
+
+
 func change_scene(scene_path: String) -> void:
 	emit_signal("scene_changed", scene_path)
 	get_tree().change_scene_to_file(scene_path)
