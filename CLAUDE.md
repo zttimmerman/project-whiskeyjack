@@ -14,7 +14,7 @@ This is a 3D action RPG built in Godot 4, inspired by early PS1/PS2 era games (t
 - **Scenes:** One scene per major system or entity (Player, Enemy, NPC, UI, etc.)
 - **Scripts:** Attach scripts directly to the relevant root node of each scene
 - **Signals:** Prefer Godot signals over direct node references for loose coupling between systems
-- **Autoloads (Singletons):** Use sparingly — only for truly global systems (GameManager, SaveManager, QuestManager)
+- **Autoloads (Singletons):** Use sparingly — only for truly global systems (GameManager, SaveManager, QuestManager, DialogueRunner, AudioManager)
 
 ---
 
@@ -36,7 +36,9 @@ res://
 ├── autoloads/
 │   ├── GameManager.gd       # Game state, scene transitions
 │   ├── SaveManager.gd       # Save/load via JSON
-│   └── QuestManager.gd      # Active quests, quest state
+│   ├── QuestManager.gd      # Active quests, quest state
+│   ├── DialogueRunner.gd    # Dialogue tree playback
+│   └── AudioManager.gd      # Audio buses, music, SFX helpers
 ├── scenes/
 │   ├── player/
 │   │   ├── Player.tscn
@@ -53,7 +55,8 @@ res://
 │       ├── HUD.tscn
 │       ├── InventoryUI.tscn
 │       ├── DialogueUI.tscn
-│       └── QuestLogUI.tscn
+│       ├── QuestLogUI.tscn
+│       └── PauseMenu.tscn
 ├── scripts/
 │   ├── combat/
 │   │   ├── HitboxComponent.gd
@@ -90,9 +93,11 @@ res://
 ### Combat
 - Real-time, no menus — all actions mapped to controller/keyboard inputs
 - Hitbox/Hurtbox component pattern: HitboxComponent emits `hit(target, damage)`, HurtboxComponent receives it
+- `HurtboxComponent` has `@export var impact_sfx: AudioStream` — assign the hit sound in the scene; plays via `AudioManager.play_sfx_at()` alongside the particle burst
 - Attack combos tracked via a combo timer and attack index
 - Enemy stagger/knockback on successful hits
 - Player i-frames during dodge roll
+- Heavy attacks trigger camera shake; all hits trigger a particle burst at the hurtbox position
 - Death: emit `died` signal, trigger death animation, notify GameManager
 
 ### CharacterStats (scripts/stats/CharacterStats.gd)
@@ -130,6 +135,17 @@ res://
 - Methods: `save_game()`, `load_game()`, `save_exists()`
 - Called by GameManager on scene transitions and from pause menu
 
+### Audio System (autoloads/AudioManager.gd)
+- Three buses created programmatically at startup: **Music**, **SFX**, **UI** — all route to Master
+- `play_music(stream)` — assigns stream, enables OGG looping, starts playback on the Music bus
+- `stop_music()` — stops the music player
+- `play_ui(stream)` — one-shot playback on the UI bus (stings, UI feedback)
+- `play_sfx_at(stream, world_position)` — spawns a temporary `AudioStreamPlayer3D` at a world position on the SFX bus; auto-frees on finish
+- Audio files live in `assets/audio/` as `.ogg`; assign streams via `.tscn` ext_resource references
+- Music is started per-level in the world scene's `_ready()` via `AudioManager.play_music(preload(...))`
+- Footsteps: timer-based in Player (0.4 s interval), only fires when `is_on_floor()` and lateral velocity > 0.5
+- Sword swing: fires at `hitbox.activate()` in both `_attack_light()` and `_attack_heavy()`
+
 ---
 
 ## Enemy Design Pattern
@@ -149,6 +165,7 @@ dodge
 interact
 lock_on
 open_inventory
+open_quest_log
 pause
 ```
 
