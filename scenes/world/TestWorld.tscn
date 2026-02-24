@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://dwaci7nqyra4a" path="res://scripts/combat/HurtboxComponent.gd" id="3_hurtbox"]
 [ext_resource type="Script" uid="uid://bcharstats0001" path="res://scripts/stats/CharacterStats.gd" id="4_stats"]
 [ext_resource type="PackedScene" uid="uid://bhud00tscn01" path="res://scenes/ui/HUD.tscn" id="6_hud"]
+[ext_resource type="PackedScene" uid="uid://invui0tscn001" path="res://scenes/ui/InventoryUI.tscn" id="7_invui"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_l8xpf"]
 size = Vector2(20, 20)
@@ -69,3 +70,5 @@ shape = SubResource("CapsuleShape3D_dummy")
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=999001002]
 
 [node name="HUD" parent="CanvasLayer" instance=ExtResource("6_hud")]
+
+[node name="InventoryUI" parent="CanvasLayer" instance=ExtResource("7_invui")]

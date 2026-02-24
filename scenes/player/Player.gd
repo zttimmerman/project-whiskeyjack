@@ -1,6 +1,7 @@
 extends CharacterBody3D
 
 signal died
+signal inventory_toggled
 
 @export var stats: CharacterStats
 @export var inventory: Inventory
@@ -46,6 +47,18 @@ func _ready() -> void:
 	_cam_pitch = spring_arm.rotation.x
 	if stats:
 		stats.died.connect(die)
+	_populate_starting_items()
+
+
+func _populate_starting_items() -> void:
+	if not inventory or not inventory.items.is_empty():
+		return
+	var sword: Item = load("res://data/items/sword_iron.tres")
+	var potion: Item = load("res://data/items/potion_health.tres")
+	if sword:
+		inventory.add_item(sword)
+	if potion:
+		inventory.add_item(potion)
 
 
 func _input(event: InputEvent) -> void:
@@ -271,7 +284,7 @@ func interact() -> void:
 
 
 func _toggle_inventory() -> void:
-	pass  # Will emit a signal to UI in a future task
+	emit_signal("inventory_toggled")
 
 
 # ── Combat ────────────────────────────────────────────────────────────────────

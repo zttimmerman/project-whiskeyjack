@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Item" format=3 uid="uid://dg2a0a3oe7iyy"]
+
+[ext_resource type="Script" uid="uid://bwm1ug8dkvml6" path="res://scripts/inventory/Item.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = "sword_iron"
+name = "Iron Sword"
+description = "A dependable iron blade. Slightly worn but well-balanced."
+type = 0
+stats_modifier = {"attack": 5}

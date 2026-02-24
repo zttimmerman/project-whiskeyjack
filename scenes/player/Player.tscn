@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://dwaci7nqyra4a" path="res://scripts/combat/HurtboxComponent.gd" id="2_gfjak"]
 [ext_resource type="Script" uid="uid://bcharstats0001" path="res://scripts/stats/CharacterStats.gd" id="3_stats"]
 [ext_resource type="Script" uid="uid://hitboxcmp001" path="res://scripts/combat/HitboxComponent.gd" id="4_hitbox"]
+[ext_resource type="Script" uid="uid://dpncksi3hcov5" path="res://scripts/inventory/Inventory.gd" id="5_inv"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gfjak"]
 radius = 0.4
@@ -22,6 +23,10 @@ level = 1
 experience = 0
 experience_to_next_level = 100
 
+[sub_resource type="Resource" id="Inventory_player"]
+script = ExtResource("5_inv")
+capacity = 20
+
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hurtbox"]
 radius = 0.45
 height = 1.8
@@ -32,6 +37,7 @@ radius = 0.4
 [node name="Player" type="CharacterBody3D" unique_id=1876139144]
 script = ExtResource("1_wr5hl")
 stats = SubResource("CharacterStats_player")
+inventory = SubResource("Inventory_player")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1706130590]
 shape = SubResource("CapsuleShape3D_gfjak")
