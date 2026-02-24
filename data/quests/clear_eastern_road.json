@@ -1,0 +1,17 @@
+{
+  "id": "clear_eastern_road",
+  "title": "Clear the Eastern Road",
+  "description": "The village elder has asked you to deal with the monsters blocking the eastern road.",
+  "stages": [
+    {
+      "id": "find_monsters",
+      "description": "Find the monsters blocking the eastern road.",
+      "completion_condition": "reach_eastern_road"
+    },
+    {
+      "id": "defeat_monsters",
+      "description": "Defeat all the monsters on the eastern road.",
+      "completion_condition": "kill_eastern_road_enemies"
+    }
+  ]
+}

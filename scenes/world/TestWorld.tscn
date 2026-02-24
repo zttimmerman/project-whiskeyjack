@@ -1,21 +1,24 @@
 [gd_scene format=3 uid="uid://30n3q6hndes"]
 
 [ext_resource type="PackedScene" uid="uid://cyibe5n4nuirt" path="res://scenes/player/Player.tscn" id="1_player"]
-[ext_resource type="PackedScene" uid="uid://dbaseenemy1tsc" path="res://scenes/enemies/BaseEnemy.tscn" id="5_enemy"]
-[ext_resource type="Script" uid="uid://btestworld0001" path="res://scenes/world/TestWorld.gd" id="2_testworld"]
+[ext_resource type="Script" uid="uid://dwbvya24qatma" path="res://scenes/world/TestWorld.gd" id="2_testworld"]
 [ext_resource type="Script" uid="uid://dwaci7nqyra4a" path="res://scripts/combat/HurtboxComponent.gd" id="3_hurtbox"]
-[ext_resource type="Script" uid="uid://bcharstats0001" path="res://scripts/stats/CharacterStats.gd" id="4_stats"]
-[ext_resource type="PackedScene" uid="uid://bhud00tscn01" path="res://scenes/ui/HUD.tscn" id="6_hud"]
-[ext_resource type="PackedScene" uid="uid://invui0tscn001" path="res://scenes/ui/InventoryUI.tscn" id="7_invui"]
-[ext_resource type="PackedScene" uid="uid://npc0tscn00001" path="res://scenes/npcs/NPC.tscn" id="8_npc"]
-[ext_resource type="PackedScene" uid="uid://dlgui0tscn001" path="res://scenes/ui/DialogueUI.tscn" id="9_dlgui"]
-[ext_resource type="PackedScene" uid="uid://d0513t21m2eqq" path="res://scenes/ui/PauseMenu.tscn" id="10_pausemenu"]
+[ext_resource type="Script" uid="uid://lgxb5k27hssk" path="res://scripts/stats/CharacterStats.gd" id="4_stats"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/BaseEnemy.tscn" id="5_enemy"]
+[ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="6_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/InventoryUI.tscn" id="7_invui"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/NPC.tscn" id="8_npc"]
+[ext_resource type="PackedScene" path="res://scenes/ui/DialogueUI.tscn" id="9_dlgui"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="10_pausemenu"]
+[ext_resource type="PackedScene" path="res://scenes/ui/QuestLogUI.tscn" id="11_questlog"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_l8xpf"]
 size = Vector2(20, 20)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_l8xpf"]
 size = Vector3(20, 0.1, 20)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_dummy"]
 
 [sub_resource type="Resource" id="CharacterStats_dummy"]
 script = ExtResource("4_stats")
@@ -24,11 +27,6 @@ current_hp = 50
 attack = 0
 defense = 0
 speed = 0.0
-level = 1
-experience = 0
-experience_to_next_level = 100
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_dummy"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_dummy"]
 radius = 0.4
@@ -48,10 +46,10 @@ shape = SubResource("BoxShape3D_l8xpf")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1426346509]
 transform = Transform3D(0.99721026, 0.028731678, -0.06889352, 0.06795707, 0.032387424, 0.99716246, 0.030881437, -0.9990624, 0.03034454, 0, 0, 0)
 
-[node name="Player" parent="." instance=ExtResource("1_player")]
+[node name="Player" parent="." unique_id=651823491 instance=ExtResource("1_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
-[node name="BaseEnemy" parent="." instance=ExtResource("5_enemy")]
+[node name="BaseEnemy" parent="." unique_id=1444522942 instance=ExtResource("5_enemy")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1, 4)
 
 [node name="DummyTarget" type="Node3D" parent="." unique_id=567890123]
@@ -64,21 +62,33 @@ mesh = SubResource("CapsuleMesh_dummy")
 collision_layer = 4
 collision_mask = 8
 script = ExtResource("3_hurtbox")
-metadata/_custom_type_script = "uid://dwaci7nqyra4a"
 stats = SubResource("CharacterStats_dummy")
+metadata/_custom_type_script = "uid://dwaci7nqyra4a"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="DummyTarget/HurtboxComponent" unique_id=890123456]
 shape = SubResource("CapsuleShape3D_dummy")
 
-[node name="NPC" parent="." instance=ExtResource("8_npc")]
+[node name="NPC" parent="." unique_id=1851629507 instance=ExtResource("8_npc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -4)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=999001002]
 
-[node name="HUD" parent="CanvasLayer" instance=ExtResource("6_hud")]
+[node name="HUD" parent="CanvasLayer" unique_id=1488432228 instance=ExtResource("6_hud")]
+layout_mode = 3
+anchors_preset = 15
 
-[node name="InventoryUI" parent="CanvasLayer" instance=ExtResource("7_invui")]
+[node name="InventoryUI" parent="CanvasLayer" unique_id=958545013 instance=ExtResource("7_invui")]
+layout_mode = 3
+anchors_preset = 15
 
-[node name="DialogueUI" parent="CanvasLayer" instance=ExtResource("9_dlgui")]
+[node name="DialogueUI" parent="CanvasLayer" unique_id=1535612203 instance=ExtResource("9_dlgui")]
+layout_mode = 3
+anchors_preset = 15
 
-[node name="PauseMenu" parent="CanvasLayer" instance=ExtResource("10_pausemenu")]
+[node name="PauseMenu" parent="CanvasLayer" unique_id=861275533 instance=ExtResource("10_pausemenu")]
+layout_mode = 3
+anchors_preset = 15
+
+[node name="QuestLogUI" parent="CanvasLayer" unique_id=657530259 instance=ExtResource("11_questlog")]
+layout_mode = 3
+anchors_preset = 15

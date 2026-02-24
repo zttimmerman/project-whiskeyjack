@@ -39,8 +39,9 @@ recommended controller (joypad) binding as well.
 |------------------|-----------------|-------------------------|
 | `interact`       | F / E           | Joypad Button 3 (Y/Triangle) |
 | `lock_on`        | Tab / Middle Click | Joypad Button 8 (R3) |
-| `open_inventory` | I               | Joypad Button 4 (Back/Select) |
-| `pause`          | Escape          | Joypad Button 6 (Start/Options) |
+| `open_inventory`  | I               | Joypad Button 4 (Back/Select) |
+| `open_quest_log`  | L               | Joypad Button 9 (L1/LB) |
+| `pause`           | Escape          | Joypad Button 6 (Start/Options) |
 
 ---
 

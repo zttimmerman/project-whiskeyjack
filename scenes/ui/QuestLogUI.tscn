@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://berchd0glpiyy"]
+
+[ext_resource type="Script" uid="uid://questloguiscript1" path="res://scenes/ui/QuestLogUI.gd" id="1_qlui"]
+
+[node name="QuestLogUI" type="Control"]
+script = ExtResource("1_qlui")
+anchor_right = 1.0
+anchor_bottom = 1.0
+process_mode = 3
+
+[node name="Background" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.55)
+mouse_filter = 0
+
+[node name="MainPanel" type="Panel" parent="."]
+anchor_left = 0.1
+anchor_top = 0.08
+anchor_right = 0.9
+anchor_bottom = 0.92
+
+[node name="Margin" type="MarginContainer" parent="MainPanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBox" type="VBoxContainer" parent="MainPanel/Margin"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TitleLabel" type="Label" parent="MainPanel/Margin/VBox"]
+text = "QUEST LOG"
+horizontal_alignment = 1
+
+[node name="HSep" type="HSeparator" parent="MainPanel/Margin/VBox"]
+
+[node name="HBox" type="HBoxContainer" parent="MainPanel/Margin/VBox"]
+size_flags_vertical = 3
+
+[node name="QuestList" type="ItemList" parent="MainPanel/Margin/VBox/HBox"]
+custom_minimum_size = Vector2(220, 0)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VSep" type="VSeparator" parent="MainPanel/Margin/VBox/HBox"]
+
+[node name="InfoPanel" type="VBoxContainer" parent="MainPanel/Margin/VBox/HBox"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TitleLabel" type="Label" parent="MainPanel/Margin/VBox/HBox/InfoPanel"]
+text = ""
+autowrap_mode = 3
+
+[node name="StageLabel" type="Label" parent="MainPanel/Margin/VBox/HBox/InfoPanel"]
+text = ""
+autowrap_mode = 3
+size_flags_vertical = 3
+
+[node name="CompletedLabel" type="Label" parent="MainPanel/Margin/VBox/HBox/InfoPanel"]
+text = ""
+autowrap_mode = 3

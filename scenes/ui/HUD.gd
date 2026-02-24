@@ -113,7 +113,7 @@ func _on_player_died() -> void:
 	tween.tween_property(death_overlay, "modulate:a", 1.0, DEATH_FADE_DURATION)
 	tween.tween_property(you_died_label, "modulate:a", 1.0, 0.35)
 	tween.tween_interval(DEATH_SHOW_DURATION)
-	tween.tween_callback(func() -> void: GameManager.reload_scene())
+	# Reload is handled by GameManager.on_player_died() which waits for this tween.
 
 
 # ── Display helpers ───────────────────────────────────────────────────────────
