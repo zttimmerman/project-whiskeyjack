@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://dlgui0tscn001"]
+
+[ext_resource type="Script" uid="uid://dlguiscript001" path="res://scenes/ui/DialogueUI.gd" id="1_dlgui"]
+
+[node name="DialogueUI" type="Control"]
+script = ExtResource("1_dlgui")
+anchor_right = 1.0
+anchor_bottom = 1.0
+process_mode = 3
+
+[node name="DialoguePanel" type="Panel" parent="."]
+anchor_left = 0.0
+anchor_top = 0.72
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Margin" type="MarginContainer" parent="DialoguePanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBox" type="VBoxContainer" parent="DialoguePanel/Margin"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="SpeakerLabel" type="Label" parent="DialoguePanel/Margin/VBox"]
+text = ""
+
+[node name="DialogueText" type="RichTextLabel" parent="DialoguePanel/Margin/VBox"]
+bbcode_enabled = true
+size_flags_vertical = 3
+scroll_active = false
+
+[node name="ChoicesBox" type="VBoxContainer" parent="DialoguePanel/Margin/VBox"]
+visible = false
+
+[node name="AdvanceHint" type="Label" parent="DialoguePanel/Margin/VBox"]
+text = "[ F to continue ]"
+horizontal_alignment = 2
+visible = false

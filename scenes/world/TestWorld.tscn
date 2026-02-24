@@ -7,6 +7,8 @@
 [ext_resource type="Script" uid="uid://bcharstats0001" path="res://scripts/stats/CharacterStats.gd" id="4_stats"]
 [ext_resource type="PackedScene" uid="uid://bhud00tscn01" path="res://scenes/ui/HUD.tscn" id="6_hud"]
 [ext_resource type="PackedScene" uid="uid://invui0tscn001" path="res://scenes/ui/InventoryUI.tscn" id="7_invui"]
+[ext_resource type="PackedScene" uid="uid://npc0tscn00001" path="res://scenes/npcs/NPC.tscn" id="8_npc"]
+[ext_resource type="PackedScene" uid="uid://dlgui0tscn001" path="res://scenes/ui/DialogueUI.tscn" id="9_dlgui"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_l8xpf"]
 size = Vector2(20, 20)
@@ -67,8 +69,13 @@ stats = SubResource("CharacterStats_dummy")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="DummyTarget/HurtboxComponent" unique_id=890123456]
 shape = SubResource("CapsuleShape3D_dummy")
 
+[node name="NPC" parent="." instance=ExtResource("8_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -4)
+
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=999001002]
 
 [node name="HUD" parent="CanvasLayer" instance=ExtResource("6_hud")]
 
 [node name="InventoryUI" parent="CanvasLayer" instance=ExtResource("7_invui")]
+
+[node name="DialogueUI" parent="CanvasLayer" instance=ExtResource("9_dlgui")]

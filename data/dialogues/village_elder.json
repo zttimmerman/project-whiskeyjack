@@ -1,0 +1,12 @@
+[
+  { "id": "start", "speaker": "Elder", "text": "Traveler, you've arrived at last.", "choices": [
+    { "text": "What do you need from me?", "next_id": "quest_offer" },
+    { "text": "Just passing through.", "next_id": "farewell" }
+  ]},
+  { "id": "quest_offer", "speaker": "Elder", "text": "Monsters have taken the eastern road. Will you help?", "choices": [
+    { "text": "I'll do it.", "next_id": "quest_accept" },
+    { "text": "Not my problem.", "next_id": "farewell" }
+  ]},
+  { "id": "quest_accept", "speaker": "Elder", "text": "Thank you. Be safe.", "set_quest": "clear_eastern_road", "next_id": null },
+  { "id": "farewell", "speaker": "Elder", "text": "Safe travels.", "next_id": null }
+]

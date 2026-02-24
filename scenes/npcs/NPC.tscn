@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://b34e2mkwcfeqq"]
+
+[ext_resource type="Script" uid="uid://xct3u52q2dd1" path="res://scenes/npcs/NPC.gd" id="1_npc"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_npc"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_npc"]
+radius = 0.4
+height = 1.8
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_npc"]
+radius = 2.0
+
+[node name="NPC" type="CharacterBody3D"]
+script = ExtResource("1_npc")
+dialogue_id = "village_elder"
+npc_name = "Elder"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_npc")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_npc")
+
+[node name="InteractArea" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractArea"]
+shape = SubResource("SphereShape3D_npc")
+
+[connection signal="body_entered" from="InteractArea" to="." method="_on_interact_area_body_entered"]
+[connection signal="body_exited" from="InteractArea" to="." method="_on_interact_area_body_exited"]
