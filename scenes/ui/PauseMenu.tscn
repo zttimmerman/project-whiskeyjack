@@ -1,0 +1,61 @@
+[gd_scene format=3 uid="uid://d0513t21m2eqq"]
+
+[ext_resource type="Script" uid="uid://pmenu0gd0001" path="res://scenes/ui/PauseMenu.gd" id="1_script"]
+
+[node name="PauseMenu" type="Control"]
+script = ExtResource("1_script")
+anchor_right = 1.0
+anchor_bottom = 1.0
+process_mode = 3
+
+[node name="Overlay" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.65)
+mouse_filter = 0
+
+[node name="MainPanel" type="Panel" parent="."]
+anchor_left = 0.35
+anchor_top = 0.2
+anchor_right = 0.65
+anchor_bottom = 0.8
+
+[node name="Margin" type="MarginContainer" parent="MainPanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="MainPanel/Margin"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 12
+
+[node name="TitleLabel" type="Label" parent="MainPanel/Margin/VBox"]
+text = "— PAUSED —"
+horizontal_alignment = 1
+
+[node name="HSep" type="HSeparator" parent="MainPanel/Margin/VBox"]
+
+[node name="ResumeButton" type="Button" parent="MainPanel/Margin/VBox"]
+text = "Resume"
+size_flags_horizontal = 3
+
+[node name="SaveButton" type="Button" parent="MainPanel/Margin/VBox"]
+text = "Save Game"
+size_flags_horizontal = 3
+
+[node name="LoadButton" type="Button" parent="MainPanel/Margin/VBox"]
+text = "Load Game"
+size_flags_horizontal = 3
+
+[node name="QuitButton" type="Button" parent="MainPanel/Margin/VBox"]
+text = "Quit"
+size_flags_horizontal = 3
+
+[node name="SavedLabel" type="Label" parent="MainPanel/Margin/VBox"]
+text = "Game Saved!"
+horizontal_alignment = 1
+visible = false

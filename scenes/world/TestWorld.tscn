@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://invui0tscn001" path="res://scenes/ui/InventoryUI.tscn" id="7_invui"]
 [ext_resource type="PackedScene" uid="uid://npc0tscn00001" path="res://scenes/npcs/NPC.tscn" id="8_npc"]
 [ext_resource type="PackedScene" uid="uid://dlgui0tscn001" path="res://scenes/ui/DialogueUI.tscn" id="9_dlgui"]
+[ext_resource type="PackedScene" uid="uid://d0513t21m2eqq" path="res://scenes/ui/PauseMenu.tscn" id="10_pausemenu"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_l8xpf"]
 size = Vector2(20, 20)
@@ -79,3 +80,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -4)
 [node name="InventoryUI" parent="CanvasLayer" instance=ExtResource("7_invui")]
 
 [node name="DialogueUI" parent="CanvasLayer" instance=ExtResource("9_dlgui")]
+
+[node name="PauseMenu" parent="CanvasLayer" instance=ExtResource("10_pausemenu")]
