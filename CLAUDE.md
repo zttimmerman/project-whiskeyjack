@@ -107,7 +107,7 @@ res://
 - `Inventory` manages an Array of Items with a max capacity
 - Equipment slots: weapon, helmet, chest, boots
 - Equipping an item applies its stats_modifier to CharacterStats
-- Item data loaded from JSON files in res://data/items/
+- Item data stored as `.tres` files in res://data/items/ — use Godot's native Resource format, not JSON, so items load directly via `load()` with no custom parser
 
 ### Dialogue System (scripts/dialogue/DialogueRunner.gd)
 - Dialogue trees stored as JSON in res://data/dialogues/
@@ -156,16 +156,22 @@ pause
 
 ## Data Format Examples
 
-### Item JSON (res://data/items/sword_iron.json)
-```json
-{
-  "id": "sword_iron",
-  "name": "Iron Sword",
-  "description": "A dependable iron blade.",
-  "type": "weapon",
-  "stats_modifier": { "attack": 5 }
-}
+### Item resource (res://data/items/sword_iron.tres)
 ```
+[gd_resource type="Resource" script_class="Item" format=3 uid="uid://..."]
+
+[ext_resource type="Script" uid="uid://bwm1ug8dkvml6" path="res://scripts/inventory/Item.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = "sword_iron"
+name = "Iron Sword"
+description = "A dependable iron blade."
+type = 0
+stats_modifier = {"attack": 5}
+```
+`type` is the Item.Type enum index: WEAPON=0, ARMOR=1, CONSUMABLE=2, KEY=3.
+For consumables, use `stats_modifier = {"heal": 30}` — the `use()` method reads this key.
 
 ### Dialogue JSON (res://data/dialogues/village_elder.json)
 ```json
@@ -192,6 +198,7 @@ pause
 - When instancing one scene inside another, reference it via `[ext_resource type="PackedScene"]` and an `instance=ExtResource(...)` node entry
 - Always verify node types match the script's `extends` (e.g. root must be `CharacterBody3D`, not `CharacterBody2D`)
 - Node names in `.tscn` must exactly match `$NodeName` references in the attached script
+- UI panels that must remain active while the game is paused (`get_tree().paused = true`) need `process_mode = 3` (`PROCESS_MODE_ALWAYS`) on their root node; child nodes inherit this automatically via `PROCESS_MODE_INHERIT`
 
 ---
 
