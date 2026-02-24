@@ -2,12 +2,31 @@
 
 [ext_resource type="PackedScene" uid="uid://cyibe5n4nuirt" path="res://scenes/player/Player.tscn" id="1_player"]
 [ext_resource type="Script" uid="uid://btestworld0001" path="res://scenes/world/TestWorld.gd" id="2_testworld"]
+[ext_resource type="Script" uid="uid://dwaci7nqyra4a" path="res://scripts/combat/HurtboxComponent.gd" id="3_hurtbox"]
+[ext_resource type="Script" uid="uid://bcharstats0001" path="res://scripts/stats/CharacterStats.gd" id="4_stats"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_l8xpf"]
 size = Vector2(20, 20)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_l8xpf"]
 size = Vector3(20, 0.1, 20)
+
+[sub_resource type="Resource" id="CharacterStats_dummy"]
+script = ExtResource("4_stats")
+max_hp = 50
+current_hp = 50
+attack = 0
+defense = 0
+speed = 0.0
+level = 1
+experience = 0
+experience_to_next_level = 100
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_dummy"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_dummy"]
+radius = 0.4
+height = 1.8
 
 [node name="TestWorld" type="Node3D" unique_id=1165707528]
 script = ExtResource("2_testworld")
@@ -25,3 +44,19 @@ transform = Transform3D(0.99721026, 0.028731678, -0.06889352, 0.06795707, 0.0323
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="DummyTarget" type="Node3D" parent="." unique_id=567890123]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.9, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="DummyTarget" unique_id=678901234]
+mesh = SubResource("CapsuleMesh_dummy")
+
+[node name="HurtboxComponent" type="Area3D" parent="DummyTarget" unique_id=789012345]
+collision_layer = 4
+collision_mask = 8
+script = ExtResource("3_hurtbox")
+metadata/_custom_type_script = "uid://dwaci7nqyra4a"
+stats = SubResource("CharacterStats_dummy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DummyTarget/HurtboxComponent" unique_id=890123456]
+shape = SubResource("CapsuleShape3D_dummy")

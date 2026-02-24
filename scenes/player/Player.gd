@@ -13,10 +13,14 @@ signal died
 @export var camera_pitch_min: float = -0.4       # ~-23 degrees
 @export var camera_pitch_max: float = 0.8        # ~46 degrees
 @export var lock_on_range: float = 15.0
+@export var combo_window: float = 0.6        # seconds before light combo resets
+@export var attack_active_time: float = 0.2  # light hitbox active duration (seconds)
+@export var heavy_active_time: float = 0.35  # heavy hitbox active duration (seconds)
 
 @onready var camera_rig: Node3D = $CameraRig
 @onready var spring_arm: SpringArm3D = $CameraRig/SpringArm3D
 @onready var hurtbox: HurtboxComponent = $HurtboxComponent
+@onready var hitbox: HitboxComponent = $HitboxComponent
 
 var _is_dodging: bool = false
 var _dodge_timer: float = 0.0
@@ -32,6 +36,7 @@ var _cam_pitch: float = -0.2
 
 var _combo_index: int = 0
 var _combo_timer: float = 0.0
+var _attack_timer: float = 0.0
 
 
 func _ready() -> void:
@@ -65,6 +70,12 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("open_inventory"):
 		_toggle_inventory()
 
+	if event.is_action_pressed("attack_light") and not _is_dodging and _attack_timer <= 0.0:
+		_attack_light()
+
+	if event.is_action_pressed("attack_heavy") and not _is_dodging and _attack_timer <= 0.0:
+		_attack_heavy()
+
 
 func _physics_process(delta: float) -> void:
 	_validate_lock_on()
@@ -75,6 +86,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		_move(delta)
 
+	_tick_attack(delta)
 	_update_camera(delta)
 	move_and_slide()
 
@@ -262,14 +274,45 @@ func _toggle_inventory() -> void:
 	pass  # Will emit a signal to UI in a future task
 
 
-# ── Combat stubs (implemented in a future task) ───────────────────────────────
+# ── Combat ────────────────────────────────────────────────────────────────────
+
+func _tick_attack(delta: float) -> void:
+	if _attack_timer > 0.0:
+		_attack_timer -= delta
+		if _attack_timer <= 0.0:
+			if is_instance_valid(hitbox):
+				hitbox.deactivate()
+
+	if _combo_timer > 0.0:
+		_combo_timer -= delta
+		if _combo_timer <= 0.0:
+			_combo_index = 0
+
 
 func _attack_light() -> void:
-	pass
+	if not is_instance_valid(hitbox):
+		return
+	var base: int = stats.attack if stats else 8
+	# Hits 1 & 2 deal base damage; finisher (index 2) deals 1.5× base
+	hitbox.damage = base if _combo_index < 2 else base + base / 2
+	hitbox.knockback_force = 4.0
+	hitbox.activate()
+	_attack_timer = attack_active_time
+	_combo_timer = combo_window
+	_combo_index = (_combo_index + 1) % 3
 
 
 func _attack_heavy() -> void:
-	pass
+	if not is_instance_valid(hitbox):
+		return
+	# Resets any active combo; deals 3× base damage with strong knockback
+	_combo_index = 0
+	_combo_timer = 0.0
+	var base: int = stats.attack if stats else 8
+	hitbox.damage = base * 3
+	hitbox.knockback_force = 10.0
+	hitbox.activate()
+	_attack_timer = heavy_active_time
 
 
 # ── Death ─────────────────────────────────────────────────────────────────────

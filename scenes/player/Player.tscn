@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cc1jb2dledn71" path="res://scenes/player/player.gd" id="1_wr5hl"]
 [ext_resource type="Script" uid="uid://dwaci7nqyra4a" path="res://scripts/combat/HurtboxComponent.gd" id="2_gfjak"]
 [ext_resource type="Script" uid="uid://bcharstats0001" path="res://scripts/stats/CharacterStats.gd" id="3_stats"]
+[ext_resource type="Script" uid="uid://hitboxcmp001" path="res://scripts/combat/HitboxComponent.gd" id="4_hitbox"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gfjak"]
 radius = 0.4
@@ -24,6 +25,9 @@ experience_to_next_level = 100
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hurtbox"]
 radius = 0.45
 height = 1.8
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_hitbox"]
+radius = 0.4
 
 [node name="Player" type="CharacterBody3D" unique_id=1876139144]
 script = ExtResource("1_wr5hl")
@@ -51,3 +55,13 @@ stats = SubResource("CharacterStats_player")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="HurtboxComponent" unique_id=892345123]
 shape = SubResource("CapsuleShape3D_hurtbox")
+
+[node name="HitboxComponent" type="Area3D" parent="." unique_id=345678901]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.7)
+collision_layer = 8
+collision_mask = 4
+script = ExtResource("4_hitbox")
+metadata/_custom_type_script = "uid://hitboxcmp001"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HitboxComponent" unique_id=456789012]
+shape = SubResource("SphereShape3D_hitbox")
