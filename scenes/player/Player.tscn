@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://cyibe5n4nuirt"]
+
+[ext_resource type="Script" uid="uid://cc1jb2dledn71" path="res://scenes/player/player.gd" id="1_wr5hl"]
+[ext_resource type="Script" uid="uid://dwaci7nqyra4a" path="res://scripts/combat/HurtboxComponent.gd" id="2_gfjak"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gfjak"]
+radius = 0.4
+height = 1.8
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_4kuee"]
+
+[node name="Player" type="CharacterBody3D" unique_id=1876139144]
+script = ExtResource("1_wr5hl")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1706130590]
+shape = SubResource("CapsuleShape3D_gfjak")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=575886353]
+mesh = SubResource("CapsuleMesh_4kuee")
+
+[node name="CameraRig" type="Node3D" parent="." unique_id=1699920677]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="SpringArm3D" type="SpringArm3D" parent="CameraRig" unique_id=783708106]
+spring_length = 4.0
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig/SpringArm3D" unique_id=2027044633]
+current = true
+
+[node name="HurtboxComponent" type="Area3D" parent="." unique_id=781134096]
+script = ExtResource("2_gfjak")
+metadata/_custom_type_script = "uid://dwaci7nqyra4a"
