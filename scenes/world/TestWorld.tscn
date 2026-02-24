@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://30n3q6hndes"]
 
 [ext_resource type="PackedScene" uid="uid://cyibe5n4nuirt" path="res://scenes/player/Player.tscn" id="1_player"]
+[ext_resource type="PackedScene" uid="uid://dbaseenemy1tsc" path="res://scenes/enemies/BaseEnemy.tscn" id="5_enemy"]
 [ext_resource type="Script" uid="uid://btestworld0001" path="res://scenes/world/TestWorld.gd" id="2_testworld"]
 [ext_resource type="Script" uid="uid://dwaci7nqyra4a" path="res://scripts/combat/HurtboxComponent.gd" id="3_hurtbox"]
 [ext_resource type="Script" uid="uid://bcharstats0001" path="res://scripts/stats/CharacterStats.gd" id="4_stats"]
@@ -44,6 +45,9 @@ transform = Transform3D(0.99721026, 0.028731678, -0.06889352, 0.06795707, 0.0323
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="BaseEnemy" parent="." instance=ExtResource("5_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1, 4)
 
 [node name="DummyTarget" type="Node3D" parent="." unique_id=567890123]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.9, 0)

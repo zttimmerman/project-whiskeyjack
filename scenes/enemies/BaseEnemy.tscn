@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://cr6q16h3br23g"]
+
+[ext_resource type="Script" uid="uid://dbaseenemy01gd" path="res://scenes/enemies/BaseEnemy.gd" id="1_enemy"]
+[ext_resource type="Script" uid="uid://bcharstats0001" path="res://scripts/stats/CharacterStats.gd" id="2_stats"]
+[ext_resource type="Script" uid="uid://dwaci7nqyra4a" path="res://scripts/combat/HurtboxComponent.gd" id="3_hurtbox"]
+[ext_resource type="Script" uid="uid://hitboxcmp001" path="res://scripts/combat/HitboxComponent.gd" id="4_hitbox"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
+radius = 0.4
+height = 1.8
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_enemy"]
+
+[sub_resource type="Resource" id="CharacterStats_enemy"]
+script = ExtResource("2_stats")
+max_hp = 30
+current_hp = 30
+attack = 8
+defense = 2
+speed = 3.0
+level = 1
+experience = 0
+experience_to_next_level = 100
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hurtbox"]
+radius = 0.45
+height = 1.8
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_hitbox"]
+radius = 0.6
+
+[node name="BaseEnemy" type="CharacterBody3D"]
+script = ExtResource("1_enemy")
+stats = SubResource("CharacterStats_enemy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_body")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_enemy")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+
+[node name="HurtboxComponent" type="Area3D" parent="."]
+collision_layer = 4
+collision_mask = 8
+script = ExtResource("3_hurtbox")
+metadata/_custom_type_script = "uid://dwaci7nqyra4a"
+stats = SubResource("CharacterStats_enemy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HurtboxComponent"]
+shape = SubResource("CapsuleShape3D_hurtbox")
+
+[node name="HitboxComponent" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.6)
+collision_layer = 16
+collision_mask = 1
+script = ExtResource("4_hitbox")
+metadata/_custom_type_script = "uid://hitboxcmp001"
+damage = 8
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HitboxComponent"]
+shape = SubResource("SphereShape3D_hitbox")
