@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://30n3q6hndes"]
 
 [ext_resource type="PackedScene" uid="uid://cyibe5n4nuirt" path="res://scenes/player/Player.tscn" id="1_player"]
+[ext_resource type="Script" uid="uid://btestworld0001" path="res://scenes/world/TestWorld.gd" id="2_testworld"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_l8xpf"]
 size = Vector2(20, 20)
@@ -9,6 +10,7 @@ size = Vector2(20, 20)
 size = Vector3(20, 0.1, 20)
 
 [node name="TestWorld" type="Node3D" unique_id=1165707528]
+script = ExtResource("2_testworld")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=429074994]
 

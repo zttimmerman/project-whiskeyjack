@@ -6,10 +6,21 @@ signal hit(target: Node, damage: int)
 @export var damage: int = 10
 @export var knockback_force: float = 5.0
 
-# Call this to activate the hitbox for one attack swing
+
+func _ready() -> void:
+	monitoring = false
+	area_entered.connect(_on_area_entered)
+
+
+# Enable the hitbox for one attack swing
 func activate() -> void:
-	pass
+	monitoring = true
 
 
 func deactivate() -> void:
-	pass
+	monitoring = false
+
+
+func _on_area_entered(area: Area3D) -> void:
+	if area is HurtboxComponent:
+		emit_signal("hit", area.get_parent(), damage)
