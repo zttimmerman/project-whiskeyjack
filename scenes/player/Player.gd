@@ -22,6 +22,8 @@ signal inventory_toggled
 @onready var spring_arm: SpringArm3D = $CameraRig/SpringArm3D
 @onready var hurtbox: HurtboxComponent = $HurtboxComponent
 @onready var hitbox: HitboxComponent = $HitboxComponent
+@onready var _sfx_swing: AudioStreamPlayer3D = $SFXSwing
+@onready var _sfx_footstep: AudioStreamPlayer3D = $SFXFootstep
 
 var _is_dodging: bool = false
 var _dodge_timer: float = 0.0
@@ -42,6 +44,9 @@ var _attack_timer: float = 0.0
 var _shake_timer: float = 0.0
 var _shake_duration: float = 0.0
 var _shake_intensity: float = 0.0
+
+const FOOTSTEP_INTERVAL: float = 0.4
+var _footstep_timer: float = 0.0
 
 
 func _ready() -> void:
@@ -108,6 +113,7 @@ func _physics_process(delta: float) -> void:
 	_tick_attack(delta)
 	_update_camera(delta)
 	move_and_slide()
+	_tick_footsteps(delta)
 
 
 # ── Movement ──────────────────────────────────────────────────────────────────
@@ -335,6 +341,8 @@ func _attack_light() -> void:
 	hitbox.knockback_force = 4.0
 	hitbox.is_heavy = false
 	hitbox.activate()
+	if _sfx_swing.stream:
+		_sfx_swing.play()
 	_attack_timer = attack_active_time
 	_combo_timer = combo_window
 	_combo_index = (_combo_index + 1) % 3
@@ -351,7 +359,21 @@ func _attack_heavy() -> void:
 	hitbox.knockback_force = 10.0
 	hitbox.is_heavy = true
 	hitbox.activate()
+	if _sfx_swing.stream:
+		_sfx_swing.play()
 	_attack_timer = heavy_active_time
+
+
+# ── Footsteps ─────────────────────────────────────────────────────────────────
+
+func _tick_footsteps(delta: float) -> void:
+	_footstep_timer -= delta
+	if _footstep_timer <= 0.0 \
+			and is_on_floor() \
+			and Vector2(velocity.x, velocity.z).length() > 0.5:
+		_footstep_timer = FOOTSTEP_INTERVAL
+		if _sfx_footstep.stream:
+			_sfx_footstep.play()
 
 
 # ── Death ─────────────────────────────────────────────────────────────────────

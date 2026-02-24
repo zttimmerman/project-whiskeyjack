@@ -12,6 +12,7 @@ const DEATH_SHOW_DURATION: float = 2.0
 @onready var you_died_label: Label = $DeathOverlay/YouDiedLabel
 @onready var hp_panel: Panel = $HPPanel
 @onready var _margin: MarginContainer = $HPPanel/MarginContainer
+@onready var _sfx_death: AudioStreamPlayer = $SFXDeath
 
 var _stats: CharacterStats = null
 var _flash_tween: Tween = null
@@ -107,6 +108,8 @@ func _on_leveled_up(_new_level: int) -> void:
 
 
 func _on_player_died() -> void:
+	if _sfx_death.stream:
+		_sfx_death.play()
 	death_overlay.visible = true
 	var tween := create_tween()
 	tween.set_parallel(false)

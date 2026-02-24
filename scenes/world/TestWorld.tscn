@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/DialogueUI.tscn" id="9_dlgui"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="10_pausemenu"]
 [ext_resource type="PackedScene" path="res://scenes/ui/QuestLogUI.tscn" id="11_questlog"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx_impact.ogg" id="12_impact"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_l8xpf"]
 size = Vector2(20, 20)
@@ -63,6 +64,7 @@ collision_layer = 4
 collision_mask = 8
 script = ExtResource("3_hurtbox")
 stats = SubResource("CharacterStats_dummy")
+impact_sfx = ExtResource("12_impact")
 metadata/_custom_type_script = "uid://dwaci7nqyra4a"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="DummyTarget/HurtboxComponent" unique_id=890123456]

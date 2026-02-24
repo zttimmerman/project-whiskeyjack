@@ -12,6 +12,8 @@ var _dummy_stats: CharacterStats = null
 
 
 func _ready() -> void:
+	AudioManager.play_music(preload("res://assets/audio/music_ambient.ogg"))
+
 	var player := get_node_or_null("Player")
 	if not player:
 		push_error("TestWorld: Player node not found")

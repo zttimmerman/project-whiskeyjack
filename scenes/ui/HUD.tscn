@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bhud00tscn01"]
 
 [ext_resource type="Script" uid="uid://bhudscript001" path="res://scenes/ui/HUD.gd" id="1_hud"]
+[ext_resource type="AudioStream" path="res://assets/audio/sting_you_died.ogg" id="2_sting"]
 
 [node name="HUD" type="Control"]
 script = ExtResource("1_hud")
@@ -51,3 +52,7 @@ anchor_bottom = 1.0
 horizontal_alignment = 1
 vertical_alignment = 1
 text = "YOU DIED"
+
+[node name="SFXDeath" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_sting")
+bus = "UI"

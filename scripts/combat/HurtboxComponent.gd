@@ -7,6 +7,9 @@ extends Area3D
 # Invincibility frames — set true during dodge roll, etc.
 var invincible: bool = false
 
+# Assign an .ogg/.wav stream in the editor once assets/audio/sfx_impact.ogg exists.
+@export var impact_sfx: AudioStream = null
+
 
 func _ready() -> void:
 	area_entered.connect(_on_hitbox_entered)
@@ -23,6 +26,7 @@ func _on_hitbox_entered(area: Area3D) -> void:
 
 	stats.take_damage(hitbox.damage)
 	_spawn_hit_particles()
+	AudioManager.play_sfx_at(impact_sfx, global_position)
 
 	# Push the parent CharacterBody3D away from the hitbox source
 	var body := get_parent() as CharacterBody3D
