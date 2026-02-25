@@ -21,7 +21,7 @@ GameManager="*uid://024br80nqky7"
 SaveManager="*uid://ch8tywqpocjgw"
 QuestManager="*uid://cecws7ifxbeme"
 DialogueRunner="*uid://cpcd3cmu4tfwq"
-AudioManager="*res://autoloads/AudioManager.gd"
+AudioManager="*uid://cxv82dw4qnwfb"
 
 [input]
 
