@@ -26,6 +26,9 @@ var _attack_cooldown_timer: float = 0.0
 
 func _ready() -> void:
 	add_to_group("enemy")
+	# Duplicate the shared stats resource so each instance has its own HP pool
+	stats = stats.duplicate()
+	$HurtboxComponent.stats = stats
 	_nav_agent = $NavigationAgent3D
 	_hitbox = $HitboxComponent
 	_player = get_tree().get_first_node_in_group("player")

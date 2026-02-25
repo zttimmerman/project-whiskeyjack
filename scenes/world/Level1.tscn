@@ -1,0 +1,273 @@
+[gd_scene format=3 uid="uid://dys6tb5xur4iu"]
+
+[ext_resource type="Script" path="res://scenes/world/Level1.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://cyibe5n4nuirt" path="res://scenes/player/Player.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://cr6q16h3br23g" path="res://scenes/enemies/BaseEnemy.tscn" id="3_baseenemy"]
+[ext_resource type="PackedScene" uid="uid://archerenemy_sc" path="res://scenes/enemies/ArcherEnemy.tscn" id="4_archer"]
+[ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="5_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/InventoryUI.tscn" id="6_invui"]
+[ext_resource type="PackedScene" path="res://scenes/ui/DialogueUI.tscn" id="7_dlgui"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="8_pause"]
+[ext_resource type="PackedScene" path="res://scenes/ui/QuestLogUI.tscn" id="9_questlog"]
+
+[sub_resource type="NavigationMesh" id="NavMesh_1"]
+cell_size = 0.25
+agent_radius = 0.4
+agent_height = 1.8
+region_min_size = 2.0
+
+[sub_resource type="StandardMaterial3D" id="Mat_floor"]
+albedo_color = Color(0.3, 0.28, 0.25, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_wall"]
+albedo_color = Color(0.45, 0.42, 0.4, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_pillar"]
+albedo_color = Color(0.5, 0.45, 0.38, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_door"]
+albedo_color = Color(0.55, 0.35, 0.2, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_exit"]
+size = Vector3(3, 3, 1)
+
+[node name="Level1" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866, -0.25, 0.433, 0, 0.866, 0.5, -0.5, -0.433, 0.75, 0, 10, 0)
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavMesh_1")
+
+[node name="StartFloor" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+use_collision = true
+size = Vector3(12, 0.2, 12)
+material = SubResource("Mat_floor")
+
+[node name="StartWallN" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -6.25)
+use_collision = true
+size = Vector3(12, 4, 0.5)
+material = SubResource("Mat_wall")
+
+[node name="StartWallS" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 6.25)
+use_collision = true
+size = Vector3(12, 4, 0.5)
+material = SubResource("Mat_wall")
+
+[node name="StartWallW" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.25, 2, 0)
+use_collision = true
+size = Vector3(0.5, 4, 12)
+material = SubResource("Mat_wall")
+
+[node name="StartWallEN" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.25, 2, -4)
+use_collision = true
+size = Vector3(0.5, 4, 4)
+material = SubResource("Mat_wall")
+
+[node name="StartWallES" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.25, 2, 4)
+use_collision = true
+size = Vector3(0.5, 4, 4)
+material = SubResource("Mat_wall")
+
+[node name="CorridorAFloor" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, -0.1, 0)
+use_collision = true
+size = Vector3(10, 0.2, 4)
+material = SubResource("Mat_floor")
+
+[node name="CorridorAWallN" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 2, -2.25)
+use_collision = true
+size = Vector3(10, 4, 0.5)
+material = SubResource("Mat_wall")
+
+[node name="CorridorAWallS" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 2, 2.25)
+use_collision = true
+size = Vector3(10, 4, 0.5)
+material = SubResource("Mat_wall")
+
+[node name="CentralFloor" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, -0.1, 0)
+use_collision = true
+size = Vector3(16, 0.2, 16)
+material = SubResource("Mat_floor")
+
+[node name="CentralWallN" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 2, -8.25)
+use_collision = true
+size = Vector3(16, 4, 0.5)
+material = SubResource("Mat_wall")
+
+[node name="CentralWallE" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.25, 2, 0)
+use_collision = true
+size = Vector3(0.5, 4, 16)
+material = SubResource("Mat_wall")
+
+[node name="CentralWallWN" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.75, 2, -5)
+use_collision = true
+size = Vector3(0.5, 4, 6)
+material = SubResource("Mat_wall")
+
+[node name="CentralWallWS" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.75, 2, 5)
+use_collision = true
+size = Vector3(0.5, 4, 6)
+material = SubResource("Mat_wall")
+
+[node name="CentralWallSW" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 2, 8.25)
+use_collision = true
+size = Vector3(6, 4, 0.5)
+material = SubResource("Mat_wall")
+
+[node name="CentralWallSE" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29, 2, 8.25)
+use_collision = true
+size = Vector3(6, 4, 0.5)
+material = SubResource("Mat_wall")
+
+[node name="Pillar1" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 1.5, -3)
+use_collision = true
+size = Vector3(1, 3, 1)
+material = SubResource("Mat_pillar")
+
+[node name="Pillar2" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 1.5, 3)
+use_collision = true
+size = Vector3(1, 3, 1)
+material = SubResource("Mat_pillar")
+
+[node name="Pillar3" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 1.5, 0)
+use_collision = true
+size = Vector3(1, 3, 1)
+material = SubResource("Mat_pillar")
+
+[node name="CorridorBFloor" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, -0.1, 13)
+use_collision = true
+size = Vector3(4, 0.2, 10)
+material = SubResource("Mat_floor")
+
+[node name="CorridorBWallE" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.25, 2, 13)
+use_collision = true
+size = Vector3(0.5, 4, 10)
+material = SubResource("Mat_wall")
+
+[node name="CorridorBWallW" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.75, 2, 13)
+use_collision = true
+size = Vector3(0.5, 4, 10)
+material = SubResource("Mat_wall")
+
+[node name="ExitFloor" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, -0.1, 24)
+use_collision = true
+size = Vector3(12, 0.2, 12)
+material = SubResource("Mat_floor")
+
+[node name="ExitWallNW" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 2, 17.75)
+use_collision = true
+size = Vector3(4, 4, 0.5)
+material = SubResource("Mat_wall")
+
+[node name="ExitWallNE" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 2, 17.75)
+use_collision = true
+size = Vector3(4, 4, 0.5)
+material = SubResource("Mat_wall")
+
+[node name="ExitWallS" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 2, 30.25)
+use_collision = true
+size = Vector3(12, 4, 0.5)
+material = SubResource("Mat_wall")
+
+[node name="ExitWallE" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.25, 2, 24)
+use_collision = true
+size = Vector3(0.5, 4, 12)
+material = SubResource("Mat_wall")
+
+[node name="ExitWallW" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.75, 2, 24)
+use_collision = true
+size = Vector3(0.5, 4, 12)
+material = SubResource("Mat_wall")
+
+[node name="DoorframeL" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.25, 2, 29.75)
+use_collision = true
+size = Vector3(0.5, 4, 0.5)
+material = SubResource("Mat_door")
+
+[node name="DoorframeR" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.75, 2, 29.75)
+use_collision = true
+size = Vector3(0.5, 4, 0.5)
+material = SubResource("Mat_door")
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="EnemyCorridorA" parent="." instance=ExtResource("3_baseenemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 1, 0)
+
+[node name="EnemyCentral1" parent="." instance=ExtResource("3_baseenemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 1, -2)
+
+[node name="EnemyCentral2" parent="." instance=ExtResource("3_baseenemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 1, 2)
+
+[node name="ArcherCentral" parent="." instance=ExtResource("4_archer")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 1, 5)
+
+[node name="ArcherCorridorB" parent="." instance=ExtResource("4_archer")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 1, 15)
+
+[node name="EnemyExit1" parent="." instance=ExtResource("3_baseenemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 1, 24)
+
+[node name="EnemyExit2" parent="." instance=ExtResource("3_baseenemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 1, 26)
+
+[node name="ExitDoor" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 1.5, 29.5)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExitDoor"]
+shape = SubResource("BoxShape3D_exit")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="HUD" parent="CanvasLayer" instance=ExtResource("5_hud")]
+layout_mode = 3
+anchors_preset = 15
+
+[node name="InventoryUI" parent="CanvasLayer" instance=ExtResource("6_invui")]
+layout_mode = 3
+anchors_preset = 15
+
+[node name="DialogueUI" parent="CanvasLayer" instance=ExtResource("7_dlgui")]
+layout_mode = 3
+anchors_preset = 15
+
+[node name="PauseMenu" parent="CanvasLayer" instance=ExtResource("8_pause")]
+layout_mode = 3
+anchors_preset = 15
+
+[node name="QuestLogUI" parent="CanvasLayer" instance=ExtResource("9_questlog")]
+layout_mode = 3
+anchors_preset = 15
