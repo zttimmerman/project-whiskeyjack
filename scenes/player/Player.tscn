@@ -8,12 +8,11 @@
 [ext_resource type="AudioStream" path="res://assets/audio/sfx_swing.ogg" id="6_swing"]
 [ext_resource type="AudioStream" path="res://assets/audio/sfx_footstep.ogg" id="7_step"]
 [ext_resource type="AudioStream" path="res://assets/audio/sfx_impact.ogg" id="8_impact"]
+[ext_resource type="PackedScene" path="res://assets/meshes/player_character.glb" id="9_model"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gfjak"]
 radius = 0.4
 height = 1.8
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_4kuee"]
 
 [sub_resource type="Resource" id="CharacterStats_player"]
 script = ExtResource("3_stats")
@@ -45,8 +44,7 @@ inventory = SubResource("Inventory_player")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1706130590]
 shape = SubResource("CapsuleShape3D_gfjak")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=575886353]
-mesh = SubResource("CapsuleMesh_4kuee")
+[node name="PlayerModel" parent="." instance=ExtResource("9_model")]
 
 [node name="CameraRig" type="Node3D" parent="." unique_id=1699920677]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)

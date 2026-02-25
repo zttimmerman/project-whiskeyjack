@@ -24,6 +24,7 @@ signal inventory_toggled
 @onready var hitbox: HitboxComponent = $HitboxComponent
 @onready var _sfx_swing: AudioStreamPlayer3D = $SFXSwing
 @onready var _sfx_footstep: AudioStreamPlayer3D = $SFXFootstep
+@onready var _anim_player: AnimationPlayer = $PlayerModel/AnimationPlayer
 
 var _is_dodging: bool = false
 var _dodge_timer: float = 0.0
@@ -48,6 +49,8 @@ var _shake_intensity: float = 0.0
 const FOOTSTEP_INTERVAL: float = 0.4
 var _footstep_timer: float = 0.0
 
+var _playing_oneshot: bool = false  # True while a non-looping anim plays
+
 
 func _ready() -> void:
 	add_to_group("player")
@@ -58,6 +61,9 @@ func _ready() -> void:
 		stats.died.connect(die)
 	if is_instance_valid(hitbox):
 		hitbox.hit.connect(_on_hitbox_hit)
+	if _anim_player:
+		_anim_player.animation_finished.connect(_on_animation_finished)
+		_play_anim("idle")
 	_populate_starting_items()
 
 
@@ -113,6 +119,7 @@ func _physics_process(delta: float) -> void:
 	_tick_attack(delta)
 	_update_camera(delta)
 	move_and_slide()
+	_update_locomotion_anim()
 	_tick_footsteps(delta)
 
 
@@ -180,6 +187,7 @@ func _dodge() -> void:
 
 	_is_dodging = true
 	_dodge_timer = dodge_duration
+	_play_anim("dodge_roll", true)
 
 	if is_instance_valid(hurtbox):
 		hurtbox.invincible = true
@@ -341,6 +349,7 @@ func _attack_light() -> void:
 	hitbox.knockback_force = 4.0
 	hitbox.is_heavy = false
 	hitbox.activate()
+	_play_anim("attack_light", true)
 	if _sfx_swing.stream:
 		_sfx_swing.play()
 	_attack_timer = attack_active_time
@@ -359,6 +368,7 @@ func _attack_heavy() -> void:
 	hitbox.knockback_force = 10.0
 	hitbox.is_heavy = true
 	hitbox.activate()
+	_play_anim("attack_heavy", true)
 	if _sfx_swing.stream:
 		_sfx_swing.play()
 	_attack_timer = heavy_active_time
@@ -376,6 +386,34 @@ func _tick_footsteps(delta: float) -> void:
 			_sfx_footstep.play()
 
 
+# ── Animation ────────────────────────────────────────────────────────────────
+
+func _play_anim(anim_name: String, oneshot: bool = false) -> void:
+	if not _anim_player:
+		return
+	if _anim_player.has_animation(anim_name):
+		_playing_oneshot = oneshot
+		_anim_player.play(anim_name)
+
+
+func _on_animation_finished(_anim_name: StringName) -> void:
+	if _playing_oneshot:
+		_playing_oneshot = false
+		_update_locomotion_anim()
+
+
+func _update_locomotion_anim() -> void:
+	if _playing_oneshot or not _anim_player:
+		return
+	var lateral := Vector2(velocity.x, velocity.z).length()
+	if lateral > 0.5:
+		if _anim_player.current_animation != "run":
+			_play_anim("run")
+	else:
+		if _anim_player.current_animation != "idle":
+			_play_anim("idle")
+
+
 # ── Death ─────────────────────────────────────────────────────────────────────
 
 func die() -> void:
@@ -385,3 +423,4 @@ func die() -> void:
 	set_physics_process(false)
 	set_process_input(false)
 	velocity = Vector3.ZERO
+	_play_anim("death", true)
