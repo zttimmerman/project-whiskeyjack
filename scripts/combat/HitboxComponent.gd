@@ -16,13 +16,13 @@ func _ready() -> void:
 
 # Enable the hitbox for one attack swing
 func activate() -> void:
-	monitoring = true
-	monitorable = true
+	set_deferred("monitoring", true)
+	set_deferred("monitorable", true)
 
 
 func deactivate() -> void:
-	monitoring = false
-	monitorable = false
+	set_deferred("monitoring", false)
+	set_deferred("monitorable", false)
 
 
 func _on_area_entered(area: Area3D) -> void:
