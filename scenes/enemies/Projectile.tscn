@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://projectile_sc1"]
+
+[ext_resource type="Script" uid="uid://projectile_gd1" path="res://scenes/enemies/Projectile.gd" id="1_proj"]
+[ext_resource type="Script" uid="uid://hitboxcmp001" path="res://scripts/combat/HitboxComponent.gd" id="2_hitbox"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_proj"]
+radius = 0.12
+height = 0.24
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_hitbox"]
+radius = 0.15
+
+[node name="Projectile" type="Area3D"]
+script = ExtResource("1_proj")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_proj")
+
+[node name="HitboxComponent" type="Area3D" parent="."]
+collision_layer = 16
+collision_mask = 1
+script = ExtResource("2_hitbox")
+metadata/_custom_type_script = "uid://hitboxcmp001"
+damage = 6
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HitboxComponent"]
+shape = SubResource("SphereShape3D_hitbox")
