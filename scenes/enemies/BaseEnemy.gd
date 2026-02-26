@@ -18,6 +18,7 @@ var state: State = State.IDLE
 var _player: CharacterBody3D = null
 var _nav_agent: NavigationAgent3D = null
 var _hitbox: HitboxComponent = null
+var _anim_player: AnimationPlayer = null
 
 var _stagger_timer: float = 0.0
 var _attack_timer: float = 0.0
@@ -32,6 +33,13 @@ func _ready() -> void:
 	_nav_agent = $NavigationAgent3D
 	_hitbox = $HitboxComponent
 	_player = get_tree().get_first_node_in_group("player")
+	# Grab AnimationPlayer from the model sub-scene (SkeletonModel/AnimationPlayer)
+	var model_node: Node = get_node_or_null("SkeletonModel")
+	if model_node:
+		_anim_player = model_node.get_node_or_null("AnimationPlayer")
+	if _anim_player:
+		_anim_player.animation_finished.connect(_on_animation_finished)
+		_play_anim("idle")
 	stats.died.connect(_on_stats_died)
 	# Connect enemy's own hurtbox to trigger stagger state (HurtboxComponent handles HP)
 	$HurtboxComponent.area_entered.connect(_on_hurtbox_hit)
@@ -111,9 +119,11 @@ func _tick_chase(delta: float) -> void:
 		velocity.x = move_dir.x * stats.speed
 		velocity.z = move_dir.z * stats.speed
 		look_at(global_position + move_dir, Vector3.UP)
+		_update_locomotion_anim()
 	else:
 		velocity.x = 0.0
 		velocity.z = 0.0
+		_update_locomotion_anim()
 
 
 func _tick_attack(delta: float) -> void:
@@ -143,15 +153,49 @@ func _get_next_action() -> void:
 func _change_state(new_state: State) -> void:
 	state = new_state
 	match new_state:
+		State.IDLE:
+			_play_anim("idle")
+		State.CHASE:
+			_update_locomotion_anim()
 		State.ATTACK:
 			_face_player()
 			_hitbox.activate()
 			_attack_timer = ATTACK_ACTIVE_TIME
+			_play_anim("attack")
 		State.STAGGER:
 			_hitbox.deactivate()
 			_stagger_timer = STAGGER_DURATION
+			_play_anim("stagger")
 		State.DEAD:
 			_hitbox.deactivate()
+			_play_anim("death")
+
+
+func _play_anim(anim_name: String) -> void:
+	if not _anim_player:
+		return
+	if _anim_player.has_animation(anim_name):
+		_anim_player.play(anim_name)
+
+
+func _update_locomotion_anim() -> void:
+	if not _anim_player or state != State.CHASE:
+		return
+	var dominated: float = Vector2(velocity.x, velocity.z).length()
+	if dominated > 0.5:
+		if _anim_player.current_animation != "run":
+			_play_anim("run")
+	else:
+		if _anim_player.current_animation != "idle":
+			_play_anim("idle")
+
+
+func _on_animation_finished(_anim_name: StringName) -> void:
+	# After a oneshot (attack/stagger) finishes, resume locomotion anim
+	if state == State.CHASE:
+		_update_locomotion_anim()
+	elif state == State.IDLE:
+		_play_anim("idle")
 
 
 func _face_player() -> void:
@@ -192,7 +236,9 @@ func die() -> void:
 	_change_state(State.DEAD)
 	GameManager.award_player_xp(xp_reward)
 	emit_signal("died")
-	queue_free()
+	# Delay queue_free so the death animation has time to play (~1.25s at 24fps)
+	var timer: SceneTreeTimer = get_tree().create_timer(1.5)
+	timer.timeout.connect(queue_free)
 
 
 func _on_stats_died() -> void:

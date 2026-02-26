@@ -6,15 +6,11 @@
 [ext_resource type="Script" uid="uid://hitboxcmp001" path="res://scripts/combat/HitboxComponent.gd" id="4_hitbox"]
 [ext_resource type="PackedScene" uid="uid://projectile_sc1" path="res://scenes/enemies/Projectile.tscn" id="5_proj"]
 [ext_resource type="AudioStream" path="res://assets/audio/sfx_impact.ogg" id="6_impact"]
+[ext_resource type="PackedScene" path="res://assets/meshes/archer_enemy.glb" id="7_model"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.4
 height = 1.8
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_archer"]
-
-[sub_resource type="StandardMaterial3D" id="Material_archer"]
-albedo_color = Color(0.6, 0.2, 0.8, 1)
 
 [sub_resource type="Resource" id="CharacterStats_archer"]
 script = ExtResource("2_stats")
@@ -45,9 +41,8 @@ projectile_scene = ExtResource("5_proj")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_body")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("CapsuleMesh_archer")
-surface_material_override/0 = SubResource("Material_archer")
+[node name="SkeletonModel" parent="." instance=ExtResource("7_model")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, -0.9, 0)
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 

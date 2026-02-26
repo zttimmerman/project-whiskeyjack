@@ -16,6 +16,7 @@ func _change_state(new_state: State) -> void:
 		_face_player()
 		_attack_timer = 0.4
 		_attack_cooldown_timer = SHOOT_COOLDOWN
+		_play_anim("attack")
 		_fire_projectile()
 	else:
 		super._change_state(new_state)
