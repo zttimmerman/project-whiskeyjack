@@ -156,6 +156,8 @@ res://
 - BaseEnemy handles: health, taking damage, death, basic NavigationAgent3D pathfinding toward player
 - Each enemy type is its own scene that extends BaseEnemy and overrides `_get_next_action()` for unique behavior
 - States: IDLE, PATROL, CHASE, ATTACK, STAGGER, DEAD — use a simple enum + match statement, not a full state machine plugin
+- **Animation:** BaseEnemy looks for `$SkeletonModel/AnimationPlayer` in `_ready()` and plays state-driven animations (idle, run, attack, stagger, death). Locomotion anim (idle vs run) updates each frame during CHASE based on horizontal speed. `die()` delays `queue_free()` by 1.5s so death animation can play. Subclasses that override `_change_state()` must call `_play_anim()` themselves for the overridden state (see ArcherEnemy)
+- **Model node convention:** Enemy scenes use a `SkeletonModel` node (instanced GLB) with `Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, -0.9, 0)` — same 180° Y rotation + grounding offset as the player
 
 ---
 
