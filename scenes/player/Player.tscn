@@ -45,6 +45,7 @@ inventory = SubResource("Inventory_player")
 shape = SubResource("CapsuleShape3D_gfjak")
 
 [node name="PlayerModel" parent="." instance=ExtResource("9_model")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, -0.9, 0)
 
 [node name="CameraRig" type="Node3D" parent="." unique_id=1699920677]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
