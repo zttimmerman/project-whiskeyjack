@@ -2,5 +2,11 @@
 .godot/
 /android/
 
+# IDE / editor
+.vscode/
+
+# Claude Code local settings
+.claude/settings.local.json
+
 # macOS
 .DS_Store
