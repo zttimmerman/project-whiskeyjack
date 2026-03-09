@@ -2,6 +2,7 @@ extends Node3D
 
 
 func _ready() -> void:
+	AudioManager.play_music(preload("res://assets/audio/music_ambient.ogg"))
 	$NavigationRegion3D.bake_navigation_mesh()
 	$EndTrigger.body_entered.connect(_on_end_trigger_body_entered)
 
