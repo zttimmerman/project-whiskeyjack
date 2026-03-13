@@ -90,8 +90,9 @@ func _close() -> void:
 func _input(event: InputEvent) -> void:
 	if not visible:
 		return
-	if event.is_action_pressed("open_inventory") or event.is_action_pressed("ui_cancel"):
+	if event.is_action_pressed("open_inventory") or event.is_action_pressed("pause"):
 		_close()
+		get_viewport().set_input_as_handled()
 
 
 # ── Item list ─────────────────────────────────────────────────────────────────

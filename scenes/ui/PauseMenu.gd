@@ -20,8 +20,10 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause"):
 		if visible:
 			_do_resume()
-		else:
+		elif not get_tree().paused:
 			_do_open()
+		else:
+			return
 		get_viewport().set_input_as_handled()
 
 

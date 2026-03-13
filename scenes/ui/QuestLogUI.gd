@@ -53,7 +53,7 @@ func _input(event: InputEvent) -> void:
 		else:
 			_open()
 		get_viewport().set_input_as_handled()
-	elif visible and event.is_action_pressed("ui_cancel"):
+	elif visible and event.is_action_pressed("pause"):
 		_close()
 		get_viewport().set_input_as_handled()
 
