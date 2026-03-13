@@ -13,6 +13,7 @@ const DEATH_SHOW_DURATION: float = 2.0
 @onready var hp_panel: Panel = $HPPanel
 @onready var _margin: MarginContainer = $HPPanel/MarginContainer
 @onready var _sfx_death: AudioStreamPlayer = $SFXDeath
+@onready var _quest_flash_label: Label = $QuestFlashLabel
 
 var _stats: CharacterStats = null
 var _flash_tween: Tween = null
@@ -27,6 +28,9 @@ func _ready() -> void:
 	death_overlay.modulate.a = 0.0
 	death_overlay.visible = false
 	you_died_label.modulate.a = 0.0
+	_quest_flash_label.visible = false
+	_quest_flash_label.modulate.a = 0.0
+	QuestManager.quest_completed.connect(_on_quest_completed)
 
 
 func _apply_style() -> void:
@@ -59,6 +63,10 @@ func _apply_style() -> void:
 	# "YOU DIED" — large and red
 	you_died_label.add_theme_font_size_override("font_size", 72)
 	you_died_label.add_theme_color_override("font_color", Color(0.85, 0.08, 0.08))
+
+	# "Quest Complete!" — gold
+	_quest_flash_label.add_theme_font_size_override("font_size", 32)
+	_quest_flash_label.add_theme_color_override("font_color", Color(0.95, 0.85, 0.3))
 
 
 func _apply_bar_style(bar: ProgressBar, fill_color: Color, bg_color: Color) -> void:
@@ -117,6 +125,16 @@ func _on_player_died() -> void:
 	tween.tween_property(you_died_label, "modulate:a", 1.0, 0.35)
 	tween.tween_interval(DEATH_SHOW_DURATION)
 	# Reload is handled by GameManager.on_player_died() which waits for this tween.
+
+
+func _on_quest_completed(_quest_id: String) -> void:
+	_quest_flash_label.visible = true
+	_quest_flash_label.modulate.a = 0.0
+	var tween := create_tween()
+	tween.tween_property(_quest_flash_label, "modulate:a", 1.0, 0.3)
+	tween.tween_interval(2.0)
+	tween.tween_property(_quest_flash_label, "modulate:a", 0.0, 0.5)
+	tween.tween_callback(func() -> void: _quest_flash_label.visible = false)
 
 
 # ── Display helpers ───────────────────────────────────────────────────────────

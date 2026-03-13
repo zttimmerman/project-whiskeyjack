@@ -1,0 +1,8 @@
+[
+  { "id": "start", "speaker": "Elder", "text": "You've returned! The road... is it safe?", "choices": [
+    { "text": "The monsters are dealt with.", "next_id": "grateful" },
+    { "text": "They won't bother anyone again.", "next_id": "grateful" }
+  ]},
+  { "id": "grateful", "speaker": "Elder", "text": "Bless you, traveler. The village owes you a great debt. Please, take this — it belonged to my son.", "next_id": "reward" },
+  { "id": "reward", "speaker": "Elder", "text": "The way forward is open now. Be careful — darker things lurk in the crypts beyond.", "next_id": null }
+]

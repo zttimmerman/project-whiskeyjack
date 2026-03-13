@@ -1,11 +1,16 @@
 class_name NPC
 extends CharacterBody3D
 
+signal quest_reward_given
+
 @export var dialogue_id: String = ""
 @export var npc_name: String = ""
+## If this quest is complete, use completion_dialogue_id instead of dialogue_id
+@export var completion_quest_id: String = ""
+@export var completion_dialogue_id: String = ""
 
-# True while the player is within interaction range
 var _player_in_range: bool = false
+var _reward_given: bool = false
 
 
 func _ready() -> void:
@@ -13,12 +18,19 @@ func _ready() -> void:
 
 
 func interact() -> void:
-	if dialogue_id.is_empty():
+	var active_dialogue := dialogue_id
+	if not completion_quest_id.is_empty() and QuestManager.is_quest_complete(completion_quest_id):
+		if not completion_dialogue_id.is_empty():
+			active_dialogue = completion_dialogue_id
+		if not _reward_given:
+			_reward_given = true
+			quest_reward_given.emit()
+
+	if active_dialogue.is_empty():
 		return
-	DialogueRunner.start(dialogue_id)
+	DialogueRunner.start(active_dialogue)
 
 
-# Called by an Area3D child when the player enters/exits interaction range
 func _on_interact_area_body_entered(body: Node3D) -> void:
 	if body.is_in_group("player"):
 		_player_in_range = true

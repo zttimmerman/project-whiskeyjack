@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/QuestLogUI.tscn" id="9_questlog"]
 [ext_resource type="PackedScene" path="res://assets/meshes/prop_torch.glb" id="10_torch"]
 [ext_resource type="PackedScene" path="res://assets/meshes/prop_weapon_rack.glb" id="11_weaponrack"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/NPC.tscn" id="12_npc"]
 
 [sub_resource type="NavigationMesh" id="NavMesh_1"]
 cell_size = 0.25
@@ -38,6 +39,9 @@ albedo_color = Color(0.38, 0.28, 0.15, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_exit"]
 size = Vector3(3, 3, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_questadvance"]
+size = Vector3(1, 3, 4)
 
 [node name="Level1" type="Node3D"]
 script = ExtResource("1_script")
@@ -297,6 +301,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, 24)
 
 [node name="Player" parent="." instance=ExtResource("2_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="VillageElder" parent="." instance=ExtResource("12_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, 2)
+dialogue_id = "village_elder"
+npc_name = "Village Elder"
+completion_quest_id = "clear_eastern_road"
+completion_dialogue_id = "village_elder_complete"
+
+[node name="QuestAdvanceArea" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 1.5, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="QuestAdvanceArea"]
+shape = SubResource("BoxShape3D_questadvance")
 
 [node name="EnemyCorridorA" parent="." instance=ExtResource("3_baseenemy")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 1, 0)

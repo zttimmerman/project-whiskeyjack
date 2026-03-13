@@ -56,6 +56,10 @@ func is_quest_active(quest_id: String) -> bool:
 	return _active_quests.has(quest_id)
 
 
+func is_quest_complete(quest_id: String) -> bool:
+	return quest_id in _completed_quests
+
+
 func get_quest_stage(quest_id: String) -> String:
 	if not is_quest_active(quest_id):
 		return ""
