@@ -22,8 +22,8 @@ This is a 3D action RPG built in Godot 4, inspired by early PS1/PS2 era games (t
 
 **Target: the look is stylized low-poly with generous budgets: bold colors, readable silhouettes, and simple albedo-only textures over realism.** PS1/PS2-era games are the reference for proportions and readability, not something to emulate authentically. Smooth limbs, recognizable faces and hands — not box people.
 
-- **Vertex budgets are authoritative (hard ceilings):** characters 2,000–5,000 vertices; props and smaller objects 500–2,000. Count = Blender mesh vertices with modifiers applied, summed across every mesh in the `.glb`. Generated or sourced meshes are decimated to fit before they are committed — no exceptions for "it already looks fine"
-- **Textures are albedo (base color) only:** one texture per asset, 128x128 to 256x256, or vertex colors. No normal, roughness, metallic, occlusion, emissive, or specular maps. Materials are `StandardMaterial3D` with `albedo_texture` set and everything else at defaults
+- **Budgets are hard ceilings, and `docs/art-bible.md` is their only source.** Vertex budgets, texture sizes and Tripo face limits are set there and copied per asset into `assets/briefs/<asset-id>.yaml`; never write the numbers anywhere else. Vertex count = Blender mesh vertices with modifiers applied, summed across every mesh in the `.glb`. Meshes are brought within budget at generation (the brief's `face_limit`); the pipeline fails anything over budget rather than decimating it, and a rigged mesh is never decimated. No exceptions for "it already looks fine"
+- **Textures are albedo (base color) only:** one texture per asset, at the size in the art bible, or vertex colors. No normal, roughness, metallic, occlusion, emissive, or specular maps. Materials are `StandardMaterial3D` with `albedo_texture` set and everything else at defaults
 - **Lighting:** one `DirectionalLight3D` + ambient per area; local `OmniLight3D`s are allowed only for visible light sources (torches, candelabras)
 - Avoid bloom, SSAO, and screen-space reflections
 - **Silhouettes matter:** characters should read clearly from the gameplay camera distance. Exaggerated proportions (slightly large heads, stylized hair) are fine and encouraged
@@ -281,12 +281,12 @@ Base meshes should be **AI-generated** whenever possible, then brought within th
 - **Refuse to generate** if the session cap would be exceeded, unless the user explicitly raises the limit for that session
 - Failed or unusable generations still count, at whatever the balance difference shows
 
-### Post-Generation Cleanup (MCP scripting)
+### Post-Generation Cleanup (pipeline stage 3)
 
-Every generated or sourced mesh goes through these steps, in order, before it is exported to `assets/meshes/`:
-1. **Rescale** to match the game world (character height ~1.8m). Move mesh vertices so feet sit at Z=0 in Blender (Y=0 in Godot)
-2. **Decimate to budget:** add a Decimate modifier (Collapse), tune the ratio until the summed vertex count is within the Visual Style budget, then apply it. Re-check the count after applying, and screenshot front/side/back to confirm the silhouette, face and hands still read
-3. **Strip materials to albedo:** keep only the base color image on each material. Remove normal, metallic/roughness, occlusion, emissive and specular image nodes and delete the orphaned images. Resize the base color image to 256x256 or smaller
+Every generated or sourced mesh goes through `python3 scripts/pipeline.py <asset-id> --stage clean` (headless Blender, `scripts/blender_cleanup.py`) before it lands in `assets/meshes/`. The asset-pipeline skill describes what it does:
+1. **Scale, pivot, facing:** to the brief's target size, with the base or center at the origin, and characters facing −Y
+2. **Budget:** asserted, never fixed by decimation. Over budget fails loudly; regenerate at the brief's `face_limit`
+3. **Albedo only:** the material is rebuilt as base color (plus cutout alpha); normal, metallic/roughness, occlusion, emissive and specular maps are dropped; the texture is downscaled to the brief's size
 4. **Do NOT attempt fine mesh surgery** (removing baked-in weapons, rebuilding hands, fixing faces) via MCP scripting — it burns tokens and damages the mesh. Regenerate with a better prompt instead, or fix manually in Blender's GUI
 
 ### Rigging & Animation

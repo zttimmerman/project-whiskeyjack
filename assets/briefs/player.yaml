@@ -1,0 +1,19 @@
+# Carried from docs/art-bible.md, "Brief: Player — Line soldier".
+# The art bible is the only source for these numbers: change it there first, then copy here.
+asset_id: player
+type: character
+brief: |
+  The player, a Frontier Line soldier. The camera sits behind them, so the back and
+  shoulders read most. Identity marks: spiky dark hair, knee-length tunic flare,
+  harness straps crossing the back.
+prompt: |
+  A young frontier soldier in a knee-length Garrison Teal wool tunic, Saddle Leather
+  harness and boots, spiky dark hair, empty hands, T-pose. Rain-darkened hem, scuffed
+  leather, a small notched teal square patch on the left shoulder.
+face_limit: 5000
+vertex_budget: 5000
+texture_size: 256
+target_size_m: 1.8
+pivot: base
+palette: [Garrison Teal, Saddle Leather, Blackened Iron, Tarnished Gold]
+animations: [idle, run, dodge_roll, attack_light, attack_heavy, death]

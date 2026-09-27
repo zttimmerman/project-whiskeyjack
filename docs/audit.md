@@ -20,6 +20,11 @@
 > - **All of §2:** damage formula (shield → 0 damage), `died` re-emission, hit-stop on i-frames, arrows through walls, modal/pause conflicts, save without scene or version, resource-cache player state, inventory identity/stacks, quest privates and silent stubs. The kill-before-accept bug (§2.7) still applies to the new stage flow. Feeds B1–B11 and C.
 > - **All of §3:** content-in-code. Feeds B2–B11.
 > - **§6 tests T1, T3–T9:** not yet written. Feeds A1–A2.
+> - **Shipped skeleton rig defects** (`archer_enemy.glb`; found by pipeline stage 4 on 2026-09-27; both affect Step 7 retargeting):
+>   1. **Toe bones sit at the origin in rest pose.** `toe.L_017` and `toe.R_021` have their heads at (0, 0, 0), not at the feet (the foot bones' heads are at (±0.116, 0.038, 0.062) in Blender space). A retargeted toe or foot rotation would pivot from the wrong place.
+>   2. **Single-bone hands with no finger chain.** `hand.L_09` and `hand.R_013` have no children except end markers, so none of `SkeletonProfileHumanoid`'s 30 finger bones map. The rig maps 22 of the profile's 56 bones: all 17 required, plus Jaw and the Shoulder and Toes pairs. Finger animation from the shared library would have nothing to drive.
+>
+>   If the Tripo-generated rig has neither defect, that's an argument for regenerating rather than keeping the Sketchfab rig. The briefs now take the Tripo path for both the Barrow-levy and the player (see `docs/art-bible.md`).
 
 ---
 

@@ -1,0 +1,61 @@
+{
+  "asset_id": "player",
+  "stages": {
+    "concept": {
+      "status": "ok",
+      "timestamp": "2026-09-27T19:08:39+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/player.yaml",
+          "sha256": "451d154cad325d0a9a08c5b4d3959196f21a03c19f305444eb00f4c1667b200f"
+        }
+      ],
+      "outputs": [],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.6.1.stable.official.14d19694e",
+        "tripo": "0.5.1"
+      },
+      "message": "no concept image (optional). To make one, run through the tripo skill: tripo generate text-to-image \"A young frontier soldier in a knee-length Garrison Teal wool tunic, Saddle Leather harness and boots, spiky dark hair, empty hands, T-pose. Rain-darkened hem, scuffed leather, a small notched teal square patch on the left shoulder.\" -o .tripo-out/player/concept-1 --no-open --json",
+      "actual_cost_credits": 0,
+      "prompt": "A young frontier soldier in a knee-length Garrison Teal wool tunic, Saddle Leather harness and boots, spiky dark hair, empty hands, T-pose. Rain-darkened hem, scuffed leather, a small notched teal square patch on the left shoulder.",
+      "params": {},
+      "cost_unknown_attempts": [],
+      "tripo_attempts": []
+    },
+    "model": {
+      "status": "awaiting",
+      "timestamp": "2026-09-27T19:08:39+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/player.yaml",
+          "sha256": "451d154cad325d0a9a08c5b4d3959196f21a03c19f305444eb00f4c1667b200f"
+        }
+      ],
+      "outputs": [],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.6.1.stable.official.14d19694e",
+        "tripo": "0.5.1"
+      },
+      "message": "waiting on a Tripo run",
+      "actual_cost_credits": 0,
+      "prompt": "A young frontier soldier in a knee-length Garrison Teal wool tunic, Saddle Leather harness and boots, spiky dark hair, empty hands, T-pose. Rain-darkened hem, scuffed leather, a small notched teal square patch on the left shoulder.",
+      "params": {
+        "pbr": false,
+        "texture": true,
+        "face_limit": 5000
+      },
+      "cost_unknown_attempts": [],
+      "suggested_command": "tripo make \"A young frontier soldier in a knee-length Garrison Teal wool tunic, Saddle Leather harness and boots, spiky dark hair, empty hands, T-pose. Rain-darkened hem, scuffed leather, a small notched teal square patch on the left shoulder.\" --param pbr=false --param texture=true --param face_limit=5000 -o .tripo-out/player/attempt-1 --no-open --json"
+    }
+  },
+  "brief": {
+    "path": "assets/briefs/player.yaml",
+    "sha256": "451d154cad325d0a9a08c5b4d3959196f21a03c19f305444eb00f4c1667b200f"
+  },
+  "total_cost_credits": 0,
+  "updated_at": "2026-09-27T19:08:39+00:00"
+}

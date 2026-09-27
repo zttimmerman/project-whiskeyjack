@@ -1,0 +1,17 @@
+# Carried from docs/art-bible.md, "Brief: Levy Bow (pilot asset)".
+# The art bible is the only source for these numbers: change it there first, then copy here.
+asset_id: prop_levy_bow
+type: prop
+brief: |
+  Visual-only short recurve bow held by Back-file levies in socket hand_l. The
+  curled tips must read at 15 m.
+prompt: |
+  A single short recurve bow with strongly curled tips, isolated prop, no hands, no
+  arrow, front view. Darkened oak limbs with cracks, small bone tip caps, a faded red
+  cloth grip wrap, one thin string.
+face_limit: 1200
+vertex_budget: 2000
+texture_size: 128
+target_size_m: 1.0
+pivot: center
+palette: [Barrow Oak, Old Bone, Signal Red]

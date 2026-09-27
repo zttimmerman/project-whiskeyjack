@@ -1,0 +1,61 @@
+{
+  "asset_id": "barrow_levy",
+  "stages": {
+    "concept": {
+      "status": "ok",
+      "timestamp": "2026-09-27T19:08:37+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/barrow_levy.yaml",
+          "sha256": "ee3848b0102b7f1f436463a3aa343985e8735beb1ff8f1ae06de44d407f97a47"
+        }
+      ],
+      "outputs": [],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.6.1.stable.official.14d19694e",
+        "tripo": "0.5.1"
+      },
+      "message": "no concept image (optional). To make one, run through the tripo skill: tripo generate text-to-image \"A humanoid skeleton of Old Bone stained peat-brown at the joints, in a rotted Saddle Leather harness, scraps of wool clinging to the ribs, roots threading the pelvis, empty hands, T-pose.\" -o .tripo-out/barrow_levy/concept-1 --no-open --json",
+      "actual_cost_credits": 0,
+      "prompt": "A humanoid skeleton of Old Bone stained peat-brown at the joints, in a rotted Saddle Leather harness, scraps of wool clinging to the ribs, roots threading the pelvis, empty hands, T-pose.",
+      "params": {},
+      "cost_unknown_attempts": [],
+      "tripo_attempts": []
+    },
+    "model": {
+      "status": "awaiting",
+      "timestamp": "2026-09-27T19:08:39+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/barrow_levy.yaml",
+          "sha256": "ee3848b0102b7f1f436463a3aa343985e8735beb1ff8f1ae06de44d407f97a47"
+        }
+      ],
+      "outputs": [],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.6.1.stable.official.14d19694e",
+        "tripo": "0.5.1"
+      },
+      "message": "waiting on a Tripo run",
+      "actual_cost_credits": 0,
+      "prompt": "A humanoid skeleton of Old Bone stained peat-brown at the joints, in a rotted Saddle Leather harness, scraps of wool clinging to the ribs, roots threading the pelvis, empty hands, T-pose.",
+      "params": {
+        "pbr": false,
+        "texture": true,
+        "face_limit": 5000
+      },
+      "cost_unknown_attempts": [],
+      "suggested_command": "tripo make \"A humanoid skeleton of Old Bone stained peat-brown at the joints, in a rotted Saddle Leather harness, scraps of wool clinging to the ribs, roots threading the pelvis, empty hands, T-pose.\" --param pbr=false --param texture=true --param face_limit=5000 -o .tripo-out/barrow_levy/attempt-1 --no-open --json"
+    }
+  },
+  "brief": {
+    "path": "assets/briefs/barrow_levy.yaml",
+    "sha256": "ee3848b0102b7f1f436463a3aa343985e8735beb1ff8f1ae06de44d407f97a47"
+  },
+  "total_cost_credits": 0,
+  "updated_at": "2026-09-27T19:11:24+00:00"
+}
