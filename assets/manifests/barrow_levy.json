@@ -3,26 +3,197 @@
   "stages": {
     "concept": {
       "status": "ok",
-      "timestamp": "2026-09-27T19:08:37+00:00",
+      "timestamp": "2026-09-27T22:17:45+00:00",
       "inputs": [
         {
           "path": "assets/briefs/barrow_levy.yaml",
-          "sha256": "ee3848b0102b7f1f436463a3aa343985e8735beb1ff8f1ae06de44d407f97a47"
+          "sha256": "60e0fcf09ab08bba0b8e0454cf34a6b6ba7303e1d4342b3b8cb1af3896f6ad52"
+        },
+        {
+          "path": "docs/art-bible.md",
+          "sha256": "cb73de850024b6ead62e38f9eb74c10b60b7cfccc4a97381f61fdb2cfeb8c9a3"
+        },
+        {
+          "path": ".tripo-out/barrow_levy/concept-1.spend.json",
+          "sha256": "c0b983f5b001f908f1ee80d709cbc69408e1cf6cb8c600959be41acc5b7d7e09"
+        },
+        {
+          "path": ".tripo-out/barrow_levy/concept-2.spend.json",
+          "sha256": "a0426206179154ddc946b051c36b879152ea3f5d323d317145f276502b180d76"
+        },
+        {
+          "path": ".tripo-out/barrow_levy/concept-3.spend.json",
+          "sha256": "5bfdd6499cb6a1012334badc89acb99302b6877e8557c9bf1f65a15ceec396a3"
         }
       ],
-      "outputs": [],
+      "outputs": [
+        {
+          "path": ".tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png",
+          "sha256": "d62266500028543ed1fc0600b1bf974f74c07ba35be79684b580dd40be22f3f2"
+        }
+      ],
       "tool_versions": {
         "python": "3.14.7",
         "blender": "Blender 5.0.1",
         "godot": "4.6.1.stable.official.14d19694e",
         "tripo": "0.5.1"
       },
-      "message": "no concept image (optional). To make one, run through the tripo skill: tripo generate text-to-image \"A humanoid skeleton of Old Bone stained peat-brown at the joints, in a rotted Saddle Leather harness, scraps of wool clinging to the ribs, roots threading the pelvis, empty hands, T-pose.\" -o .tripo-out/barrow_levy/concept-1 --no-open --json",
-      "actual_cost_credits": 0,
-      "prompt": "A humanoid skeleton of Old Bone stained peat-brown at the joints, in a rotted Saddle Leather harness, scraps of wool clinging to the ribs, roots threading the pelvis, empty hands, T-pose.",
-      "params": {},
+      "message": "approved concept-3 (.tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png)",
+      "actual_cost_credits": 45,
+      "concept_model": "banana_pro",
+      "params": {
+        "template": "t_pose",
+        "aspect_ratio": "3:4"
+      },
+      "approval": {
+        "attempt": "concept-3",
+        "image": {
+          "path": ".tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png",
+          "sha256": "d62266500028543ed1fc0600b1bf974f74c07ba35be79684b580dd40be22f3f2"
+        },
+        "approved_at": "2026-09-27T22:17:45+00:00",
+        "approved_by": "user",
+        "concept_model": "banana_pro",
+        "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. Keep everything exactly as it is except the lower legs and hands: merge each shin into one single solid bone, and join each hand's fingers into one simple mitten shape.",
+        "command": "tripo generate image-to-image .tripo-out/barrow_levy/concept-2/tripo-out/tripo-out-barrow-levy-concept-1-8d6f1884/generated_image.png --model banana_pro --prompt 'Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. Keep everything exactly as it is except the lower legs and hands: merge each shin into one single solid bone, and join each hand'\"'\"'s fingers into one simple mitten shape.' --param template=t_pose --param aspect_ratio=3:4 -o .tripo-out/barrow_levy/concept-3 --no-open --json"
+      },
       "cost_unknown_attempts": [],
-      "tripo_attempts": []
+      "cost_check": [
+        {
+          "attempt": "concept-1",
+          "status": "generated",
+          "estimate_credits": 15,
+          "actual_balance_delta": 15,
+          "cli_reported_credits": 15,
+          "estimate_error": 0
+        },
+        {
+          "attempt": "concept-2",
+          "status": "generated",
+          "estimate_credits": 15,
+          "actual_balance_delta": 15,
+          "cli_reported_credits": 15,
+          "estimate_error": 0
+        },
+        {
+          "attempt": "concept-3",
+          "status": "generated",
+          "estimate_credits": 15,
+          "actual_balance_delta": 15,
+          "cli_reported_credits": 15,
+          "estimate_error": 0
+        }
+      ],
+      "tripo_attempts": [
+        {
+          "status": "generated",
+          "started_at": "2026-09-27T21:55:26+00:00",
+          "user_confirmed_at": "2026-09-27T21:55:26+00:00",
+          "tripo_cli_version": "0.5.1",
+          "model_version": "banana_pro",
+          "region": "ov",
+          "command": "tripo generate text-to-image 'Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A humanoid skeleton in pale yellowed beige, stained peat-brown at the joints, with a clearly readable skull and ribcage, wearing a rotted leather harness in dark reddish-brown: a belt at the waist and two straps crossing the chest and back. Empty hands, T-pose.' --model banana_pro --param template=t_pose --param aspect_ratio=3:4 -o .tripo-out/barrow_levy/concept-1 --no-open --json",
+          "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A humanoid skeleton in pale yellowed beige, stained peat-brown at the joints, with a clearly readable skull and ribcage, wearing a rotted leather harness in dark reddish-brown: a belt at the waist and two straps crossing the chest and back. Empty hands, T-pose.",
+          "params": {
+            "template": "t_pose",
+            "aspect_ratio": "3:4"
+          },
+          "dry_run": {
+            "valid": null,
+            "note": "tripo generate has no --dry-run; checked via pipeline.py --dry-run"
+          },
+          "estimate_credits": 15,
+          "estimate_source": "user estimate; unconfirmed (first banana_pro run)",
+          "balance_before": {
+            "balance": 920,
+            "frozen": 0
+          },
+          "finished_at": "2026-09-27T21:58:31+00:00",
+          "balance_after": {
+            "balance": 905,
+            "frozen": 0
+          },
+          "actual_spend": 15,
+          "cli_reported_credits": 15,
+          "exit_code": 0,
+          "task_ids": [
+            "00f86eee-94d5-4cba-9f8d-bcda2ef82ae3"
+          ]
+        },
+        {
+          "status": "generated",
+          "started_at": "2026-09-27T22:07:43+00:00",
+          "user_confirmed_at": "2026-09-27T22:07:43+00:00",
+          "tripo_cli_version": "0.5.1",
+          "model_version": "banana_pro",
+          "region": "ov",
+          "command": "tripo generate image-to-image .tripo-out/barrow_levy/concept-1/tripo-out/stylized-low-poly-3d-game-asset-3-00f86eee/generated_image.png --model banana_pro --prompt 'Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. Keep the leather harness, belt, buckle, all colors and the peat-brown staining at the joints exactly as they are; change only the bone forms. Merge each forearm into one single solid bone, and each shin into one single solid bone. Make the ribcage one solid rounded shell, with the rib gaps shown as darker painted lines on its surface. Join the fingers of each hand into a simple mitten-shaped hand. If it fits naturally, raise the arms to shoulder height; the current angled arm pose is also acceptable.' --param template=t_pose --param aspect_ratio=3:4 -o .tripo-out/barrow_levy/concept-2 --no-open --json",
+          "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. Keep the leather harness, belt, buckle, all colors and the peat-brown staining at the joints exactly as they are; change only the bone forms. Merge each forearm into one single solid bone, and each shin into one single solid bone. Make the ribcage one solid rounded shell, with the rib gaps shown as darker painted lines on its surface. Join the fingers of each hand into a simple mitten-shaped hand. If it fits naturally, raise the arms to shoulder height; the current angled arm pose is also acceptable.",
+          "params": {
+            "template": "t_pose",
+            "aspect_ratio": "3:4"
+          },
+          "derived_from": "concept-1",
+          "dry_run": {
+            "valid": null,
+            "note": "tripo generate has no --dry-run; checked via pipeline.py --dry-run"
+          },
+          "estimate_credits": 15,
+          "estimate_source": "assumed equal to banana_pro text-to-image (observed 15); image-to-image unconfirmed",
+          "balance_before": {
+            "balance": 905,
+            "frozen": 0
+          },
+          "finished_at": "2026-09-27T22:09:42+00:00",
+          "balance_after": {
+            "balance": 890,
+            "frozen": 0
+          },
+          "actual_spend": 15,
+          "cli_reported_credits": 15,
+          "exit_code": 0,
+          "task_ids": [
+            "8d6f1884-f8be-4905-8be5-eee599b772a1"
+          ]
+        },
+        {
+          "status": "generated",
+          "started_at": "2026-09-27T22:15:10+00:00",
+          "user_confirmed_at": "2026-09-27T22:15:10+00:00",
+          "tripo_cli_version": "0.5.1",
+          "model_version": "banana_pro",
+          "region": "ov",
+          "command": "tripo generate image-to-image .tripo-out/barrow_levy/concept-2/tripo-out/tripo-out-barrow-levy-concept-1-8d6f1884/generated_image.png --model banana_pro --prompt 'Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. Keep everything exactly as it is except the lower legs and hands: merge each shin into one single solid bone, and join each hand'\"'\"'s fingers into one simple mitten shape.' --param template=t_pose --param aspect_ratio=3:4 -o .tripo-out/barrow_levy/concept-3 --no-open --json",
+          "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. Keep everything exactly as it is except the lower legs and hands: merge each shin into one single solid bone, and join each hand's fingers into one simple mitten shape.",
+          "params": {
+            "template": "t_pose",
+            "aspect_ratio": "3:4"
+          },
+          "derived_from": "concept-2",
+          "dry_run": {
+            "valid": null,
+            "note": "tripo generate has no --dry-run; checked via pipeline.py --dry-run"
+          },
+          "estimate_credits": 15,
+          "estimate_source": "observed: banana_pro image-to-image, concept-2",
+          "balance_before": {
+            "balance": 890,
+            "frozen": 0
+          },
+          "finished_at": "2026-09-27T22:17:30+00:00",
+          "balance_after": {
+            "balance": 875,
+            "frozen": 0
+          },
+          "actual_spend": 15,
+          "cli_reported_credits": 15,
+          "exit_code": 0,
+          "task_ids": [
+            "308a5daa-2502-4e2e-b351-5112af116286"
+          ]
+        }
+      ],
+      "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. Keep everything exactly as it is except the lower legs and hands: merge each shin into one single solid bone, and join each hand's fingers into one simple mitten shape."
     },
     "model": {
       "status": "awaiting",
@@ -54,8 +225,20 @@
   },
   "brief": {
     "path": "assets/briefs/barrow_levy.yaml",
-    "sha256": "ee3848b0102b7f1f436463a3aa343985e8735beb1ff8f1ae06de44d407f97a47"
+    "sha256": "60e0fcf09ab08bba0b8e0454cf34a6b6ba7303e1d4342b3b8cb1af3896f6ad52"
   },
-  "total_cost_credits": 0,
-  "updated_at": "2026-09-27T19:11:24+00:00"
+  "total_cost_credits": 45,
+  "updated_at": "2026-09-27T22:17:45+00:00",
+  "concept_approval": {
+    "attempt": "concept-3",
+    "image": {
+      "path": ".tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png",
+      "sha256": "d62266500028543ed1fc0600b1bf974f74c07ba35be79684b580dd40be22f3f2"
+    },
+    "approved_at": "2026-09-27T22:17:45+00:00",
+    "approved_by": "user",
+    "concept_model": "banana_pro",
+    "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. Keep everything exactly as it is except the lower legs and hands: merge each shin into one single solid bone, and join each hand's fingers into one simple mitten shape.",
+    "command": "tripo generate image-to-image .tripo-out/barrow_levy/concept-2/tripo-out/tripo-out-barrow-levy-concept-1-8d6f1884/generated_image.png --model banana_pro --prompt 'Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. Keep everything exactly as it is except the lower legs and hands: merge each shin into one single solid bone, and join each hand'\"'\"'s fingers into one simple mitten shape.' --param template=t_pose --param aspect_ratio=3:4 -o .tripo-out/barrow_levy/concept-3 --no-open --json"
+  }
 }

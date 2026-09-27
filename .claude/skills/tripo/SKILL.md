@@ -34,6 +34,9 @@ From https://developers.tripo3d.ai/en/pricing (checked 2026-09-27; re-check if a
 |---|---|---|---|---|---|
 | 2026-09-27 | text → 3D, standard texture, `face_limit` 1000 | P1-20260311 | 20 | **40** | 40 |
 | 2026-09-27 | text → 3D, standard texture, `face_limit` 1000, pinned `--model` | P1-20260311 | 40 | **40** | 40 |
+| 2026-09-27 | text → image, `template=t_pose`, `aspect_ratio=3:4` (came back 1792×2400) | banana_pro | 15 | **15** | 15 |
+| 2026-09-27 | image → image refine, `template=t_pose`, `aspect_ratio=3:4` (came back 1792×2400) | banana_pro | 15 | **15** | 15 |
+| 2026-09-27 | image → image refine of a refine (short two-item edit) | banana_pro | 15 | **15** | 15 |
 
 The pricing-page table below undercounted P1 by half. The page has H-, P- and Splat-series tabs; this table was read from its flattened text and is most likely the **H-series** price. Estimate P-series work from the observed-costs table, and add each new operation type to it after its first run.
 
@@ -49,13 +52,13 @@ Add-ons stack on top: HD texture +10, Smart Low-poly +10 (not available on P1), 
 
 | Operation | Working estimate | Basis |
 |---|---|---|
-| text → image, `banana_pro` (default size, 2K tier) | ~15 | user's estimate; the pricing page bills images in 1K/2K/4K tiers |
 | text → image, `seedream_v5` | unknown, expected below banana_pro | none yet |
-| image → image refine | unknown; assume the same as that model's text → image | none yet |
 | image → multiview | unknown | the pricing page doesn't list it |
 | multiview → 3D, P1, standard texture | ≥ 40 (P1 text → 3D observed) | the page's H-series 30 × P1's observed 2× would be 60; give the user the 40–60 range |
 
 After each first run, move the row into the observed table above and delete it here.
+
+**`template=t_pose` rewrites the prompt.** The server puts its own instructions in front of ours (seen in `task.json`'s `input.prompt`): full body, facing forward, arms at shoulder height, remove handheld objects, "Keep natural body proportions and anatomy", front view, neutral background. That last line works against FORM's "slightly exaggerated proportions". The first banana_pro run (Barrow-levy concept-1) still came back in an A-pose with the arms about 35° below horizontal, not a true T-pose.
 
 ## Files this skill writes (all in the gitignored `.tripo-out/`)
 
