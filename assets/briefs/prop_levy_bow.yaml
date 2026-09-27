@@ -15,4 +15,5 @@ triangle_budget: 1320
 texture_size: 128
 target_size_m: 1.0
 pivot: center
+tip_end: symmetric
 palette: [Barrow Oak, Old Bone, Signal Red]

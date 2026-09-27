@@ -10,6 +10,7 @@ Imports the GLB and then:
   normal/roughness/metallic/emission maps and baking non-image albedo;
 - downscales the albedo to texture_size;
 - aligns props along their principal axis and fails if the residual tilt exceeds PROP_AXIS_TOLERANCE_DEG;
+- finds the prop's tip (the thinner end), flips it to the brief's tip_end, and fails if it still doesn't match;
 - checks the triangle count against triangle_budget, failing loudly instead of decimating;
 - exports the GLB.
 
@@ -29,6 +30,8 @@ import numpy as np
 from mathutils import Matrix, Vector
 
 PROP_AXIS_TOLERANCE_DEG = 2.0
+TIP_SLICE = 0.12        # fraction of the length measured at each end
+TIP_AMBIGUOUS_RATIO = 0.8  # thin/thick cross-section ratio above which the tip can't be told
 STRIP_NOTE = "normal, roughness, metallic, specular, emission and occlusion inputs are not carried over"
 
 
@@ -105,6 +108,19 @@ def alignment_matrix(axes):
     return Matrix((x, y, z)).to_4x4()
 
 
+def end_cross_sections(points):
+    """XY bounding area of the bottom and top TIP_SLICE of the length (after +Z alignment)."""
+    lo, hi = min(p.z for p in points), max(p.z for p in points)
+    span = hi - lo
+
+    def area(sel):
+        if not sel:
+            return 0.0
+        return (max(p.x for p in sel) - min(p.x for p in sel)) * (max(p.y for p in sel) - min(p.y for p in sel))
+    return (area([p for p in points if p.z <= lo + TIP_SLICE * span]),
+            area([p for p in points if p.z >= hi - TIP_SLICE * span]))
+
+
 def tilt_from_z(axis):
     return math.degrees(math.acos(min(1.0, abs(axis.normalized().z))))
 
@@ -163,6 +179,30 @@ def _bm_stats(bm):
     }
 
 
+def _parts(bm):
+    """Connected pieces of a welded mesh, largest first, each with its triangles, vertices and size."""
+    seen, parts = set(), []
+    for f in bm.faces:
+        if f.index in seen:
+            continue
+        faces, stack = [], [f]
+        seen.add(f.index)
+        while stack:
+            cur = stack.pop()
+            faces.append(cur)
+            for e in cur.edges:
+                for nf in e.link_faces:
+                    if nf.index not in seen:
+                        seen.add(nf.index)
+                        stack.append(nf)
+        verts = {v for fc in faces for v in fc.verts}
+        co = [v.co for v in verts]
+        dims = [max(c[i] for c in co) - min(c[i] for c in co) for i in range(3)]
+        parts.append({"triangles": sum(len(fc.verts) - 2 for fc in faces), "vertices": len(verts),
+                      "size_m": [round(d, 4) for d in dims]})
+    return sorted(parts, key=lambda p: -p["triangles"])
+
+
 def mesh_health(meshes):
     """Baseline topology stats, recorded and never failed on. The glTF importer doesn't merge
     vertices, so every UV seam arrives split and shows up as a boundary. The 'welded' pass
@@ -177,12 +217,17 @@ def mesh_health(meshes):
                 bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=1e-5)
             bm.verts.index_update()
             st = _bm_stats(bm)
+            if weld:
+                st["parts"] = _parts(bm)
+                st["part_count"] = len(st["parts"])
             bm.free()
             entry[label] = st
             for k, v in st.items():
-                if not k.endswith("_ratio"):
+                if isinstance(v, (int, float)) and not k.endswith("_ratio"):
                     totals[label][k] = totals[label].get(k, 0) + v
         per_mesh.append(entry)
+    totals["welded"]["parts"] = sorted((p for e in per_mesh for p in e["welded"]["parts"]),
+                                       key=lambda p: -p["triangles"])
     for label in totals:
         f = totals[label].get("faces") or 1
         totals[label]["quad_ratio"] = round(totals[label].get("quads", 0) / f, 4)
@@ -396,7 +441,6 @@ def run(args, params, report):
         if spread[2] < 1.2 * spread[1]:
             report["warnings"].append("prop has no clear long axis (top two spreads within 20%); alignment is arbitrary")
         rot = alignment_matrix(axes)
-        report["warnings"].append("prop up-direction (which end is +Z) is unverified; check it in the socket")
     apply_to_roots(rot)
     if params["type"] == "prop":
         residual = tilt_from_z(principal_axes(world_points(meshes))[0][2])
@@ -404,6 +448,27 @@ def run(args, params, report):
         if residual > PROP_AXIS_TOLERANCE_DEG:
             raise RuntimeError(f"ORIENTATION: principal axis still {residual:.1f} deg off +Z after alignment "
                                f"(tolerance {PROP_AXIS_TOLERANCE_DEG} deg); not exporting")
+        # Which end is up: the tip is the thinner end. The first Levy Blade passed every other check upside down.
+        expected = params.get("tip_end")
+        bottom, top = end_cross_sections(world_points(meshes))
+        xf["end_cross_sections_before_scale"] = {"bottom": round(bottom, 6), "top": round(top, 6)}
+        thin, thick = sorted((bottom, top))
+        if expected == "symmetric":
+            xf["tip_check"] = "skipped (brief says symmetric)"
+        elif thick == 0 or thin / thick > TIP_AMBIGUOUS_RATIO:
+            xf["tip_check"] = "ambiguous"
+            report["warnings"].append(f"tip end ambiguous (end cross-sections {bottom:.5f} vs {top:.5f} m2); "
+                                      "which end is up is unverified")
+        else:
+            if ("top" if top < bottom else "bottom") != expected:
+                apply_to_roots(Matrix.Rotation(math.pi, 4, "X"))
+                xf["tip_flipped"] = True
+            bottom, top = end_cross_sections(world_points(meshes))
+            found = "top" if top < bottom else "bottom"
+            xf["tip_check"] = f"tip at {found} (thin/thick {thin / thick:.2f})"
+            if found != expected:
+                raise RuntimeError(f"TIP: the thinner end is at the {found}, but the brief's tip_end is "
+                                   f"{expected}; not exporting")
 
     # Scale, then pivot
     mn, mx = bbox(world_points(meshes))

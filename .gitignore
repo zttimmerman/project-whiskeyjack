@@ -15,3 +15,6 @@
 .tripo-out/
 # Tripo CLI per-directory context (last task pointer; machine-local)
 .tripo/
+
+# Python bytecode
+__pycache__/

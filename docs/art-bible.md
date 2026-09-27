@@ -134,9 +134,9 @@ Every asset gets a brief before any generation spend. Fields:
 - **Palette:** Blackened Iron blade, pitted · Saddle Leather grip wrap, rotted · Old Bone pommel cap.
 - **Materials & wear:** centuries of burial, with a chipped edge, rust bloom and a frayed wrap.
 - **Rig / attachment:** no skeleton. Held in socket `hand_r` via `held_props` on the enemy scene; alignment is fixed with a child `Transform3D`, never by editing the mesh.
-- **Scale & pivot:** about 0.55 m overall (blade 0.40, grip 0.15). Origin at the base (pommel end), blade along Blender +Z. The socket's child `Transform3D` shifts it to the grip.
+- **Scale & pivot:** about 0.55 m overall (blade 0.40, grip 0.15). Origin at the base (pommel end), blade along Blender +Z, so the tip (the thinner end) is at the top (`tip_end: top`). The socket's child `Transform3D` shifts it to the grip.
 - **Animation:** none.
-- **Prompt:** FORM block + *"A single short leaf-shaped iron sword with no crossguard, isolated prop, no hands, side view. Pitted Blackened Iron blade with a chipped edge, grip wrapped in rotted Saddle Leather, a small Old Bone pommel cap."*
+- **Prompt:** FORM block + *"A single short leaf-shaped sword as an isolated prop, seen from the side. The blade tapers straight into the leather-wrapped grip in one continuous piece, its shoulders meeting the grip directly. The blade is blackened, near-black desaturated iron with a cold grey-brown cast, pitted, with a chipped edge. The grip is wrapped in rotted dark leather and capped with a small bone pommel."*
 - **Accept when:** ≤ 1,100 triangles; true length 0.55 m along its principal axis; albedo only at ≤ 128²; sits in the skeleton's right hand through all Front-file clips without clipping into the skull or ribs; reads as a blade from the gameplay camera.
 - **Cost:** 1 Tripo generation; regenerate rather than doing mesh surgery.
 
@@ -149,7 +149,7 @@ Every asset gets a brief before any generation spend. Fields:
 - **Palette:** Barrow Oak limbs, darkened · Old Bone tip caps · **Signal Red grip wrap**, which echoes the Back-file rag cue.
 - **Materials & wear:** warped, cracked wood; frayed string; a faded wrap.
 - **Rig / attachment:** no skeleton. Held in socket `hand_l` via `held_props`, aligned with a child `Transform3D`.
-- **Scale & pivot:** about 1.0 m tip to tip. Origin at the center (the grip), limbs along Blender ±Z.
+- **Scale & pivot:** about 1.0 m tip to tip. Origin at the center (the grip), limbs along Blender ±Z; both ends are tips (`tip_end: symmetric`).
 - **Animation:** none. The string doesn't deform (acceptable for MVP).
 - **Prompt:** FORM block + *"A single short recurve bow with strongly curled tips, isolated prop, no hands, no arrow, front view. Darkened Barrow Oak limbs with cracks, small Old Bone tip caps, a faded Signal Red cloth grip wrap, one thin string."*
 - **Accept when:** ≤ 1,320 triangles; true length 1.0 m along its principal axis; albedo only at ≤ 128²; sits in the left hand through all Back-file clips; the curled silhouette reads at 15 m.

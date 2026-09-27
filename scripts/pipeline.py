@@ -39,6 +39,8 @@ TRIPO_OUT = ROOT / ".tripo-out"
 ART_BIBLE = ROOT / "docs" / "art-bible.md"
 BLENDER_SCRIPT = ROOT / "scripts" / "blender_cleanup.py"
 GODOT_SCRIPT = ROOT / "scripts" / "godot_validate.gd"
+VIEWS_SCRIPT = ROOT / "scripts" / "blender_views.py"
+VIEW_NAMES = ("front", "right", "back", "top", "wireframe_front")
 STAGES = ["concept", "model", "clean", "validate"]
 
 EXIT_OK, EXIT_ERROR, EXIT_CHECK_FAILED, EXIT_AWAITING = 0, 1, 2, 3
@@ -156,6 +158,9 @@ def load_brief(asset_id):
     need("target_size_m", lambda v: isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0, "a positive number")
     need("pivot", lambda v: v in ("base", "center"), "base or center")
     need("palette", lambda v: isinstance(v, list) and v, "a non-empty list")
+    if b.get("type") == "prop":
+        need("tip_end", lambda v: v in ("top", "bottom", "symmetric"),
+             "top, bottom or symmetric (where the prop's thinner end sits after placement)")
     if isinstance(b.get("palette"), list):
         unknown = [c for c in b["palette"] if c not in art_bible_palette()]
         if unknown:
@@ -405,7 +410,7 @@ def stage_model(brief, m, dry_run, force):
 
 def stage_params(brief):
     keys = ("asset_id", "type", "face_limit", "triangle_budget", "texture_size", "target_size_m", "pivot",
-            "palette", "socket_map", "animations", "exclude_objects")
+            "palette", "socket_map", "animations", "exclude_objects", "tip_end")
     return {k: brief.get(k) for k in keys}
 
 
@@ -460,7 +465,8 @@ def stage_clean(brief, m, dry_run, force):
         print(f"clean: health ({label}): {t['vertices']} verts, {t['faces']} faces "
               f"(tri {t['triangles']} / quad {t['quads']} / ngon {t['ngons']}, quad ratio {t['quad_ratio']}), "
               f"non-manifold {t['non_manifold_edges']}, boundary {t['boundary_edges']} in {t['boundary_loops']} loops, "
-              f"loose verts {t['loose_vertices']}, degenerate faces {t['degenerate_faces']}")
+              f"loose verts {t['loose_vertices']}, degenerate faces {t['degenerate_faces']}"
+              + (f", parts {t['part_count']} " + str([p['triangles'] for p in t['parts']]) + " tris" if 'parts' in t else ""))
     record(m, "clean", "ok" if passed else "failed", inputs, [out] if passed else [], msg,
            params=stage_params(brief), report=report)
     return EXIT_OK if passed else EXIT_CHECK_FAILED
@@ -475,8 +481,10 @@ def stage_validate(brief, m, dry_run, force):
             return EXIT_OK
         print(f"validate: {rel(glb)} doesn't exist; run the clean stage first")
         return EXIT_AWAITING
-    inputs = [brief["_path"], glb, GODOT_SCRIPT] + ([ROOT / brief["socket_map"]] if brief.get("socket_map") else [])
-    if not force and up_to_date(m["stages"].get("validate"), inputs, []):
+    inputs = [brief["_path"], glb, GODOT_SCRIPT, VIEWS_SCRIPT] + ([ROOT / brief["socket_map"]] if brief.get("socket_map") else [])
+    views_dir = MANIFESTS / aid
+    view_pngs = [views_dir / f"{n}.png" for n in VIEW_NAMES]
+    if not force and up_to_date(m["stages"].get("validate"), inputs, view_pngs):
         print("validate: up to date")
         return EXIT_OK
     wd = work_dir(aid)
@@ -489,15 +497,44 @@ def stage_validate(brief, m, dry_run, force):
     cmd = [GODOT, "--headless", "--path", ROOT, "-s", GODOT_SCRIPT, "--",
            "--glb", glb, "--params", params_path, "--report", report_path]
     report = run_tool(cmd, report_path, dry_run, "validate")
+    views_cmd = [BLENDER, "-b", "--factory-startup", "--python-exit-code", "1", "-P", VIEWS_SCRIPT, "--",
+                 "--input", glb, "--outdir", views_dir, "--report", wd / "views-report.json"]
+    views = run_tool(views_cmd, wd / "views-report.json", dry_run, "validate (views)")
     if report is None:
         return EXIT_OK
+    report["views"] = views
+    report["gross_flags"] = gross_flags(views, m)
+    for flag in report["gross_flags"]:
+        report["warnings"].append(f"gross check: {flag}")
     passed = report.get("status") == "pass"
     msg = "; ".join(report.get("errors", [])) or "all checks passed"
     print(f"validate: {'PASS' if passed else 'FAIL'}: {msg}")
+    print(f"validate: views in {rel(views_dir)}/ " + ", ".join(
+        f"{k} {v['coverage']:.1%}" for k, v in (views.get("views") or {}).items()) +
+        f"; welded pieces: {views.get('pieces_welded')}")
     for w in report.get("warnings", []):
         print(f"validate: warning: {w}")
-    record(m, "validate", "ok" if passed else "failed", inputs, [], msg, params=params, report=report)
+    record(m, "validate", "ok" if passed else "failed", inputs, [p for p in view_pngs if p.exists()], msg,
+           params=params, report=report)
     return EXIT_OK if passed else EXIT_CHECK_FAILED
+
+
+def gross_flags(views, m):
+    """Baseline flags only (recorded as warnings, never failures): missing geometry and holes.
+    Fused parts have no reliable automatic test; the renders and the welded piece count are for review."""
+    flags = []
+    if views.get("status") != "ok":
+        flags.append("review renders failed: " + "; ".join(views.get("errors", [])))
+        return flags
+    if not views.get("triangles"):
+        flags.append("missing geometry: no triangles")
+    for name, v in (views.get("views") or {}).items():
+        if v["coverage"] < 0.005:
+            flags.append(f"missing geometry: the {name} view is almost empty ({v['coverage']:.2%} of the frame)")
+    welded = (((m["stages"].get("clean") or {}).get("report") or {}).get("mesh_health") or {}).get("totals", {}).get("welded", {})
+    if welded.get("boundary_loops"):
+        flags.append(f"holes: {welded['boundary_loops']} open boundary loops after welding")
+    return flags
 
 
 STAGE_FUNCS = {"concept": stage_concept, "model": stage_model, "clean": stage_clean, "validate": stage_validate}
