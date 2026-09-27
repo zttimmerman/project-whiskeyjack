@@ -1,21 +1,27 @@
 #!/usr/bin/env python3
 """Asset pipeline orchestrator.
 
-    python3 scripts/pipeline.py <asset-id> --stage <concept|model|clean|validate|all> [--dry-run] [--force]
+    python3 scripts/pipeline.py <asset-id> --stage <concept|multiview|model|clean|validate|all> [--dry-run] [--force]
+        [--concept-model banana_pro|seedream_v5] [--variants K] [--refine N --edit TEXT]
+    python3 scripts/pipeline.py <asset-id> --approve-concept N
 
 Stages:
-  concept   Resolve the generation prompt from the brief; ingest a concept image if one was generated.
-  model     Ingest the base mesh: the brief's source_glb, or the newest Tripo download on disk.
-  clean     Blender (headless): scale, pivot, facing, albedo-only, texture size, vertex budget, export GLB.
-  validate  Godot (headless): bone names, SkeletonProfileHumanoid mapping, vertex count, textures.
+  concept    Text-to-image concept (FORM + LIGHTING + brief prompt), or an image-to-image refine of
+             concept-N. Stops until the user approves one concept (--approve-concept N).
+  multiview  Image-to-multiview from the approved concept: a front/left/back/right sheet.
+  model      Ingest the base mesh: the brief's source_glb, or the newest Tripo download on disk.
+             Otherwise prints multiview-to-3D for the current sheet. Never text-to-3D.
+  clean      Blender (headless): scale, pivot, facing, albedo-only, texture size, triangle budget, export GLB.
+  validate   Godot (headless): bone names, SkeletonProfileHumanoid mapping, triangle count, textures.
 
-This script never runs a paid Tripo command. When concept or model output is missing, it
-prints the exact `tripo` command; the agent runs that command through the tripo skill
+This script never runs a paid Tripo command. When a stage's output is missing, it prints the
+exact `tripo` command; the agent runs that command through the tripo skill
 (.claude/skills/tripo/), which owns spend gating. Re-running the stage then ingests the
 downloaded files. Resuming is file-based: stages compare SHA-256 hashes of their inputs
 and outputs on disk, never a stored task_id.
 
-Exit codes: 0 ok or up to date, 1 error, 2 stage check failed, 3 waiting on a Tripo run.
+Exit codes: 0 ok or up to date, 1 error, 2 stage check failed, 3 waiting on a Tripo run,
+4 waiting on the user's concept approval.
 """
 
 import argparse
@@ -41,9 +47,19 @@ BLENDER_SCRIPT = ROOT / "scripts" / "blender_cleanup.py"
 GODOT_SCRIPT = ROOT / "scripts" / "godot_validate.gd"
 VIEWS_SCRIPT = ROOT / "scripts" / "blender_views.py"
 VIEW_NAMES = ("front", "right", "back", "top", "wireframe_front")
-STAGES = ["concept", "model", "clean", "validate"]
+STAGES = ["concept", "multiview", "model", "clean", "validate"]
 
-EXIT_OK, EXIT_ERROR, EXIT_CHECK_FAILED, EXIT_AWAITING = 0, 1, 2, 3
+EXIT_OK, EXIT_ERROR, EXIT_CHECK_FAILED, EXIT_AWAITING, EXIT_AWAITING_APPROVAL = 0, 1, 2, 3, 4
+
+IMAGE_PATTERNS = ["*.png", "*.jpg", "*.jpeg", "*.webp"]
+VIEWS = ("front", "left", "back", "right")  # the CLI's positional multiview order
+# Concept image models (Tripo text-to-image whitelist). Character concepts are portrait; banana
+# models take `aspect_ratio`, seedream takes `size` as WxH (it ignores aspect_ratio).
+CONCEPT_MODELS = {
+    "banana_pro": {"portrait": {"aspect_ratio": "3:4"}},
+    "seedream_v5": {"portrait": {"size": "1536x2048"}},
+}
+DEFAULT_CONCEPT_MODEL = "banana_pro"
 
 
 class PipelineError(Exception):
@@ -125,10 +141,12 @@ def prompt_blocks():
     return blocks
 
 
-def compose_prompt(brief, kind):
-    """Concept images get FORM + LIGHTING + description; 3D models get FORM + description."""
+def compose_prompt(brief, kind, edit=None):
+    """Concept images get FORM + LIGHTING + description, and a refine swaps the description for
+    the edit instruction (the source image carries the subject). 3D models get FORM + description."""
     b = prompt_blocks()
-    parts = [b["form"]] + ([b["lighting"]] if kind == "concept" else []) + [" ".join(brief["prompt"].split())]
+    body = edit if kind == "refine" else brief["prompt"]
+    parts = [b["form"]] + ([b["lighting"]] if kind in ("concept", "refine") else []) + [" ".join(body.split())]
     return " ".join(parts)
 
 
@@ -278,6 +296,9 @@ def record(m, stage, status, inputs, outputs, message, **extra):
 
 # ── Tripo attempt files (written by the tripo skill; read-only here) ─────────
 
+BAD_STATUSES = ("rejected", "lost", "failed")
+
+
 def tripo_attempts(asset_id, kind, patterns):
     """Attempts under .tripo-out/<asset-id>/<kind>-<n>/, each with an optional <kind>-<n>.spend.json."""
     base = TRIPO_OUT / asset_id
@@ -318,8 +339,19 @@ def cost_check(attempts):
     return rows
 
 
+def spend_fields(attempts):
+    """Cost and provenance fields every Tripo-backed stage records."""
+    cost, unknown = attempt_costs(attempts)
+    return {"actual_cost_credits": cost, "cost_unknown_attempts": unknown, "cost_check": cost_check(attempts),
+            "tripo_attempts": [a["spend"] for a in attempts if a["spend"]]}
+
+
+def is_usable(a):
+    return bool(a["files"]) and (a["spend"] or {}).get("status") not in BAD_STATUSES
+
+
 def usable(attempts):
-    ok = [a for a in attempts if a["files"] and (a["spend"] or {}).get("status") not in ("rejected", "lost", "failed")]
+    ok = [a for a in attempts if is_usable(a)]
     return ok[-1] if ok else None
 
 
@@ -327,38 +359,201 @@ def tripo_params(brief):
     return {"pbr": False, "texture": True, "face_limit": brief["face_limit"]}
 
 
-def next_attempt_dir(asset_id, kind, attempts):
-    n = (attempts[-1]["n"] + 1) if attempts else 1
+def param_flags(params):
+    fmt = lambda v: str(v).lower() if isinstance(v, bool) else str(v)
+    return " ".join(f"--param {shlex.quote(f'{k}={fmt(v)}')}" for k, v in params.items())
+
+
+def next_attempt_dir(asset_id, kind, attempts, offset=0):
+    n = (attempts[-1]["n"] + 1 if attempts else 1) + offset
     return f".tripo-out/{asset_id}/{kind}-{n}"
+
+
+def tripo_command(*parts):
+    return " ".join(p for p in parts if p)
+
+
+def spend_input(a, subcommand):
+    """The input file in the attempt's recorded command (`tripo generate <subcommand> <input> ...`), resolved.
+    That command is how a multiview sheet is tied to the concept it came from."""
+    cmd = (a["spend"] or {}).get("command")
+    if not cmd:
+        return None
+    argv = shlex.split(cmd)
+    try:
+        return (ROOT / argv[argv.index(subcommand) + 1]).resolve()
+    except (ValueError, IndexError):
+        return None
+
+
+# ── Concept images and approval ───────────────────────────────────────────────
+
+def concept_params(brief, concept_model):
+    """Characters get the T-pose template and a portrait frame; props get neither."""
+    if brief["type"] != "character":
+        return {}
+    return {"template": "t_pose", **CONCEPT_MODELS[concept_model]["portrait"]}
+
+
+def concept_image(a):
+    """The one concept image in a concept attempt. The CLI also writes preview.png as a copy of it."""
+    imgs = [f for f in a["files"] if f.name != "preview.png"] or a["files"]
+    if len(imgs) != 1:
+        raise PipelineError(f"{rel(a['dir'])} holds {len(imgs)} images {[f.name for f in imgs]}; expected one concept image")
+    return imgs[0]
+
+
+def find_attempt(attempts, kind, n):
+    a = next((a for a in attempts if a["n"] == n), None)
+    if a is None or not a["files"]:
+        raise PipelineError(f"no image in {kind}-{n}")
+    if not is_usable(a):
+        raise PipelineError(f"{kind}-{n} is marked {a['spend']['status']}")
+    return a
+
+
+def approved_concept(brief, m):
+    """(image path, None) when the recorded approval still matches the file on disk, else (None, reason)."""
+    ap = m.get("concept_approval")
+    if not ap:
+        return None, "no concept approved yet"
+    p = ROOT / ap["image"]["path"]
+    if not p.exists():
+        return None, f"the approved image {ap['image']['path']} is missing"
+    if sha256(p) != ap["image"]["sha256"]:
+        return None, f"the approved image {ap['image']['path']} changed after approval"
+    spend_path = TRIPO_OUT / brief["asset_id"] / f"{ap['attempt']}.spend.json"
+    status = json.loads(spend_path.read_text()).get("status") if spend_path.exists() else None
+    if status in BAD_STATUSES:
+        return None, f"{ap['attempt']} was marked {status} after approval"
+    return p, None
+
+
+def approve_concept(brief, m, n):
+    """Records the user's approval of concept-<n>. Run only when the user has approved it in chat."""
+    a = find_attempt(tripo_attempts(brief["asset_id"], "concept", IMAGE_PATTERNS), "concept", n)
+    img = concept_image(a)
+    sp = a["spend"] or {}
+    m["concept_approval"] = {"attempt": a["dir"].name, "image": file_record(img), "approved_at": now(),
+                             "approved_by": "user", "concept_model": sp.get("model_version"),
+                             "prompt": sp.get("prompt"), "command": sp.get("command")}
+    print(f"concept: approved {a['dir'].name} ({rel(img)}). Next: --stage multiview")
+
+
+def model_on_disk(brief):
+    return resolve_model(brief)[0] is not None
 
 
 # ── Stages ────────────────────────────────────────────────────────────────────
 
-def stage_concept(brief, m, dry_run, force):
-    """Optional stage: never blocks the model stage."""
+def stage_concept(brief, m, args):
+    """Stops the pipeline until the user approves a concept: iteration belongs at the image stage."""
     aid = brief["asset_id"]
-    attempts = tripo_attempts(aid, "concept", ["*.png", "*.jpg", "*.jpeg", "*.webp"])
-    pick = usable(attempts)
-    prompt = compose_prompt(brief, "concept")
-    inputs = [brief["_path"], ART_BIBLE] + ([a["spend_path"] for a in attempts if a["spend_path"].exists()])
-    outputs = [pick["files"][0]] if pick else []
-    if not force and up_to_date(m["stages"].get("concept"), inputs, outputs):
+    attempts = tripo_attempts(aid, "concept", IMAGE_PATTERNS)
+    approved, why = approved_concept(brief, m)
+    inputs = [brief["_path"], ART_BIBLE] + [a["spend_path"] for a in attempts if a["spend_path"].exists()]
+    model = args.concept_model
+    params = concept_params(brief, model)
+
+    def save(status, msg, outputs=(), **extra):
+        if not args.dry_run:
+            record(m, "concept", status, inputs, list(outputs), msg, concept_model=model, params=params,
+                   approval=m.get("concept_approval") if approved else None, **spend_fields(attempts), **extra)
+
+    if args.refine is not None:
+        src = concept_image(find_attempt(attempts, "concept", args.refine))
+        prompt = compose_prompt(brief, "refine", args.edit)
+        cmd = tripo_command("tripo generate image-to-image", shlex.quote(rel(src)), f"--model {model}",
+                            f"--prompt {shlex.quote(prompt)}", param_flags(params),
+                            f"-o {next_attempt_dir(aid, 'concept', attempts)} --no-open --json")
+        print(f"concept: refine concept-{args.refine} through the tripo skill, then review the result:\n  {cmd}")
+        save("awaiting", f"waiting on a Tripo refine of concept-{args.refine}", prompt=prompt, suggested_commands=[cmd])
+        return EXIT_AWAITING
+
+    candidates = [a for a in attempts if is_usable(a)]
+    if args.variants is None and model_on_disk(brief):
+        status, msg, outputs = "ok", "not needed: the base mesh is already on disk", []
+    elif args.variants is None and approved:
+        status, msg, outputs = "ok", f"approved {m['concept_approval']['attempt']} ({rel(approved)})", [approved]
+    elif args.variants is None and candidates:
+        print(f"concept: waiting on the user's approval ({why}). Show the user each candidate, then run "
+              f"`--approve-concept N` only after they approve one in chat:")
+        for a in candidates:
+            print(f"  concept-{a['n']}: {rel(concept_image(a))}  "
+                  f"({(a['spend'] or {}).get('model_version') or 'no spend record'})")
+        print("  More options: --variants K (new concepts), --refine N --edit TEXT (image-to-image on concept-N)")
+        save("awaiting_approval", f"waiting on the user's approval of one of {[a['dir'].name for a in candidates]}")
+        return EXIT_AWAITING_APPROVAL
+    else:
+        prompt = compose_prompt(brief, "concept")
+        cmds = [tripo_command("tripo generate text-to-image", shlex.quote(prompt), f"--model {model}",
+                              param_flags(params), f"-o {next_attempt_dir(aid, 'concept', attempts, i)} --no-open --json")
+                for i in range(args.variants or 1)]
+        print("concept: generate through the tripo skill (one paid call each), then review with the user:\n  "
+              + "\n  ".join(cmds))
+        save("awaiting", "waiting on a Tripo concept run", prompt=prompt, suggested_commands=cmds)
+        return EXIT_AWAITING
+
+    if not args.force and up_to_date(m["stages"].get("concept"), inputs, outputs):
         print("concept: up to date")
         return EXIT_OK
-    if brief.get("source_glb"):
-        msg = "existing source_glb; no concept needed"
-    elif pick:
-        msg = f"concept image ingested from {pick['dir'].name}"
-    else:
-        cmd = f'tripo generate text-to-image {shlex.quote(prompt)} -o {next_attempt_dir(aid, "concept", attempts)} --no-open --json'
-        msg = "no concept image (optional). To make one, run through the tripo skill: " + cmd
     print(f"concept: {msg}")
-    if dry_run:
+    save(status, msg, outputs, prompt=(m.get("concept_approval") or {}).get("prompt") if approved else None)
+    return EXIT_OK
+
+
+def current_sheet(brief, m):
+    """(attempt, views, attempts, reason) for the newest usable multiview sheet made from the approved concept."""
+    attempts = tripo_attempts(brief["asset_id"], "multiview", IMAGE_PATTERNS)
+    approved, why = approved_concept(brief, m)
+    if not approved:
+        return None, {}, attempts, why
+    made_from = [a for a in attempts if is_usable(a) and spend_input(a, "image-to-multiview") == approved.resolve()]
+    if not made_from:
+        return None, {}, attempts, "no multiview sheet from the approved concept yet"
+    pick = made_from[-1]
+    views = {}
+    for f in pick["files"]:
+        hit = re.search(r"(front|left|back|right)_view", f.name)
+        if hit and hit.group(1) not in views:
+            views[hit.group(1)] = f
+    return pick, views, attempts, None
+
+
+def stage_multiview(brief, m, args):
+    aid = brief["asset_id"]
+    approved, why = approved_concept(brief, m)
+    pick, views, attempts, reason = current_sheet(brief, m)
+    inputs = ([approved] if approved else []) + [a["spend_path"] for a in attempts if a["spend_path"].exists()]
+    outputs = [views[v] for v in VIEWS if v in views]
+
+    def save(status, msg, **extra):
+        if not args.dry_run:
+            record(m, "multiview", status, inputs, outputs, msg, **spend_fields(attempts), **extra)
+
+    if model_on_disk(brief):
+        status, msg = "ok", "not needed: the base mesh is already on disk"
+    elif not approved:
+        print(f"multiview: waiting on the user's concept approval ({why}); run --stage concept")
+        return EXIT_AWAITING_APPROVAL
+    elif pick is None:
+        cmd = tripo_command("tripo generate image-to-multiview", shlex.quote(rel(approved)),
+                            f"-o {next_attempt_dir(aid, 'multiview', attempts)} --no-open --json")
+        print(f"multiview: {reason}. Generate it through the tripo skill:\n  {cmd}")
+        save("awaiting", "waiting on a Tripo multiview run", suggested_command=cmd)
+        return EXIT_AWAITING
+    elif "front" not in views or len(views) < 2:
+        msg = f"{pick['dir'].name} has views {sorted(views)}; multiview-to-3D needs front plus at least one more"
+        print(f"multiview: FAIL: {msg}")
+        save("failed", msg)
+        return EXIT_CHECK_FAILED
+    else:
+        status, msg = "ok", f"sheet {pick['dir'].name} from {m['concept_approval']['attempt']}: {', '.join(v for v in VIEWS if v in views)}"
+    if not args.force and up_to_date(m["stages"].get("multiview"), inputs, outputs):
+        print("multiview: up to date")
         return EXIT_OK
-    cost, unknown = attempt_costs(attempts)
-    record(m, "concept", "ok", inputs, outputs, msg, prompt=prompt, params={},
-           actual_cost_credits=cost, cost_unknown_attempts=unknown,
-           tripo_attempts=[a["spend"] for a in attempts if a["spend"]])
+    print(f"multiview: {msg}")
+    save(status, msg)
     return EXIT_OK
 
 
@@ -371,40 +566,43 @@ def resolve_model(brief):
     return (pick["files"][0] if pick else None), attempts
 
 
-def stage_model(brief, m, dry_run, force):
+def stage_model(brief, m, args):
     aid = brief["asset_id"]
     model, attempts = resolve_model(brief)
-    prompt = compose_prompt(brief, "model")
     params = tripo_params(brief)
     inputs = [brief["_path"], ART_BIBLE] + [a["spend_path"] for a in attempts if a["spend_path"].exists()]
     if model is None:
-        concept = m["stages"].get("concept", {}).get("outputs") or []
-        source = shlex.quote(concept[0]["path"] if concept else prompt)
-        flags = " ".join(f"--param {k}={str(v).lower()}" for k, v in params.items())
-        cmd = (f"tripo make {source} --model {brief['tripo_model']} {flags} "
-               f"-o {next_attempt_dir(aid, 'attempt', attempts)} --no-open --json")
+        # Image path only: multiview-to-3D from the approved concept's sheet, never text-to-3D.
+        sheet, views, _, why = current_sheet(brief, m)
+        if sheet is None or "front" not in views:
+            print(f"model: no base mesh on disk, and no multiview sheet to build one from ({why or 'the sheet has no front view'}). "
+                  "Run --stage concept, then --stage multiview.")
+            return EXIT_AWAITING_APPROVAL if approved_concept(brief, m)[0] is None else EXIT_AWAITING
+        cmd = tripo_command("tripo make", " ".join(shlex.quote(rel(views[v])) for v in VIEWS if v in views),
+                            f"--model {brief['tripo_model']}", param_flags(params),
+                            f"-o {next_attempt_dir(aid, 'attempt', attempts)} --no-open --json")
         print("model: no base mesh on disk yet. Generate it through the tripo skill "
               "(free dry run, then user confirmation, then the paid run):\n  " + cmd)
-        if not dry_run:
-            cost, unknown = attempt_costs(attempts)
-            record(m, "model", "awaiting", inputs, [], "waiting on a Tripo run", prompt=prompt, params=params,
-                   tripo_model=brief.get("tripo_model"), actual_cost_credits=cost,
-                   cost_check=cost_check(attempts), cost_unknown_attempts=unknown, suggested_command=cmd)
+        if not args.dry_run:
+            record(m, "model", "awaiting", inputs, [], "waiting on a Tripo run", prompt=None, params=params,
+                   tripo_model=brief.get("tripo_model"), source_views=[file_record(views[v]) for v in VIEWS if v in views],
+                   suggested_command=cmd, **spend_fields(attempts))
             save_manifest(m)
         return EXIT_AWAITING
-    if not force and up_to_date(m["stages"].get("model"), inputs, [model]):
+    if not args.force and up_to_date(m["stages"].get("model"), inputs, [model]):
         print("model: up to date")
         return EXIT_OK
     msg = f"existing source_glb {rel(model)}" if brief.get("source_glb") else f"Tripo download {rel(model)}"
     print(f"model: {msg}")
-    if dry_run:
+    if args.dry_run:
         return EXIT_OK
-    cost, unknown = attempt_costs(attempts)
-    record(m, "model", "ok", inputs, [model], msg, prompt=None if brief.get("source_glb") else prompt,
+    picked = usable(attempts)
+    fields = spend_fields(attempts)
+    record(m, "model", "ok", inputs, [model], msg,
+           # the prompt actually sent, if any (multiview-to-3D takes none)
+           prompt=((picked or {}).get("spend") or {}).get("prompt"),
            params=None if brief.get("source_glb") else params, tripo_model=brief.get("tripo_model"),
-           actual_cost_credits=cost, estimate_credits=sum((r["estimate_credits"] or 0) for r in cost_check(attempts)),
-           cost_check=cost_check(attempts), cost_unknown_attempts=unknown,
-           tripo_attempts=[a["spend"] for a in attempts if a["spend"]])
+           estimate_credits=sum((r["estimate_credits"] or 0) for r in fields["cost_check"]), **fields)
     return EXIT_OK
 
 
@@ -433,7 +631,8 @@ def work_dir(asset_id):
     return TRIPO_OUT / asset_id / "work"
 
 
-def stage_clean(brief, m, dry_run, force):
+def stage_clean(brief, m, args):
+    dry_run, force = args.dry_run, args.force
     aid = brief["asset_id"]
     model, _ = resolve_model(brief)
     if model is None:
@@ -472,7 +671,8 @@ def stage_clean(brief, m, dry_run, force):
     return EXIT_OK if passed else EXIT_CHECK_FAILED
 
 
-def stage_validate(brief, m, dry_run, force):
+def stage_validate(brief, m, args):
+    dry_run, force = args.dry_run, args.force
     aid = brief["asset_id"]
     glb = MESHES / f"{aid}.glb"
     if not glb.exists():
@@ -537,22 +737,43 @@ def gross_flags(views, m):
     return flags
 
 
-STAGE_FUNCS = {"concept": stage_concept, "model": stage_model, "clean": stage_clean, "validate": stage_validate}
+STAGE_FUNCS = {"concept": stage_concept, "multiview": stage_multiview, "model": stage_model,
+               "clean": stage_clean, "validate": stage_validate}
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("asset_id")
-    ap.add_argument("--stage", required=True, choices=STAGES + ["all"])
+    ap.add_argument("--stage", choices=STAGES + ["all"])
     ap.add_argument("--dry-run", action="store_true", help="print what would run; write nothing")
     ap.add_argument("--force", action="store_true", help="re-run even if inputs and outputs are unchanged")
+    ap.add_argument("--concept-model", choices=sorted(CONCEPT_MODELS), default=DEFAULT_CONCEPT_MODEL,
+                    help=f"text-to-image model for concepts (default {DEFAULT_CONCEPT_MODEL}; seedream_v5 for cheap variants)")
+    ap.add_argument("--variants", type=int, metavar="K", help="print K new concept commands (1-4), even if concepts exist")
+    ap.add_argument("--refine", type=int, metavar="N", help="print an image-to-image refine of concept-N (needs --edit)")
+    ap.add_argument("--edit", metavar="TEXT", help="the refine instruction, e.g. from the user's review")
+    ap.add_argument("--approve-concept", type=int, metavar="N",
+                    help="record the user's approval of concept-N; only after they approve it in chat")
     args = ap.parse_args()
+    if (args.stage is None) == (args.approve_concept is None):
+        ap.error("give exactly one of --stage or --approve-concept")
+    if args.variants is not None and not 1 <= args.variants <= 4:
+        ap.error("--variants must be 1-4")
+    if (args.refine is None) != (args.edit is None):
+        ap.error("--refine and --edit go together")
+    if (args.refine is not None or args.variants is not None) and args.stage != "concept":
+        ap.error("--refine and --variants apply to --stage concept only")
     try:
         brief = load_brief(args.asset_id)
         m = load_manifest(args.asset_id)
         m["brief"] = file_record(brief["_path"])
+        if args.approve_concept is not None:
+            approve_concept(brief, m, args.approve_concept)
+            if not args.dry_run:
+                save_manifest(m)
+            return EXIT_OK
         for stage in STAGES if args.stage == "all" else [args.stage]:
-            code = STAGE_FUNCS[stage](brief, m, args.dry_run, args.force)
+            code = STAGE_FUNCS[stage](brief, m, args)
             if not args.dry_run:
                 save_manifest(m)
             if code != EXIT_OK:

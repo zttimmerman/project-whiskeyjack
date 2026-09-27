@@ -36,7 +36,9 @@ Hex values are either set exactly in a scene or script, or sampled from a shippe
 
 Generation prompts are built from two blocks plus the brief's own description. `scripts/pipeline.py` reads both blocks from this section, so edit them here only:
 - **Concept-image prompts:** FORM + LIGHTING + description.
-- **3D-model prompts:** FORM + description. Lighting words are left out because 3D generation may misread them or bake them into the albedo.
+- **3D-model prompts:** FORM + description. Lighting words are left out because 3D generation may misread them or bake them into the albedo. The pipeline's 3D step is multiview-to-3D, whose endpoint takes no prompt, so this composition applies only where a 3D endpoint takes text.
+
+**The concept image is the only channel for FORM.** Multiview-to-3D takes no prompt, so FORM reaches the model only through the approved concept. Judge concepts as low-poly game assets (flat shading, simple forms, minimal fine surface detail), not as attractive illustrations. A detailed, painterly concept produces a detailed mesh, and `face_limit` will destroy that detail rather than simplify it.
 
 ### FORM block
 

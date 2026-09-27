@@ -18,10 +18,11 @@ The CLI ships its own agent docs (`tripo docs --llm`, `tripo docs --topic comman
 1. **Session cap: 500 credits** (1 credit = $0.01). Track the running total of *actual* spend in the conversation and show it as `used / 500` with every confirmation request. Warn once the total reaches 400. Refuse any run whose estimate would push the total past 500, unless the user raises the cap for this session. Failed and unusable attempts count at whatever the balance difference shows.
 2. **No spend without explicit confirmation for that specific run.** The flow is always: dry run → show the plan → the user says yes in chat → run. The permission prompt from `.claude/settings.json` is a second gate, not a substitute. Non-interactive runs auto-enable `--yes`, so the CLI itself will never ask.
 3. **Invoke as bare `tripo`.** Don't use `npx`, `nvm exec`, an absolute path, or a script wrapper, because the permission rules match on the `tripo <cmd>` prefix. Run one `tripo` command per Bash call, with no `&&`, `;` or pipes around a paid command. Redirecting output to a file is fine.
-4. **Art-bible parameters, no presets.** Never pass `--for`. Pass exactly the parameters `pipeline.py` prints (`--model` from the brief's `tripo_model`, `pbr=false`, `texture=true`, and the brief's `face_limit`). Output is GLB only: no `--then convert` (non-default convert options bill at the advanced tier). Don't add a `--then` step unless the user approved that step's cost.
+4. **Art-bible parameters, no presets.** Never pass `--for`. Pass exactly the parameters `pipeline.py` prints. For 3D, that's `--model` from the brief's `tripo_model`, `pbr=false`, `texture=true`, and the brief's `face_limit`. For concept images, it's `--model banana_pro` (or `seedream_v5` when the user asks for cheap variants), plus `template=t_pose` and a portrait frame for characters only. Output is GLB only: no `--then convert` (non-default convert options bill at the advanced tier). Don't add a `--then` step unless the user approved that step's cost.
 5. **Pin the model; never rely on auto-selection.** Without `--model`, the CLI picks the model itself: explicit low-poly intent in the prompt **or** `face_limit` ≤ 20000 selects P1, anything else v3.1. That's the CLI's internal rule (`knowledge/models.js`), so rewording a prompt or a CLI update could silently switch models. Every brief pins a wire version (e.g. `tripo_model: P1-20260311`); the server accepts only wire values, and the CLI also maps aliases like `tripo-p1` to them. P1 rejects `quad`, `smart_low_poly`, `generate_parts` and `geometry_quality`, and outputs triangles only.
 6. **Describe what IS there; don't rely on negatives.** "No X" phrasing is unreliable: the first Levy Blade prompt said "no crossguard" and Tripo modelled a crossguard. Briefs describe the positive shape instead ("the blade tapers straight into the grip in one continuous piece") and give concrete colors ("blackened, near-black desaturated iron with a cold grey-brown cast") rather than excluding wrong ones.
-7. **Commands:** use `tripo --version` for the version (there's no `version` subcommand) and `tripo balance --json` for the balance (`{"balance","frozen"}`; there's no `account` subcommand).
+7. **No 3D spend before the concept is approved.** The pipeline chain is text-to-image → (optional image-to-image refine) → image-to-multiview → multiview-to-3D. Image-to-multiview and the model are only printed once the user has approved a concept in chat and `pipeline.py --approve-concept N` has recorded it. Never run that command on the user's behalf, and never run a multiview or model command the pipeline didn't print.
+8. **Commands:** use `tripo --version` for the version (there's no `version` subcommand) and `tripo balance --json` for the balance (`{"balance","frozen"}`; there's no `account` subcommand).
 
 ## Cost estimate
 
@@ -42,13 +43,25 @@ The pricing-page table below undercounted P1 by half. The page has H-, P- and Sp
 | Image → 3D | 20 | 30 |
 | Multiview → 3D | 20 | 30 |
 
-Add-ons stack on top: HD texture +10, Smart Low-poly +10 (not available on P1), Quad +5, HD geometry +20. Text-to-image concept art costs 5–15 depending on the image model. The estimate is guidance only; **the balance difference is the truth.**
+Add-ons stack on top: HD texture +10, Smart Low-poly +10 (not available on P1), Quad +5, HD geometry +20. The estimate is guidance only; **the balance difference is the truth.**
+
+**Not yet observed. Treat every figure here as unconfirmed, and say so when asking.** P1 text-to-3D came in at 2× the pricing page, so the page isn't trusted for P-series work:
+
+| Operation | Working estimate | Basis |
+|---|---|---|
+| text → image, `banana_pro` (default size, 2K tier) | ~15 | user's estimate; the pricing page bills images in 1K/2K/4K tiers |
+| text → image, `seedream_v5` | unknown, expected below banana_pro | none yet |
+| image → image refine | unknown; assume the same as that model's text → image | none yet |
+| image → multiview | unknown | the pricing page doesn't list it |
+| multiview → 3D, P1, standard texture | ≥ 40 (P1 text → 3D observed) | the page's H-series 30 × P1's observed 2× would be 60; give the user the 40–60 range |
+
+After each first run, move the row into the observed table above and delete it here.
 
 ## Files this skill writes (all in the gitignored `.tripo-out/`)
 
 | What | Where |
 |---|---|
-| Raw CLI output | `.tripo-out/<asset-id>/<kind>-<n>/<slug>-<id8>/` (`kind` is `concept` or `attempt`; `-o` is a base folder, so the CLI creates the subfolder) |
+| Raw CLI output | `.tripo-out/<asset-id>/<kind>-<n>/<slug>-<id8>/` (`kind` is `concept`, `multiview` or `attempt`; `-o` is a base folder, so the CLI creates the subfolder) |
 | Run stdout and stderr | `.tripo-out/<asset-id>/<kind>-<n>.result.json`, `.log` |
 | Spend record | `.tripo-out/<asset-id>/<kind>-<n>.spend.json` (schema below). `pipeline.py` copies these into the committed manifest |
 
@@ -62,10 +75,12 @@ Add-ons stack on top: HD texture +10, Smart Low-poly +10 (not available on P1), 
 
 ## Procedure (one paid call)
 
-1. **Get the command.** Run `python3 scripts/pipeline.py <asset-id> --stage concept|model` and take the `tripo …` command it prints. The next attempt number `<n>` is in the `-o` path.
+1. **Get the command.** Run `python3 scripts/pipeline.py <asset-id> --stage concept|multiview|model` and take the `tripo …` command it prints. The next attempt number `<n>` is in the `-o` path.
 2. **Preflight (free).** Run `tripo --version`, `tripo balance --json` and `tripo whoami --json` (for the region). If the balance is below the estimate, stop and ask the user to top up at https://platform.tripo3d.ai. `tripo topup` points at a stale page.
-3. **Dry run (free, no network).** Run the printed command with `--dry-run --json` added. It must return `valid: true`. Note `model` (the wire version string, e.g. `P1-20260311`) and any `warnings`/`cost_notes`. A warning that mentions a price tier needs the user's explicit OK.
-4. **Ask.** Show the user: the asset ID, prompt, model version, parameters, estimated credits, the current balance, and `used / 500`. Wait for a clear yes.
+3. **Dry run (free, no network).**
+   - **`tripo make` (the model stage):** run the printed command with `--dry-run --json` added. It must return `valid: true`. Note `model` (the wire version string, e.g. `P1-20260311`), and check that the payload's `inputs` key each view to the right file. Also note any `warnings`/`cost_notes`: a warning that mentions a price tier needs the user's explicit OK.
+   - **`tripo generate text-to-image | image-to-image | image-to-multiview` (the concept and multiview stages):** `generate` has **no `--dry-run`**, and the CLI doesn't validate image parameters locally, so a bad one surfaces only as an API error. Instead, run `python3 scripts/pipeline.py <asset-id> --stage <stage> --dry-run` and check the printed command against the parameter rules in rule 4. The API accepts `template` (`t_pose` …) and `aspect_ratio` (banana models only; seedream sizes via `size=WxH`) on text-to-image. Image-to-multiview takes only an input image: no model and no prompt. The model version to record is the `--model` value.
+4. **Ask.** Show the user: the asset ID, prompt, model version, parameters, estimated credits (and whether that price is observed or unconfirmed), the current balance, and `used / 500`. For a multiview or model run, also show the approved concept (and the multiview sheet) you're building from. Wait for a clear yes. `--variants K` prints K commands: list them all with the K× total, and one yes may cover exactly that list.
 5. **Record the before balance.** Run `tripo balance --json` immediately before the paid run. Write `<kind>-<n>.spend.json` with status `running`, the before balance, the CLI version, the model version, the prompt, parameters and the confirmation time.
 6. **Run (paid)**, with the Bash tool's `run_in_background`, because it can block for up to 15 minutes:
    `<printed command> > .tripo-out/<asset-id>/<kind>-<n>.result.json 2> .tripo-out/<asset-id>/<kind>-<n>.log`
@@ -106,5 +121,7 @@ Add-ons stack on top: HD texture +10, Smart Low-poly +10 (not available on P1), 
 }
 ```
 
-- `model_version` is the dry run's `model` wire string. If the run's `task.json` reports a different version, record both and tell the user.
+- `model_version` is the dry run's `model` wire string. If the run's `task.json` reports a different version, record both and tell the user. For concept images, it's the `--model` value (e.g. `banana_pro`); image-to-multiview has none, so record `null`.
+- `command` must be **exactly** the command that ran, not a paraphrase. `pipeline.py` reads the input image path out of an image-to-multiview command to tie each sheet to the concept it came from; a sheet whose command doesn't name the approved image is never used.
+- `params` holds what was passed with `--param`: for 3D, `pbr`, `texture` and `face_limit`; for a character concept, `template` and `aspect_ratio` or `size`.
 - `tripo_cli_version` comes from `tripo --version` at preflight. The CLI updates independently of this repo, so a version change between attempts is worth noting.
