@@ -12,7 +12,7 @@
 
 **Body plan:** human-scale humanoid. The existing 28-bone rig must be mapped to the humanoid profile. **The MVP ships this one model with two variants.**
 **Variants:** Front-file melee (`BaseEnemy.tscn`: hunched, blade forward) · Back-file archer (`ArcherEnemy.tscn`: upright, bow drawn).
-**Weapons are separate prop assets**, not part of the body mesh. Each is held in a hand socket (a `BoneAttachment3D` under the model's `Skeleton3D`): the **Levy Blade** on the right hand (`hand.R_013`), and the **Levy Bow** on the left (`hand.L_09`). Briefs are in `docs/art-bible.md`.
+**Weapons are separate prop assets**, not part of the body mesh. Each is held in a hand socket: the **Levy Blade** in `hand_r`, the **Levy Bow** in `hand_l`. The rig's bone names live only in `data/rigs/barrow_levy_sockets.tres`. Briefs are in `docs/art-bible.md`.
 **Secondary readability cue:** in case posture and weapon don't read at distance, Back-file levies carry faded **Signal Red** rag wrappings on the forearms and brow, as a material variant of the skeleton's albedo. Front-file levies stay unwrapped Old Bone.
 **Gameplay hook:** a levy killed in a Still-pool re-forms unless Kindled or warded, and Kindle hits always stagger.
 

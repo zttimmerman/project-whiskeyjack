@@ -292,6 +292,7 @@ Every generated or sourced mesh goes through these steps, in order, before it is
 
 - **Do not build armatures, paint weights, or keyframe animations via MCP scripting.** Animation comes from a shared animation library that is retargeted onto each character; it is not authored per model
 - Character models must use a humanoid skeleton that maps onto Godot's `SkeletonProfileHumanoid`, so the shared library can be retargeted through the `BoneMap` in the GLB's import settings. If a model has no such skeleton, stop and ask the user how it should be rigged
+- **Socket bones:** every new character needs its socket bones (`hand_r`, `hand_l`, …) mapped in a `SocketMap` resource at `data/rigs/<rig>_sockets.tres`, assigned to the scene's `socket_map` export. That file is the single place to update when a rig changes or is regenerated. Never write bone names in scripts, scenes or call sites; enemies attach props via `held_props` (socket → PackedScene)
 - Game code plays animations by name, so retargeted clips must be exposed under these names — player: `idle`, `run`, `dodge_roll`, `attack_light`, `attack_heavy`, `death`; enemies: `idle`, `run`, `attack`, `stagger`, `death`
 
 ### Manual MCP Editing (for modifications, not base meshes)

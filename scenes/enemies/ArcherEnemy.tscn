@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://projectile_sc1" path="res://scenes/enemies/Projectile.tscn" id="5_proj"]
 [ext_resource type="AudioStream" path="res://assets/audio/sfx_impact.ogg" id="6_impact"]
 [ext_resource type="PackedScene" path="res://assets/meshes/archer_enemy.glb" id="7_model"]
+[ext_resource type="Resource" path="res://data/rigs/barrow_levy_sockets.tres" id="20_sockets"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.4
@@ -37,6 +38,7 @@ detection_range = 14.0
 attack_range = 0.0
 xp_reward = 15
 projectile_scene = ExtResource("5_proj")
+socket_map = ExtResource("20_sockets")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_body")

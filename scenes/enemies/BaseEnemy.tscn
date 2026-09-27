@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://hitboxcmp001" path="res://scripts/combat/HitboxComponent.gd" id="4_hitbox"]
 [ext_resource type="AudioStream" path="res://assets/audio/sfx_impact.ogg" id="5_impact"]
 [ext_resource type="PackedScene" path="res://assets/meshes/archer_enemy.glb" id="6_model"]
+[ext_resource type="Resource" path="res://data/rigs/barrow_levy_sockets.tres" id="20_sockets"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.4
@@ -32,6 +33,7 @@ radius = 0.6
 [node name="BaseEnemy" type="CharacterBody3D"]
 script = ExtResource("1_enemy")
 stats = SubResource("CharacterStats_enemy")
+socket_map = ExtResource("20_sockets")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_body")

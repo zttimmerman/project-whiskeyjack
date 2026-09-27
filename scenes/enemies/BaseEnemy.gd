@@ -9,6 +9,10 @@ enum State { IDLE, PATROL, CHASE, ATTACK, STAGGER, DEAD }
 @export var detection_range: float = 10.0
 @export var attack_range: float = 1.5
 @export var gravity: float = 20.0
+## Bone names for this model's rig; the only place socket bones are named
+@export var socket_map: SocketMap
+## Props to hold, keyed by socket name, e.g. {"hand_r": PackedScene}
+@export var held_props: Dictionary = {}
 
 const STAGGER_DURATION: float = 0.4
 const ATTACK_ACTIVE_TIME: float = 0.3
@@ -40,6 +44,8 @@ func _ready() -> void:
 	if _anim_player:
 		_anim_player.animation_finished.connect(_on_animation_finished)
 		_play_anim("idle")
+	if model_node:
+		_attach_held_props(model_node)
 	stats.died.connect(_on_stats_died)
 	# Connect enemy's own hurtbox to trigger stagger state (HurtboxComponent handles HP)
 	$HurtboxComponent.area_entered.connect(_on_hurtbox_hit)
@@ -169,6 +175,26 @@ func _change_state(new_state: State) -> void:
 		State.DEAD:
 			_hitbox.deactivate()
 			_play_anim("death")
+
+
+# Parents each held prop to a BoneAttachment3D on the bone its socket maps to
+func _attach_held_props(model_node: Node) -> void:
+	if held_props.is_empty():
+		return
+	var skeletons: Array[Node] = model_node.find_children("*", "Skeleton3D", true, false)
+	if skeletons.is_empty() or not socket_map:
+		push_warning("%s: held_props set but no Skeleton3D or socket_map" % name)
+		return
+	var skeleton := skeletons[0] as Skeleton3D
+	for socket in held_props:
+		var bone := socket_map.get_bone(socket)
+		if skeleton.find_bone(bone) == -1:
+			push_warning("%s: socket '%s' maps to missing bone '%s'" % [name, socket, bone])
+			continue
+		var attachment := BoneAttachment3D.new()
+		attachment.bone_name = bone
+		skeleton.add_child(attachment)
+		attachment.add_child((held_props[socket] as PackedScene).instantiate())
 
 
 func _play_anim(anim_name: String) -> void:
