@@ -27,8 +27,13 @@ func _wire_enemy_deaths() -> void:
 
 func _on_enemy_died() -> void:
 	_enemies_killed += 1
-	if _enemies_killed >= TOTAL_ENEMIES and QuestManager.is_quest_active(QUEST_ID):
-		QuestManager.complete_quest(QUEST_ID)
+	if _enemies_killed < TOTAL_ENEMIES:
+		return
+	# Road is clear: move to the report-back stage. The Keeper completes the quest
+	# on interact. Loops so a kill finishing before the reach trigger still lands
+	# on return_to_keeper.
+	while QuestManager.get_quest_stage(QUEST_ID) in ["find_monsters", "defeat_monsters"]:
+		QuestManager.advance_quest(QUEST_ID)
 
 
 func _on_quest_advance_area_entered(body: Node3D) -> void:

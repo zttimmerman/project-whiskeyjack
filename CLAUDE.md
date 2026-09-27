@@ -1,7 +1,7 @@
 # CLAUDE.md — 3D Low-Poly Action RPG (Godot 4)
 
 ## Project Overview
-This is a 3D action RPG built in Godot 4, inspired by early PS1/PS2 era games (think early Final Fantasy, Legend of Dragoon, early Zelda 3D). The aesthetic is intentionally low-poly and stylized — embrace chunky geometry, limited vertex counts, and bold colors over realism. Combat is real-time action in the style of Zelda / early Dark Souls.
+This is a 3D action RPG built in Godot 4, inspired by early PS1/PS2 era games (think early Final Fantasy, Legend of Dragoon, early Zelda 3D). The look is stylized low-poly with generous budgets: bold colors, readable silhouettes, and simple albedo-only textures over realism. Combat is real-time action in the style of Zelda / early Dark Souls.
 
 ---
 
@@ -20,15 +20,16 @@ This is a 3D action RPG built in Godot 4, inspired by early PS1/PS2 era games (t
 
 ## Visual Style Rules
 
-**Target fidelity: PS2 era (~2001–2004).** Think Final Fantasy X field models, Kingdom Hearts, Dark Cloud 2 — not PS1 blockiness, not modern HD. Characters should look like they belong on a PS2 loading screen.
+**Target: the look is stylized low-poly with generous budgets: bold colors, readable silhouettes, and simple albedo-only textures over realism.** PS1/PS2-era games are the reference for proportions and readability, not something to emulate authentically. Smooth limbs, recognizable faces and hands — not box people.
 
-- **Polygon budget:** ~2,000–5,000 vertices per character; ~500–2,000 for props/smaller objects. Smooth limbs with visible edge flow, recognizable faces and fingers — not box people
-- **Materials:** vertex colors or simple hand-painted textures (128x128 to 256x256). PBR textures from AI generators are acceptable if downscaled and simplified to match the aesthetic
-- No normal maps; keep lighting simple with a single directional light + ambient
-- Avoid bloom, SSAO, and screen-space reflections — these break the aesthetic
+- **Vertex budgets are authoritative (hard ceilings):** characters 2,000–5,000 vertices; props and smaller objects 500–2,000. Count = Blender mesh vertices with modifiers applied, summed across every mesh in the `.glb`. Generated or sourced meshes are decimated to fit before they are committed — no exceptions for "it already looks fine"
+- **Textures are albedo (base color) only:** one texture per asset, 128x128 to 256x256, or vertex colors. No normal, roughness, metallic, occlusion, emissive, or specular maps. Materials are `StandardMaterial3D` with `albedo_texture` set and everything else at defaults
+- **Lighting:** one `DirectionalLight3D` + ambient per area; local `OmniLight3D`s are allowed only for visible light sources (torches, candelabras)
+- Avoid bloom, SSAO, and screen-space reflections
 - **Silhouettes matter:** characters should read clearly from the gameplay camera distance. Exaggerated proportions (slightly large heads, stylized hair) are fine and encouraged
 - Camera: Third-person, behind the player, with optional lock-on targeting for combat
-- UI: Pixel-style fonts, chunky bordered panels, limited color palette
+- UI: chunky bordered panels, limited color palette, Godot's default font
+- **Post-MVP — do not implement unless explicitly asked:** palette quantization, vertex-snapping or affine-texture-warp shaders, pixel fonts
 
 ---
 
@@ -251,20 +252,20 @@ This project uses the **Blender MCP** to create, generate, and edit 3D models di
 
 ### AI Model Generation (primary workflow for new assets)
 
-Base meshes should be **AI-generated** whenever possible, then cleaned up and modified via MCP scripting. Do not hand-code complex geometry vertex-by-vertex — that's only appropriate for simple shapes (hair spikes, flat panels, accessories).
+Base meshes should be **AI-generated** whenever possible, then brought within the vertex budget and texture rules (see Visual Style Rules) via MCP scripting. Do not hand-code complex geometry vertex-by-vertex — that's only appropriate for simple shapes (hair spikes, flat panels, accessories).
 
 **Hyper3D Rodin Gen-2 via fal.ai (primary — $0.40/generation):**
 - Pay-per-use through fal.ai, no subscription required
 - The BlenderMCP addon has been **patched** to use Rodin v2 endpoints (`fal-ai/hyper3d/rodin/v2` for image-to-3D, `fal-ai/hyper3d/rodin/v2/text-to-3d` for text-to-3D). The addon file is at `~/Library/Application Support/Blender/5.0/scripts/addons/addon.py`
-- v2 request params: `quality_mesh_option: "50K Quad"`, `geometry_file_format: "glb"`, `material: "PBR"`, `TAPose: true` — these are hardcoded in the patched addon
+- v2 request params hardcoded in the patched addon: `quality_mesh_option: "50K Quad"`, `geometry_file_format: "glb"`, `material: "PBR"`, `TAPose: true`. The mesh this returns is roughly 10–25× over the character budget and carries extra material maps — every generation **must** go through Post-Generation Cleanup before use
 - **Important:** fal.ai queue URLs (poll/fetch) use the path `fal-ai/hyper3d/requests/{id}`, NOT the v2 submission path — the addon's poll/import URLs must stay as the original non-v2 format
 - Enable in BlenderMCP sidebar → "Use Hyper3D Rodin 3D model generation" → select **fal.ai** mode → enter fal.ai API key
 - Workflow: `generate_hyper3d_model_via_text` or `_via_images` → `poll_rodin_job_status` → `import_generated_asset`
 - Generated models come in at normalized size (~1 unit) — rescale after import to match the game world
-- **Prompt tips:** include "no weapons, empty hands" to avoid baked-in weapons; include "T-pose" or "A-pose" for rigging-ready output; AI may still generate unwanted items — regenerate rather than attempting mesh surgery
+- **Prompt tips:** include "no weapons, empty hands" to avoid baked-in weapons; include "T-pose" or "A-pose" so the model can be fitted to the shared humanoid skeleton; AI may still generate unwanted items — regenerate rather than attempting mesh surgery
 
 **Sketchfab (for sourcing pre-made assets):**
-- Search for CC0/free-license low-poly models when AI generation isn't the right fit
+- Search for CC0/free-license low-poly models when AI generation isn't the right fit; sourced models follow the same budget and albedo-only rules
 - Requires a free Sketchfab API key
 - Enable in BlenderMCP sidebar → "Use assets from Sketchfab" + enter API key
 - Workflow: `search_sketchfab_models` → `get_sketchfab_model_preview` → `download_sketchfab_model`
@@ -281,45 +282,47 @@ Base meshes should be **AI-generated** whenever possible, then cleaned up and mo
 
 ### Post-Generation Cleanup (MCP scripting)
 
-AI-generated meshes will need adjustment before use in-game:
-- **Do NOT decimate or downscale textures** unless explicitly asked — Rodin v2 output already looks PS2-era appropriate at ~50K faces
-- **Rescale** to match the game world (e.g., character height ~1.8m). Move mesh vertices so feet sit at Z=0 in Blender (Y=0 in Godot)
-- **Rig with armature** — generated models don't have skeletons. Create a 21-bone humanoid armature via MCP scripting, parent with automatic weights. The T-pose output from v2 makes this straightforward
-- **Create animations** via keyframing pose bones in Blender. Required set: `idle`, `run`, `dodge_roll`, `attack_light`, `attack_heavy`, `death`. Arms in T-pose rest need ~55° Z rotation on UpperArm bones to hang at sides
-- **Do NOT attempt fine mesh surgery** (removing baked-in weapons, rebuilding hands, fixing faces) via MCP scripting — it burns tokens and damages the mesh. Regenerate with a better prompt instead, or fix manually in Blender's GUI
+Every generated or sourced mesh goes through these steps, in order, before it is exported to `assets/meshes/`:
+1. **Rescale** to match the game world (character height ~1.8m). Move mesh vertices so feet sit at Z=0 in Blender (Y=0 in Godot)
+2. **Decimate to budget:** add a Decimate modifier (Collapse), tune the ratio until the summed vertex count is within the Visual Style budget, then apply it. Re-check the count after applying, and screenshot front/side/back to confirm the silhouette, face and hands still read
+3. **Strip materials to albedo:** keep only the base color image on each material. Remove normal, metallic/roughness, occlusion, emissive and specular image nodes and delete the orphaned images. Resize the base color image to 256x256 or smaller
+4. **Do NOT attempt fine mesh surgery** (removing baked-in weapons, rebuilding hands, fixing faces) via MCP scripting — it burns tokens and damages the mesh. Regenerate with a better prompt instead, or fix manually in Blender's GUI
+
+### Rigging & Animation
+
+- **Do not build armatures, paint weights, or keyframe animations via MCP scripting.** Animation comes from a shared animation library that is retargeted onto each character; it is not authored per model
+- Character models must use a humanoid skeleton that maps onto Godot's `SkeletonProfileHumanoid`, so the shared library can be retargeted through the `BoneMap` in the GLB's import settings. If a model has no such skeleton, stop and ask the user how it should be rigged
+- Game code plays animations by name, so retargeted clips must be exposed under these names — player: `idle`, `run`, `dodge_roll`, `attack_light`, `attack_heavy`, `death`; enemies: `idle`, `run`, `attack`, `stagger`, `death`
 
 ### Manual MCP Editing (for modifications, not base meshes)
 
 Use direct bmesh/Python scripting via MCP for:
 - Modifying existing geometry (hair restyling, adding accessories, patching gaps)
 - Simple procedural shapes (spikes, flat panels, gem shapes)
-- Vertex color adjustments and material fixes
-- Rigging weight assignments
+- Vertex color adjustments and albedo material fixes
 
-**Do NOT** hand-code complex organic meshes (characters, creatures, weapons with curves). Generate those via AI instead.
+**Do NOT** hand-code complex organic meshes (characters, creatures, weapons with curves). Generate those via AI instead. Make geometry edits **before** a mesh is skinned; don't edit geometry on a rigged mesh via MCP.
 
 Editing workflow:
 1. **Import:** clear the Blender scene, then `import_scene.gltf(filepath=...)` to load the existing `.glb`
 2. **Inspect first:** use `get_scene_info` and `get_viewport_screenshot` to understand the current model before making changes
-3. **Analyze mesh data** before modifying — check vertex groups, color attributes, material setup, and bounding boxes via bmesh so edits land in the right place
-4. **Preserve rigging:** when adding/removing geometry, always assign vertex group weights (via the `deform` layer) to the correct bone so the armature still works
-5. **Preserve vertex colors:** set the color attribute on every loop of every new face — missing colors will render black
-6. **Validate coverage:** for geometry meant to cover other geometry (hair over a skull, armor over a body), check the actual Z/position of the underlying mesh vertices — don't assume; the model may extend higher than expected
+3. **Analyze mesh data** before modifying — check color attributes, material setup, vertex count and bounding boxes via bmesh so edits land in the right place
+4. **Preserve vertex colors:** set the color attribute on every loop of every new face — missing colors will render black
+5. **Validate coverage:** for geometry meant to cover other geometry (hair over a skull, armor over a body), check the actual Z/position of the underlying mesh vertices — don't assume; the model may extend higher than expected
+6. **Stay within budget:** re-check the summed vertex count after edits
 7. **Screenshot from multiple angles** after changes — top-down, front, back, side — to catch gaps or artifacts before exporting
 8. **Export:** `export_scene.gltf(filepath=..., export_format='GLB', export_animations=True, export_skins=True, export_yup=True)` — note that `export_colors` is not a valid parameter in Blender 5.x; vertex colors export automatically
 
 ### Blender → Godot Integration Gotchas
 - **Facing direction:** Models face -Y in Blender. After GLB export with `export_yup=True`, this becomes +Z in Godot. Godot's forward is -Z, so the model appears to face backward. **Fix:** add a 180° Y rotation on the model node in the `.tscn`: `Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0)`
 - **Model grounding:** CharacterBody3D collision capsule (height 1.8) centers at the node origin, so the capsule bottom is at Y=-0.9. The model's feet (at local Y=0) must be offset to match: set model node Y translation to -0.9. Example: `Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, -0.9, 0)`
-- **Blender 5.x Action API:** Uses layered actions (`.layers`, `.slots`) instead of legacy `.fcurves`. Use `keyframe_insert()` on pose bones directly — don't try to access `action.fcurves`
-- **Axis conversion:** Blender Z-up → Godot Y-up. Blender (X, Y, Z) → Godot (X, -Z, Y) approximately. Bone positions, animations, and mesh data all get converted by the GLB exporter
-- **GLB >4 joint influences warning** is normal for dense meshes — the exporter auto-selects the top 4 weights per vertex
+- **Axis conversion:** Blender Z-up → Godot Y-up. Blender (X, Y, Z) → Godot (X, -Z, Y) approximately. Bone positions and mesh data both get converted by the GLB exporter
 
 ### Other MCP Gotchas
 - Hair/accessory geometry is typically disconnected from the body mesh (no shared vertices), making it safe to delete and rebuild independently
 - Always check both local and world coordinates — if `matrix_world` is identity, they're the same
 - `bmesh.ops.delete` with `context='FACES'` deletes faces but may leave orphan vertices; clean them up with a second pass
-- Rotating armatures without also rotating the child mesh vertices breaks skinning — avoid; use Godot-side `Transform3D` rotation on the model node instead
+- Don't rotate armatures in Blender to fix orientation — it breaks skinning; use Godot-side `Transform3D` rotation on the model node instead
 - `bpy.ops.ed.undo()` in MCP scripts can crash or disconnect the Blender session — avoid relying on undo; work non-destructively instead
 
 ---

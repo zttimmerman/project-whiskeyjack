@@ -305,9 +305,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 [node name="VillageElder" parent="." instance=ExtResource("12_npc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, 2)
 dialogue_id = "village_elder"
-npc_name = "Village Elder"
+npc_name = "Idrenna"
 completion_quest_id = "clear_eastern_road"
 completion_dialogue_id = "village_elder_complete"
+return_stage_id = "return_to_keeper"
 
 [node name="QuestAdvanceArea" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 1.5, 0)
