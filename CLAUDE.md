@@ -237,32 +237,33 @@ For consumables, use `stats_modifier = {"heal": 30}` — the `use()` method read
 
 ---
 
-## 3D Asset Workflow (Blender MCP)
+## 3D Asset Workflow
 
-This project uses the **Blender MCP** to create, generate, and edit 3D models directly from Claude Code. All meshes live in `assets/meshes/` as `.glb` files.
+All meshes live in `assets/meshes/` as `.glb` files. There are two tools:
+- **Tripo CLI** (`tripo`): AI generation of base meshes. Every generation goes through the **`tripo` project skill** (`.claude/skills/tripo/`), which owns the procedure, the manifests and spend tracking.
+- **Blender MCP:** inspection, cleanup and simple manual edits. It isn't used for generation.
 
 ### Setup
-- **MCP install:** `claude mcp add blender uvx blender-mcp` (user-level, one-time)
-- **Every session:** Blender must be open with the BlenderMCP addon active and server started (sidebar → BlenderMCP → "Start Server"). If the `mcp__blender__*` tools are missing, remind the user to:
+- **Tripo CLI:** `tripo-cli` is installed globally under Node 20. The nvm default is Node 16, so the wrapper `~/.local/bin/tripo` pins Node 20; always call plain `tripo`.
+- **Tripo auth:** `tripo login` (browser device flow) saves the API key to `~/.tripo/config.json`. Never paste keys into chat, code, docs or logs.
+- **Tripo credits:** buy API credits in the console at https://platform.tripo3d.ai (API credits are separate from studio.tripo3d.ai). `tripo topup` opens a stale page.
+- **Blender MCP install:** `claude mcp add blender uvx blender-mcp` (user-level, one-time)
+- **Every Blender session:** Blender must be open with the BlenderMCP addon active and the server started (sidebar → BlenderMCP → "Start Server"). If the `mcp__blender__*` tools are missing, remind the user to:
   1. Open Blender
   2. Enable the BlenderMCP addon (Edit → Preferences → Add-ons)
   3. Click "Start Server" in the BlenderMCP sidebar panel
   4. Restart the Claude Code session if the MCP was just installed
-- **AI generation integrations** must be enabled per-session in the BlenderMCP sidebar panel (checkboxes + API keys where needed), then reconnect
 
-### AI Model Generation (primary workflow for new assets)
+### AI Model Generation (Tripo CLI)
 
-Base meshes should be **AI-generated** whenever possible, then brought within the vertex budget and texture rules (see Visual Style Rules) via MCP scripting. Do not hand-code complex geometry vertex-by-vertex — that's only appropriate for simple shapes (hair spikes, flat panels, accessories).
+Base meshes should be **AI-generated** whenever possible, then brought within the vertex budget and texture rules (see Visual Style Rules). Do not hand-code complex geometry vertex-by-vertex — that's only appropriate for simple shapes (hair spikes, flat panels, accessories).
 
-**Hyper3D Rodin Gen-2 via fal.ai (primary — $0.40/generation):**
-- Pay-per-use through fal.ai, no subscription required
-- The BlenderMCP addon has been **patched** to use Rodin v2 endpoints (`fal-ai/hyper3d/rodin/v2` for image-to-3D, `fal-ai/hyper3d/rodin/v2/text-to-3d` for text-to-3D). The addon file is at `~/Library/Application Support/Blender/5.0/scripts/addons/addon.py`
-- v2 request params hardcoded in the patched addon: `quality_mesh_option: "50K Quad"`, `geometry_file_format: "glb"`, `material: "PBR"`, `TAPose: true`. The mesh this returns is roughly 10–25× over the character budget and carries extra material maps — every generation **must** go through Post-Generation Cleanup before use
-- **Important:** fal.ai queue URLs (poll/fetch) use the path `fal-ai/hyper3d/requests/{id}`, NOT the v2 submission path — the addon's poll/import URLs must stay as the original non-v2 format
-- Enable in BlenderMCP sidebar → "Use Hyper3D Rodin 3D model generation" → select **fal.ai** mode → enter fal.ai API key
-- Workflow: `generate_hyper3d_model_via_text` or `_via_images` → `poll_rodin_job_status` → `import_generated_asset`
-- Generated models come in at normalized size (~1 unit) — rescale after import to match the game world
+- **Two skills, two layers:** the **asset-pipeline** skill (`scripts/pipeline.py <asset-id> --stage concept|model|clean|validate|all`) orchestrates briefs, stages, Blender cleanup, Godot validation and manifests. The **tripo** skill is the vendor adapter, and every paid `tripo` call goes through it (dry run → the user confirms the cost → paid run). `pipeline.py` only prints `tripo` commands; it never runs a paid one.
+- **Art-bible parameters:** `--param pbr=false --param texture=true --param face_limit=<from the brief>`, GLB output only. Never use the `--for` presets; they request PBR materials, 15K faces and 2048² FBX conversion.
+- **Manifest:** `assets/manifests/<asset-id>.json` (committed), written by `pipeline.py`. Each stage records its inputs and outputs (with hashes), the prompt, parameters, the actual credit cost, tool versions (tripo, Blender, Godot, Python) and a timestamp. The CLI is a moving dependency, so versions are always recorded.
+- **Output URLs expire ~5 minutes after a task succeeds:** download in the same run. Resuming is file-based (raw output in the gitignored `.tripo-out/`), never task-ID-based.
 - **Prompt tips:** include "no weapons, empty hands" to avoid baked-in weapons; include "T-pose" or "A-pose" so the model can be fitted to the shared humanoid skeleton; AI may still generate unwanted items — regenerate rather than attempting mesh surgery
+- **Don't use Blender MCP's generation tools** (`mcp__blender__generate_*`, including its Rodin, Hunyuan and Tripo integrations). They bypass the manifest and credit tracking.
 
 **Sketchfab (for sourcing pre-made assets):**
 - Search for CC0/free-license low-poly models when AI generation isn't the right fit; sourced models follow the same budget and albedo-only rules
@@ -273,12 +274,12 @@ Base meshes should be **AI-generated** whenever possible, then brought within th
 ### API Spend Safeguards
 
 **Hard rules — Claude must follow these without exception:**
-- **$5 max per session** (~12 Rodin generations at $0.40 each)
-- **Always state the cost and get explicit user confirmation** before every generation call — no silent API spend
-- **Track a running total** of generations and estimated cost in the conversation; display it with each confirmation prompt
-- **Stop and warn** when approaching the cap (e.g., at $4.00 / 10 generations)
+- **500 credits max per session** (1 credit = $0.01; a textured text-to-3D model is ~20 credits)
+- **Always state the estimated cost and get explicit user confirmation** before every paid `tripo` command, with no silent spend. The CLI auto-confirms when run non-interactively, so the confirmation must come from the user in chat. `.claude/settings.json` also forces a permission prompt on paid `tripo` subcommands and on Blender MCP generation tools.
+- **Track a running total** of *actual* spend (the balance difference) in the conversation; display `used / 500` with each confirmation prompt
+- **Stop and warn** at 400 credits
 - **Refuse to generate** if the session cap would be exceeded, unless the user explicitly raises the limit for that session
-- If a generation fails or produces unusable results, it still counts toward the session total (the API was still called)
+- Failed or unusable generations still count, at whatever the balance difference shows
 
 ### Post-Generation Cleanup (MCP scripting)
 

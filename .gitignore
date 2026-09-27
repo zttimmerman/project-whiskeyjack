@@ -10,3 +10,6 @@
 
 # macOS
 .DS_Store
+
+# Raw Tripo CLI downloads (hidden dir, so Godot also skips importing it)
+.tripo-out/
