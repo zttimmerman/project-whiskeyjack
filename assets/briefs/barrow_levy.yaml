@@ -7,9 +7,9 @@ brief: |
   (archer) variants. Posture and the held prop carry the read; Back-file adds a
   Signal Red wrap material variant.
 prompt: |
-  A humanoid skeleton of Old Bone stained peat-brown at the joints, in a rotted Saddle
-  Leather harness, scraps of wool clinging to the ribs, roots threading the pelvis, empty
-  hands, T-pose.
+  A humanoid skeleton in Old Bone, stained peat-brown at the joints, with a clearly
+  readable skull and ribcage, wearing a rotted leather harness in Saddle Leather: a belt
+  at the waist and two straps crossing the chest and back. Empty hands, T-pose.
 face_limit: 5000
 tripo_model: P1-20260311
 triangle_budget: 5500

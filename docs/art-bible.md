@@ -8,20 +8,22 @@ Derived from shipped assets and `CLAUDE.md` → Visual Style Rules. Faction grou
 
 Hex values are either set exactly in a scene or script, or sampled from a shipped texture. Sampled values were quantized to 24-step bins, so they're approximate.
 
-| Name | Hex | Derived from | Use |
-|---|---|---|---|
-| Garrison Teal | `#0C5454` | Player tunic (`player_character_texture_diffuse.png`, sampled) | Imperial cloth, player identity |
-| Saddle Leather | `#4A2A10` | Player straps and boots (same texture, sampled) | Leather, harness, belts |
-| Barrow Oak | `#8C5933` | Crate/barrel albedo `Color(0.55, 0.35, 0.2)` (`Level1.tscn`) | Timber, shafts, shield faces |
-| Old Bone | `#CCB484` | Skeleton base color (`archer_enemy_skeleton_baseColor.png`, sampled) | Bone, parchment, pale cloth |
-| Wet Slate | `#736B66` | Wall albedo `Color(0.45, 0.42, 0.40)` (Level scenes) | Dressed stone, roads |
-| Rain Stone | `#4D4740` | Wall albedo `Color(0.3, 0.28, 0.25)` | Field stone, oilskin |
-| Peat Black | `#2E2926` | Floor albedo `Color(0.18, 0.16, 0.15)` | Peat, soot, deep shadow areas |
-| Blackened Iron | `#242424` | Torch iron (`prop_torch_material_diffuse.png`, sampled) | Iron, helms, fittings |
-| Torch Amber | `#FFCC80` | Torch light `Color(1.0, 0.8, 0.5)` (Level scenes) | Firelight, warmth, the player's realm |
-| Signal Red | `#C71F14` | HP bar fill (`HUD.gd:52`) | Blood, danger, rare accents |
-| Tarnished Gold | `#E6BF1A` | XP bar fill (`HUD.gd:55`) | Brass, rank marks, reward accents |
-| Overcast Blue | `#8C8CCC` | UI panel border (`HUD.gd:40`) | Cold light, rain, the Sleet |
+**Names are for people; prompts get the plain color.** Image models can't resolve a name like "Old Bone" (the blade's first attempt came back green). `scripts/pipeline.py` replaces every palette name in a prompt with its **Plain color**, so briefs can keep using the names. A plain color is a concrete color phrase only: no palette names, and no material words.
+
+| Name | Hex | Plain color | Derived from | Use |
+|---|---|---|---|---|
+| Garrison Teal | `#0C5454` | deep dark teal | Player tunic (`player_character_texture_diffuse.png`, sampled) | Imperial cloth, player identity |
+| Saddle Leather | `#4A2A10` | dark reddish-brown | Player straps and boots (same texture, sampled) | Leather, harness, belts |
+| Barrow Oak | `#8C5933` | warm mid-brown | Crate/barrel albedo `Color(0.55, 0.35, 0.2)` (`Level1.tscn`) | Timber, shafts, shield faces |
+| Old Bone | `#CCB484` | pale yellowed beige | Skeleton base color (`archer_enemy_skeleton_baseColor.png`, sampled) | Bone, parchment, pale cloth |
+| Wet Slate | `#736B66` | mid warm grey | Wall albedo `Color(0.45, 0.42, 0.40)` (Level scenes) | Dressed stone, roads |
+| Rain Stone | `#4D4740` | dark brownish grey | Wall albedo `Color(0.3, 0.28, 0.25)` | Field stone, oilskin |
+| Peat Black | `#2E2926` | very dark brown-black | Floor albedo `Color(0.18, 0.16, 0.15)` | Peat, soot, deep shadow areas |
+| Blackened Iron | `#242424` | near-black charcoal | Torch iron (`prop_torch_material_diffuse.png`, sampled) | Iron, helms, fittings |
+| Torch Amber | `#FFCC80` | pale warm amber | Torch light `Color(1.0, 0.8, 0.5)` (Level scenes) | Firelight, warmth, the player's realm |
+| Signal Red | `#C71F14` | vivid scarlet red | HP bar fill (`HUD.gd:52`) | Blood, danger, rare accents |
+| Tarnished Gold | `#E6BF1A` | bright golden yellow | XP bar fill (`HUD.gd:55`) | Brass, rank marks, reward accents |
+| Overcast Blue | `#8C8CCC` | muted lavender blue | UI panel border (`HUD.gd:40`) | Cold light, rain, the Sleet |
 
 **Balance:** scenes should be mostly the cool, muted colors (Wet Slate, Rain Stone, Peat Black), with Torch Amber marking wherever people live. Save Signal Red and Tarnished Gold for accents.
 
@@ -34,9 +36,10 @@ Hex values are either set exactly in a scene or script, or sampled from a shippe
 
 ## Prompt blocks
 
-Generation prompts are built from two blocks plus the brief's own description. `scripts/pipeline.py` reads both blocks from this section, so edit them here only:
-- **Concept-image prompts:** FORM + LIGHTING + description.
-- **3D-model prompts:** FORM + description. Lighting words are left out because 3D generation may misread them or bake them into the albedo. The pipeline's 3D step is multiview-to-3D, whose endpoint takes no prompt, so this composition applies only where a 3D endpoint takes text.
+Generation prompts are built from these blocks plus the brief's own description, with palette names swapped for their plain colors (see Palette). `scripts/pipeline.py` reads FORM and CONCEPT LIGHTING from this section, so edit them here only. Which lighting applies depends on what the image is for:
+- **Concept images: anything that feeds multiview-to-3D** (every pipeline concept and refine, characters and props alike): FORM + CONCEPT LIGHTING + description. The image is the model's only input, so its lighting must show true base colors and clean forms. Directional light bakes shadows into the generated texture and misleads reconstruction.
+- **Mood and reference images, never fed to 3D** (how an area or character should feel in-game): FORM + MOOD LIGHTING + description. The pipeline never produces these, and never uses one as a concept.
+- **3D-model prompts:** FORM + description, with no lighting. The pipeline's 3D step is multiview-to-3D, whose endpoint takes no prompt, so this composition applies only where a 3D endpoint takes text.
 
 **The concept image is the only channel for FORM.** Multiview-to-3D takes no prompt, so FORM reaches the model only through the approved concept. Judge concepts as low-poly game assets (flat shading, simple forms, minimal fine surface detail), not as attractive illustrations. A detailed, painterly concept produces a detailed mesh, and `face_limit` will destroy that detail rather than simplify it.
 
@@ -49,7 +52,17 @@ matte hand-painted albedo-only texture, restricted muted palette. No
 photorealism, no glossy PBR shine, no pixel art.
 ```
 
-### LIGHTING block
+### CONCEPT LIGHTING block
+
+```
+Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey
+background. Every surface shows its true base color at the same brightness,
+front and back, with no cast shadows and no highlights.
+```
+
+### MOOD LIGHTING block
+
+For mood and reference images only. Never use it in anything that feeds multiview-to-3D.
 
 ```
 Lit for a low-ambient torchlit interior: dim slate-grey ambient, one warm
@@ -57,7 +70,7 @@ torch-amber key light, deep but not black shadows. No lighting or shadow
 painted into the texture. No bloom.
 ```
 
-**Why concepts get the lighting:** concepts are lit the way the levels actually are, with low Wet Slate ambient and a warm torch key (see Rendering above). Generated albedo is then judged, and painted, for values that read in that light, not in a bright studio render. Lighting must never be baked into the albedo; the engine supplies it.
+**Why two lightings:** a concept's pixels become the mesh's texture and shape cues, so any light in the image ends up baked into the albedo, and the engine lights the asset a second time. Concepts are therefore flat-lit. Whether the albedo's values *read* in the levels' low Wet Slate ambient and warm torch key (see Rendering above) is judged afterwards, on the in-engine asset or on a mood image, never by lighting the concept.
 
 ## Faction color groupings
 
@@ -90,7 +103,7 @@ Every asset gets a brief before any generation spend. Fields:
 - **Rig / attachment:** skeleton or socket.
 - **Scale & pivot**
 - **Animation:** clip names the code plays, from the shared library.
-- **Prompt:** the visual description. The pipeline prepends the FORM block (and, for concept images, the LIGHTING block).
+- **Prompt:** the visual description at silhouette level: the shapes that must read at gameplay distance, with colors given by palette name (the pipeline swaps in the plain colors). Wear, small marks and surface detail belong in the albedo, never in the prompt. At the `face_limit`, modelled fine detail either vanishes or eats the budget (the Levy Blade spent 84% of its triangles on the grip wrap). The pipeline prepends the FORM block, plus the CONCEPT LIGHTING block for concept images.
 - **Accept when:** a checklist for commit.
 - **Cost:** the number of Tripo generations needed. Prices, estimates and confirmation live in the tripo skill (`.claude/skills/tripo/`).
 
@@ -103,11 +116,11 @@ Every asset gets a brief before any generation spend. Fields:
 - **Silhouette:** spiky dark hair (the player's identity mark), knee-length tunic flare, harness straps crossing the back.
 - **Budget:** ≤ 5,500 triangles (Tripo `face_limit` 5,000 + 10%); one albedo at 256×256.
 - **Palette:** Garrison Teal tunic · Saddle Leather harness and boots · Blackened Iron buckles · Tarnished Gold company-number stitching under a Notch on the left shoulder.
-- **Materials & wear:** wool, oiled leather; rain-darkened hem, scuffed boots, a patched elbow.
+- **Materials & wear:** wool, oiled leather. The wear (a rain-darkened hem, scuffed boots, a patched elbow) and the Notch patch are painted in the albedo during the texture pass, and kept out of the prompt.
 - **Rig / attachment:** the generated mesh needs a humanoid skeleton that maps onto Godot's `SkeletonProfileHumanoid`; how it gets rigged is still open (CLAUDE.md → Rigging & Animation). Pipeline stage 4 proposes the `BoneMap`. The right hand is the weapon socket, mapped in a `SocketMap` like every other rig.
 - **Scale & pivot:** 1.8 m tall, feet at origin, facing −Y in Blender. The `.tscn` transform is unchanged (CLAUDE.md → Blender → Godot gotchas).
 - **Animation:** library clips `idle`, `run`, `dodge_roll`, `attack_light`, `attack_heavy`, `death`. The current hand-keyed clips are retired.
-- **Prompt:** FORM block + *"A young frontier soldier in a knee-length Garrison Teal wool tunic, Saddle Leather harness and boots, spiky dark hair, empty hands, T-pose. Rain-darkened hem, scuffed leather, a small notched teal square patch on the left shoulder."*
+- **Prompt:** FORM block + *"A young frontier soldier in a knee-length wool tunic in Garrison Teal that flares at the hem, a leather harness in Saddle Leather with two straps crossing the chest and back, leather boots in Saddle Leather, spiky dark hair, empty hands, T-pose."*
 - **Accept when:** ≤ 5,500 triangles; albedo only at ≤ 256²; retarget previews all 6 clips without breaking; teal and the hair read from the gameplay camera; face and hands still recognizable.
 - **Cost:** 1 Tripo generation, plus one per rejected attempt.
 
@@ -119,11 +132,11 @@ Every asset gets a brief before any generation spend. Fields:
 - **Budget:** ≤ 5,500 triangles (Tripo `face_limit` 5,000 + 10%); albedo at 256×256.
 - **Palette:** Old Bone · Saddle Leather harness scraps · Blackened Iron (via props) · **Back-file only:** Signal Red rag wraps on the forearms and brow.
 - **Back-file variant:** a second albedo, `barrow_levy_backfile_baseColor.png` (256²), identical except for the painted Signal Red wraps. It's applied as a material override in `ArcherEnemy.tscn`, so there's no second mesh.
-- **Materials & wear:** peat-stained joints, root tendrils, cracked bone, rotted leather.
+- **Materials & wear:** peat-stained joints, cracked bone and rotted leather, all painted in the albedo. The root tendrils and wool scraps are lore (`docs/world/05-bestiary.md`), not geometry, and are kept out of the prompt.
 - **Rig / attachment:** the new rig must map onto `SkeletonProfileHumanoid`; pipeline stage 4 proposes the `BoneMap`. Sockets `hand_r` (blade) and `hand_l` (bow) are mapped to bones **only** in `data/rigs/barrow_levy_sockets.tres`, which still names the Sketchfab bones: update that file for the new rig, and nothing else. Stage 4 fails until the sockets resolve.
 - **Scale & pivot:** 1.8 m tall, feet at origin, facing −Y in Blender. The model node keeps `Transform3D(-1,0,0,0,1,0,0,0,-1,0,-0.9,0)`.
 - **Animation:** the code plays `idle`, `run`, `attack`, `stagger`, `death` for **both** variants. The library must provide a melee `attack` for Front-file and a bow-draw `attack` for Back-file, remapped per variant. **Open item:** the shared library needs a bow-draw clip.
-- **Prompt:** FORM block + *"A humanoid skeleton of Old Bone stained peat-brown at the joints, in a rotted Saddle Leather harness, scraps of wool clinging to the ribs, roots threading the pelvis, empty hands, T-pose."*
+- **Prompt:** FORM block + *"A humanoid skeleton in Old Bone, stained peat-brown at the joints, with a clearly readable skull and ribcage, wearing a rotted leather harness in Saddle Leather: a belt at the waist and two straps crossing the chest and back. Empty hands, T-pose."*
 - **Accept when:** the retarget plays all 5 clips on both variants; Back-file is distinguishable from Front-file at 15 m in the Level 1 corridor with props hidden; budget still met.
 - **Cost:** 1 Tripo generation, plus one per rejected attempt. The Back-file texture and the bone map are manual or scripted work.
 

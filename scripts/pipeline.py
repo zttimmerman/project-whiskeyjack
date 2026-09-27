@@ -124,30 +124,43 @@ def parse_brief_yaml(text, path):
     return data
 
 
+PALETTE_ROW = re.compile(r"^\| ([A-Z][A-Za-z ]+?) \| `#[0-9A-Fa-f]{6}` \| ([^|]+?) \|", re.M)
+
+
 def art_bible_palette():
-    rows = re.findall(r"^\| ([A-Z][A-Za-z ]+?) \| `#[0-9A-Fa-f]{6}` \|", ART_BIBLE.read_text(), re.M)
-    return set(rows)
+    """{name: plain color} from docs/art-bible.md's palette table, the only source."""
+    return dict(PALETTE_ROW.findall(ART_BIBLE.read_text()))
+
+
+def plain_colors(text):
+    """Swaps each palette name for its plain color: image models can't resolve names like "Old Bone"."""
+    palette = art_bible_palette()
+    for name in sorted(palette, key=len, reverse=True):
+        text = re.sub(rf"\b{re.escape(name)}\b", palette[name], text)
+    return text
 
 
 def prompt_blocks():
-    """FORM and LIGHTING blocks from docs/art-bible.md ("### FORM block" / "### LIGHTING block"), the only source."""
+    """FORM and CONCEPT LIGHTING blocks from docs/art-bible.md ("### <NAME> block" + a fenced block), the
+    only source. MOOD LIGHTING is deliberately not read: nothing the pipeline makes may be torchlit."""
     text = ART_BIBLE.read_text()
     blocks = {}
-    for name in ("FORM", "LIGHTING"):
+    for name in ("FORM", "CONCEPT LIGHTING"):
         m = re.search(rf"^### {name} block\s*\n+```\n(.*?)\n```", text, re.S | re.M)
         if not m:
             raise PipelineError(f"docs/art-bible.md has no fenced '### {name} block' section")
-        blocks[name.lower()] = " ".join(m.group(1).split())
+        blocks[name.lower().replace(" ", "_")] = " ".join(m.group(1).split())
     return blocks
 
 
 def compose_prompt(brief, kind, edit=None):
-    """Concept images get FORM + LIGHTING + description, and a refine swaps the description for
-    the edit instruction (the source image carries the subject). 3D models get FORM + description."""
+    """Concept images (everything that feeds multiview-to-3D) get FORM + CONCEPT LIGHTING + description,
+    and a refine swaps the description for the edit instruction (the source image carries the subject).
+    3D models get FORM + description. Palette names become plain colors throughout."""
     b = prompt_blocks()
     body = edit if kind == "refine" else brief["prompt"]
-    parts = [b["form"]] + ([b["lighting"]] if kind in ("concept", "refine") else []) + [" ".join(body.split())]
-    return " ".join(parts)
+    parts = [b["form"]] + ([b["concept_lighting"]] if kind in ("concept", "refine") else []) + [" ".join(body.split())]
+    return plain_colors(" ".join(parts))
 
 
 def load_brief(asset_id):
