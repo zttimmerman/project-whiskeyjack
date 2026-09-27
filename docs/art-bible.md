@@ -29,7 +29,7 @@ Hex values are either set exactly in a scene or script, or sampled from a shippe
 
 - **Vertices:** characters 2,000–5,000; props and small objects 500–2,000. Count Blender mesh vertices with modifiers applied, summed across the whole `.glb`.
 - **Textures:** albedo (base color) only, one texture per asset, 128×128 to 256×256, or vertex colors. No normal, roughness, metallic, occlusion, emissive or specular maps.
-- **Rendering:** one directional light plus ambient per area. Local lights are allowed only for visible sources such as torches and candelabras. No bloom, SSAO or SSR.
+- **Rendering:** one directional light plus ambient per area. Ambient is a `WorldEnvironment` with Wet Slate `#736B66` color at low energy: Level 1 uses 0.5, enough for figures to read against the floor away from torchlight without flattening the torch pools. Local lights are allowed only for visible sources such as torches and candelabras. No bloom, SSAO or SSR.
 - **Post-MVP, not now:** palette quantization, vertex-snap or affine-warp shaders, pixel fonts.
 
 ## STYLE BLOCK
