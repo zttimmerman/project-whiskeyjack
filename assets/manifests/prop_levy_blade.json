@@ -1,0 +1,627 @@
+{
+  "asset_id": "prop_levy_blade",
+  "stages": {
+    "concept": {
+      "status": "ok",
+      "timestamp": "2026-09-27T21:12:10+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/prop_levy_blade.yaml",
+          "sha256": "d2b53fa6313767d0f8488e0f0beaead69bd439820e5e79c4a363db50380c5533"
+        },
+        {
+          "path": "docs/art-bible.md",
+          "sha256": "faed263b458381ec35845d7227f564793dddb57d8c6384351d430792e55faaf9"
+        }
+      ],
+      "outputs": [],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.6.1.stable.official.14d19694e",
+        "tripo": "0.5.1"
+      },
+      "message": "no concept image (optional). To make one, run through the tripo skill: tripo generate text-to-image 'Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Lit for a low-ambient torchlit interior: dim slate-grey ambient, one warm torch-amber key light, deep but not black shadows. No lighting or shadow painted into the texture. No bloom. A single short leaf-shaped sword as an isolated prop, seen from the side. The blade tapers straight into the leather-wrapped grip in one continuous piece, its shoulders meeting the grip directly. The blade is blackened, near-black desaturated iron with a cold grey-brown cast, pitted, with a chipped edge. The grip is wrapped in rotted dark leather and capped with a small bone pommel.' -o .tripo-out/prop_levy_blade/concept-1 --no-open --json",
+      "actual_cost_credits": 0,
+      "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Lit for a low-ambient torchlit interior: dim slate-grey ambient, one warm torch-amber key light, deep but not black shadows. No lighting or shadow painted into the texture. No bloom. A single short leaf-shaped sword as an isolated prop, seen from the side. The blade tapers straight into the leather-wrapped grip in one continuous piece, its shoulders meeting the grip directly. The blade is blackened, near-black desaturated iron with a cold grey-brown cast, pitted, with a chipped edge. The grip is wrapped in rotted dark leather and capped with a small bone pommel.",
+      "params": {},
+      "cost_unknown_attempts": [],
+      "tripo_attempts": []
+    },
+    "model": {
+      "status": "ok",
+      "timestamp": "2026-09-27T21:12:10+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/prop_levy_blade.yaml",
+          "sha256": "d2b53fa6313767d0f8488e0f0beaead69bd439820e5e79c4a363db50380c5533"
+        },
+        {
+          "path": "docs/art-bible.md",
+          "sha256": "faed263b458381ec35845d7227f564793dddb57d8c6384351d430792e55faaf9"
+        },
+        {
+          "path": ".tripo-out/prop_levy_blade/attempt-1.spend.json",
+          "sha256": "1ff37d97c91a6272387998855fa613d782f45c454e7cc435fa3eb1aada64649f"
+        },
+        {
+          "path": ".tripo-out/prop_levy_blade/attempt-2.spend.json",
+          "sha256": "1af8146d81a40631c52e61de8858ffba9c713f7b2bc2037c839eafdc3d6238b1"
+        }
+      ],
+      "outputs": [
+        {
+          "path": ".tripo-out/prop_levy_blade/attempt-2/tripo-out/stylized-low-poly-3d-game-asset-2-e7bd2854/model.glb",
+          "sha256": "014b27c6c53b3a1c927ae61ddd46bfdf3c87be6099c6c0e2db960093010db0da"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.6.1.stable.official.14d19694e",
+        "tripo": "0.5.1"
+      },
+      "message": "Tripo download .tripo-out/prop_levy_blade/attempt-2/tripo-out/stylized-low-poly-3d-game-asset-2-e7bd2854/model.glb",
+      "actual_cost_credits": 80,
+      "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. A single short leaf-shaped sword as an isolated prop, seen from the side. The blade tapers straight into the leather-wrapped grip in one continuous piece, its shoulders meeting the grip directly. The blade is blackened, near-black desaturated iron with a cold grey-brown cast, pitted, with a chipped edge. The grip is wrapped in rotted dark leather and capped with a small bone pommel.",
+      "params": {
+        "pbr": false,
+        "texture": true,
+        "face_limit": 1000
+      },
+      "tripo_model": "P1-20260311",
+      "estimate_credits": 60,
+      "cost_check": [
+        {
+          "attempt": "attempt-1",
+          "status": "rejected",
+          "estimate_credits": 20,
+          "actual_balance_delta": 40,
+          "cli_reported_credits": 40,
+          "estimate_error": 20
+        },
+        {
+          "attempt": "attempt-2",
+          "status": "generated",
+          "estimate_credits": 40,
+          "actual_balance_delta": 40,
+          "cli_reported_credits": 40,
+          "estimate_error": 0
+        }
+      ],
+      "cost_unknown_attempts": [],
+      "tripo_attempts": [
+        {
+          "status": "rejected",
+          "started_at": "2026-09-27T20:38:46+00:00",
+          "user_confirmed_at": "2026-09-27T20:38:46+00:00",
+          "tripo_cli_version": "0.5.1",
+          "model_version": "P1-20260311",
+          "model_selection": "CLI auto-selected (low-poly intent)",
+          "region": "ov",
+          "command": "tripo make '<prompt>' --param pbr=false --param texture=true --param face_limit=1000 -o .tripo-out/prop_levy_blade/attempt-1 --no-open --json",
+          "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. A single short leaf-shaped iron sword with no crossguard, isolated prop, no hands, side view. Pitted blackened iron blade with a chipped edge, grip wrapped in rotted leather, a small bone pommel cap.",
+          "params": {
+            "pbr": false,
+            "texture": true,
+            "face_limit": 1000
+          },
+          "dry_run": {
+            "valid": true,
+            "warnings": [],
+            "cost_notes": []
+          },
+          "estimate_credits": 20,
+          "estimate_source": "developers.tripo3d.ai/en/pricing: text-to-3D, standard texture (checked 2026-09-27)",
+          "balance_before": {
+            "balance": 1000,
+            "frozen": 0
+          },
+          "finished_at": "2026-09-27T20:44:35+00:00",
+          "balance_after": {
+            "balance": 960,
+            "frozen": 0
+          },
+          "actual_spend": 40,
+          "cli_reported_credits": 40,
+          "exit_code": 0,
+          "task_ids": [
+            "af5c0376-1a3c-4ee6-b9fb-6d91a4d843ee"
+          ],
+          "raw_dir": ".tripo-out/prop_levy_blade/attempt-1/tripo-out/stylized-low-poly-3d-game-asset-af5c0376",
+          "raw_files": [
+            "model.glb",
+            "rendered_image.webp",
+            "generated_image.jpeg",
+            "preview.png"
+          ],
+          "estimate_note": "Estimate of 20 came from the pricing page's text-to-3D row, which appears to be the H-series price; the P1 text-to-3D run with a standard texture cost 40. CLI-reported credits matched the balance delta exactly.",
+          "rejected_at": "2026-09-27T20:57:28+00:00",
+          "rejected_reason": "Off-brief: modelled a crossguard despite 'no crossguard'; olive-green blade instead of blackened iron. Also generated 46 deg off-axis (fixed in stage 3) and upside down relative to the brief's pivot."
+        },
+        {
+          "status": "generated",
+          "started_at": "2026-09-27T21:10:08+00:00",
+          "user_confirmed_at": "2026-09-27T21:10:08+00:00",
+          "tripo_cli_version": "0.5.1",
+          "model_version": "P1-20260311",
+          "model_selection": "pinned via --model (brief tripo_model)",
+          "region": "ov",
+          "command": "tripo make 'Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. A single short leaf-shaped sword as an isolated prop, seen from the side. The blade tapers straight into the leather-wrapped grip in one continuous piece, its shoulders meeting the grip directly. The blade is blackened, near-black desaturated iron with a cold grey-brown cast, pitted, with a chipped edge. The grip is wrapped in rotted dark leather and capped with a small bone pommel.' --model P1-20260311 --param pbr=false --param texture=true --param face_limit=1000 -o .tripo-out/prop_levy_blade/attempt-2 --no-open --json",
+          "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. A single short leaf-shaped sword as an isolated prop, seen from the side. The blade tapers straight into the leather-wrapped grip in one continuous piece, its shoulders meeting the grip directly. The blade is blackened, near-black desaturated iron with a cold grey-brown cast, pitted, with a chipped edge. The grip is wrapped in rotted dark leather and capped with a small bone pommel.",
+          "params": {
+            "pbr": false,
+            "texture": true,
+            "face_limit": 1000
+          },
+          "dry_run": {
+            "valid": true,
+            "warnings": [],
+            "cost_notes": [],
+            "model_reason": "explicit --model"
+          },
+          "estimate_credits": 40,
+          "estimate_source": "observed: P1 text-to-3D, standard texture, attempt-1 on 2026-09-27",
+          "balance_before": {
+            "balance": 960,
+            "frozen": 0
+          },
+          "finished_at": "2026-09-27T21:12:09+00:00",
+          "balance_after": {
+            "balance": 920,
+            "frozen": 0
+          },
+          "actual_spend": 40,
+          "cli_reported_credits": 40,
+          "exit_code": 0,
+          "task_ids": [
+            "e7bd2854-92fe-42c6-91eb-940a0ffaa160"
+          ],
+          "raw_dir": ".tripo-out/prop_levy_blade/attempt-2/tripo-out/stylized-low-poly-3d-game-asset-2-e7bd2854",
+          "raw_files": [
+            "model.glb",
+            "rendered_image.webp",
+            "generated_image.jpeg",
+            "preview.png"
+          ]
+        }
+      ]
+    },
+    "clean": {
+      "status": "ok",
+      "timestamp": "2026-09-27T21:12:11+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/prop_levy_blade.yaml",
+          "sha256": "d2b53fa6313767d0f8488e0f0beaead69bd439820e5e79c4a363db50380c5533"
+        },
+        {
+          "path": ".tripo-out/prop_levy_blade/attempt-2/tripo-out/stylized-low-poly-3d-game-asset-2-e7bd2854/model.glb",
+          "sha256": "014b27c6c53b3a1c927ae61ddd46bfdf3c87be6099c6c0e2db960093010db0da"
+        },
+        {
+          "path": "scripts/blender_cleanup.py",
+          "sha256": "a257ca3d41419d6dbbaf5b24ddfe6e1b9aa6684013ad16bec035c59c87b02c76"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "assets/meshes/prop_levy_blade.glb",
+          "sha256": "9d5738d5a41a544121e1e4bccd1a90e317aeed19edc375bdb3283a3edd679238"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.6.1.stable.official.14d19694e",
+        "tripo": "0.5.1"
+      },
+      "message": "exported assets/meshes/prop_levy_blade.glb",
+      "actual_cost_credits": 0,
+      "params": {
+        "asset_id": "prop_levy_blade",
+        "type": "prop",
+        "face_limit": 1000,
+        "triangle_budget": 1100,
+        "texture_size": 128,
+        "target_size_m": 0.55,
+        "pivot": "base",
+        "palette": [
+          "Blackened Iron",
+          "Saddle Leather",
+          "Old Bone"
+        ],
+        "socket_map": null,
+        "animations": null,
+        "exclude_objects": null,
+        "tip_end": "top"
+      },
+      "report": {
+        "status": "pass",
+        "errors": [],
+        "warnings": [],
+        "blender_version": "5.0.1",
+        "input": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/prop_levy_blade/attempt-2/tripo-out/stylized-low-poly-3d-game-asset-2-e7bd2854/model.glb",
+        "output": "/Users/zach/Documents/repos/project-whiskeyjack/assets/meshes/prop_levy_blade.glb",
+        "materials": [
+          {
+            "name": "tripo_material_e7bd2854-92fe-42c6-91eb-940a0ffaa160",
+            "stripped": "normal, roughness, metallic, specular, emission and occlusion inputs are not carried over",
+            "converted_from": "principled",
+            "texture": "Color_e7bd2854-92fe-42c6-91eb-940a0ffaa160",
+            "alpha": false
+          }
+        ],
+        "textures": [
+          {
+            "name": "Color_e7bd2854-92fe-42c6-91eb-940a0ffaa160",
+            "size_before": [
+              2048,
+              2048
+            ],
+            "size_after": [
+              128,
+              128
+            ]
+          }
+        ],
+        "removed_objects": [],
+        "rigged": false,
+        "transform": {
+          "pivot": "base",
+          "size_before_m": [
+            0.2012,
+            0.998,
+            0.9863
+          ],
+          "principal_axis_before": [
+            0.059,
+            0.69,
+            -0.721
+          ],
+          "tilt_from_z_before_deg": 43.9,
+          "tilt_from_z_after_deg": 0.0,
+          "end_cross_sections_before_scale": {
+            "bottom": 0.006038,
+            "top": 0.021918
+          },
+          "tip_flipped": true,
+          "tip_check": "tip at top (thin/thick 0.28)",
+          "scale_factor": 0.40158,
+          "size_after_m": [
+            0.1212,
+            0.0701,
+            0.55
+          ],
+          "true_dims_m": {
+            "x": 0.1212,
+            "y": 0.0701,
+            "z": 0.55
+          },
+          "true_length_m": 0.55,
+          "min_after": [
+            -0.0606,
+            -0.0351,
+            -0.0
+          ]
+        },
+        "mesh_health": {
+          "totals": {
+            "as_imported": {
+              "vertices": 1484,
+              "edges": 2249,
+              "faces": 1017,
+              "triangles": 1017,
+              "quads": 0,
+              "ngons": 0,
+              "non_manifold_edges": 0,
+              "boundary_edges": 1447,
+              "boundary_loops": 253,
+              "wire_edges": 0,
+              "loose_vertices": 0,
+              "degenerate_faces": 0,
+              "zero_length_edges": 0,
+              "quad_ratio": 0.0,
+              "triangle_ratio": 1.0
+            },
+            "welded": {
+              "vertices": 492,
+              "edges": 1516,
+              "faces": 1017,
+              "triangles": 1017,
+              "quads": 0,
+              "ngons": 0,
+              "non_manifold_edges": 16,
+              "boundary_edges": 6,
+              "boundary_loops": 4,
+              "wire_edges": 0,
+              "loose_vertices": 0,
+              "degenerate_faces": 0,
+              "zero_length_edges": 0,
+              "part_count": 3,
+              "parts": [
+                {
+                  "triangles": 855,
+                  "vertices": 407,
+                  "size_m": [
+                    0.1212,
+                    0.0701,
+                    0.1858
+                  ]
+                },
+                {
+                  "triangles": 156,
+                  "vertices": 80,
+                  "size_m": [
+                    0.0917,
+                    0.0335,
+                    0.3679
+                  ]
+                },
+                {
+                  "triangles": 6,
+                  "vertices": 5,
+                  "size_m": [
+                    0.0145,
+                    0.0053,
+                    0.0154
+                  ]
+                }
+              ],
+              "quad_ratio": 0.0,
+              "triangle_ratio": 1.0
+            }
+          },
+          "per_mesh": [
+            {
+              "mesh": "tripo_node_e7bd2854-92fe-42c6-91eb-940a0ffaa160",
+              "as_imported": {
+                "vertices": 1484,
+                "edges": 2249,
+                "faces": 1017,
+                "triangles": 1017,
+                "quads": 0,
+                "ngons": 0,
+                "quad_ratio": 0.0,
+                "triangle_ratio": 1.0,
+                "non_manifold_edges": 0,
+                "boundary_edges": 1447,
+                "boundary_loops": 253,
+                "wire_edges": 0,
+                "loose_vertices": 0,
+                "degenerate_faces": 0,
+                "zero_length_edges": 0
+              },
+              "welded": {
+                "vertices": 492,
+                "edges": 1516,
+                "faces": 1017,
+                "triangles": 1017,
+                "quads": 0,
+                "ngons": 0,
+                "quad_ratio": 0.0,
+                "triangle_ratio": 1.0,
+                "non_manifold_edges": 16,
+                "boundary_edges": 6,
+                "boundary_loops": 4,
+                "wire_edges": 0,
+                "loose_vertices": 0,
+                "degenerate_faces": 0,
+                "zero_length_edges": 0,
+                "parts": [
+                  {
+                    "triangles": 855,
+                    "vertices": 407,
+                    "size_m": [
+                      0.1212,
+                      0.0701,
+                      0.1858
+                    ]
+                  },
+                  {
+                    "triangles": 156,
+                    "vertices": 80,
+                    "size_m": [
+                      0.0917,
+                      0.0335,
+                      0.3679
+                    ]
+                  },
+                  {
+                    "triangles": 6,
+                    "vertices": 5,
+                    "size_m": [
+                      0.0145,
+                      0.0053,
+                      0.0154
+                    ]
+                  }
+                ],
+                "part_count": 3
+              }
+            }
+          ],
+          "weld_distance_m": 1e-05,
+          "note": "baseline only; nothing fails on these yet"
+        },
+        "triangle_count": 1017,
+        "triangle_budget": 1100,
+        "vertex_metrics": {
+          "split_at_seams": 1484,
+          "welded": 492,
+          "note": "metrics only; the budget is in triangles"
+        },
+        "animations": [],
+        "exported": {
+          "images": 1,
+          "materials": [
+            {
+              "name": "tripo_material_e7bd2854-92fe-42c6-91eb-940a0ffaa160",
+              "alphaMode": "OPAQUE",
+              "base_color_texture": true
+            }
+          ],
+          "animations": 0,
+          "skins": 0
+        }
+      }
+    },
+    "validate": {
+      "status": "ok",
+      "timestamp": "2026-09-27T21:12:12+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/prop_levy_blade.yaml",
+          "sha256": "d2b53fa6313767d0f8488e0f0beaead69bd439820e5e79c4a363db50380c5533"
+        },
+        {
+          "path": "assets/meshes/prop_levy_blade.glb",
+          "sha256": "9d5738d5a41a544121e1e4bccd1a90e317aeed19edc375bdb3283a3edd679238"
+        },
+        {
+          "path": "scripts/godot_validate.gd",
+          "sha256": "6cf56e54a966926d18a03d65a333c9858f48608aaf1cc4df9607a36bb4175a19"
+        },
+        {
+          "path": "scripts/blender_views.py",
+          "sha256": "554ef333528dafb4b79bcfc47f6af626daa7c39ceccc02b4ce7042966ed86d82"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "assets/manifests/prop_levy_blade/front.png",
+          "sha256": "c27fad9f39bb5676e40dd5d3ff9f0778d9804d563cfb5b7c18dcf39c5115af04"
+        },
+        {
+          "path": "assets/manifests/prop_levy_blade/right.png",
+          "sha256": "7c0d6916954aa7cf80fe3283a10ae1f2dac4e52c9ca6c014851c62f87930bfbb"
+        },
+        {
+          "path": "assets/manifests/prop_levy_blade/back.png",
+          "sha256": "5cf816ffaa57b6e14a2f7e9406c6755b777790e749d4e27c6873ceeec4a15976"
+        },
+        {
+          "path": "assets/manifests/prop_levy_blade/top.png",
+          "sha256": "8299fa579240bca3cc43047a5a7df46a78033490e407fa64ae55e7e383bb06d4"
+        },
+        {
+          "path": "assets/manifests/prop_levy_blade/wireframe_front.png",
+          "sha256": "da4d9d7c7063dc4b740f78355c04c67ce01ac78eae49cd074e8aa0d5efb2c395"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.6.1.stable.official.14d19694e",
+        "tripo": "0.5.1"
+      },
+      "message": "all checks passed",
+      "actual_cost_credits": 0,
+      "params": {
+        "asset_id": "prop_levy_blade",
+        "type": "prop",
+        "face_limit": 1000,
+        "triangle_budget": 1100,
+        "texture_size": 128,
+        "target_size_m": 0.55,
+        "pivot": "base",
+        "palette": [
+          "Blackened Iron",
+          "Saddle Leather",
+          "Old Bone"
+        ],
+        "socket_map": null,
+        "animations": null,
+        "exclude_objects": null,
+        "tip_end": "top",
+        "blender_triangle_count": 1017
+      },
+      "report": {
+        "animations": {
+          "expected": [],
+          "missing": [],
+          "present": []
+        },
+        "errors": [],
+        "godot_version": "4.6.1-stable (official)",
+        "import_method": "GLTFDocument (runtime); editor import settings such as a BoneMap don't apply",
+        "materials": [
+          {
+            "albedo_texture": [
+              128,
+              128
+            ],
+            "extra_maps": [],
+            "mesh": "tripo_node_e7bd2854-92fe-42c6-91eb-940a0ffaa160",
+            "surface": 0,
+            "transparency": "disabled",
+            "unshaded": false
+          }
+        ],
+        "rig": {
+          "skeleton": false
+        },
+        "status": "pass",
+        "textures": {
+          "count": 1,
+          "max_allowed": 128,
+          "sizes": [
+            [
+              128,
+              128
+            ]
+          ]
+        },
+        "triangles": {
+          "blender_count": 1017.0,
+          "budget": 1100,
+          "count": 1017
+        },
+        "vertex_metrics": {
+          "gpu_count": 1484,
+          "note": "metrics only; the budget is in triangles"
+        },
+        "warnings": [
+          "gross check: holes: 4 open boundary loops after welding"
+        ],
+        "views": {
+          "status": "ok",
+          "views": {
+            "front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/prop_levy_blade/front.png",
+              "coverage": 0.0803
+            },
+            "right": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/prop_levy_blade/right.png",
+              "coverage": 0.0462
+            },
+            "back": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/prop_levy_blade/back.png",
+              "coverage": 0.0803
+            },
+            "top": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/prop_levy_blade/top.png",
+              "coverage": 0.4157
+            },
+            "wireframe_front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/prop_levy_blade/wireframe_front.png",
+              "coverage": 0.0338
+            }
+          },
+          "errors": [],
+          "triangles": 1017,
+          "pieces_welded": 3
+        },
+        "gross_flags": [
+          "holes: 4 open boundary loops after welding"
+        ]
+      }
+    }
+  },
+  "brief": {
+    "path": "assets/briefs/prop_levy_blade.yaml",
+    "sha256": "d2b53fa6313767d0f8488e0f0beaead69bd439820e5e79c4a363db50380c5533"
+  },
+  "total_cost_credits": 80,
+  "updated_at": "2026-09-27T21:12:12+00:00"
+}

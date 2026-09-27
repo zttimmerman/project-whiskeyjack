@@ -32,6 +32,7 @@ From https://developers.tripo3d.ai/en/pricing (checked 2026-09-27; re-check if a
 | Date | Operation | Model | Estimate | Actual (balance delta) | CLI-reported |
 |---|---|---|---|---|---|
 | 2026-09-27 | text → 3D, standard texture, `face_limit` 1000 | P1-20260311 | 20 | **40** | 40 |
+| 2026-09-27 | text → 3D, standard texture, `face_limit` 1000, pinned `--model` | P1-20260311 | 40 | **40** | 40 |
 
 The pricing-page table below undercounted P1 by half. The page has H-, P- and Splat-series tabs; this table was read from its flattened text and is most likely the **H-series** price. Estimate P-series work from the observed-costs table, and add each new operation type to it after its first run.
 
