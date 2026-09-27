@@ -9,7 +9,8 @@ Imports the GLB and then:
 - rebuilds every material as albedo-only (base color, plus alpha if used), stripping
   normal/roughness/metallic/emission maps and baking non-image albedo;
 - downscales the albedo to texture_size;
-- checks the vertex count against vertex_budget, failing loudly instead of decimating;
+- aligns props along their principal axis and fails if the residual tilt exceeds PROP_AXIS_TOLERANCE_DEG;
+- checks the triangle count against triangle_budget, failing loudly instead of decimating;
 - exports the GLB.
 
 Budget numbers come only from --params, which is built from the brief YAML. Every outcome
@@ -22,9 +23,12 @@ import math
 import struct
 import sys
 
+import bmesh
 import bpy
+import numpy as np
 from mathutils import Matrix, Vector
 
+PROP_AXIS_TOLERANCE_DEG = 2.0
 STRIP_NOTE = "normal, roughness, metallic, specular, emission and occlusion inputs are not carried over"
 
 
@@ -86,6 +90,25 @@ def detect_forward(arms, meshes, height):
     return None, None
 
 
+def principal_axes(points):
+    """Eigenvectors of the point covariance, as Vectors ordered smallest to largest spread."""
+    arr = np.array([tuple(p) for p in points])
+    vals, vecs = np.linalg.eigh(np.cov((arr - arr.mean(0)).T))
+    return [Vector(vecs[:, i]) for i in range(3)], [float(v) for v in vals]
+
+
+def alignment_matrix(axes):
+    """Rotation taking the largest-spread axis to +Z and the second to +X (right-handed)."""
+    z = axes[2].normalized()
+    x = (axes[1] - axes[1].dot(z) * z).normalized()
+    y = z.cross(x)
+    return Matrix((x, y, z)).to_4x4()
+
+
+def tilt_from_z(axis):
+    return math.degrees(math.acos(min(1.0, abs(axis.normalized().z))))
+
+
 def apply_to_roots(matrix):
     for o in scene_objects():
         if o.parent is None:
@@ -107,6 +130,65 @@ def bake_transforms_into_meshes():
         if o.type not in ("MESH",):
             bpy.data.objects.remove(o, do_unlink=True)
     bpy.context.view_layer.update()
+
+
+def _bm_stats(bm):
+    faces = list(bm.faces)
+    sides = [len(f.verts) for f in faces]
+    boundary = [e for e in bm.edges if e.is_boundary]
+    # Count holes as connected loops of boundary edges (union-find over their vertices).
+    parent = {}
+
+    def find(v):
+        while parent.setdefault(v, v) != v:
+            parent[v] = parent[parent[v]]
+            v = parent[v]
+        return v
+    for e in boundary:
+        a, b = find(e.verts[0].index), find(e.verts[1].index)
+        if a != b:
+            parent[a] = b
+    loops = len({find(e.verts[0].index) for e in boundary})
+    n = len(faces) or 1
+    return {
+        "vertices": len(bm.verts), "edges": len(bm.edges), "faces": len(faces),
+        "triangles": sides.count(3), "quads": sides.count(4), "ngons": sum(1 for k in sides if k > 4),
+        "quad_ratio": round(sides.count(4) / n, 4), "triangle_ratio": round(sides.count(3) / n, 4),
+        "non_manifold_edges": sum(1 for e in bm.edges if len(e.link_faces) > 2),
+        "boundary_edges": len(boundary), "boundary_loops": loops,
+        "wire_edges": sum(1 for e in bm.edges if e.is_wire),
+        "loose_vertices": sum(1 for v in bm.verts if not v.link_edges),
+        "degenerate_faces": sum(1 for f in faces if f.calc_area() < 1e-12),
+        "zero_length_edges": sum(1 for e in bm.edges if e.calc_length() < 1e-9),
+    }
+
+
+def mesh_health(meshes):
+    """Baseline topology stats, recorded and never failed on. The glTF importer doesn't merge
+    vertices, so every UV seam arrives split and shows up as a boundary. The 'welded' pass
+    merges within 0.01 mm to separate real holes from seam splits."""
+    per_mesh, totals = [], {"as_imported": {}, "welded": {}}
+    for o in meshes:
+        entry = {"mesh": o.name}
+        for label, weld in (("as_imported", False), ("welded", True)):
+            bm = bmesh.new()
+            bm.from_mesh(o.data)
+            if weld:
+                bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=1e-5)
+            bm.verts.index_update()
+            st = _bm_stats(bm)
+            bm.free()
+            entry[label] = st
+            for k, v in st.items():
+                if not k.endswith("_ratio"):
+                    totals[label][k] = totals[label].get(k, 0) + v
+        per_mesh.append(entry)
+    for label in totals:
+        f = totals[label].get("faces") or 1
+        totals[label]["quad_ratio"] = round(totals[label].get("quads", 0) / f, 4)
+        totals[label]["triangle_ratio"] = round(totals[label].get("triangles", 0) / f, 4)
+    return {"totals": totals, "per_mesh": per_mesh, "weld_distance_m": 1e-5,
+            "note": "baseline only; nothing fails on these yet"}
 
 
 def albedo_source(nt):
@@ -306,15 +388,22 @@ def run(args, params, report):
             if snapped:
                 rot = Matrix.Rotation(math.radians(-snapped), 4, "Z")
     else:
-        dims = mx - mn
-        axis = max(range(3), key=lambda i: dims[i])
-        if axis == 0:
-            rot = Matrix.Rotation(math.radians(90), 4, "Y")
-        elif axis == 1:
-            rot = Matrix.Rotation(math.radians(-90), 4, "X")
-        xf["long_axis_before"] = "XYZ"[axis]
+        # Align the principal axis, not the bounding box: a bbox check misses diagonal props. The first
+        # Levy Blade sat 46 degrees off Z and passed every check at 45% over its true length.
+        axes, spread = principal_axes(world_points(meshes))
+        xf.update(principal_axis_before=[round(c, 3) for c in axes[2]],
+                  tilt_from_z_before_deg=round(tilt_from_z(axes[2]), 1))
+        if spread[2] < 1.2 * spread[1]:
+            report["warnings"].append("prop has no clear long axis (top two spreads within 20%); alignment is arbitrary")
+        rot = alignment_matrix(axes)
         report["warnings"].append("prop up-direction (which end is +Z) is unverified; check it in the socket")
     apply_to_roots(rot)
+    if params["type"] == "prop":
+        residual = tilt_from_z(principal_axes(world_points(meshes))[0][2])
+        xf["tilt_from_z_after_deg"] = round(residual, 3)
+        if residual > PROP_AXIS_TOLERANCE_DEG:
+            raise RuntimeError(f"ORIENTATION: principal axis still {residual:.1f} deg off +Z after alignment "
+                               f"(tolerance {PROP_AXIS_TOLERANCE_DEG} deg); not exporting")
 
     # Scale, then pivot
     mn, mx = bbox(world_points(meshes))
@@ -329,25 +418,33 @@ def run(args, params, report):
         bake_transforms_into_meshes()
         meshes = [o for o in scene_objects() if o.type == "MESH"]
     mn, mx = bbox(world_points(meshes))
+    # Props are principal-axis aligned by now, so the bounding box gives true dimensions along the part's own axes
     xf.update(scale_factor=round(scale, 5), size_after_m=[round(v, 4) for v in (mx - mn)],
-              min_after=[round(v, 4) for v in mn])
+              true_dims_m={"x": round(mx.x - mn.x, 4), "y": round(mx.y - mn.y, 4), "z": round(mx.z - mn.z, 4)},
+              true_length_m=round(mx.z - mn.z, 4), min_after=[round(v, 4) for v in mn])
     report["transform"] = xf
+    report["mesh_health"] = mesh_health(meshes)
 
     rebuild_materials(meshes, params["texture_size"], report)
 
-    # Budget: fail loudly; never decimate here (and never a rigged mesh)
+    # Budget is in triangles (n-gon = n-2). Vertex counts are metrics only: they move with UV-seam splits.
     dg = bpy.context.evaluated_depsgraph_get()
-    count = 0
+    tris = split_verts = 0
     for o in meshes:
         ev = o.evaluated_get(dg)
-        count += len(ev.to_mesh().vertices)
+        me = ev.to_mesh()
+        tris += sum(p.loop_total - 2 for p in me.polygons)
+        split_verts += len(me.vertices)
         ev.to_mesh_clear()
-    report["vertex_count"] = count
-    report["vertex_budget"] = params["vertex_budget"]
-    if count > params["vertex_budget"]:
+    report["triangle_count"] = tris
+    report["triangle_budget"] = params["triangle_budget"]
+    report["vertex_metrics"] = {"split_at_seams": split_verts,
+                                "welded": report["mesh_health"]["totals"]["welded"]["vertices"],
+                                "note": "metrics only; the budget is in triangles"}
+    if tris > params["triangle_budget"]:
         why = ("it's rigged, and decimating a skinned mesh wrecks its weights" if rigged
                else "stage 3 doesn't decimate")
-        raise RuntimeError(f"OVER BUDGET: {count} vertices > {params['vertex_budget']}. Not exporting; {why}. "
+        raise RuntimeError(f"OVER BUDGET: {tris} triangles > {params['triangle_budget']}. Not exporting; {why}. "
                            f"Regenerate with the brief's face_limit ({params['face_limit']}) or reduce the source.")
 
     for a in arms:

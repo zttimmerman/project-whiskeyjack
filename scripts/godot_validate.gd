@@ -3,7 +3,7 @@ extends SceneTree
 # Stage 4 (validate) of scripts/pipeline.py:
 #   godot --headless --path . -s scripts/godot_validate.gd -- --glb <path> --params <json> --report <json>
 # Imports the GLB at runtime with GLTFDocument, so no .import files are written, and reports:
-# bone names and their mapping onto SkeletonProfileHumanoid, socket bones, the vertex count,
+# bone names and their mapping onto SkeletonProfileHumanoid, socket bones, the triangle count,
 # textures, extra material maps and animations, all checked against the brief's numbers in --params.
 # Exit code: 0 pass, 2 fail.
 
@@ -193,6 +193,7 @@ func _guess_profile_name(bone: String) -> String:
 
 func _check_meshes(root: Node, params: Dictionary, report: Dictionary) -> void:
 	var gpu_verts := 0
+	var triangles := 0
 	var textures := {}
 	var materials: Array = []
 	for mi in root.find_children("*", "MeshInstance3D", true, false):
@@ -201,7 +202,10 @@ func _check_meshes(root: Node, params: Dictionary, report: Dictionary) -> void:
 			continue
 		for s in mesh.get_surface_count():
 			var arrays := mesh.surface_get_arrays(s)
-			gpu_verts += (arrays[Mesh.ARRAY_VERTEX] as PackedVector3Array).size()
+			var nverts := (arrays[Mesh.ARRAY_VERTEX] as PackedVector3Array).size()
+			gpu_verts += nverts
+			var idx = arrays[Mesh.ARRAY_INDEX]
+			triangles += ((idx as PackedInt32Array).size() if idx != null else nverts) / 3
 			var mat: Material = mi.get_active_material(s)
 			var entry := {"mesh": str(mi.name), "surface": s}
 			if mat is BaseMaterial3D:
@@ -232,21 +236,14 @@ func _check_meshes(root: Node, params: Dictionary, report: Dictionary) -> void:
 				entry["material"] = mat.get_class()
 			materials.append(entry)
 
-	var budget: int = params["vertex_budget"]
-	var blender_count = params.get("blender_vertex_count")
-	report["vertices"] = {
-		"gpu_count": gpu_verts,
-		"blender_count": blender_count,
-		"budget": budget,
-		"note": "the budget counts Blender vertices; the GPU count also splits vertices at UV seams and hard edges",
-	}
-	if blender_count != null:
-		if int(blender_count) > budget:
-			report["errors"].append("over budget: %d Blender vertices > %d" % [blender_count, budget])
-	elif gpu_verts > budget:
-		report["errors"].append("over budget: %d GPU vertices > %d (no Blender count to compare)" % [gpu_verts, budget])
-	if gpu_verts > budget and blender_count != null and int(blender_count) <= budget:
-		report["warnings"].append("GPU vertex count %d exceeds the budget only because of seam splits" % gpu_verts)
+	var budget: int = params["triangle_budget"]
+	var blender_tris = params.get("blender_triangle_count")
+	report["triangles"] = {"count": triangles, "blender_count": blender_tris, "budget": budget}
+	report["vertex_metrics"] = {"gpu_count": gpu_verts, "note": "metrics only; the budget is in triangles"}
+	if triangles > budget:
+		report["errors"].append("over budget: %d triangles > %d" % [triangles, budget])
+	if blender_tris != null and int(blender_tris) != triangles:
+		report["warnings"].append("Godot counts %d triangles, Blender %d" % [triangles, int(blender_tris)])
 
 	var size: int = params["texture_size"]
 	var tex_list: Array = textures.values()

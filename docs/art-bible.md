@@ -27,7 +27,7 @@ Hex values are either set exactly in a scene or script, or sampled from a shippe
 
 ## Budgets (authoritative; this file is their only source)
 
-- **Vertices:** characters 2,000–5,000; props and small objects 500–2,000. Count Blender mesh vertices with modifiers applied, summed across the whole `.glb`.
+- **Triangles (the budget unit):** every brief sets a triangle budget of its Tripo `face_limit` + 10%, since Tripo overshoots `face_limit` slightly (the first Levy Blade came in at 1,026 triangles for 1,000). Characters: `face_limit` 5,000, so 5,500 triangles; props are set per brief. The count is triangles after triangulation (an n-gon counts n−2), summed across the whole `.glb`, which is the same number Godot reports. Vertex counts (split at UV seams, and welded) are recorded as metrics only: they shift with seam splitting and can't be compared across assets.
 - **Textures:** albedo (base color) only, one texture per asset, 128×128 to 256×256, or vertex colors. No normal, roughness, metallic, occlusion, emissive or specular maps.
 - **Rendering:** one directional light plus ambient per area. Ambient is a `WorldEnvironment` with Wet Slate `#736B66` color at low energy: Level 1 uses 0.5, enough for figures to read against the floor away from torchlight without flattening the torch pools. Local lights are allowed only for visible sources such as torches and candelabras. No bloom, SSAO or SSR.
 - **Post-MVP, not now:** palette quantization, vertex-snap or affine-warp shaders, pixel fonts.
@@ -82,7 +82,7 @@ Every asset gets a brief before any generation spend. Fields:
 - **File / Source:** the target path, and whether it's existing, AI-generated or sourced.
 - **Role:** what it does in play.
 - **Silhouette:** what must read at ~10 m.
-- **Budget:** vertex ceiling, texture size, and the Tripo `face_limit`. These numbers live **only** here; each is copied into the asset's brief YAML (`assets/briefs/<asset-id>.yaml`), which the pipeline reads. A `face_limit` at or below the vertex ceiling leaves headroom, since a triangulated mesh has roughly half as many vertices as faces before UV seams.
+- **Budget:** the Tripo `face_limit`, the triangle budget (`face_limit` + 10%), and the texture size. These numbers live **only** here; each is copied into the asset's brief YAML (`assets/briefs/<asset-id>.yaml`), which the pipeline reads.
 - **Palette:** primary, secondary and accent, from the groupings above.
 - **Materials & wear**
 - **Rig / attachment:** skeleton or socket.
@@ -99,14 +99,14 @@ Every asset gets a brief before any generation spend. Fields:
 - **File / Source:** `assets/meshes/player.glb`, **generated with Tripo from this brief** and run through the asset pipeline. It replaces the shipped `player_character.glb` (Rodin v2: 50,566 vertices, a 2048² albedo, normal and metallic-roughness maps), which isn't cleaned or reused.
 - **Role:** the player; the camera sits behind them, so the back and shoulders read most.
 - **Silhouette:** spiky dark hair (the player's identity mark), knee-length tunic flare, harness straps crossing the back.
-- **Budget:** ≤ 5,000 vertices; one albedo at 256×256; Tripo `face_limit` 5,000.
+- **Budget:** ≤ 5,500 triangles (Tripo `face_limit` 5,000 + 10%); one albedo at 256×256.
 - **Palette:** Garrison Teal tunic · Saddle Leather harness and boots · Blackened Iron buckles · Tarnished Gold company-number stitching under a Notch on the left shoulder.
 - **Materials & wear:** wool, oiled leather; rain-darkened hem, scuffed boots, a patched elbow.
 - **Rig / attachment:** the generated mesh needs a humanoid skeleton that maps onto Godot's `SkeletonProfileHumanoid`; how it gets rigged is still open (CLAUDE.md → Rigging & Animation). Pipeline stage 4 proposes the `BoneMap`. The right hand is the weapon socket, mapped in a `SocketMap` like every other rig.
 - **Scale & pivot:** 1.8 m tall, feet at origin, facing −Y in Blender. The `.tscn` transform is unchanged (CLAUDE.md → Blender → Godot gotchas).
 - **Animation:** library clips `idle`, `run`, `dodge_roll`, `attack_light`, `attack_heavy`, `death`. The current hand-keyed clips are retired.
 - **Prompt:** FORM block + *"A young frontier soldier in a knee-length Garrison Teal wool tunic, Saddle Leather harness and boots, spiky dark hair, empty hands, T-pose. Rain-darkened hem, scuffed leather, a small notched teal square patch on the left shoulder."*
-- **Accept when:** ≤ 5,000 vertices; albedo only at ≤ 256²; retarget previews all 6 clips without breaking; teal and the hair read from the gameplay camera; face and hands still recognizable.
+- **Accept when:** ≤ 5,500 triangles; albedo only at ≤ 256²; retarget previews all 6 clips without breaking; teal and the hair read from the gameplay camera; face and hands still recognizable.
 - **Cost:** 1 Tripo generation, plus one per rejected attempt.
 
 ## Brief: Barrow-levy — skeleton (Front-file and Back-file)
@@ -114,7 +114,7 @@ Every asset gets a brief before any generation spend. Fields:
 - **File / Source:** `assets/meshes/barrow_levy.glb`, **generated with Tripo from this brief**. This is the pilot for the Tripo path. It replaces the shipped Sketchfab `archer_enemy.glb` (1,277 vertices, a 28-bone rig with rest-pose defects; see `docs/audit.md`), which stays in the game until the new mesh passes the pipeline.
 - **Role:** the slice's only enemy model: Front-file melee (×5) and Back-file archer (×2).
 - **Silhouette:** Front-file hunched forward with a blade; Back-file upright with a bow. Posture and the held prop carry the read.
-- **Budget:** ≤ 5,000 vertices (there's room to add harness straps and rags); albedo at 256×256; Tripo `face_limit` 5,000 for the planned regeneration.
+- **Budget:** ≤ 5,500 triangles (Tripo `face_limit` 5,000 + 10%); albedo at 256×256.
 - **Palette:** Old Bone · Saddle Leather harness scraps · Blackened Iron (via props) · **Back-file only:** Signal Red rag wraps on the forearms and brow.
 - **Back-file variant:** a second albedo, `barrow_levy_backfile_baseColor.png` (256²), identical except for the painted Signal Red wraps. It's applied as a material override in `ArcherEnemy.tscn`, so there's no second mesh.
 - **Materials & wear:** peat-stained joints, root tendrils, cracked bone, rotted leather.
@@ -130,14 +130,14 @@ Every asset gets a brief before any generation spend. Fields:
 - **File / Source:** `assets/meshes/prop_levy_blade.glb`, AI-generated (Tripo), then run through the full Post-Generation Cleanup. **This is the pipeline's first run.**
 - **Role:** visual only, held by Front-file levies. Damage stays on the existing `HitboxComponent`.
 - **Silhouette:** a short, broad leaf-shaped blade with no crossguard and a stubby wrapped grip. It must read as a blade, not a club, at 10 m.
-- **Budget:** ≤ 2,000 vertices (aim for the low end, ~500); albedo at 128×128; Tripo `face_limit` 1,000.
+- **Budget:** ≤ 1,100 triangles (Tripo `face_limit` 1,000 + 10%); albedo at 128×128.
 - **Palette:** Blackened Iron blade, pitted · Saddle Leather grip wrap, rotted · Old Bone pommel cap.
 - **Materials & wear:** centuries of burial, with a chipped edge, rust bloom and a frayed wrap.
 - **Rig / attachment:** no skeleton. Held in socket `hand_r` via `held_props` on the enemy scene; alignment is fixed with a child `Transform3D`, never by editing the mesh.
 - **Scale & pivot:** about 0.55 m overall (blade 0.40, grip 0.15). Origin at the base (pommel end), blade along Blender +Z. The socket's child `Transform3D` shifts it to the grip.
 - **Animation:** none.
 - **Prompt:** FORM block + *"A single short leaf-shaped iron sword with no crossguard, isolated prop, no hands, side view. Pitted Blackened Iron blade with a chipped edge, grip wrapped in rotted Saddle Leather, a small Old Bone pommel cap."*
-- **Accept when:** ≤ 2,000 vertices; albedo only at ≤ 128²; sits in the skeleton's right hand through all Front-file clips without clipping into the skull or ribs; reads as a blade from the gameplay camera.
+- **Accept when:** ≤ 1,100 triangles; true length 0.55 m along its principal axis; albedo only at ≤ 128²; sits in the skeleton's right hand through all Front-file clips without clipping into the skull or ribs; reads as a blade from the gameplay camera.
 - **Cost:** 1 Tripo generation; regenerate rather than doing mesh surgery.
 
 ## Brief: Levy Bow *(pilot asset)*
@@ -145,14 +145,14 @@ Every asset gets a brief before any generation spend. Fields:
 - **File / Source:** `assets/meshes/prop_levy_bow.glb`, AI-generated (Tripo), then run through the full Post-Generation Cleanup.
 - **Role:** visual only, held by Back-file levies. Projectiles stay as they are; an arrow prop is out of scope.
 - **Silhouette:** a short recurve bow with strongly curled tips, so it reads as a bow edge-on and face-on. The string is one thin strip and static.
-- **Budget:** ≤ 2,000 vertices (aim for ~600); albedo at 128×128; Tripo `face_limit` 1,200.
+- **Budget:** ≤ 1,320 triangles (Tripo `face_limit` 1,200 + 10%); albedo at 128×128.
 - **Palette:** Barrow Oak limbs, darkened · Old Bone tip caps · **Signal Red grip wrap**, which echoes the Back-file rag cue.
 - **Materials & wear:** warped, cracked wood; frayed string; a faded wrap.
 - **Rig / attachment:** no skeleton. Held in socket `hand_l` via `held_props`, aligned with a child `Transform3D`.
 - **Scale & pivot:** about 1.0 m tip to tip. Origin at the center (the grip), limbs along Blender ±Z.
 - **Animation:** none. The string doesn't deform (acceptable for MVP).
 - **Prompt:** FORM block + *"A single short recurve bow with strongly curled tips, isolated prop, no hands, no arrow, front view. Darkened Barrow Oak limbs with cracks, small Old Bone tip caps, a faded Signal Red cloth grip wrap, one thin string."*
-- **Accept when:** ≤ 2,000 vertices; albedo only at ≤ 128²; sits in the left hand through all Back-file clips; the curled silhouette reads at 15 m.
+- **Accept when:** ≤ 1,320 triangles; true length 1.0 m along its principal axis; albedo only at ≤ 128²; sits in the left hand through all Back-file clips; the curled silhouette reads at 15 m.
 - **Cost:** 1 Tripo generation.
 
 **Pilot total:** 4 Tripo generations (player, Barrow-levy, blade, bow), plus any rejected attempts. The tripo skill estimates and confirms each before it runs.

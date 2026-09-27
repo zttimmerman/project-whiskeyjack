@@ -10,7 +10,8 @@ prompt: |
   arrow, front view. Darkened oak limbs with cracks, small bone tip caps, a faded red
   cloth grip wrap, one thin string.
 face_limit: 1200
-vertex_budget: 2000
+tripo_model: P1-20260311
+triangle_budget: 1320
 texture_size: 128
 target_size_m: 1.0
 pivot: center

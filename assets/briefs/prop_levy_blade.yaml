@@ -10,7 +10,8 @@ prompt: |
   side view. Pitted blackened iron blade with a chipped edge, grip wrapped in rotted
   leather, a small bone pommel cap.
 face_limit: 1000
-vertex_budget: 2000
+tripo_model: P1-20260311
+triangle_budget: 1100
 texture_size: 128
 target_size_m: 0.55
 pivot: base

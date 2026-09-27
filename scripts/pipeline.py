@@ -149,7 +149,9 @@ def load_brief(asset_id):
     need("brief", lambda v: isinstance(v, str) and v.strip(), "non-empty text")
     need("prompt", lambda v: isinstance(v, str) and v.strip(), "non-empty text")
     need("face_limit", is_pos_int, "a positive integer")
-    need("vertex_budget", is_pos_int, "a positive integer")
+    need("triangle_budget", is_pos_int, "a positive integer (the art bible's face_limit + 10%)")
+    need("tripo_model", lambda v: isinstance(v, str) and re.fullmatch(r"[A-Za-z0-9.]+-\d{8}", v),
+         "a pinned Tripo wire version such as P1-20260311 (not an alias; don't rely on CLI auto-selection)")
     need("texture_size", lambda v: is_pos_int(v) and v & (v - 1) == 0, "a power of two")
     need("target_size_m", lambda v: isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0, "a positive number")
     need("pivot", lambda v: v in ("base", "center"), "base or center")
@@ -299,6 +301,18 @@ def attempt_costs(attempts):
     return total, unknown
 
 
+def cost_check(attempts):
+    """Per-attempt estimate vs actual balance difference, to judge how far the estimate can be trusted."""
+    rows = []
+    for a in attempts:
+        sp = a["spend"] or {}
+        est, act, cli = sp.get("estimate_credits"), sp.get("actual_spend"), sp.get("cli_reported_credits")
+        rows.append({"attempt": a["dir"].name, "status": sp.get("status"), "estimate_credits": est,
+                     "actual_balance_delta": act, "cli_reported_credits": cli,
+                     "estimate_error": (act - est) if isinstance(act, (int, float)) and isinstance(est, (int, float)) else None})
+    return rows
+
+
 def usable(attempts):
     ok = [a for a in attempts if a["files"] and (a["spend"] or {}).get("status") not in ("rejected", "lost", "failed")]
     return ok[-1] if ok else None
@@ -362,13 +376,15 @@ def stage_model(brief, m, dry_run, force):
         concept = m["stages"].get("concept", {}).get("outputs") or []
         source = shlex.quote(concept[0]["path"] if concept else prompt)
         flags = " ".join(f"--param {k}={str(v).lower()}" for k, v in params.items())
-        cmd = f"tripo make {source} {flags} -o {next_attempt_dir(aid, 'attempt', attempts)} --no-open --json"
+        cmd = (f"tripo make {source} --model {brief['tripo_model']} {flags} "
+               f"-o {next_attempt_dir(aid, 'attempt', attempts)} --no-open --json")
         print("model: no base mesh on disk yet. Generate it through the tripo skill "
               "(free dry run, then user confirmation, then the paid run):\n  " + cmd)
         if not dry_run:
             cost, unknown = attempt_costs(attempts)
             record(m, "model", "awaiting", inputs, [], "waiting on a Tripo run", prompt=prompt, params=params,
-                   actual_cost_credits=cost, cost_unknown_attempts=unknown, suggested_command=cmd)
+                   tripo_model=brief.get("tripo_model"), actual_cost_credits=cost,
+                   cost_check=cost_check(attempts), cost_unknown_attempts=unknown, suggested_command=cmd)
             save_manifest(m)
         return EXIT_AWAITING
     if not force and up_to_date(m["stages"].get("model"), inputs, [model]):
@@ -380,13 +396,15 @@ def stage_model(brief, m, dry_run, force):
         return EXIT_OK
     cost, unknown = attempt_costs(attempts)
     record(m, "model", "ok", inputs, [model], msg, prompt=None if brief.get("source_glb") else prompt,
-           params=None if brief.get("source_glb") else params, actual_cost_credits=cost,
-           cost_unknown_attempts=unknown, tripo_attempts=[a["spend"] for a in attempts if a["spend"]])
+           params=None if brief.get("source_glb") else params, tripo_model=brief.get("tripo_model"),
+           actual_cost_credits=cost, estimate_credits=sum((r["estimate_credits"] or 0) for r in cost_check(attempts)),
+           cost_check=cost_check(attempts), cost_unknown_attempts=unknown,
+           tripo_attempts=[a["spend"] for a in attempts if a["spend"]])
     return EXIT_OK
 
 
 def stage_params(brief):
-    keys = ("asset_id", "type", "face_limit", "vertex_budget", "texture_size", "target_size_m", "pivot",
+    keys = ("asset_id", "type", "face_limit", "triangle_budget", "texture_size", "target_size_m", "pivot",
             "palette", "socket_map", "animations", "exclude_objects")
     return {k: brief.get(k) for k in keys}
 
@@ -438,6 +456,11 @@ def stage_clean(brief, m, dry_run, force):
     print(f"clean: {'PASS' if passed else 'FAIL'}: {msg}")
     for w in report.get("warnings", []):
         print(f"clean: warning: {w}")
+    for label, t in (report.get("mesh_health") or {}).get("totals", {}).items():
+        print(f"clean: health ({label}): {t['vertices']} verts, {t['faces']} faces "
+              f"(tri {t['triangles']} / quad {t['quads']} / ngon {t['ngons']}, quad ratio {t['quad_ratio']}), "
+              f"non-manifold {t['non_manifold_edges']}, boundary {t['boundary_edges']} in {t['boundary_loops']} loops, "
+              f"loose verts {t['loose_vertices']}, degenerate faces {t['degenerate_faces']}")
     record(m, "clean", "ok" if passed else "failed", inputs, [out] if passed else [], msg,
            params=stage_params(brief), report=report)
     return EXIT_OK if passed else EXIT_CHECK_FAILED
@@ -459,7 +482,7 @@ def stage_validate(brief, m, dry_run, force):
     wd = work_dir(aid)
     params_path, report_path = wd / "validate-params.json", wd / "validate-report.json"
     params = stage_params(brief)
-    params["blender_vertex_count"] = (m["stages"].get("clean", {}).get("report") or {}).get("vertex_count")
+    params["blender_triangle_count"] = (m["stages"].get("clean", {}).get("report") or {}).get("triangle_count")
     if not dry_run:
         wd.mkdir(parents=True, exist_ok=True)
         params_path.write_text(json.dumps(params, indent=2))

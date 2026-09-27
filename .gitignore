@@ -13,3 +13,5 @@
 
 # Raw Tripo CLI downloads (hidden dir, so Godot also skips importing it)
 .tripo-out/
+# Tripo CLI per-directory context (last task pointer; machine-local)
+.tripo/

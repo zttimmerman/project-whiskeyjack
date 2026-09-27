@@ -11,7 +11,8 @@ prompt: |
   harness and boots, spiky dark hair, empty hands, T-pose. Rain-darkened hem, scuffed
   leather, a small notched teal square patch on the left shoulder.
 face_limit: 5000
-vertex_budget: 5000
+tripo_model: P1-20260311
+triangle_budget: 5500
 texture_size: 256
 target_size_m: 1.8
 pivot: base

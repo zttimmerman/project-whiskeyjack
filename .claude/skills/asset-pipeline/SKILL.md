@@ -7,7 +7,7 @@ description: Orchestrates 3D asset production for this project with scripts/pipe
 
 **Layering:** this skill orchestrates; the **tripo** skill (`.claude/skills/tripo/`) is the vendor adapter. Any paid `tripo` call, including concept images and models, follows the tripo skill: its confirmation flow, credit cap, balance checks and URL-expiry rules. None of those are repeated here. `pipeline.py` never runs a paid `tripo` command; it prints the command, and the agent runs it through the tripo skill.
 
-**Budgets:** `docs/art-bible.md` is the only source of budget numbers (vertex budget, texture size, `face_limit`, target size, pivot, palette). Each asset carries them in its brief YAML. To change a number, change the art bible first, then copy it into the brief. Never write a number into this skill, the tripo skill, or a script.
+**Budgets:** `docs/art-bible.md` is the only source of budget numbers (`face_limit`, triangle budget, texture size, target size, pivot, palette). Each asset carries them in its brief YAML. To change a number, change the art bible first, then copy it into the brief. Never write a number into this skill, the tripo skill, or a script.
 
 ## Command
 
@@ -29,7 +29,7 @@ python3 scripts/pipeline.py <asset-id> --stage <concept|model|clean|validate|all
 
 | Path | What | In git? |
 |---|---|---|
-| `assets/briefs/<asset-id>.yaml` | brief: `asset_id`, `type` (character\|prop), `brief`, `prompt`, `face_limit`, `vertex_budget`, `texture_size`, `target_size_m`, `pivot` (base\|center), `palette` (names from the art bible), plus optional `source_glb`, `socket_map`, `animations`, `exclude_objects` | yes |
+| `assets/briefs/<asset-id>.yaml` | brief: `asset_id`, `type` (character\|prop), `brief`, `prompt`, `face_limit`, `tripo_model` (a pinned wire version, passed as `--model`), `triangle_budget` (`face_limit` + 10%), `texture_size`, `target_size_m`, `pivot` (base\|center), `palette` (names from the art bible), plus optional `source_glb`, `socket_map`, `animations`, `exclude_objects` | yes |
 | `assets/manifests/<asset-id>.json` | one entry per stage: status, timestamp, inputs and outputs with SHA-256 hashes, prompt, parameters, actual cost in credits, tool versions (Python, Blender, Godot, tripo), and the stage report | yes |
 | `assets/meshes/<asset-id>.glb` | the cleaned output of stage 3 | yes |
 | `.tripo-out/<asset-id>/` | Tripo downloads, spend records, and `work/` (stage parameters, reports, logs) | no |
@@ -46,17 +46,19 @@ Prompts are composed from `docs/art-bible.md` → Prompt blocks: concept images 
    - removes Blender's importer-made bone display shapes, and anything listed in `exclude_objects`;
    - fails if a rigged asset has a mesh that isn't attached to the armature;
    - characters: detects facing from the foot bones (heel to toe), falling back to the foot geometry, and snaps to −Y;
-   - props: turns the longest axis to +Z (which end points up is flagged as unverified);
+   - props: aligns the **principal axis** (largest spread) to +Z and the second axis to +X, then re-measures and **fails if the residual tilt exceeds 2°**; warns when a prop has no clear long axis. Which end points up is still unverified;
    - scales to `target_size_m` (height for characters, length for props) and puts the base or center at the origin;
    - rebuilds every material as albedo-only (a Principled BSDF with base color, plus cutout alpha through Round so glTF writes MASK), dropping normal, roughness, metallic, specular, emission and occlusion maps, and turning unlit/emission setups into albedo;
    - bakes the albedo with Cycles when it comes from a node chain rather than an image (one material only);
    - downscales the texture to `texture_size`, and fails if there's more than one texture;
-   - checks the vertex count, and **fails loudly when over budget. It never decimates, and a rigged mesh is never touched.** The fix is to regenerate at the brief's `face_limit`;
+   - records **mesh health** as a baseline and never fails on it: triangle/quad/n-gon counts and ratios, non-manifold edges, boundary edges and loops (holes), wire edges, loose vertices, degenerate faces and zero-length edges. Everything is counted twice: as imported, and welded at 0.01 mm. The glTF importer doesn't merge vertices, so every UV seam shows up as an "as imported" boundary; the welded numbers are the real topology;
+   - records the true dimensions (`true_dims_m`, `true_length_m`) after alignment;
+   - checks the **triangle** count (n-gons count n−2), and **fails loudly when over budget. It never decimates, and a rigged mesh is never touched.** The fix is to regenerate at the brief's `face_limit`;
    - exports the GLB, then reads it back and fails if a texture was dropped.
 4. **validate**. Runs `godot --headless -s scripts/godot_validate.gd` and imports the GLB with `GLTFDocument` at runtime (no `.import` files). It reports:
    - the bone names and a proposed mapping onto `SkeletonProfileHumanoid` (a name heuristic; confirm it in the editor's BoneMap), including missing required bones, which fail a character;
    - whether every socket in `socket_map` resolves to a bone;
-   - the vertex count (the GPU count is reported, and the stage-3 Blender count decides against the budget);
+   - the triangle count against the budget, and whether it matches stage 3's Blender count (GPU vertices are recorded as a metric only);
    - textures (size, count, extra maps; no albedo *and* no vertex colors fails);
    - material transparency;
    - animations against the brief (missing ones only warn, since they'll come from the shared library).
@@ -83,3 +85,4 @@ Every stage records the SHA-256 of its inputs (brief, source GLB, spend records,
 - The Cycles bake path (albedo from a node chain) hasn't yet been exercised on a real asset.
 - The humanoid mapping is a name heuristic (it covers Blender, Sketchfab and Mixamo naming). The editor's BoneMap is authoritative.
 - The prop up-direction isn't detected; the socket's child `Transform3D` absorbs flips.
+- The budget unit is triangles. Vertex counts (as imported, split at UV seams; and welded) are recorded as metrics only; the first blade was 1,454 split and 519 welded for 1,026 triangles.

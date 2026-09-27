@@ -22,7 +22,7 @@ This is a 3D action RPG built in Godot 4, inspired by early PS1/PS2 era games (t
 
 **Target: the look is stylized low-poly with generous budgets: bold colors, readable silhouettes, and simple albedo-only textures over realism.** PS1/PS2-era games are the reference for proportions and readability, not something to emulate authentically. Smooth limbs, recognizable faces and hands — not box people.
 
-- **Budgets are hard ceilings, and `docs/art-bible.md` is their only source.** Vertex budgets, texture sizes and Tripo face limits are set there and copied per asset into `assets/briefs/<asset-id>.yaml`; never write the numbers anywhere else. Vertex count = Blender mesh vertices with modifiers applied, summed across every mesh in the `.glb`. Meshes are brought within budget at generation (the brief's `face_limit`); the pipeline fails anything over budget rather than decimating it, and a rigged mesh is never decimated. No exceptions for "it already looks fine"
+- **Budgets are hard ceilings, and `docs/art-bible.md` is their only source.** Triangle budgets, texture sizes and Tripo face limits are set there and copied per asset into `assets/briefs/<asset-id>.yaml`; never write the numbers anywhere else. **The budget unit is triangles** (after triangulation, summed across the `.glb`); vertex counts shift with UV-seam splitting and are recorded as metrics only. Meshes are brought within budget at generation (the brief's `face_limit`); the pipeline fails anything over budget rather than decimating it, and a rigged mesh is never decimated. No exceptions for "it already looks fine"
 - **Textures are albedo (base color) only:** one texture per asset, at the size in the art bible, or vertex colors. No normal, roughness, metallic, occlusion, emissive, or specular maps. Materials are `StandardMaterial3D` with `albedo_texture` set and everything else at defaults
 - **Lighting:** one `DirectionalLight3D` + ambient per area; local `OmniLight3D`s are allowed only for visible light sources (torches, candelabras)
 - Avoid bloom, SSAO, and screen-space reflections
@@ -256,7 +256,7 @@ All meshes live in `assets/meshes/` as `.glb` files. There are two tools:
 
 ### AI Model Generation (Tripo CLI)
 
-Base meshes should be **AI-generated** whenever possible, then brought within the vertex budget and texture rules (see Visual Style Rules). Do not hand-code complex geometry vertex-by-vertex — that's only appropriate for simple shapes (hair spikes, flat panels, accessories).
+Base meshes should be **AI-generated** whenever possible, then brought within the triangle budget and texture rules (see Visual Style Rules). Do not hand-code complex geometry vertex-by-vertex — that's only appropriate for simple shapes (hair spikes, flat panels, accessories).
 
 - **Two skills, two layers:** the **asset-pipeline** skill (`scripts/pipeline.py <asset-id> --stage concept|model|clean|validate|all`) orchestrates briefs, stages, Blender cleanup, Godot validation and manifests. The **tripo** skill is the vendor adapter, and every paid `tripo` call goes through it (dry run → the user confirms the cost → paid run). `pipeline.py` only prints `tripo` commands; it never runs a paid one.
 - **Art-bible parameters:** `--param pbr=false --param texture=true --param face_limit=<from the brief>`, GLB output only. Never use the `--for` presets; they request PBR materials, 15K faces and 2048² FBX conversion.
@@ -311,7 +311,7 @@ Editing workflow:
 3. **Analyze mesh data** before modifying — check color attributes, material setup, vertex count and bounding boxes via bmesh so edits land in the right place
 4. **Preserve vertex colors:** set the color attribute on every loop of every new face — missing colors will render black
 5. **Validate coverage:** for geometry meant to cover other geometry (hair over a skull, armor over a body), check the actual Z/position of the underlying mesh vertices — don't assume; the model may extend higher than expected
-6. **Stay within budget:** re-check the summed vertex count after edits
+6. **Stay within budget:** re-check the summed triangle count after edits
 7. **Screenshot from multiple angles** after changes — top-down, front, back, side — to catch gaps or artifacts before exporting
 8. **Export:** `export_scene.gltf(filepath=..., export_format='GLB', export_animations=True, export_skins=True, export_yup=True)` — note that `export_colors` is not a valid parameter in Blender 5.x; vertex colors export automatically
 
