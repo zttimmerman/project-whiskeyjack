@@ -25,6 +25,7 @@ import json
 import os
 import platform
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -108,6 +109,25 @@ def parse_brief_yaml(text, path):
 def art_bible_palette():
     rows = re.findall(r"^\| ([A-Z][A-Za-z ]+?) \| `#[0-9A-Fa-f]{6}` \|", ART_BIBLE.read_text(), re.M)
     return set(rows)
+
+
+def prompt_blocks():
+    """FORM and LIGHTING blocks from docs/art-bible.md ("### FORM block" / "### LIGHTING block"), the only source."""
+    text = ART_BIBLE.read_text()
+    blocks = {}
+    for name in ("FORM", "LIGHTING"):
+        m = re.search(rf"^### {name} block\s*\n+```\n(.*?)\n```", text, re.S | re.M)
+        if not m:
+            raise PipelineError(f"docs/art-bible.md has no fenced '### {name} block' section")
+        blocks[name.lower()] = " ".join(m.group(1).split())
+    return blocks
+
+
+def compose_prompt(brief, kind):
+    """Concept images get FORM + LIGHTING + description; 3D models get FORM + description."""
+    b = prompt_blocks()
+    parts = [b["form"]] + ([b["lighting"]] if kind == "concept" else []) + [" ".join(brief["prompt"].split())]
+    return " ".join(parts)
 
 
 def load_brief(asset_id):
@@ -300,8 +320,8 @@ def stage_concept(brief, m, dry_run, force):
     aid = brief["asset_id"]
     attempts = tripo_attempts(aid, "concept", ["*.png", "*.jpg", "*.jpeg", "*.webp"])
     pick = usable(attempts)
-    prompt = " ".join(brief["prompt"].split())
-    inputs = [brief["_path"]] + ([a["spend_path"] for a in attempts if a["spend_path"].exists()])
+    prompt = compose_prompt(brief, "concept")
+    inputs = [brief["_path"], ART_BIBLE] + ([a["spend_path"] for a in attempts if a["spend_path"].exists()])
     outputs = [pick["files"][0]] if pick else []
     if not force and up_to_date(m["stages"].get("concept"), inputs, outputs):
         print("concept: up to date")
@@ -311,7 +331,7 @@ def stage_concept(brief, m, dry_run, force):
     elif pick:
         msg = f"concept image ingested from {pick['dir'].name}"
     else:
-        cmd = f'tripo generate text-to-image "{prompt}" -o {next_attempt_dir(aid, "concept", attempts)} --no-open --json'
+        cmd = f'tripo generate text-to-image {shlex.quote(prompt)} -o {next_attempt_dir(aid, "concept", attempts)} --no-open --json'
         msg = "no concept image (optional). To make one, run through the tripo skill: " + cmd
     print(f"concept: {msg}")
     if dry_run:
@@ -335,12 +355,12 @@ def resolve_model(brief):
 def stage_model(brief, m, dry_run, force):
     aid = brief["asset_id"]
     model, attempts = resolve_model(brief)
-    prompt = " ".join(brief["prompt"].split())
+    prompt = compose_prompt(brief, "model")
     params = tripo_params(brief)
-    inputs = [brief["_path"]] + [a["spend_path"] for a in attempts if a["spend_path"].exists()]
+    inputs = [brief["_path"], ART_BIBLE] + [a["spend_path"] for a in attempts if a["spend_path"].exists()]
     if model is None:
         concept = m["stages"].get("concept", {}).get("outputs") or []
-        source = concept[0]["path"] if concept else f'"{prompt}"'
+        source = shlex.quote(concept[0]["path"] if concept else prompt)
         flags = " ".join(f"--param {k}={str(v).lower()}" for k, v in params.items())
         cmd = f"tripo make {source} {flags} -o {next_attempt_dir(aid, 'attempt', attempts)} --no-open --json"
         print("model: no base mesh on disk yet. Generate it through the tripo skill "

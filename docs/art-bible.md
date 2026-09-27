@@ -32,18 +32,30 @@ Hex values are either set exactly in a scene or script, or sampled from a shippe
 - **Rendering:** one directional light plus ambient per area. Ambient is a `WorldEnvironment` with Wet Slate `#736B66` color at low energy: Level 1 uses 0.5, enough for figures to read against the floor away from torchlight without flattening the torch pools. Local lights are allowed only for visible sources such as torches and candelabras. No bloom, SSAO or SSR.
 - **Post-MVP, not now:** palette quantization, vertex-snap or affine-warp shaders, pixel fonts.
 
-## STYLE BLOCK
+## Prompt blocks
 
-Paste this in front of any image or 3D generation prompt, then add the entry's visual description after it:
+Generation prompts are built from two blocks plus the brief's own description. `scripts/pipeline.py` reads both blocks from this section, so edit them here only:
+- **Concept-image prompts:** FORM + LIGHTING + description.
+- **3D-model prompts:** FORM + description. Lighting words are left out because 3D generation may misread them or bake them into the albedo.
+
+### FORM block
 
 ```
-Stylized low-poly 3D game art with generous polygon budgets: clean readable
-silhouette, slightly exaggerated proportions, smooth limbs, recognizable face
-and hands. Simple hand-painted albedo-only texture, matte surfaces, no normal
-maps, no metallic or glossy PBR shine, no photorealism. Muted cold palette of
-wet slate, rain stone and peat black with warm torch-amber accents. Soft single
-directional light, overcast mood, no bloom, no pixel art, no PS1 jitter.
+Stylized low-poly 3D game asset with a clean, readable silhouette and slightly
+exaggerated proportions. Flat color blocking with minimal fine surface detail,
+matte hand-painted albedo-only texture, restricted muted palette. No
+photorealism, no glossy PBR shine, no pixel art.
 ```
+
+### LIGHTING block
+
+```
+Lit for a low-ambient torchlit interior: dim slate-grey ambient, one warm
+torch-amber key light, deep but not black shadows. No lighting or shadow
+painted into the texture. No bloom.
+```
+
+**Why concepts get the lighting:** concepts are lit the way the levels actually are, with low Wet Slate ambient and a warm torch key (see Rendering above). Generated albedo is then judged, and painted, for values that read in that light, not in a bright studio render. Lighting must never be baked into the albedo; the engine supplies it.
 
 ## Faction color groupings
 
@@ -76,7 +88,7 @@ Every asset gets a brief before any generation spend. Fields:
 - **Rig / attachment:** skeleton or socket.
 - **Scale & pivot**
 - **Animation:** clip names the code plays, from the shared library.
-- **Prompt:** the STYLE BLOCK plus the visual description.
+- **Prompt:** the visual description. The pipeline prepends the FORM block (and, for concept images, the LIGHTING block).
 - **Accept when:** a checklist for commit.
 - **Cost:** the number of Tripo generations needed. Prices, estimates and confirmation live in the tripo skill (`.claude/skills/tripo/`).
 
@@ -93,7 +105,7 @@ Every asset gets a brief before any generation spend. Fields:
 - **Rig / attachment:** the generated mesh needs a humanoid skeleton that maps onto Godot's `SkeletonProfileHumanoid`; how it gets rigged is still open (CLAUDE.md → Rigging & Animation). Pipeline stage 4 proposes the `BoneMap`. The right hand is the weapon socket, mapped in a `SocketMap` like every other rig.
 - **Scale & pivot:** 1.8 m tall, feet at origin, facing −Y in Blender. The `.tscn` transform is unchanged (CLAUDE.md → Blender → Godot gotchas).
 - **Animation:** library clips `idle`, `run`, `dodge_roll`, `attack_light`, `attack_heavy`, `death`. The current hand-keyed clips are retired.
-- **Prompt:** STYLE BLOCK + *"A young frontier soldier in a knee-length Garrison Teal wool tunic, Saddle Leather harness and boots, spiky dark hair, empty hands, T-pose. Rain-darkened hem, scuffed leather, a small notched teal square patch on the left shoulder."*
+- **Prompt:** FORM block + *"A young frontier soldier in a knee-length Garrison Teal wool tunic, Saddle Leather harness and boots, spiky dark hair, empty hands, T-pose. Rain-darkened hem, scuffed leather, a small notched teal square patch on the left shoulder."*
 - **Accept when:** ≤ 5,000 vertices; albedo only at ≤ 256²; retarget previews all 6 clips without breaking; teal and the hair read from the gameplay camera; face and hands still recognizable.
 - **Cost:** 1 Tripo generation, plus one per rejected attempt.
 
@@ -109,7 +121,7 @@ Every asset gets a brief before any generation spend. Fields:
 - **Rig / attachment:** the new rig must map onto `SkeletonProfileHumanoid`; pipeline stage 4 proposes the `BoneMap`. Sockets `hand_r` (blade) and `hand_l` (bow) are mapped to bones **only** in `data/rigs/barrow_levy_sockets.tres`, which still names the Sketchfab bones: update that file for the new rig, and nothing else. Stage 4 fails until the sockets resolve.
 - **Scale & pivot:** 1.8 m tall, feet at origin, facing −Y in Blender. The model node keeps `Transform3D(-1,0,0,0,1,0,0,0,-1,0,-0.9,0)`.
 - **Animation:** the code plays `idle`, `run`, `attack`, `stagger`, `death` for **both** variants. The library must provide a melee `attack` for Front-file and a bow-draw `attack` for Back-file, remapped per variant. **Open item:** the shared library needs a bow-draw clip.
-- **Prompt:** STYLE BLOCK + *"A humanoid skeleton of Old Bone stained peat-brown at the joints, in a rotted Saddle Leather harness, scraps of wool clinging to the ribs, roots threading the pelvis, empty hands, T-pose."*
+- **Prompt:** FORM block + *"A humanoid skeleton of Old Bone stained peat-brown at the joints, in a rotted Saddle Leather harness, scraps of wool clinging to the ribs, roots threading the pelvis, empty hands, T-pose."*
 - **Accept when:** the retarget plays all 5 clips on both variants; Back-file is distinguishable from Front-file at 15 m in the Level 1 corridor with props hidden; budget still met.
 - **Cost:** 1 Tripo generation, plus one per rejected attempt. The Back-file texture and the bone map are manual or scripted work.
 
@@ -124,7 +136,7 @@ Every asset gets a brief before any generation spend. Fields:
 - **Rig / attachment:** no skeleton. Held in socket `hand_r` via `held_props` on the enemy scene; alignment is fixed with a child `Transform3D`, never by editing the mesh.
 - **Scale & pivot:** about 0.55 m overall (blade 0.40, grip 0.15). Origin at the base (pommel end), blade along Blender +Z. The socket's child `Transform3D` shifts it to the grip.
 - **Animation:** none.
-- **Prompt:** STYLE BLOCK + *"A single short leaf-shaped iron sword with no crossguard, isolated prop, no hands, side view. Pitted Blackened Iron blade with a chipped edge, grip wrapped in rotted Saddle Leather, a small Old Bone pommel cap."*
+- **Prompt:** FORM block + *"A single short leaf-shaped iron sword with no crossguard, isolated prop, no hands, side view. Pitted Blackened Iron blade with a chipped edge, grip wrapped in rotted Saddle Leather, a small Old Bone pommel cap."*
 - **Accept when:** ≤ 2,000 vertices; albedo only at ≤ 128²; sits in the skeleton's right hand through all Front-file clips without clipping into the skull or ribs; reads as a blade from the gameplay camera.
 - **Cost:** 1 Tripo generation; regenerate rather than doing mesh surgery.
 
@@ -139,7 +151,7 @@ Every asset gets a brief before any generation spend. Fields:
 - **Rig / attachment:** no skeleton. Held in socket `hand_l` via `held_props`, aligned with a child `Transform3D`.
 - **Scale & pivot:** about 1.0 m tip to tip. Origin at the center (the grip), limbs along Blender ±Z.
 - **Animation:** none. The string doesn't deform (acceptable for MVP).
-- **Prompt:** STYLE BLOCK + *"A single short recurve bow with strongly curled tips, isolated prop, no hands, no arrow, front view. Darkened Barrow Oak limbs with cracks, small Old Bone tip caps, a faded Signal Red cloth grip wrap, one thin string."*
+- **Prompt:** FORM block + *"A single short recurve bow with strongly curled tips, isolated prop, no hands, no arrow, front view. Darkened Barrow Oak limbs with cracks, small Old Bone tip caps, a faded Signal Red cloth grip wrap, one thin string."*
 - **Accept when:** ≤ 2,000 vertices; albedo only at ≤ 128²; sits in the left hand through all Back-file clips; the curled silhouette reads at 15 m.
 - **Cost:** 1 Tripo generation.
 

@@ -38,6 +38,8 @@ The brief YAML uses a strict subset: top-level keys, scalars, `[inline lists]`, 
 
 ## Stages
 
+Prompts are composed from `docs/art-bible.md` → Prompt blocks: concept images get FORM + LIGHTING + the brief's `prompt`; 3D models get FORM + the brief's `prompt`.
+
 1. **concept** (optional, never blocks). Resolves the prompt. If a concept image exists under `.tripo-out/<id>/concept-<n>/`, the stage ingests it and the model stage uses it (image-to-3D). Otherwise it prints the `tripo generate text-to-image` command for an optional concept pass.
 2. **model**. Uses the brief's `source_glb` for existing assets. Otherwise it ingests the newest usable Tripo download (`attempt-<n>`, skipping attempts whose spend record is `rejected`, `lost` or `failed`) and copies every attempt's spend record into the manifest. If nothing is on disk, it prints the `tripo make` command with the brief's parameters and exits 3.
 3. **clean**. Runs `blender -b --factory-startup -P scripts/blender_cleanup.py`:
