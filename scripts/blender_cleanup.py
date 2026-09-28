@@ -18,6 +18,7 @@ Imports the GLB and then:
 - aligns props along their principal axis and fails if the residual tilt exceeds PROP_AXIS_TOLERANCE_DEG;
 - finds the prop's tip (the thinner end), flips it to the brief's tip_end, and fails if it still doesn't match;
 - rigid-part characters (brief: rigid_parts) only: binds each disconnected part at weight 1.0 to its nearest bone;
+- skirted characters (brief: skirt_reweight) only: grades the skirt from Hips at the waist to the thighs at the hem;
 - checks the triangle count against triangle_budget, failing loudly instead of decimating;
 - exports the GLB.
 
@@ -45,6 +46,9 @@ CONCEPT_BG_DE = 10.0        # concept pixels this close to the border color are 
 CONCEPT_KMEANS_ITERS = 20
 PALETTE_MIN_SHARE = 0.03   # a palette color must cover this much of the texture to be corrected
 PALETTE_MAX_DRIFT = 30.0   # CIE76 dE: a group further than this from its target is a different material
+SKIRT_TROUSER_RADIUS = 0.085  # m (1.8 m character): closer than this to a thigh bone is trousers, not skirt
+SKIRT_WAIST_OFFSET = 0.05     # m below the Hips joint where the skirt starts
+SKIRT_BELOW_KNEE = 0.12       # m below the knee joints where the skirt search stops
 SMOOTH_ANGLE_DEG = 30.0  # art bible: flat-shade every edge sharper than this; smooth-shaded low poly reads as inflated plastic
 # Source export axes (glTF frame, which the importer keeps for X) mapped to Blender forward vectors.
 # Tripo's +y/-y aren't mapped: which way its "y" points in a Y-up glTF is unverified.
@@ -137,6 +141,20 @@ def _segment_distance(p, a, b):
     return (p - (a + ab * t)).length
 
 
+def joint_segments(arm):
+    """{bone: (head, end)} in world space, where end is the child joint (the mean of the children's
+    heads), or the tail for leaf bones. Not head-to-tail: Blender's glTF importer invents display
+    tails (the player's thigh tail stopped at 0.70 m with the knee at 0.45 m), and they differ
+    between files."""
+    out = {}
+    for b in arm.data.bones:
+        head = arm.matrix_world @ b.head_local
+        kids = [arm.matrix_world @ c.head_local for c in b.children]
+        end = sum(kids, Vector()) / len(kids) if kids else arm.matrix_world @ b.tail_local
+        out[b.name] = (head, end)
+    return out
+
+
 def rigid_rebind(meshes, arms, report):
     """Rigid-part characters only (brief: rigid_parts: true), e.g. a skeleton built from separate
     bones. Binds every disconnected part (welded at 0.01 mm to find it) at weight 1.0 to the bone
@@ -144,8 +162,7 @@ def rigid_rebind(meshes, arms, report):
     auto-rigger's blended weights, which smear rigid parts across neighbours (the Barrow-levy pelvis
     was 0.37 on Hips and the rest on both thighs). Candidates are the bones that already carry
     weight, so a control bone like Root never captures a part. Never for continuous-skin characters."""
-    arm = arms[0]
-    bones = {b.name: (arm.matrix_world @ b.head_local, arm.matrix_world @ b.tail_local) for b in arm.data.bones}
+    bones = joint_segments(arms[0])
     rows = []
     for o in meshes:
         me = o.data
@@ -199,9 +216,57 @@ def rigid_rebind(meshes, arms, report):
         for root, vis in parts.items():
             groups[assignment[root]].add(vis, 1.0, "REPLACE")
     rows.sort(key=lambda r: -r["triangles"])
-    report["rigid_rebind"] = {"method": "each disconnected part at weight 1.0 on the bone whose rest segment "
-                                        "is nearest its center (candidates: bones that carried weight)",
+    report["rigid_rebind"] = {"method": "each disconnected part at weight 1.0 on the bone whose joint span (head "
+                                        "to child joint) is nearest its center (candidates: bones that carried weight)",
                               "parts": rows}
+
+
+def skirt_reweight(meshes, arms, report):
+    """Continuous-skin characters with a skirt (brief: skirt_reweight: true). Auto-riggers bind a
+    skirt to the legs; the player's hem came back about 40% on the shins, so it stretches between
+    the legs when walking. The skirt is the part of the mesh between knee and hip height that sits
+    further than SKIRT_TROUSER_RADIUS from both thigh bones (inside that radius is the trousers).
+    It's reweighted deterministically: Hips at the waist grading linearly to the thighs at the hem,
+    split between the two thighs by inverse squared distance, with zero weight on the shins."""
+    seg = joint_segments(arms[0])
+    find = lambda token: next((n for n in seg if n.lower().endswith(token.lower())), None)
+    hips, lthigh, rthigh = find("Hips"), find("LeftUpLeg"), find("RightUpLeg")
+    lshin, rshin = find("LeftLeg"), find("RightLeg")
+    if not all((hips, lthigh, rthigh, lshin, rshin)):
+        raise RuntimeError(f"skirt_reweight needs Hips, Left/RightUpLeg and Left/RightLeg bones; the rig has {sorted(seg)}")
+    waist_z = seg[hips][0].z - SKIRT_WAIST_OFFSET
+    knee_z = (seg[lshin][0].z + seg[rshin][0].z) / 2 - SKIRT_BELOW_KNEE
+    rows = {"vertices": 0}
+    for o in meshes:
+        me = o.data
+        groups = {n: (o.vertex_groups.get(n) or o.vertex_groups.new(name=n)) for n in (hips, lthigh, rthigh)}
+        skirt = []
+        for v in me.vertices:
+            p = o.matrix_world @ v.co
+            if knee_z < p.z < waist_z:
+                dl, dr = _segment_distance(p, *seg[lthigh]), _segment_distance(p, *seg[rthigh])
+                if min(dl, dr) > SKIRT_TROUSER_RADIUS:
+                    skirt.append((v.index, p, dl, dr))
+        if not skirt:
+            continue
+        hem_z = min(p.z for _, p, _, _ in skirt)
+        idx = [i for i, _, _, _ in skirt]
+        for g in o.vertex_groups:
+            g.remove(idx)
+        for i, p, dl, dr in skirt:
+            t = max(0.0, min(1.0, (waist_z - p.z) / max(waist_z - hem_z, 1e-6)))
+            wl, wr = 1 / dl ** 2, 1 / dr ** 2
+            if 1 - t > 0:
+                groups[hips].add([i], 1 - t, "REPLACE")
+            if t > 0:
+                groups[lthigh].add([i], t * wl / (wl + wr), "REPLACE")
+                groups[rthigh].add([i], t * wr / (wl + wr), "REPLACE")
+        rows["vertices"] += len(skirt)
+        rows.update(waist_z=round(waist_z, 3), hem_z=round(hem_z, 3), knee_z=round(knee_z, 3))
+    rows["method"] = ("vertices between knee and waist, further than %.3f m from both thigh bones: Hips at the waist "
+                      "grading linearly to the thighs at the hem, split by inverse squared distance; no shin weight"
+                      % SKIRT_TROUSER_RADIUS)
+    report["skirt_reweight"] = rows
 
 
 def flat_shade_by_angle(meshes, weld, report):
@@ -218,18 +283,33 @@ def flat_shade_by_angle(meshes, weld, report):
             if me.has_custom_normals:
                 raise RuntimeError(f"couldn't clear custom normals on '{o.name}'")
             info["custom_normals_cleared"].append(o.name)
-        if weld:
-            bm = bmesh.new()
-            bm.from_mesh(me)
-            before = len(bm.verts)
+        bm = bmesh.new()
+        bm.from_mesh(me)
+        before = len(bm.verts)
+        if weld == "all":
             bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=1e-5)
-            info["welded_vertices_removed"] += before - len(bm.verts)
-            bm.to_mesh(me)
-            bm.free()
+        elif weld == "same_weights":
+            # Rigged: merge UV-seam splits only where the coincident vertices carry identical skin
+            # weights, so no weights change. Unwelded seams otherwise render as hard edges (the
+            # rigged Barrow-levy went from 13.2% to 24.4% faceted faces).
+            deform = bm.verts.layers.deform.active
+            first, targets = {}, {}
+            for v in bm.verts:
+                w = tuple(sorted((g, round(x, 5)) for g, x in v[deform].items() if x > 0)) if deform else ()
+                key = (tuple(round(c / 1e-5) for c in v.co), w)
+                if key in first:
+                    targets[v] = first[key]
+                else:
+                    first[key] = v
+            if targets:
+                bmesh.ops.weld_verts(bm, targetmap=targets)
+        info["welded_vertices_removed"] += before - len(bm.verts)
+        bm.to_mesh(me)
+        bm.free()
         me.shade_smooth()
         me.set_sharp_from_angle(angle=math.radians(SMOOTH_ANGLE_DEG))
         me.update()
-    info["welded"] = weld
+    info["welded"] = weld or "none"
     report["shading"] = info
 
 
@@ -870,11 +950,16 @@ def run(args, params, report):
 
     rebuild_materials(meshes, params["texture_size"], report, params.get("palette_targets"), params.get("reference_image"),
                       params.get("texture_overlays"), args.input)
-    flat_shade_by_angle(meshes, weld=not rigged, report=report)
+    # Weight steps first, so the weld below sees final weights (seam splits then match and merge)
     if params.get("rigid_parts"):
         if not rigged:
             raise RuntimeError("the brief sets rigid_parts, but the input has no rig to bind to")
         rigid_rebind(meshes, arms, report)
+    if params.get("skirt_reweight"):
+        if not rigged:
+            raise RuntimeError("the brief sets skirt_reweight, but the input has no rig")
+        skirt_reweight(meshes, arms, report)
+    flat_shade_by_angle(meshes, weld="same_weights" if rigged else "all", report=report)
 
     # Budget is in triangles (n-gon = n-2). Vertex counts are metrics only: they move with UV-seam splits.
     dg = bpy.context.evaluated_depsgraph_get()

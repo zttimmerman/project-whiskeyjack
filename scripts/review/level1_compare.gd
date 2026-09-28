@@ -5,6 +5,8 @@ extends Node
 # Review tool, not part of the game. Windowed run (headless can't render), as a scene so the
 # project's autoloads load:
 #   godot --path . res://scripts/review/level1_compare.tscn -- --player <glb> --levy <glb> --out <dir>
+#       [--ambient-energy <float>] [--torch-energy <float>] [--tag <name>]
+# The energy overrides try level-side lighting changes without editing Level1.tscn.
 
 const SHOTS := {
 	# Player's back to the camera at gameplay framing; the levy 5 m ahead, facing the player.
@@ -30,6 +32,7 @@ func _ready() -> void:
 		if child is CharacterBody3D or child is CanvasLayer or child is Control or child is Camera3D:
 			level.remove_child(child)
 			child.free()
+	_override_lighting(level, args)
 	add_child(level)
 	var player := _load_glb(args["player"])
 	var levy := _load_glb(args["levy"])
@@ -49,10 +52,20 @@ func _ready() -> void:
 			await get_tree().process_frame
 		await RenderingServer.frame_post_draw
 		var img := get_viewport().get_texture().get_image()
-		var path: String = args["out"].path_join("level1_%s.png" % shot)
+		var tag: String = ("_" + args["tag"]) if args.has("tag") else ""
+		var path: String = args["out"].path_join("level1_%s%s.png" % [shot, tag])
 		img.save_png(path)
 		print("SAVED ", path)
 	get_tree().quit()
+
+
+func _override_lighting(level: Node, args: Dictionary) -> void:
+	for node in level.find_children("*", "WorldEnvironment", true, false):
+		if args.has("ambient-energy"):
+			(node as WorldEnvironment).environment.ambient_light_energy = float(args["ambient-energy"])
+	for node in level.find_children("*", "OmniLight3D", true, false):
+		if args.has("torch-energy"):
+			(node as OmniLight3D).light_energy = float(args["torch-energy"])
 
 
 func _load_glb(path: String) -> Node3D:

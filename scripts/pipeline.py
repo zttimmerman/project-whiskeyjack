@@ -212,10 +212,11 @@ def load_brief(asset_id):
         unknown = [c for c in b["palette"] if c not in art_bible_palette()]
         if unknown:
             errors.append(f"palette colors not in docs/art-bible.md: {unknown}")
-    if "rigid_parts" in b and not isinstance(b["rigid_parts"], bool):
-        errors.append("'rigid_parts' must be true or false")
-    if b.get("rigid_parts") and b.get("type") != "character":
-        errors.append("'rigid_parts' applies to characters only")
+    for flag in ("rigid_parts", "skirt_reweight"):
+        if flag in b and not isinstance(b[flag], bool):
+            errors.append(f"'{flag}' must be true or false")
+        if b.get(flag) and b.get("type") != "character":
+            errors.append(f"'{flag}' applies to characters only")
     for opt in ("animations", "exclude_objects", "texture_overlays"):
         if opt in b and not (isinstance(b[opt], list) and all(isinstance(x, str) for x in b[opt])):
             errors.append(f"'{opt}' must be a list of names")
@@ -644,7 +645,7 @@ def stage_model(brief, m, args):
 
 def stage_params(brief):
     keys = ("asset_id", "type", "face_limit", "triangle_budget", "texture_size", "target_size_m", "pivot",
-            "palette", "socket_map", "animations", "exclude_objects", "tip_end", "rigid_parts")
+            "palette", "socket_map", "animations", "exclude_objects", "tip_end", "rigid_parts", "skirt_reweight")
     return {k: brief.get(k) for k in keys}
 
 
