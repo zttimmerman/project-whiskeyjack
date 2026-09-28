@@ -101,6 +101,10 @@ Each group owns one **primary** color that no other group uses as a primary, so 
 - **Overcast Blue:** the Sleet, Charter light and UI only.
 - **Torch Amber:** fire, Kindle and Hessane lamps only.
 
+## Sourcing: generate or download
+
+**Generate what carries identity; download the rest.** Characters, faction-marked gear and anything the camera lingers on go through the Tripo pipeline and a brief. Generic dressing (barrels, crates, rubble, furniture) can come from CC0 sources. Downloaded assets go through the same clean stage (facing, flat shading, color correction toward the palette, budget assert), so they land in the same color space and shading standard as generated ones. (That import path is queued; see `docs/decisions.md` → Next.)
+
 ## Design brief format
 
 Every asset gets a brief before any generation spend. Fields:
@@ -180,7 +184,7 @@ Every asset gets a brief before any generation spend. Fields:
 - **Rig / attachment:** no skeleton. Held in socket `hand_l` via `held_props`, aligned with a child `Transform3D`.
 - **Scale & pivot:** about 1.0 m tip to tip. Origin at the center (the grip), limbs along Blender ±Z; both ends are tips (`tip_end: symmetric`).
 - **Animation:** none. The string doesn't deform (acceptable for MVP).
-- **Prompt:** FORM block + *"A single short recurve bow with strongly curled tips, isolated prop, no hands, no arrow, front view. Darkened Barrow Oak limbs with cracks, small Old Bone tip caps, a faded Signal Red cloth grip wrap, one thin string."*
+- **Prompt:** FORM block + *"A single short recurve bow standing upright, seen from the front, as an isolated prop. Two Barrow Oak limbs curl strongly outward at each tip and end in small Old Bone caps; the grip in the middle is wrapped in Signal Red cloth, and one thin straight string runs from tip to tip."* (Rewritten 2026-09-28 to describe only what's there, without negatives; the cracks and wear go in the albedo.)
 - **Accept when:** ≤ 1,320 triangles; true length 1.0 m along its principal axis; albedo only at ≤ 128²; sits in the left hand through all Back-file clips; the curled silhouette reads at 15 m.
 - **Cost:** 1 Tripo generation.
 
