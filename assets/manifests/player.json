@@ -3,11 +3,19 @@
   "stages": {
     "concept": {
       "status": "ok",
-      "timestamp": "2026-09-27T19:08:39+00:00",
+      "timestamp": "2026-09-28T02:15:22+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player.yaml",
-          "sha256": "451d154cad325d0a9a08c5b4d3959196f21a03c19f305444eb00f4c1667b200f"
+          "sha256": "b8f7e3e56b741e5a552f9153ead28d318a385dfce5daecd85f8c2c040bc44960"
+        },
+        {
+          "path": "docs/art-bible.md",
+          "sha256": "3a37a6a6d5d6bde589a71e4bfed662c76449b74d865adb07f3c304bcec5d8094"
+        },
+        {
+          "path": ".tripo-out/player/concept-1.spend.json",
+          "sha256": "a84d2419b3ca3ae01d14de5a25a70d5bc44942c19461ec6ace7ab56be5b99aa6"
         }
       ],
       "outputs": [],
@@ -17,45 +25,1129 @@
         "godot": "4.6.1.stable.official.14d19694e",
         "tripo": "0.5.1"
       },
-      "message": "no concept image (optional). To make one, run through the tripo skill: tripo generate text-to-image \"A young frontier soldier in a knee-length Garrison Teal wool tunic, Saddle Leather harness and boots, spiky dark hair, empty hands, T-pose. Rain-darkened hem, scuffed leather, a small notched teal square patch on the left shoulder.\" -o .tripo-out/player/concept-1 --no-open --json",
-      "actual_cost_credits": 0,
-      "prompt": "A young frontier soldier in a knee-length Garrison Teal wool tunic, Saddle Leather harness and boots, spiky dark hair, empty hands, T-pose. Rain-darkened hem, scuffed leather, a small notched teal square patch on the left shoulder.",
-      "params": {},
+      "message": "not needed: the base mesh is already on disk",
+      "actual_cost_credits": 15,
+      "concept_model": "banana_pro",
+      "params": {
+        "template": "t_pose",
+        "aspect_ratio": "3:4"
+      },
+      "approval": {
+        "attempt": "concept-1",
+        "image": {
+          "path": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+          "sha256": "e92b55a11a671ace6e50e37e78578afaa6a2e46e7d230da2da61ef368c2e9f98"
+        },
+        "approved_at": "2026-09-28T01:16:49+00:00",
+        "approved_by": "user",
+        "concept_model": "banana_pro",
+        "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A young frontier soldier in a knee-length wool tunic in deep dark teal that flares at the hem, a leather harness in dark reddish-brown with two straps crossing the chest and back, leather boots in dark reddish-brown, spiky dark hair, empty hands, T-pose.",
+        "command": "tripo generate text-to-image 'Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A young frontier soldier in a knee-length wool tunic in deep dark teal that flares at the hem, a leather harness in dark reddish-brown with two straps crossing the chest and back, leather boots in dark reddish-brown, spiky dark hair, empty hands, T-pose.' --model banana_pro --param template=t_pose --param aspect_ratio=3:4 -o .tripo-out/player/concept-1 --no-open --json"
+      },
       "cost_unknown_attempts": [],
-      "tripo_attempts": []
+      "cost_check": [
+        {
+          "attempt": "concept-1",
+          "status": "generated",
+          "estimate_credits": 15,
+          "actual_balance_delta": 15,
+          "cli_reported_credits": 15,
+          "estimate_error": 0
+        }
+      ],
+      "tripo_attempts": [
+        {
+          "status": "generated",
+          "started_at": "2026-09-28T01:09:00+00:00",
+          "user_confirmed_at": "2026-09-28T01:09:00+00:00",
+          "tripo_cli_version": "0.5.1",
+          "model_version": "banana_pro",
+          "region": "ov",
+          "command": "tripo generate text-to-image 'Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A young frontier soldier in a knee-length wool tunic in deep dark teal that flares at the hem, a leather harness in dark reddish-brown with two straps crossing the chest and back, leather boots in dark reddish-brown, spiky dark hair, empty hands, T-pose.' --model banana_pro --param template=t_pose --param aspect_ratio=3:4 -o .tripo-out/player/concept-1 --no-open --json",
+          "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A young frontier soldier in a knee-length wool tunic in deep dark teal that flares at the hem, a leather harness in dark reddish-brown with two straps crossing the chest and back, leather boots in dark reddish-brown, spiky dark hair, empty hands, T-pose.",
+          "params": {
+            "template": "t_pose",
+            "aspect_ratio": "3:4"
+          },
+          "dry_run": {
+            "valid": null,
+            "note": "tripo generate has no --dry-run; checked via pipeline.py --dry-run"
+          },
+          "estimate_credits": 15,
+          "estimate_source": "observed: banana_pro text-to-image (Barrow-levy concept-1)",
+          "balance_before": {
+            "balance": 765,
+            "frozen": 0
+          },
+          "finished_at": "2026-09-28T01:11:35+00:00",
+          "balance_after": {
+            "balance": 750,
+            "frozen": 0
+          },
+          "actual_spend": 15,
+          "cli_reported_credits": 15,
+          "exit_code": 0,
+          "task_ids": [
+            "f98a43b0-b206-44dc-a737-10f881298007"
+          ]
+        }
+      ],
+      "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A young frontier soldier in a knee-length wool tunic in deep dark teal that flares at the hem, a leather harness in dark reddish-brown with two straps crossing the chest and back, leather boots in dark reddish-brown, spiky dark hair, empty hands, T-pose."
     },
     "model": {
-      "status": "awaiting",
-      "timestamp": "2026-09-27T19:08:39+00:00",
+      "status": "ok",
+      "timestamp": "2026-09-28T02:15:22+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player.yaml",
-          "sha256": "451d154cad325d0a9a08c5b4d3959196f21a03c19f305444eb00f4c1667b200f"
+          "sha256": "b8f7e3e56b741e5a552f9153ead28d318a385dfce5daecd85f8c2c040bc44960"
+        },
+        {
+          "path": "docs/art-bible.md",
+          "sha256": "3a37a6a6d5d6bde589a71e4bfed662c76449b74d865adb07f3c304bcec5d8094"
+        },
+        {
+          "path": ".tripo-out/player/attempt-1.spend.json",
+          "sha256": "fed58d084351c22163a791249a7e518e3c9ff4476c32c1136fc93670c065c98d"
         }
       ],
-      "outputs": [],
+      "outputs": [
+        {
+          "path": ".tripo-out/player/attempt-1/tripo-out/generate-multiview-image-front-v-2-e2b61bb2/model.glb",
+          "sha256": "0910cebda7cd474de61a86030328c667191eb141b9a8141cfdcc9d7d4899d53a"
+        }
+      ],
       "tool_versions": {
         "python": "3.14.7",
         "blender": "Blender 5.0.1",
         "godot": "4.6.1.stable.official.14d19694e",
         "tripo": "0.5.1"
       },
-      "message": "waiting on a Tripo run",
-      "actual_cost_credits": 0,
-      "prompt": "A young frontier soldier in a knee-length Garrison Teal wool tunic, Saddle Leather harness and boots, spiky dark hair, empty hands, T-pose. Rain-darkened hem, scuffed leather, a small notched teal square patch on the left shoulder.",
+      "message": "Tripo download .tripo-out/player/attempt-1/tripo-out/generate-multiview-image-front-v-2-e2b61bb2/model.glb",
+      "actual_cost_credits": 50,
+      "prompt": null,
       "params": {
         "pbr": false,
         "texture": true,
         "face_limit": 5000
       },
+      "tripo_model": "P1-20260311",
+      "estimate_credits": 50,
       "cost_unknown_attempts": [],
-      "suggested_command": "tripo make \"A young frontier soldier in a knee-length Garrison Teal wool tunic, Saddle Leather harness and boots, spiky dark hair, empty hands, T-pose. Rain-darkened hem, scuffed leather, a small notched teal square patch on the left shoulder.\" --param pbr=false --param texture=true --param face_limit=5000 -o .tripo-out/player/attempt-1 --no-open --json"
+      "cost_check": [
+        {
+          "attempt": "attempt-1",
+          "status": "generated",
+          "estimate_credits": 50,
+          "actual_balance_delta": 50,
+          "cli_reported_credits": 50,
+          "estimate_error": 0
+        }
+      ],
+      "tripo_attempts": [
+        {
+          "status": "generated",
+          "started_at": "2026-09-28T01:29:36+00:00",
+          "user_confirmed_at": "2026-09-28T01:29:36+00:00",
+          "tripo_cli_version": "0.5.1",
+          "model_version": "P1-20260311",
+          "model_selection": "pinned via --model (brief tripo_model)",
+          "region": "ov",
+          "command": "tripo make .tripo-out/player/multiview-1/tripo-out/tripo-out-player-concept-1-tripo-e62305da/generate_multiview_image.front_view.jpeg .tripo-out/player/multiview-1/tripo-out/tripo-out-player-concept-1-tripo-e62305da/generate_multiview_image.left_view.jpeg .tripo-out/player/multiview-1/tripo-out/tripo-out-player-concept-1-tripo-e62305da/generate_multiview_image.back_view.jpeg .tripo-out/player/multiview-1/tripo-out/tripo-out-player-concept-1-tripo-e62305da/generate_multiview_image.right_view.jpeg --model P1-20260311 --param pbr=false --param texture=true --param face_limit=5000 -o .tripo-out/player/attempt-1 --no-open --json",
+          "prompt": null,
+          "params": {
+            "pbr": false,
+            "texture": true,
+            "face_limit": 5000
+          },
+          "source_sheet": "multiview-1",
+          "source_concept": "concept-1",
+          "dry_run": {
+            "valid": true,
+            "warnings": [],
+            "cost_notes": [],
+            "model_reason": "explicit --model"
+          },
+          "estimate_credits": 50,
+          "estimate_source": "observed: P1 multiview-to-3D (Barrow-levy attempt-1)",
+          "balance_before": {
+            "balance": 740,
+            "frozen": 0
+          },
+          "finished_at": "2026-09-28T01:51:18+00:00",
+          "balance_after": {
+            "balance": 690,
+            "frozen": 0
+          },
+          "actual_spend": 50,
+          "cli_reported_credits": 50,
+          "exit_code": 0,
+          "task_ids": [
+            "e2b61bb2-f8dc-43c6-8eea-39854366cb6d"
+          ]
+        }
+      ]
+    },
+    "multiview": {
+      "status": "ok",
+      "timestamp": "2026-09-28T01:19:55+00:00",
+      "inputs": [
+        {
+          "path": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+          "sha256": "e92b55a11a671ace6e50e37e78578afaa6a2e46e7d230da2da61ef368c2e9f98"
+        },
+        {
+          "path": ".tripo-out/player/multiview-1.spend.json",
+          "sha256": "687b15106d5910b8d20e88fe771ff6e5933fb442e686b33657a7144c31b3930d"
+        }
+      ],
+      "outputs": [
+        {
+          "path": ".tripo-out/player/multiview-1/tripo-out/tripo-out-player-concept-1-tripo-e62305da/generate_multiview_image.front_view.jpeg",
+          "sha256": "f9f5a90af2658d046e2579b9d3f23af57a1ea97052bce5fe0881fce389daae05"
+        },
+        {
+          "path": ".tripo-out/player/multiview-1/tripo-out/tripo-out-player-concept-1-tripo-e62305da/generate_multiview_image.left_view.jpeg",
+          "sha256": "4643c7b10f09aed344844bfd5eb26c7a744c9b13aca8ab46872b48ae074ef149"
+        },
+        {
+          "path": ".tripo-out/player/multiview-1/tripo-out/tripo-out-player-concept-1-tripo-e62305da/generate_multiview_image.back_view.jpeg",
+          "sha256": "0f33711be223b9498cd8cc700d9f3180584ed05d35782bd26dbe3b2ece83753e"
+        },
+        {
+          "path": ".tripo-out/player/multiview-1/tripo-out/tripo-out-player-concept-1-tripo-e62305da/generate_multiview_image.right_view.jpeg",
+          "sha256": "4adc63aead6c78ed5b565e0bea1a5d1acfada27bfb4540bb9e7d6ed1d9ca901e"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.6.1.stable.official.14d19694e",
+        "tripo": "0.5.1"
+      },
+      "message": "sheet multiview-1 from concept-1: front, left, back, right",
+      "actual_cost_credits": 10,
+      "cost_unknown_attempts": [],
+      "cost_check": [
+        {
+          "attempt": "multiview-1",
+          "status": "generated",
+          "estimate_credits": 10,
+          "actual_balance_delta": 10,
+          "cli_reported_credits": 10,
+          "estimate_error": 0
+        }
+      ],
+      "tripo_attempts": [
+        {
+          "status": "generated",
+          "started_at": "2026-09-28T01:18:50+00:00",
+          "user_confirmed_at": "2026-09-28T01:18:50+00:00",
+          "tripo_cli_version": "0.5.1",
+          "model_version": null,
+          "region": "ov",
+          "command": "tripo generate image-to-multiview .tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png -o .tripo-out/player/multiview-1 --no-open --json",
+          "prompt": null,
+          "params": {},
+          "source_concept": "concept-1",
+          "dry_run": {
+            "valid": null,
+            "note": "tripo generate has no --dry-run; checked via pipeline.py --dry-run"
+          },
+          "estimate_credits": 10,
+          "estimate_source": "observed: image-to-multiview (Barrow-levy multiview-1)",
+          "balance_before": {
+            "balance": 750,
+            "frozen": 0
+          },
+          "finished_at": "2026-09-28T01:19:55+00:00",
+          "balance_after": {
+            "balance": 740,
+            "frozen": 0
+          },
+          "actual_spend": 10,
+          "cli_reported_credits": 10,
+          "exit_code": 0,
+          "task_ids": [
+            "e62305da-f6bb-4f8a-b1cd-1597c6a38539"
+          ]
+        }
+      ]
+    },
+    "rig": {
+      "status": "ok",
+      "timestamp": "2026-09-28T02:15:22+00:00",
+      "inputs": [
+        {
+          "path": ".tripo-out/player/attempt-1/tripo-out/generate-multiview-image-front-v-2-e2b61bb2/model.glb",
+          "sha256": "0910cebda7cd474de61a86030328c667191eb141b9a8141cfdcc9d7d4899d53a"
+        },
+        {
+          "path": ".tripo-out/player/rig-1.spend.json",
+          "sha256": "b60d82282802fad4cad3923452ae466388b6b22b90361e4fb5530495c7be8098"
+        }
+      ],
+      "outputs": [
+        {
+          "path": ".tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/model.glb",
+          "sha256": "bc92e1fb6182ff5c57b7cb15c65cab0870d7ffd0d6ec02ce42763fd31a12577d"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.6.1.stable.official.14d19694e",
+        "tripo": "0.5.1"
+      },
+      "message": "rigged .tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/model.glb from .tripo-out/player/attempt-1/tripo-out/generate-multiview-image-front-v-2-e2b61bb2/model.glb",
+      "actual_cost_credits": 25,
+      "params": {
+        "rig_type": "biped",
+        "spec": "mixamo",
+        "model": "v1.0-20240301",
+        "out_format": "glb"
+      },
+      "cost_unknown_attempts": [],
+      "cost_check": [
+        {
+          "attempt": "rig-1",
+          "status": "generated",
+          "estimate_credits": 25,
+          "actual_balance_delta": 25,
+          "cli_reported_credits": 25,
+          "estimate_error": 0
+        }
+      ],
+      "tripo_attempts": [
+        {
+          "status": "generated",
+          "started_at": "2026-09-28T02:07:25+00:00",
+          "user_confirmed_at": "2026-09-28T02:07:25+00:00",
+          "tripo_cli_version": "0.5.1",
+          "model_version": "v1.0-20240301",
+          "region": "ov",
+          "command": "tripo anim rig .tripo-out/player/attempt-1/tripo-out/generate-multiview-image-front-v-2-e2b61bb2/model.glb --rig-type biped --spec mixamo --out-format glb --param model=v1.0-20240301 -o .tripo-out/player/rig-1 --no-open --json",
+          "prompt": null,
+          "params": {
+            "rig_type": "biped",
+            "spec": "mixamo",
+            "out_format": "glb",
+            "model": "v1.0-20240301"
+          },
+          "source_model": "attempt-1 (raw download)",
+          "dry_run": {
+            "valid": null,
+            "note": "no --dry-run for anim rig; rig-check on this file: riggable=true, biped (task 29c1d76a)"
+          },
+          "estimate_credits": 25,
+          "estimate_source": "observed: v1.0 rig (Barrow-levy rig-2)",
+          "balance_before": {
+            "balance": 690,
+            "frozen": 0
+          },
+          "finished_at": "2026-09-28T02:15:22+00:00",
+          "balance_after": {
+            "balance": 665,
+            "frozen": 0
+          },
+          "actual_spend": 25,
+          "cli_reported_credits": 25,
+          "exit_code": 0,
+          "task_ids": [
+            "ba787f8d-ff80-4aac-971f-5172b78184bf"
+          ]
+        }
+      ]
+    },
+    "clean": {
+      "status": "ok",
+      "timestamp": "2026-09-28T02:18:04+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/player.yaml",
+          "sha256": "223a2457fb2fcf5929f7911169959f2bf4860272724c55c7c59d13ff68781620"
+        },
+        {
+          "path": ".tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/model.glb",
+          "sha256": "bc92e1fb6182ff5c57b7cb15c65cab0870d7ffd0d6ec02ce42763fd31a12577d"
+        },
+        {
+          "path": "scripts/blender_cleanup.py",
+          "sha256": "8a229bb6bbafc6501917b8b4e7c02cfa05e12e3624df6436828c411816fa7885"
+        },
+        {
+          "path": ".tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/task.json",
+          "sha256": "fb70f61b1a8d26326576e914851c53839cf5589a2cad8ffec5b4de1b50221850"
+        },
+        {
+          "path": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+          "sha256": "e92b55a11a671ace6e50e37e78578afaa6a2e46e7d230da2da61ef368c2e9f98"
+        },
+        {
+          "path": "assets/overlays/player_mouth.png",
+          "sha256": "ad40db84b412035c867629510d3505e53a4f3044d14110a9e88242672fbb409c"
+        },
+        {
+          "path": "assets/overlays/player_mouth.json",
+          "sha256": "fb7f7dc5f4a7abf98b5f9334f2d22f2a0cc4f7ea56de2764cb661ef360c353d9"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "assets/meshes/player.glb",
+          "sha256": "f77b0dde075156ddefb848643f3a203899d436a06bbf1254f81b6e1b16ff0bb0"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.6.1.stable.official.14d19694e",
+        "tripo": "0.5.1"
+      },
+      "message": "exported assets/meshes/player.glb",
+      "actual_cost_credits": 0,
+      "params": {
+        "asset_id": "player",
+        "type": "character",
+        "face_limit": 5000,
+        "triangle_budget": 5500,
+        "texture_size": 256,
+        "target_size_m": 1.8,
+        "pivot": "base",
+        "palette": [
+          "Garrison Teal",
+          "Saddle Leather",
+          "Blackened Iron",
+          "Tarnished Gold"
+        ],
+        "socket_map": null,
+        "animations": [
+          "idle",
+          "run",
+          "dodge_roll",
+          "attack_light",
+          "attack_heavy",
+          "death"
+        ],
+        "exclude_objects": null,
+        "tip_end": null,
+        "rigid_parts": null,
+        "source_forward": {
+          "axis": "+x",
+          "source": "Tripo API default (.tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/task.json sets no export_orientation)"
+        },
+        "palette_targets": {
+          "Garrison Teal": "#0C5454",
+          "Saddle Leather": "#4A2A10",
+          "Blackened Iron": "#242424",
+          "Tarnished Gold": "#E6BF1A"
+        },
+        "reference_image": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+        "texture_overlays": [
+          "/Users/zach/Documents/repos/project-whiskeyjack/assets/overlays/player_mouth.png"
+        ]
+      },
+      "report": {
+        "status": "pass",
+        "errors": [],
+        "warnings": [],
+        "blender_version": "5.0.1",
+        "input": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/model.glb",
+        "output": "/Users/zach/Documents/repos/project-whiskeyjack/assets/meshes/player.glb",
+        "materials": [
+          {
+            "name": "tripo_material_e2b61bb2-f8dc-43c6-8eea-39854366cb6d",
+            "stripped": "normal, roughness, metallic, specular, emission and occlusion inputs are not carried over",
+            "converted_from": "principled",
+            "texture": "Color_e2b61bb2-f8dc-43c6-8eea-39854366cb6d",
+            "alpha": false
+          }
+        ],
+        "textures": [
+          {
+            "name": "Color_e2b61bb2-f8dc-43c6-8eea-39854366cb6d",
+            "size_before": [
+              2048,
+              2048
+            ],
+            "size_after": [
+              256,
+              256
+            ]
+          }
+        ],
+        "removed_objects": [
+          "Icosphere (bone display shape created by the importer)"
+        ],
+        "rigged": true,
+        "armatures": [
+          {
+            "name": "Armature",
+            "bones": [
+              "Root",
+              "mixamorig:Hips",
+              "mixamorig:Spine",
+              "mixamorig:Spine1",
+              "mixamorig:Spine2",
+              "mixamorig:Neck",
+              "mixamorig:Head",
+              "mixamorig:LeftShoulder",
+              "mixamorig:LeftArm",
+              "mixamorig:LeftForeArm",
+              "mixamorig:LeftHand",
+              "mixamorig:RightShoulder",
+              "mixamorig:RightArm",
+              "mixamorig:RightForeArm",
+              "mixamorig:RightHand",
+              "mixamorig:LeftUpLeg",
+              "mixamorig:LeftLeg",
+              "mixamorig:LeftFoot",
+              "mixamorig:LeftToeBase",
+              "mixamorig:RightUpLeg",
+              "mixamorig:RightLeg",
+              "mixamorig:RightFoot",
+              "mixamorig:RightToeBase"
+            ]
+          }
+        ],
+        "transform": {
+          "pivot": "base",
+          "size_before_m": [
+            0.2211,
+            1.0,
+            0.9883
+          ],
+          "geometry_forward": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "geometry_note": "geometry (arm span along y, feet +0.034 along x)",
+          "source_forward": {
+            "axis": "+x",
+            "source": "Tripo API default (.tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/task.json sets no export_orientation)"
+          },
+          "facing_detected_by": "foot bones (head to tail)",
+          "forward_before": [
+            1.0,
+            -0.002
+          ],
+          "rotation_z_deg": -90,
+          "scale_factor": 1.82139,
+          "size_after_m": [
+            1.8214,
+            0.4028,
+            1.8
+          ],
+          "true_dims_m": {
+            "x": 1.8214,
+            "y": 0.4028,
+            "z": 1.8
+          },
+          "true_length_m": 1.8,
+          "min_after": [
+            -0.9107,
+            -0.2014,
+            0.0
+          ]
+        },
+        "mesh_health": {
+          "totals": {
+            "as_imported": {
+              "vertices": 6564,
+              "edges": 10488,
+              "faces": 4893,
+              "triangles": 4893,
+              "quads": 0,
+              "ngons": 0,
+              "non_manifold_edges": 2,
+              "boundary_edges": 6299,
+              "boundary_loops": 980,
+              "wire_edges": 0,
+              "loose_vertices": 0,
+              "degenerate_faces": 0,
+              "zero_length_edges": 0,
+              "quad_ratio": 0.0,
+              "triangle_ratio": 1.0
+            },
+            "welded": {
+              "vertices": 2481,
+              "edges": 7371,
+              "faces": 4893,
+              "triangles": 4893,
+              "quads": 0,
+              "ngons": 0,
+              "non_manifold_edges": 13,
+              "boundary_edges": 95,
+              "boundary_loops": 2,
+              "wire_edges": 0,
+              "loose_vertices": 0,
+              "degenerate_faces": 0,
+              "zero_length_edges": 0,
+              "part_count": 5,
+              "parts": [
+                {
+                  "triangles": 4713,
+                  "vertices": 2383,
+                  "size_m": [
+                    0.2211,
+                    1.0,
+                    0.9883
+                  ]
+                },
+                {
+                  "triangles": 50,
+                  "vertices": 27,
+                  "size_m": [
+                    0.0157,
+                    0.0372,
+                    0.0078
+                  ]
+                },
+                {
+                  "triangles": 50,
+                  "vertices": 27,
+                  "size_m": [
+                    0.0157,
+                    0.0372,
+                    0.0078
+                  ]
+                },
+                {
+                  "triangles": 42,
+                  "vertices": 23,
+                  "size_m": [
+                    0.0078,
+                    0.0117,
+                    0.0137
+                  ]
+                },
+                {
+                  "triangles": 38,
+                  "vertices": 21,
+                  "size_m": [
+                    0.0078,
+                    0.0137,
+                    0.0137
+                  ]
+                }
+              ],
+              "quad_ratio": 0.0,
+              "triangle_ratio": 1.0
+            }
+          },
+          "per_mesh": [
+            {
+              "mesh": "tripo_node_e2b61bb2-f8dc-43c6-8eea-39854",
+              "as_imported": {
+                "vertices": 6564,
+                "edges": 10488,
+                "faces": 4893,
+                "triangles": 4893,
+                "quads": 0,
+                "ngons": 0,
+                "quad_ratio": 0.0,
+                "triangle_ratio": 1.0,
+                "non_manifold_edges": 2,
+                "boundary_edges": 6299,
+                "boundary_loops": 980,
+                "wire_edges": 0,
+                "loose_vertices": 0,
+                "degenerate_faces": 0,
+                "zero_length_edges": 0
+              },
+              "welded": {
+                "vertices": 2481,
+                "edges": 7371,
+                "faces": 4893,
+                "triangles": 4893,
+                "quads": 0,
+                "ngons": 0,
+                "quad_ratio": 0.0,
+                "triangle_ratio": 1.0,
+                "non_manifold_edges": 13,
+                "boundary_edges": 95,
+                "boundary_loops": 2,
+                "wire_edges": 0,
+                "loose_vertices": 0,
+                "degenerate_faces": 0,
+                "zero_length_edges": 0,
+                "parts": [
+                  {
+                    "triangles": 4713,
+                    "vertices": 2383,
+                    "size_m": [
+                      0.2211,
+                      1.0,
+                      0.9883
+                    ]
+                  },
+                  {
+                    "triangles": 50,
+                    "vertices": 27,
+                    "size_m": [
+                      0.0157,
+                      0.0372,
+                      0.0078
+                    ]
+                  },
+                  {
+                    "triangles": 50,
+                    "vertices": 27,
+                    "size_m": [
+                      0.0157,
+                      0.0372,
+                      0.0078
+                    ]
+                  },
+                  {
+                    "triangles": 42,
+                    "vertices": 23,
+                    "size_m": [
+                      0.0078,
+                      0.0117,
+                      0.0137
+                    ]
+                  },
+                  {
+                    "triangles": 38,
+                    "vertices": 21,
+                    "size_m": [
+                      0.0078,
+                      0.0137,
+                      0.0137
+                    ]
+                  }
+                ],
+                "part_count": 5
+              }
+            }
+          ],
+          "weld_distance_m": 1e-05,
+          "note": "baseline only; nothing fails on these yet"
+        },
+        "color_correction": [
+          {
+            "image": "Color_e2b61bb2-f8dc-43c6-8eea-39854366cb6d",
+            "size": [
+              256,
+              256
+            ],
+            "method": "approved concept (hue and saturation restored; lightness lifted to the matched concept tone, never lowered)",
+            "reference": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+            "concept_background": "#8B8B8B",
+            "clusters": [
+              {
+                "concept": "#14313F",
+                "concept_share": 0.32,
+                "texture_before": "#032C3F",
+                "texture_share": 0.351,
+                "delta_e_before": 4.5,
+                "applied": true,
+                "texture_after": "#13303E",
+                "delta_ab_after": 0.3,
+                "lightness": [
+                  16.6,
+                  18.5,
+                  18.8
+                ],
+                "delta_ab_before": 3.9
+              },
+              {
+                "concept": "#BC9781",
+                "concept_share": 0.058,
+                "texture_before": "#AC9386",
+                "texture_share": 0.078,
+                "delta_e_before": 7.9,
+                "applied": true,
+                "texture_after": "#BE9983",
+                "delta_ab_after": 0.1,
+                "lightness": [
+                  62.9,
+                  66.2,
+                  65.4
+                ],
+                "delta_ab_before": 7.5
+              },
+              {
+                "concept": "#646064",
+                "concept_share": 0.004,
+                "texture_before": "#5B4444",
+                "texture_share": 0.016,
+                "delta_e_before": 13.8,
+                "applied": false,
+                "reason": "covers 1.6% of the texture"
+              },
+              {
+                "concept": "#957468",
+                "concept_share": 0.03,
+                "texture_before": "#7F6E68",
+                "texture_share": 0.023,
+                "delta_e_before": 9.2,
+                "applied": false,
+                "reason": "covers 2.3% of the texture"
+              },
+              {
+                "concept": "#45282B",
+                "concept_share": 0.231,
+                "texture_before": "#441B21",
+                "texture_share": 0.246,
+                "delta_e_before": 7.8,
+                "applied": true,
+                "texture_after": "#432629",
+                "delta_ab_after": 0.4,
+                "lightness": [
+                  16.0,
+                  19.0,
+                  19.8
+                ],
+                "delta_ab_before": 6.8
+              },
+              {
+                "concept": "#2C1D25",
+                "concept_share": 0.145,
+                "texture_before": "#281A21",
+                "texture_share": 0.159,
+                "delta_e_before": 1.6,
+                "applied": true,
+                "texture_after": "#2B1A22",
+                "delta_ab_after": 1.3,
+                "lightness": [
+                  11.3,
+                  11.7,
+                  12.7
+                ],
+                "delta_ab_before": 0.8
+              },
+              {
+                "concept": "#383C43",
+                "concept_share": 0.021,
+                "texture_before": "#354149",
+                "texture_share": 0.029,
+                "delta_e_before": 3.4,
+                "applied": false,
+                "reason": "covers 2.9% of the texture"
+              },
+              {
+                "concept": "#0B1C2C",
+                "concept_share": 0.19,
+                "texture_before": "#03122A",
+                "texture_share": 0.098,
+                "delta_e_before": 7.2,
+                "applied": true,
+                "texture_after": "#071929",
+                "delta_ab_after": 0.4,
+                "lightness": [
+                  5.7,
+                  8.0,
+                  9.5
+                ],
+                "delta_ab_before": 6.1
+              }
+            ]
+          }
+        ],
+        "overlays": [
+          {
+            "overlay": "/Users/zach/Documents/repos/project-whiskeyjack/assets/overlays/player_mouth.png",
+            "pixels": 19
+          }
+        ],
+        "shading": {
+          "angle_deg": 30.0,
+          "welded_vertices_removed": 0,
+          "custom_normals_cleared": [
+            "tripo_node_e2b61bb2-f8dc-43c6-8eea-39854"
+          ],
+          "welded": false
+        },
+        "triangle_count": 4893,
+        "triangle_budget": 5500,
+        "vertex_metrics": {
+          "split_at_seams": 6564,
+          "welded": 2481,
+          "note": "metrics only; the budget is in triangles"
+        },
+        "animations": [],
+        "exported": {
+          "images": 1,
+          "materials": [
+            {
+              "name": "tripo_material_e2b61bb2-f8dc-43c6-8eea-39854366cb6d",
+              "alphaMode": "OPAQUE",
+              "base_color_texture": true
+            }
+          ],
+          "animations": 0,
+          "skins": 1
+        }
+      }
+    },
+    "validate": {
+      "status": "ok",
+      "timestamp": "2026-09-28T02:18:17+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/player.yaml",
+          "sha256": "223a2457fb2fcf5929f7911169959f2bf4860272724c55c7c59d13ff68781620"
+        },
+        {
+          "path": "assets/meshes/player.glb",
+          "sha256": "f77b0dde075156ddefb848643f3a203899d436a06bbf1254f81b6e1b16ff0bb0"
+        },
+        {
+          "path": "scripts/godot_validate.gd",
+          "sha256": "7206c588708da230432d1771d350537f8b5d64c7cfc4150a3b6b77cb409d8e51"
+        },
+        {
+          "path": "scripts/blender_views.py",
+          "sha256": "debc0bfee9633437a28f041585e1422ec94aa009a068e18c0826528ed36d9d85"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "assets/manifests/player/front.png",
+          "sha256": "df61577afb5da4dc8a093237cf9b99c1de88462c728c58a8f639cad3129712c8"
+        },
+        {
+          "path": "assets/manifests/player/right.png",
+          "sha256": "90bd35d5c02d9257cd25b1f322eb5c3f875d5569fcaa5913010b4905e977f12a"
+        },
+        {
+          "path": "assets/manifests/player/back.png",
+          "sha256": "1f412b4a4110f3fd86bbbc3c9fa4235ab6f2e0d1a3b59fea0121d363392cc80c"
+        },
+        {
+          "path": "assets/manifests/player/top.png",
+          "sha256": "4943ffa349a9204ff911c28723b26c4727e0c242922122362e38827607d9330f"
+        },
+        {
+          "path": "assets/manifests/player/clay_front.png",
+          "sha256": "785df729e8bb14b417121b322b1944d990b751ea8aff2e8dafd0a7203dd0feac"
+        },
+        {
+          "path": "assets/manifests/player/wireframe_front.png",
+          "sha256": "bced4ceb63d5507067fdf203f726b624af3b49a2d77b006f0a568ebead94a0bd"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.6.1.stable.official.14d19694e",
+        "tripo": "0.5.1"
+      },
+      "message": "all checks passed",
+      "actual_cost_credits": 0,
+      "params": {
+        "asset_id": "player",
+        "type": "character",
+        "face_limit": 5000,
+        "triangle_budget": 5500,
+        "texture_size": 256,
+        "target_size_m": 1.8,
+        "pivot": "base",
+        "palette": [
+          "Garrison Teal",
+          "Saddle Leather",
+          "Blackened Iron",
+          "Tarnished Gold"
+        ],
+        "socket_map": null,
+        "animations": [
+          "idle",
+          "run",
+          "dodge_roll",
+          "attack_light",
+          "attack_heavy",
+          "death"
+        ],
+        "exclude_objects": null,
+        "tip_end": null,
+        "rigid_parts": null,
+        "blender_triangle_count": 4893
+      },
+      "report": {
+        "animations": {
+          "expected": [
+            "idle",
+            "run",
+            "dodge_roll",
+            "attack_light",
+            "attack_heavy",
+            "death"
+          ],
+          "missing": [
+            "idle",
+            "run",
+            "dodge_roll",
+            "attack_light",
+            "attack_heavy",
+            "death"
+          ],
+          "present": []
+        },
+        "errors": [],
+        "godot_version": "4.6.1-stable (official)",
+        "import_method": "GLTFDocument (runtime); editor import settings such as a BoneMap don't apply",
+        "materials": [
+          {
+            "albedo_texture": [
+              256,
+              256
+            ],
+            "extra_maps": [],
+            "mesh": "tripo_node_e2b61bb2-f8dc-43c6-8eea-39854",
+            "metallic": 0.0,
+            "metallic_specular": 0.0,
+            "roughness": 1.0,
+            "specular_mode": "schlick_ggx",
+            "surface": 0,
+            "transparency": "disabled",
+            "unshaded": false
+          }
+        ],
+        "rig": {
+          "bone_count": 23,
+          "bones": [
+            "Root",
+            "mixamorig_Hips",
+            "mixamorig_Spine",
+            "mixamorig_Spine1",
+            "mixamorig_Spine2",
+            "mixamorig_Neck",
+            "mixamorig_Head",
+            "mixamorig_LeftShoulder",
+            "mixamorig_LeftArm",
+            "mixamorig_LeftForeArm",
+            "mixamorig_LeftHand",
+            "mixamorig_RightShoulder",
+            "mixamorig_RightArm",
+            "mixamorig_RightForeArm",
+            "mixamorig_RightHand",
+            "mixamorig_LeftUpLeg",
+            "mixamorig_LeftLeg",
+            "mixamorig_LeftFoot",
+            "mixamorig_LeftToeBase",
+            "mixamorig_RightUpLeg",
+            "mixamorig_RightLeg",
+            "mixamorig_RightFoot",
+            "mixamorig_RightToeBase"
+          ],
+          "exact_profile_name_matches": [
+            "Root"
+          ],
+          "humanoid_mappable": true,
+          "mapping_method": "name heuristic; confirm in the editor's BoneMap before retargeting",
+          "missing_required": [],
+          "profile": "SkeletonProfileHumanoid (56 bones, 17 required)",
+          "proposed_bone_map": {
+            "Chest": "mixamorig_Spine1",
+            "Head": "mixamorig_Head",
+            "Hips": "mixamorig_Hips",
+            "LeftFoot": "mixamorig_LeftFoot",
+            "LeftHand": "mixamorig_LeftHand",
+            "LeftLowerArm": "mixamorig_LeftForeArm",
+            "LeftLowerLeg": "mixamorig_LeftLeg",
+            "LeftShoulder": "mixamorig_LeftShoulder",
+            "LeftToes": "mixamorig_LeftToeBase",
+            "LeftUpperArm": "mixamorig_LeftArm",
+            "LeftUpperLeg": "mixamorig_LeftUpLeg",
+            "Neck": "mixamorig_Neck",
+            "RightFoot": "mixamorig_RightFoot",
+            "RightHand": "mixamorig_RightHand",
+            "RightLowerArm": "mixamorig_RightForeArm",
+            "RightLowerLeg": "mixamorig_RightLeg",
+            "RightShoulder": "mixamorig_RightShoulder",
+            "RightToes": "mixamorig_RightToeBase",
+            "RightUpperArm": "mixamorig_RightArm",
+            "RightUpperLeg": "mixamorig_RightUpLeg",
+            "Spine": "mixamorig_Spine",
+            "UpperChest": "mixamorig_Spine2"
+          },
+          "skeleton": true,
+          "skeleton_path": "Armature/Skeleton3D",
+          "unmapped_bones": [
+            "Root"
+          ]
+        },
+        "status": "pass",
+        "textures": {
+          "count": 1,
+          "max_allowed": 256,
+          "sizes": [
+            [
+              256,
+              256
+            ]
+          ]
+        },
+        "triangles": {
+          "blender_count": 4893.0,
+          "budget": 5500,
+          "count": 4893
+        },
+        "vertex_metrics": {
+          "gpu_count": 7272,
+          "note": "metrics only; the budget is in triangles"
+        },
+        "warnings": [
+          "animations missing (they'll come from the shared library): [\"idle\", \"run\", \"dodge_roll\", \"attack_light\", \"attack_heavy\", \"death\"]",
+          "gross check: holes: 2 open boundary loops after welding"
+        ],
+        "views": {
+          "status": "ok",
+          "views": {
+            "front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/player/front.png",
+              "coverage": 0.1776
+            },
+            "right": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/player/right.png",
+              "coverage": 0.1099
+            },
+            "back": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/player/back.png",
+              "coverage": 0.1776
+            },
+            "top": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/player/top.png",
+              "coverage": 0.079
+            },
+            "clay_front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/player/clay_front.png",
+              "coverage": 0.1776
+            },
+            "wireframe_front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/player/wireframe_front.png",
+              "coverage": 0.1591
+            }
+          },
+          "errors": [],
+          "triangles": 4893,
+          "pieces_welded": 5
+        },
+        "gross_flags": [
+          "holes: 2 open boundary loops after welding"
+        ]
+      }
     }
   },
   "brief": {
     "path": "assets/briefs/player.yaml",
-    "sha256": "451d154cad325d0a9a08c5b4d3959196f21a03c19f305444eb00f4c1667b200f"
+    "sha256": "223a2457fb2fcf5929f7911169959f2bf4860272724c55c7c59d13ff68781620"
   },
-  "total_cost_credits": 0,
-  "updated_at": "2026-09-27T19:08:39+00:00"
+  "total_cost_credits": 100,
+  "updated_at": "2026-09-28T02:18:17+00:00",
+  "concept_approval": {
+    "attempt": "concept-1",
+    "image": {
+      "path": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+      "sha256": "e92b55a11a671ace6e50e37e78578afaa6a2e46e7d230da2da61ef368c2e9f98"
+    },
+    "approved_at": "2026-09-28T01:16:49+00:00",
+    "approved_by": "user",
+    "concept_model": "banana_pro",
+    "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A young frontier soldier in a knee-length wool tunic in deep dark teal that flares at the hem, a leather harness in dark reddish-brown with two straps crossing the chest and back, leather boots in dark reddish-brown, spiky dark hair, empty hands, T-pose.",
+    "command": "tripo generate text-to-image 'Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A young frontier soldier in a knee-length wool tunic in deep dark teal that flares at the hem, a leather harness in dark reddish-brown with two straps crossing the chest and back, leather boots in dark reddish-brown, spiky dark hair, empty hands, T-pose.' --model banana_pro --param template=t_pose --param aspect_ratio=3:4 -o .tripo-out/player/concept-1 --no-open --json"
+  }
 }
