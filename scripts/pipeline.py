@@ -852,6 +852,18 @@ def gross_flags(views, m):
     return flags
 
 
+# Which judge packet follows each stage (scripts/judge.py; the asset-pipeline skill -> Judge).
+# Concepts are judged while they wait for approval, the rest once the stage has passed.
+JUDGE_AFTER = {("concept", EXIT_AWAITING_APPROVAL): "concept", ("multiview", EXIT_OK): "multiview",
+               ("model", EXIT_OK): "model", ("validate", EXIT_OK): "mesh"}
+
+
+def judge_hint(brief, stage, code, args):
+    judge_stage = JUDGE_AFTER.get((stage, code))
+    if judge_stage and not args.dry_run and not (judge_stage in ("multiview", "model") and model_on_disk(brief) and brief.get("source_glb")):
+        print(f"judge: python3 scripts/judge.py packet {brief['asset_id']} --stage {judge_stage}")
+
+
 STAGE_FUNCS = {"concept": stage_concept, "multiview": stage_multiview, "model": stage_model, "rig": stage_rig,
                "clean": stage_clean, "validate": stage_validate}
 
@@ -893,6 +905,7 @@ def main():
             code = STAGE_FUNCS[stage](brief, m, args)
             if not args.dry_run:
                 save_manifest(m)
+            judge_hint(brief, stage, code, args)
             if code != EXIT_OK:
                 return code
         return EXIT_OK

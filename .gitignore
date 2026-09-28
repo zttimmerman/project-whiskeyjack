@@ -21,3 +21,6 @@ __pycache__/
 
 # Quaternius packs as extracted (only the two non-root-motion GLBs are committed)
 assets/animations/quaternius/Universal Animation Library*[[]Standard[]]/
+
+# Judge packets: scratch (preview cleans, renders before copying); the packet keeps the evidence it copied
+assets/manifests/**/judge/*/work/

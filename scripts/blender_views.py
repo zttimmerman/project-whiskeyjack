@@ -37,6 +37,8 @@ def parse_args():
     ap.add_argument("--input", required=True)
     ap.add_argument("--outdir", required=True)
     ap.add_argument("--report", required=True)
+    ap.add_argument("--closeups", action="store_true",
+                    help="also render closeup_front/closeup_back of the top 42%% (head and chest; for the judge)")
     return ap.parse_args(argv)
 
 
@@ -157,6 +159,20 @@ def render(args, report):
 
     for name, (direction, rot) in VIEWS.items():
         shoot(name, direction, rot)
+
+    if args.closeups:
+        # Head and chest at about 3x the full view's scale: face-sized defects (a lost mouth, skin
+        # showing through clothing) are a few pixels in the full-height views
+        top = mx.z - dims.z * 0.21
+        for name in ("front", "back"):
+            direction, rot = VIEWS[name]
+            cam_data.ortho_scale = dims.z * 0.42
+            cam.location = Vector((center.x, center.y, top)) + direction * reach
+            cam.rotation_euler = [math.radians(a) for a in rot]
+            path = os.path.join(args.outdir, f"closeup_{name}.png")
+            scene.render.filepath = path
+            bpy.ops.render.render(write_still=True)
+            report["views"][f"closeup_{name}"] = {"path": path, "coverage": coverage(path)}
 
     # Clay: one flat grey front for reading form only
     shading.color_type = "SINGLE"

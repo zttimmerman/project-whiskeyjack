@@ -45,6 +45,24 @@ Hex values are either set exactly in a scene or script, or sampled from a shippe
 - **Rendering:** one directional light plus ambient per area. Ambient is a `WorldEnvironment` with Wet Slate `#736B66` color at low energy: Level 1 uses 0.5, enough for figures to read against the floor away from torchlight without flattening the torch pools. Local lights are allowed only for visible sources such as torches and candelabras, with one exception: the player's **character fill light** (`Player.tscn` → `CameraRig/FillLight`: Torch Amber, energy 3.5, range 5 m, 0.6 m above and 2.5 m behind the camera pivot, so the skin doesn't clip). Its cull mask is render layer 2, and only the player's meshes are on it, so walls, floor and enemies are unaffected. **Readability fixes go in this order: character fill light, then level lighting, and albedo brightening only as a last resort** (it fights color correction, only helps in dark areas, and has to be redone per character). No bloom, SSAO or SSR.
 - **Post-MVP, not now:** palette quantization, vertex-snap or affine-warp shaders, pixel fonts.
 
+## Judge tolerances
+
+The numeric assertions the asset judge checks (`scripts/judge.py`, which reads this table; nothing else holds these numbers). ΔE is CIE76 in Lab. Each value is set on principle and checked against the replays in `assets/manifests/judge_replays/`: the known-bad inputs fail, and where a shipped asset or clip fails too, it's a real finding recorded in `docs/decisions.md`, not a reason to loosen the limit.
+
+| Check | Limit | Applies to | Why |
+|---|---|---|---|
+| `concept_palette_de` | 25 | concept | A brief palette color counts as present when one of the concept's main colors (≥ 3% of the figure) sits within this distance. Loose on purpose: the player's approved "deep dark teal" rendered as navy #14313F. |
+| `color_min_share` | 0.05 | model, mesh | Colors covering less of the concept (or texture) than this are details, not checked. |
+| `color_kept_ratio` | 0.33 | model, mesh | A concept color must keep at least this fraction of its concept share in the texture, or the model lost it. |
+| `color_dab_after` | 5 | model, mesh | Hue/saturation distance (Lab a, b) between a corrected texture cluster and its concept color. |
+| `palette_de_before` | 20 | model, mesh | Concept-less assets: distance before correction for a palette group covering at least `color_min_share`. Correction can repaint a wrong color: blade attempt 1's olive-green blade grouped under Old Bone (27.5 ΔE) and came out bone-colored. |
+| `palette_de_after` | 12 | model, mesh | Concept-less assets: distance between a corrected palette group's median and its palette color. |
+| `mesh_max_holes` | 10 | model, mesh | Open boundary loops after welding. Fewer are reported for the judge to weigh (the blade's 4 grip slits are recorded and accepted). |
+| `motion_root_travel_m` | 0.15 | death, in-place clips | Horizontal Hips travel from the first frame. The pre-fix `Death01` travelled 0.45–0.51 m; shipped idles and runs stay under 0.07. |
+| `motion_foot_slide_mps` | 0.5 | death, in-place clips | 90th-percentile ground-relative speed of a planted foot (near its lowest point and not moving vertically), at the clip's gameplay speed: 10% of the player's run. Action clips pivot on planted feet on purpose, so theirs is reported only. |
+| `motion_bind_deviation_m` | 1.8 | every clip | Largest vertex displacement from the bind pose in the Hips frame; a character's height, because no attached vertex gets that far from the hips. Normal clips reach 0.5–1.6 (arms swinging from the T-pose). |
+| `motion_edge_stretch` | 1.0 | every clip | Largest relative length change of any mesh edge of at least 1 cm from the bind pose: an edge has doubled. Rigid-part characters read 0. |
+
 ## Prompt blocks
 
 Generation prompts are built from these blocks plus the brief's own description, with palette names swapped for their plain colors (see Palette). `scripts/pipeline.py` reads FORM and CONCEPT LIGHTING from this section, so edit them here only. Which lighting applies depends on what the image is for:
