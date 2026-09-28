@@ -59,10 +59,11 @@ The Tripo chain is **text-to-image → (optional refine) → image-to-multiview 
 3. **clean**. Runs `blender -b --factory-startup -P scripts/blender_cleanup.py`:
    - removes Blender's importer-made bone display shapes, and anything listed in `exclude_objects`;
    - fails if a rigged asset has a mesh that isn't attached to the armature;
-   - characters: detects facing from the foot bones (heel to toe), falling back to the foot geometry, and snaps to −Y;
+   - characters: detects facing and snaps it to −Y. A rig uses its foot bones (heel to toe). Without a rig, it reads the source's export axis from the Tripo `task.json` beside the download (`export_orientation`, or the API default `+x` when that's unset) and cross-checks it against the geometry: the arm span gives the lateral axis, the feet give forward. If the metadata and the geometry disagree it **fails**; with neither, it warns and assumes −Y. **Tripo's rigger expects Tripo's own +X orientation**, so rig the raw download before cleaning; a cleaned, rotated GLB rig-checks as unriggable;
    - props: aligns the **principal axis** (largest spread) to +Z and the second axis to +X, then re-measures and **fails if the residual tilt exceeds 2°**; warns when a prop has no clear long axis. It then finds the **tip** (the thinner end, comparing each end's cross-section over 12% of the length), flips the prop 180° if the tip isn't at the brief's `tip_end`, re-measures, and **fails** if it still doesn't match. When the ends are too similar (thin/thick above 0.8) it only warns; `symmetric` skips the check;
    - scales to `target_size_m` (height for characters, length for props) and puts the base or center at the origin;
-   - rebuilds every material as albedo-only (a Principled BSDF with base color, plus cutout alpha through Round so glTF writes MASK), dropping normal, roughness, metallic, specular, emission and occlusion maps, and turning unlit/emission setups into albedo;
+   - rebuilds every material as albedo-only (a Principled BSDF with base color, plus cutout alpha through Round so glTF writes MASK), with roughness 1, metallic 0 and specular 0. It drops normal, roughness, metallic, specular, emission and occlusion maps, and turns unlit/emission setups into albedo;
+   - **flat shading:** clears the imported custom normals, then flat-shades every edge sharper than 30° (`SMOOTH_ANGLE_DEG`). Unrigged meshes are welded first so UV-seam splits don't read as hard edges; this keeps UVs and the triangle count;
    - bakes the albedo with Cycles when it comes from a node chain rather than an image (one material only);
    - downscales the texture to `texture_size`, and fails if there's more than one texture;
    - records **mesh health** as a baseline and never fails on it: triangle/quad/n-gon counts and ratios, non-manifold edges, boundary edges and loops (holes), wire edges, loose vertices, degenerate faces, zero-length edges, and the **part count** (welded connected pieces, each with its triangles, vertices and size). The part count is a rigging risk to watch on characters before auto-rigging. Everything is counted twice: as imported, and welded at 0.01 mm. The glTF importer doesn't merge vertices, so every UV seam shows up as an "as imported" boundary; the welded numbers are the real topology;
@@ -74,6 +75,7 @@ The Tripo chain is **text-to-image → (optional refine) → image-to-multiview 
    - whether every socket in `socket_map` resolves to a bone;
    - the triangle count against the budget, and whether it matches stage 3's Blender count (GPU vertices are recorded as a metric only);
    - textures (size, count, extra maps; no albedo *and* no vertex colors fails);
+   - each material's imported roughness, metallic and specular. It warns when specular is above 0; Godot 4.6 ignores glTF specular, so this currently always warns;
    - material transparency;
    - animations against the brief (missing ones only warn, since they'll come from the shared library).
 
@@ -99,5 +101,5 @@ Every stage records the SHA-256 of its inputs (brief, source GLB, spend records,
 - The Cycles bake path (albedo from a node chain) hasn't yet been exercised on a real asset.
 - The humanoid mapping is a name heuristic (it covers Blender, Sketchfab and Mixamo naming). The editor's BoneMap is authoritative.
 - The prop up-direction isn't detected; the socket's child `Transform3D` absorbs flips.
-- Stage 4 renders `front`, `right`, `back`, `top` and `wireframe_front` PNGs into `assets/manifests/<asset-id>/` (Blender Workbench, offline; `assets/manifests/.gdignore` keeps Godot from importing them). Gross-failure flags are warnings only: missing geometry (no triangles, or a view under 0.5% coverage) and holes (welded boundary loops). Fused parts need a human look at the renders.
+- Stage 4 renders `front`, `right`, `back` and `top` **with the albedo texture in true color** (the Standard view transform, since the default AgX made albedo look like grey clay), plus `clay_front` (grey, form only) and `wireframe_front` PNGs into `assets/manifests/<asset-id>/` (Blender Workbench, offline; `assets/manifests/.gdignore` keeps Godot from importing them). Gross-failure flags are warnings only: missing geometry (no triangles, or a view under 0.5% coverage) and holes (welded boundary loops). Fused parts need a human look at the renders.
 - The budget unit is triangles. Vertex counts (as imported, split at UV seams; and welded) are recorded as metrics only; the first blade was 1,454 split and 519 welded for 1,026 triangles.

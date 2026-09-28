@@ -46,7 +46,7 @@ ART_BIBLE = ROOT / "docs" / "art-bible.md"
 BLENDER_SCRIPT = ROOT / "scripts" / "blender_cleanup.py"
 GODOT_SCRIPT = ROOT / "scripts" / "godot_validate.gd"
 VIEWS_SCRIPT = ROOT / "scripts" / "blender_views.py"
-VIEW_NAMES = ("front", "right", "back", "top", "wireframe_front")
+VIEW_NAMES = ("front", "right", "back", "top", "clay_front", "wireframe_front")
 STAGES = ["concept", "multiview", "model", "clean", "validate"]
 
 EXIT_OK, EXIT_ERROR, EXIT_CHECK_FAILED, EXIT_AWAITING, EXIT_AWAITING_APPROVAL = 0, 1, 2, 3, 4
@@ -644,6 +644,18 @@ def work_dir(asset_id):
     return TRIPO_OUT / asset_id / "work"
 
 
+def source_forward(task_json):
+    """Which way a Tripo download faces, from the task.json the CLI writes beside it. Tripo exports
+    along +x unless the request set export_orientation (API default), so a Tripo task without the
+    parameter still has a known facing. None for anything that isn't a Tripo download."""
+    if not task_json.exists():
+        return None
+    task_input = json.loads(task_json.read_text()).get("input") or {}
+    if "export_orientation" in task_input:
+        return {"axis": task_input["export_orientation"], "source": f"{rel(task_json)} export_orientation"}
+    return {"axis": "+x", "source": f"Tripo API default ({rel(task_json)} sets no export_orientation)"}
+
+
 def stage_clean(brief, m, args):
     dry_run, force = args.dry_run, args.force
     aid = brief["asset_id"]
@@ -654,15 +666,17 @@ def stage_clean(brief, m, args):
     out = MESHES / f"{aid}.glb"
     if out.resolve() == model.resolve():
         raise PipelineError(f"clean would overwrite its own input {rel(model)}; give the asset a different id")
-    inputs = [brief["_path"], model, BLENDER_SCRIPT]
+    task_json = model.parent / "task.json"
+    inputs = [brief["_path"], model, BLENDER_SCRIPT] + ([task_json] if task_json.exists() else [])
     if not force and up_to_date(m["stages"].get("clean"), inputs, [out]):
         print("clean: up to date")
         return EXIT_OK
     wd = work_dir(aid)
     params_path, report_path = wd / "clean-params.json", wd / "clean-report.json"
+    params = {**stage_params(brief), "source_forward": source_forward(task_json)}
     if not dry_run:
         wd.mkdir(parents=True, exist_ok=True)
-        params_path.write_text(json.dumps(stage_params(brief), indent=2))
+        params_path.write_text(json.dumps(params, indent=2))
     cmd = [BLENDER, "-b", "--factory-startup", "--python-exit-code", "1", "-P", BLENDER_SCRIPT, "--",
            "--input", model, "--output", out, "--params", params_path, "--report", report_path]
     report = run_tool(cmd, report_path, dry_run, "clean")
@@ -680,7 +694,7 @@ def stage_clean(brief, m, args):
               f"loose verts {t['loose_vertices']}, degenerate faces {t['degenerate_faces']}"
               + (f", parts {t['part_count']} " + str([p['triangles'] for p in t['parts']]) + " tris" if 'parts' in t else ""))
     record(m, "clean", "ok" if passed else "failed", inputs, [out] if passed else [], msg,
-           params=stage_params(brief), report=report)
+           params=params, report=report)
     return EXIT_OK if passed else EXIT_CHECK_FAILED
 
 

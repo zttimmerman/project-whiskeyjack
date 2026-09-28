@@ -3,8 +3,10 @@
     blender -b --factory-startup --python-exit-code 1 -P scripts/blender_views.py -- \
         --input asset.glb --outdir assets/manifests/<asset-id> --report views.json
 
-Renders four orthographic views (front, right, back, top) with the albedo texture, plus a
-front wireframe, using the Workbench engine (offline, no API calls). It reports how much of
+Renders four orthographic views (front, right, back, top) with the albedo texture in its true
+colors, plus a grey clay front (form only) and a front wireframe, using the Workbench engine
+(offline, no API calls). The textured views are the ones to judge: clay exaggerates rounded form
+and hides the flat color blocking. It reports how much of
 each frame the asset covers and how many separate pieces the welded mesh has. The renders
 are for a human to read; nothing here fails or repairs anything.
 """
@@ -124,8 +126,14 @@ def render(args, report):
     scene.render.film_transparent = True
     scene.render.image_settings.file_format = "PNG"
     scene.render.image_settings.color_mode = "RGBA"
+    # Standard, not the default AgX: AgX desaturates and darkens the albedo until it reads as clay
+    try:
+        scene.view_settings.view_transform = "Standard"
+    except TypeError as e:
+        raise RuntimeError(f"Standard view transform unavailable: {e}")
     shading = scene.display.shading
     shading.light = "STUDIO"
+    shading.show_specular_highlight = False  # the game material has none either
     shading.color_type = "TEXTURE"
 
     cam_data = bpy.data.cameras.new("review")
@@ -149,6 +157,12 @@ def render(args, report):
 
     for name, (direction, rot) in VIEWS.items():
         shoot(name, direction, rot)
+
+    # Clay: one flat grey front for reading form only
+    shading.color_type = "SINGLE"
+    shading.single_color = (0.6, 0.6, 0.6)
+    direction, rot = VIEWS["front"]
+    shoot("clay_front", direction, rot)
 
     # Wireframe: replace the surfaces with thin edge geometry, drawn in one flat color
     for o in meshes:

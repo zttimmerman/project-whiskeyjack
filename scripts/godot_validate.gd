@@ -212,6 +212,13 @@ func _check_meshes(root: Node, params: Dictionary, report: Dictionary) -> void:
 				var bm := mat as BaseMaterial3D
 				entry["transparency"] = ["disabled", "alpha", "alpha_scissor", "alpha_hash", "depth_pre_pass"][bm.transparency]
 				entry["unshaded"] = bm.shading_mode == BaseMaterial3D.SHADING_MODE_UNSHADED
+				# What the importer made of the surface response; a highlight reads as plastic.
+				entry["roughness"] = snappedf(bm.roughness, 0.001)
+				entry["metallic"] = snappedf(bm.metallic, 0.001)
+				entry["metallic_specular"] = snappedf(bm.metallic_specular, 0.001)
+				entry["specular_mode"] = ["schlick_ggx", "toon", "disabled"][bm.specular_mode]
+				if bm.metallic_specular > 0.0 and bm.specular_mode != BaseMaterial3D.SPECULAR_DISABLED:
+					report["warnings"].append("surface %d of '%s' imports with specular %.2f (a highlight)" % [s, mi.name, bm.metallic_specular])
 				if bm.albedo_texture:
 					var t := bm.albedo_texture
 					textures[t.get_rid()] = [t.get_width(), t.get_height()]

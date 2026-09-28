@@ -5,10 +5,14 @@
 
 Imports the GLB and then:
 - removes objects the brief lists in exclude_objects;
-- fixes facing (characters face -Y), scales to target_size_m, and moves the base or center to the origin;
+- fixes facing (characters face -Y), scales to target_size_m, and moves the base or center to the origin.
+  Facing comes from foot bones on a rig; without one, from the source's export metadata
+  (Tripo exports face +X by default) cross-checked against the geometry (arm span, feet);
 - rebuilds every material as albedo-only (base color, plus alpha if used), stripping
-  normal/roughness/metallic/emission maps and baking non-image albedo;
+  normal/roughness/metallic/emission maps and baking non-image albedo; roughness 1, specular 0;
 - downscales the albedo to texture_size;
+- replaces imported smooth normals with flat shading above SMOOTH_ANGLE_DEG (welding UV-seam
+  splits first on unrigged meshes, so the angle test sees real edges);
 - aligns props along their principal axis and fails if the residual tilt exceeds PROP_AXIS_TOLERANCE_DEG;
 - finds the prop's tip (the thinner end), flips it to the brief's tip_end, and fails if it still doesn't match;
 - checks the triangle count against triangle_budget, failing loudly instead of decimating;
@@ -33,6 +37,10 @@ PROP_AXIS_TOLERANCE_DEG = 2.0
 TIP_SLICE = 0.12        # fraction of the length measured at each end
 TIP_AMBIGUOUS_RATIO = 0.8  # thin/thick cross-section ratio above which the tip can't be told
 STRIP_NOTE = "normal, roughness, metallic, specular, emission and occlusion inputs are not carried over"
+SMOOTH_ANGLE_DEG = 30.0  # art bible: flat-shade every edge sharper than this; smooth-shaded low poly reads as inflated plastic
+# Source export axes (glTF frame, which the importer keeps for X) mapped to Blender forward vectors.
+# Tripo's +y/-y aren't mapped: which way its "y" points in a Y-up glTF is unverified.
+SOURCE_FORWARD = {"+x": Vector((1, 0, 0)), "-x": Vector((-1, 0, 0))}
 
 
 def parse_args():
@@ -91,6 +99,57 @@ def detect_forward(arms, meshes, height):
         if v.length > 1e-4:
             return v.normalized(), "foot geometry forward of the ankles"
     return None, None
+
+
+def forward_from_geometry(meshes, height):
+    """Horizontal forward vector for a character with no rig. The arm span (A- or T-pose) is the
+    widest horizontal extent, so it's the lateral axis; forward is the other horizontal axis,
+    signed by the feet, which reach further forward of the ankles than behind them."""
+    pts = world_points(meshes)
+    mn, mx = bbox(pts)
+    ext = mx - mn
+    lateral, depth = (0, 1) if ext.x >= ext.y else (1, 0)
+    if ext[lateral] < 1.5 * ext[depth]:
+        return None, f"no clear arm span (horizontal extents x {ext.x:.3f}, y {ext.y:.3f})"
+    feet = [p for p in pts if p.z < mn.z + 0.05 * height]
+    ankles = [p for p in pts if mn.z + 0.06 * height <= p.z < mn.z + 0.12 * height]
+    if not feet or not ankles:
+        return None, "no foot or ankle geometry near the floor"
+    d = sum(p[depth] for p in feet) / len(feet) - sum(p[depth] for p in ankles) / len(ankles)
+    if abs(d) < 0.01 * height:
+        return None, f"feet don't reach forward of the ankles ({d:+.4f})"
+    v = Vector((0, 0, 0))
+    v[depth] = 1.0 if d > 0 else -1.0
+    return v, f"geometry (arm span along {'xy'[lateral]}, feet {d:+.3f} along {'xy'[depth]})"
+
+
+def flat_shade_by_angle(meshes, weld, report):
+    """Replaces imported custom (smooth) normals with flat shading wherever faces meet at more than
+    SMOOTH_ANGLE_DEG. The glTF importer doesn't merge vertices, so every UV seam arrives split and
+    would read as a hard edge; unrigged meshes are welded first (UVs live on face corners and
+    survive), while rigged ones keep their vertices so no weights get merged."""
+    info = {"angle_deg": SMOOTH_ANGLE_DEG, "welded_vertices_removed": 0, "custom_normals_cleared": []}
+    for o in meshes:
+        me = o.data
+        if me.has_custom_normals:
+            with bpy.context.temp_override(object=o, active_object=o, selected_objects=[o]):
+                bpy.ops.mesh.customdata_custom_splitnormals_clear()
+            if me.has_custom_normals:
+                raise RuntimeError(f"couldn't clear custom normals on '{o.name}'")
+            info["custom_normals_cleared"].append(o.name)
+        if weld:
+            bm = bmesh.new()
+            bm.from_mesh(me)
+            before = len(bm.verts)
+            bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=1e-5)
+            info["welded_vertices_removed"] += before - len(bm.verts)
+            bm.to_mesh(me)
+            bm.free()
+        me.shade_smooth()
+        me.set_sharp_from_angle(angle=math.radians(SMOOTH_ANGLE_DEG))
+        me.update()
+    info["welded"] = weld
+    report["shading"] = info
 
 
 def principal_axes(points):
@@ -327,6 +386,9 @@ def rebuild_materials(meshes, size, report):
         nt.links.new(bsdf.outputs["BSDF"], out.inputs["Surface"])
         bsdf.inputs["Metallic"].default_value = 0.0
         bsdf.inputs["Roughness"].default_value = 1.0
+        # No highlight: albedo-only at the default specular still reads as plastic. The exporter writes
+        # KHR_materials_specular for this, which Godot 4.6's importer doesn't read (see validate).
+        bsdf.inputs["Specular IOR Level"].default_value = 0.0
         if img:
             tex = nt.nodes.new("ShaderNodeTexImage")
             tex.image = img
@@ -421,9 +483,29 @@ def run(args, params, report):
     # Facing / orientation
     rot = Matrix.Identity(4)
     if params["type"] == "character":
-        fwd, how = detect_forward(arms, meshes, mx.z - mn.z) if rigged else (None, None)
+        height = mx.z - mn.z
+        fwd, how = detect_forward(arms, meshes, height) if rigged else (None, None)
+        geo, geo_how = forward_from_geometry(meshes, height)
+        src = params.get("source_forward") or {}
+        meta = SOURCE_FORWARD.get(src.get("axis"))
+        xf.update(geometry_forward=[round(c, 3) for c in geo] if geo else None, geometry_note=geo_how,
+                  source_forward=src or None)
+        if src and meta is None:
+            report["warnings"].append(f"source export axis {src.get('axis')!r} isn't mapped; using geometry only")
+        if fwd is None and meta is not None:
+            # The source says which way it exported; the geometry must agree before anything is rotated.
+            if geo is not None and geo.dot(meta) < 0.9:
+                raise RuntimeError(f"FACING: the source metadata says forward is {src['axis']} ({src.get('source')}), "
+                                   f"but the geometry says {tuple(round(c) for c in geo)} ({geo_how}); not exporting")
+            fwd, how = meta, f"source metadata: {src['axis']} ({src.get('source')})" + (
+                "; geometry agrees" if geo is not None else f"; geometry inconclusive: {geo_how}")
+        elif fwd is None and geo is not None:
+            fwd, how = geo, geo_how
+        elif fwd is not None and geo is not None and geo.dot(fwd) < 0.9:
+            report["warnings"].append(f"foot bones and geometry disagree on facing ({how} vs {geo_how}); using the bones")
         if fwd is None:
-            report["warnings"].append("facing unverified (no usable foot bones); assumed -Y per convention")
+            report["warnings"].append(f"facing unverified (no foot bones, no source metadata, {geo_how}); "
+                                      "assumed -Y per convention")
             xf["facing"] = "unverified"
         else:
             angle = math.atan2(fwd.x, -fwd.y)  # 0 when already facing -Y
@@ -491,6 +573,7 @@ def run(args, params, report):
     report["mesh_health"] = mesh_health(meshes)
 
     rebuild_materials(meshes, params["texture_size"], report)
+    flat_shade_by_angle(meshes, weld=not rigged, report=report)
 
     # Budget is in triangles (n-gon = n-2). Vertex counts are metrics only: they move with UV-seam splits.
     dg = bpy.context.evaluated_depsgraph_get()
