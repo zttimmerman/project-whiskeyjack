@@ -2,6 +2,27 @@
 
 Settled choices with their one-line reasons. Read this before re-opening any of them. Dates are 2026-09-27 unless noted.
 
+## Session handoff (update at the end of every session)
+
+- **Branch** `world-bible-slice`; main is at `1467dbf`. Last session ended 2026-09-28 (the handoff commit follows `69752d0`).
+- **Done:**
+  - Tripo image pipeline: concept (approval gate) → multiview → P1 3D → rig v1.0 → clean → validate.
+  - Barrow-levy, player and Levy Bow generated; blade re-cleaned. Color correction is anchored to the approved concept.
+  - Quaternius animation retargeted: both enemy variants and the player animate in Level 1 and hold their weapons.
+- **Next:**
+  1. Playtest the slice in motion.
+  2. The CC0 import path for downloaded props (queued below).
+  3. Per-hit combo names (`Sword_Regular_A/B/C`) in `Player.gd`.
+  4. Enemy spacing (levies crowd into the player).
+- **Open questions:**
+  - Is `OverhandThrow` acceptable as the Back-file's bow attack, or buy the UAL2 tier with `Bow_*`? The user wants to see it in motion first.
+  - Is the player's sword a new asset, or keep reusing the Levy Blade?
+- **Before any Tripo spend:** read the tripo skill. The cap is 500 per session, and each session starts at 0 used. Balance is 590. Costs: concept 15, multiview 10, model 50, rig 25.
+- **Tools:**
+  - `scripts/pipeline.py <id> --stage all`;
+  - `scripts/tools/build_animation_library.gd`, `make_bone_maps.gd` and `make_held_props.gd`;
+  - review scenes in `scripts/review/`: `anim_sheet`, `level1_play_capture` and `level1_compare`.
+
 ## Settled
 
 - **Budgets are in triangles, not vertices.** Vertex counts move with UV-seam splitting (the blade was 1,454 as imported but 519 welded, for 1,026 triangles), while triangles are what `face_limit` controls and Godot reports stably. The budget is `face_limit` + 10%.
@@ -41,6 +62,14 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 
 - **Levy Bow: concept-1 approved as a mild recurve** (not worth 15 credits to sharpen a curl that 1,320 triangles would smooth out). It came back at 1,192 triangles, with no holes and **the string intact as its own part** (1.4 cm × 86 cm, strung between the tip rings), so no cleanup string was needed. The prompt was rewritten to describe only what's there before generating (the old one had "no hands, no arrow" and "cracks"). It's held in the Back-file's `hand_l` via `scenes/props/HeldLevyBow.tscn`: limbs upright along the thumb side, string toward the archer.
 
+## Learned 2026-09-28
+
+- **Rest-pose mismatch over-rotates arms:** the A-pose levy on the T-pose Quaternius library swung its arms down and behind the back; the `retarget/rest_fixer/fix_silhouette/enable` import option fixes it. Check this on every new character.
+- **Death clips carry baked hip translation** (`Death01` about 0.5 m backward): the build strips it (`in_place`), and code must zero velocity and stop navigation when death starts.
+- **`Walk_Formal_Loop` clasps the hands behind the back,** so it's unusable for armed characters.
+- **Props attach through generated wrapper scenes** (`scenes/props/Held*.tscn`, `scripts/tools/make_held_props.gd`) in the hand bone's retargeted frame, with one helper (`scripts/combat/HeldProps.gd`) for the player and the enemies.
+- **Observed Tripo costs:** concept 15, multiview 10, model 50, rig 25, so a character is about 100 and a prop about 75.
+
 ## Observed Tripo costs
 
 - P1 text-to-3D with a standard texture: **40 credits** (twice: attempts 1 and 2). The pricing page's 20 was the H-series price, so it undercounted P1 by 2×. The CLI's `credits_consumed` matched the balance difference every time.
@@ -57,9 +86,8 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 
 ## Open risks
 
-- **Shipped skeleton toe bones sit at the origin in rest pose** (`toe.L_017`, `toe.R_021`), so they'll mis-pivot under retargeting.
-- **Shipped skeleton hands are single bones with no finger chain,** so none of the 30 finger bones in `SkeletonProfileHumanoid` map.
-- **Tripo's overshoot is unverified on characters.** The 10% triangle headroom rests on a single prop (+2.6% at `face_limit` 1000).
+- *(Resolved: the Sketchfab skeleton's toe and hand bone defects no longer matter; `archer_enemy.glb` is retired from the enemy scenes.)*
+- *(Resolved: Tripo's overshoot on characters is inside the 10% headroom: the levy was +0.9%, and the player came in 2.1% under.)*
 - **The blade's grip wrap has 4 small slits and 16 non-manifold edges** (recorded, not repaired). Mesh health is a baseline only; nothing fails on it yet.
 
 - **Tripo's first auto-rig of the Barrow-levy is lopsided** (rig-1, 25 credits). `--spec mixamo` was accepted but ignored: it returned Tripo's generic 22-bone limb rig (`tripo::0_Left_Limb_0`…), which no name heuristic maps to SkeletonProfileHumanoid. The right arm is correct (collarbone, upper arm, forearm, hand). The **left arm is one bone short:** its elbow sits mid upper arm and there's no left hand bone, which is the bow socket. The thighs are only about 55% weighted to the thigh bone, the foot bones point down instead of forward, and two stray bones (`bone_20`, `bone_21`) stick out of the chest and back.
@@ -72,7 +100,7 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 - **The color-correction lightness ceiling is soft, not strict:** the player's skin landed 0.8 L above its concept tone (66.2 against 65.4), because blending neighbouring groups' shifts adds a little. That's below the perceptual threshold.
 - **Player back readability: level-side lighting doesn't fix it** (sweep in the gameplay view). His back renders near-black (luminance 0.020 against a 0.26 floor). The torch doesn't reach it at all. Ambient 0.5 → 0.9 only raises it to 0.040, while the levy's contrast against the corridor drops from 1.57 to 1.33. The key light faces away from his back in that view. Level 1 lighting is unchanged; the fix is on the asset side (the navy and teal albedo is at L 8–19) or the key light's direction.
 - **A character fill light fixes it instead:** an OmniLight3D under the player's CameraRig, on the camera side, culled to render layer 2 (only the player's meshes). It's a CLAUDE.md-sanctioned exception to visible-source-only local lights. The layer cull mask works in the Compatibility renderer: floor, wall and levy luminance were **identical** with and without it. Measured on his back: 0.020 at energy 0, 0.082 at 1.0, 0.148 at 3.0, and 0.206 at 6.0, where the skin blows out orange. **Final: energy 3.5 with the light 2.5 m behind the pivot (range 5)**, where no skin clips (95th percentile 0.82, against 0.6% clipped at 3.0 / 1.5 m) and his back reads at 0.133. The skin's albedo saturates long before the navy tunic reaches the floor's 0.26, so "above the floor" isn't reachable without overexposure; at 3.0 his tunic, vest and belt read clearly.
-- **Enemies run on the new Barrow-levy** (`BaseEnemy.tscn` and `ArcherEnemy.tscn` now instance `barrow_levy.glb`; sockets map to `mixamorig_LeftHand` / `mixamorig_RightHand`, with Godot's glTF importer turning `:` into `_`). **They have no animation clips until the Quaternius retarget exists**, so they stand in their rest pose and slide.
+- **Enemies run on the new Barrow-levy** (`BaseEnemy.tscn` and `ArcherEnemy.tscn` instance `barrow_levy.glb`). After retargeting, the sockets use profile names (`RightHand` / `LeftHand`), and both variants animate from the Quaternius library.
 - **Every lit GLB now imports with specular 0** after a forced reimport. The retired `archer_enemy.glb` still shows 0.5, but its material is `KHR_materials_unlit`, so specular never applies.
 - **Player open questions, recorded not fixed:** skin showing through the tunic (probably near-coincident vest and body surfaces), and 2 open holes plus 13 non-manifold edges where the vest meets the tunic. In the Level 1 comparison at gameplay distance neither shows; judge them again with animation.
 - **Level 1 torchlight comparison** (`assets/manifests/comparison/`, made with `scripts/review/level1_compare.tscn`, the level's own ambient and torch energies): the two characters read as one set, with the same flat faceting and matte albedo, and no plastic sheen. The levy's pale bone pops against the dark corridor. **The player's dark teal, navy and dark boots sit close in value to the corridor from behind**, so the spiky hair and vest carry the read. If that's too dark in play, fix it level-side (ambient and torch energy), per the color-correction rule.
@@ -81,5 +109,3 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 
 - **Queued (after the weapons are in): a pipeline path for downloaded CC0 assets.** It skips stages 1–2 (concept, multiview, model) and runs an existing GLB through clean: facing, flat shading, palette correction (there's no concept, so the palette fallback applies), and the budget assert. Third-party props then land in the same color space and shading standard as generated ones. Principle recorded in the art bible: generate what carries identity, download the rest.
 
-
-- Build pipeline stages 1–3 as the chain text-to-image (banana_pro) → image-to-multiview → multiview-to-3D, with a stop for concept approval. Then run the Barrow-levy through it and record each new stage's observed cost.
