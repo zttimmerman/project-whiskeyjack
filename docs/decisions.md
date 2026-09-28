@@ -16,6 +16,9 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 - **`pipeline.py` prints `tripo` commands and never runs them.** A subprocess would bypass Claude Code's permission prompt, and non-interactive runs auto-add `--yes`, so the chat confirmation plus the permission gate are the only spend control.
 - **The Tripo model is pinned per brief (`tripo_model: P1-20260311`).** The CLI's auto-selection depends on prompt wording and `face_limit`.
 - **Props are aligned on their principal axis, and the thinner end is placed at the brief's `tip_end`.** Blade attempt 1 passed every other check while 46° off-axis (45% too long) and upside down.
+- **The rig model follows the body plan, not recency.** Tripo's rig docs (developers.tripo3d.ai/en/docs/animations-rig): `v1.0-20240301` is the server default, biped-only and recommended for humanoids; `v2.5-20260210` is the creature rigger (quadruped, hexapod, octopod, serpentine, aquatic, avian). The pipeline defaults to v1.0 and keeps `--rig-model` for creatures such as the Sett-boar. We had it backwards at first: v2.5 on the Barrow-levy returned generic limb chains.
+- **Rigid rebind for rigid-part characters** (brief `rigid_parts: true`): each disconnected part goes at weight 1.0 to its nearest weighted bone. This is an explicit exception to CLAUDE.md's no-weight-scripting rule, because it's a deterministic algorithm rather than hand-tuning. It never applies to continuous-skin characters.
+- **Quaternius stays the animation source; Tripo's rig v1.0 presets (90+) are a fallback only.** The reasons are the same as for Quaternius over Tripo retarget: licensing, and cost per character.
 - **Characters: raw download → Tripo auto-rig → clean.** Tripo's rigger reads models in Tripo's own +X orientation, and the clean stage rotates characters to −Y, so the cleaned Barrow-levy rig-checked as unriggable while the raw download was a riggable biped (both checks free).
 - **Cleanup corrects the albedo toward the palette.** Tripo's texture pass desaturates (bone #A89C86 against Old Bone #CCB484, likely its `delight` step). The correction is deterministic and driven by the brief's palette subset (art bible → Shading and palette correction).
 - **Specular 0 is set at import in Godot**, by a glTF import extension (`addons/stylized_materials`), because Godot 4.6 ignores glTF's own specular. It was chosen over a per-GLB import script, which every new asset's fresh `.import` would silently miss, and over a shared enemy material, which covers only enemies and would have to override per-asset albedo.
@@ -32,7 +35,7 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 - P1 multiview-to-3D at `face_limit` 5000: **50 credits**, matching the CLI (Barrow-levy attempt-1). That's 10 more than P1 text-to-3D.
 - Tripo auto-rig (biped, `v2.5-20260210` requested): **25 credits**, matching the CLI (Barrow-levy rig-1). Rig-check is free (0 credits, twice).
 - Not yet observed: seedream_v5. Add each to the tripo skill's table after its first run.
-- Project spend so far: 210 (80 on the blade; Barrow-levy 130: concepts 45, multiview 10, model 50, rig 25); balance 790.
+- Project spend so far: 235 (80 on the blade; Barrow-levy 155: concepts 45, multiview 10, model 50, rigs 50); balance 765.
 
 ## Open risks
 
@@ -43,7 +46,12 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 - **The Barrow-levy socket map still names the Sketchfab bones.** Stage 4 fails until `data/rigs/barrow_levy_sockets.tres` is updated for the new rig.
 
 - **Tripo's first auto-rig of the Barrow-levy is lopsided** (rig-1, 25 credits). `--spec mixamo` was accepted but ignored: it returned Tripo's generic 22-bone limb rig (`tripo::0_Left_Limb_0`…), which no name heuristic maps to SkeletonProfileHumanoid. The right arm is correct (collarbone, upper arm, forearm, hand). The **left arm is one bone short:** its elbow sits mid upper arm and there's no left hand bone, which is the bow socket. The thighs are only about 55% weighted to the thigh bone, the foot bones point down instead of forward, and two stray bones (`bone_20`, `bone_21`) stick out of the chest and back.
+- **Observation, not a rule:** the docs list `spec` as a top-level rig parameter (default `tripo`, alternative `mixamo`) with no model restriction, yet the v2.5 run ignored it. That stays unexplained.
+- **Barrow-levy rigid rebind results:** the pelvis and belt went to Hips at 1.00 (the pelvis was 0.26 before), the lower ribs to Spine1 at 1.00 (0.22–0.55 before, partly on the arms), and every limb, the skull and both hands to their own bones at 1.00. **Known quirk:** the Foot bones sit at floor level, so the feet bind to ToeBase, Foot's child. That's harmless, because Quaternius drives Foot and not the toes, and it won't read at gameplay distance.
+- **Rig v1.0 (`v1.0-20240301`) honoured `--spec mixamo` where v2.5 didn't** (Barrow-levy rig-2, 25 credits). It returned 23 `mixamorig:` bones with symmetric chains, including LeftHand, and every SkeletonProfileHumanoid required bone maps. No doc limits `spec` to certain rig models; this one observation suggests v2.5 ignores it. The limbs are clean (each arm and leg segment 0.96–1.00 on its own bone). The weight defects are in the torso: the pelvis and belt are split across both thigh bones (Hips 0.37), a few lower ribs are partly on the arm bones, and the foot bones sit at the floor, so the feet are half on the shin and half on the toe. This is **one asset with near-worst-case input** (35 disconnected pieces with gaps at every joint), not a verdict on Tripo's rigger; the player (continuous limbs, a solid tunic) is the real test.
 - **Rigged meshes aren't welded, so UV seams render hard.** The faceted-face ratio went from 13% (welded, unrigged) to 24% (rigged). It isn't visible in 512 px review renders. Welding rigged meshes wherever the coincident vertices share identical skin weights would fix it; not done yet.
 ## Next
+
+- **Queued:** weld rigged meshes wherever coincident vertices carry identical skin weights, to undo the 13.2% → 24.4% faceting change on every character.
 
 - Build pipeline stages 1–3 as the chain text-to-image (banana_pro) → image-to-multiview → multiview-to-3D, with a stop for concept approval. Then run the Barrow-levy through it and record each new stage's observed cost.

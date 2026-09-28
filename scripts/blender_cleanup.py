@@ -15,6 +15,7 @@ Imports the GLB and then:
   splits first on unrigged meshes, so the angle test sees real edges);
 - aligns props along their principal axis and fails if the residual tilt exceeds PROP_AXIS_TOLERANCE_DEG;
 - finds the prop's tip (the thinner end), flips it to the brief's tip_end, and fails if it still doesn't match;
+- rigid-part characters (brief: rigid_parts) only: binds each disconnected part at weight 1.0 to its nearest bone;
 - checks the triangle count against triangle_budget, failing loudly instead of decimating;
 - exports the GLB.
 
@@ -123,6 +124,79 @@ def forward_from_geometry(meshes, height):
     v = Vector((0, 0, 0))
     v[depth] = 1.0 if d > 0 else -1.0
     return v, f"geometry (arm span along {'xy'[lateral]}, feet {d:+.3f} along {'xy'[depth]})"
+
+
+def _segment_distance(p, a, b):
+    ab = b - a
+    t = 0.0 if ab.length_squared < 1e-12 else max(0.0, min(1.0, (p - a).dot(ab) / ab.length_squared))
+    return (p - (a + ab * t)).length
+
+
+def rigid_rebind(meshes, arms, report):
+    """Rigid-part characters only (brief: rigid_parts: true), e.g. a skeleton built from separate
+    bones. Binds every disconnected part (welded at 0.01 mm to find it) at weight 1.0 to the bone
+    whose rest segment is nearest the part's center. Deterministic, not hand-painted: it replaces an
+    auto-rigger's blended weights, which smear rigid parts across neighbours (the Barrow-levy pelvis
+    was 0.37 on Hips and the rest on both thighs). Candidates are the bones that already carry
+    weight, so a control bone like Root never captures a part. Never for continuous-skin characters."""
+    arm = arms[0]
+    bones = {b.name: (arm.matrix_world @ b.head_local, arm.matrix_world @ b.tail_local) for b in arm.data.bones}
+    rows = []
+    for o in meshes:
+        me = o.data
+        names = {g.index: g.name for g in o.vertex_groups}
+        weighted = {names[g.group] for v in me.vertices for g in v.groups if g.weight > 0 and g.group in names}
+        cands = {n: seg for n, seg in bones.items() if n in weighted}
+        if not cands:
+            raise RuntimeError(f"rigid_rebind: '{o.name}' has no weighted bones to bind to")
+        # Parts: vertices sharing a position (UV-seam splits) plus face connectivity
+        parent = list(range(len(me.vertices)))
+
+        def find(x):
+            while parent[x] != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
+        first = {}
+        for v in me.vertices:
+            key = tuple(round(c / 1e-5) for c in v.co)
+            if key in first:
+                parent[find(v.index)] = find(first[key])
+            else:
+                first[key] = v.index
+        for poly in me.polygons:
+            r = find(poly.vertices[0])
+            for vi in poly.vertices[1:]:
+                parent[find(vi)] = r
+        parts = {}
+        for v in me.vertices:
+            parts.setdefault(find(v.index), []).append(v.index)
+        tris_of = {}
+        for poly in me.polygons:
+            tris_of[find(poly.vertices[0])] = tris_of.get(find(poly.vertices[0]), 0) + poly.loop_total - 2
+        groups = {n: (o.vertex_groups.get(n) or o.vertex_groups.new(name=n)) for n in cands}
+        assignment = {}
+        for root, vis in parts.items():
+            pts = [o.matrix_world @ me.vertices[i].co for i in vis]
+            center = sum(pts, Vector()) / len(pts)
+            bone = min(cands, key=lambda n: (_segment_distance(center, *cands[n]), n))
+            before = {}
+            for i in vis:
+                for g in me.vertices[i].groups:
+                    if g.group in names and g.weight > 0:
+                        before[names[g.group]] = before.get(names[g.group], 0.0) + g.weight
+            total = sum(before.values()) or 1.0
+            assignment[root] = bone
+            rows.append({"mesh": o.name, "triangles": tris_of.get(root, 0), "center": [round(c, 3) for c in center],
+                         "bone": bone, "share_before": round(before.get(bone, 0.0) / total, 2)})
+        for g in list(o.vertex_groups):
+            g.remove(list(range(len(me.vertices))))
+        for root, vis in parts.items():
+            groups[assignment[root]].add(vis, 1.0, "REPLACE")
+    rows.sort(key=lambda r: -r["triangles"])
+    report["rigid_rebind"] = {"method": "each disconnected part at weight 1.0 on the bone whose rest segment "
+                                        "is nearest its center (candidates: bones that carried weight)",
+                              "parts": rows}
 
 
 def flat_shade_by_angle(meshes, weld, report):
@@ -654,6 +728,10 @@ def run(args, params, report):
 
     rebuild_materials(meshes, params["texture_size"], report, params.get("palette_targets"))
     flat_shade_by_angle(meshes, weld=not rigged, report=report)
+    if params.get("rigid_parts"):
+        if not rigged:
+            raise RuntimeError("the brief sets rigid_parts, but the input has no rig to bind to")
+        rigid_rebind(meshes, arms, report)
 
     # Budget is in triangles (n-gon = n-2). Vertex counts are metrics only: they move with UV-seam splits.
     dg = bpy.context.evaluated_depsgraph_get()

@@ -62,9 +62,12 @@ CONCEPT_MODELS = {
     "seedream_v5": {"portrait": {"size": "1536x2048"}},
 }
 DEFAULT_CONCEPT_MODEL = "banana_pro"
-# Tripo auto-rig, pinned like tripo_model (the CLI default today). Mixamo bone names are the ones
-# Godot's BoneMap auto-mapper and godot_validate.gd's humanoid heuristic recognise.
-RIG_MODEL = "v2.5-20260210"
+# Tripo auto-rig, pinned like tripo_model. The rig model follows the body plan, not recency: v1.0 is
+# the humanoid (biped) rigger and the server default; v2.5 is the creature rigger (quadruped, hexapod,
+# octopod, serpentine, aquatic, avian) and returned generic limb chains on a humanoid. Mixamo bone
+# names are the ones Godot's BoneMap auto-mapper and godot_validate.gd's humanoid heuristic recognise.
+RIG_MODEL = "v1.0-20240301"
+RIG_MODELS = ("v1.0-20240301", "v2.5-20260210")  # --rig-model v2.5-20260210 for non-humanoids (the Sett-boar)
 RIG_SPEC = "mixamo"
 
 
@@ -209,6 +212,10 @@ def load_brief(asset_id):
         unknown = [c for c in b["palette"] if c not in art_bible_palette()]
         if unknown:
             errors.append(f"palette colors not in docs/art-bible.md: {unknown}")
+    if "rigid_parts" in b and not isinstance(b["rigid_parts"], bool):
+        errors.append("'rigid_parts' must be true or false")
+    if b.get("rigid_parts") and b.get("type") != "character":
+        errors.append("'rigid_parts' applies to characters only")
     for opt in ("animations", "exclude_objects"):
         if opt in b and not (isinstance(b[opt], list) and all(isinstance(x, str) for x in b[opt])):
             errors.append(f"'{opt}' must be a list of names")
@@ -634,7 +641,7 @@ def stage_model(brief, m, args):
 
 def stage_params(brief):
     keys = ("asset_id", "type", "face_limit", "triangle_budget", "texture_size", "target_size_m", "pivot",
-            "palette", "socket_map", "animations", "exclude_objects", "tip_end")
+            "palette", "socket_map", "animations", "exclude_objects", "tip_end", "rigid_parts")
     return {k: brief.get(k) for k in keys}
 
 
@@ -689,7 +696,8 @@ def stage_rig(brief, m, args):
         return EXIT_AWAITING
     pick, glb, attempts = current_rig(brief, model)
     inputs = [model] + [a["spend_path"] for a in attempts if a["spend_path"].exists()]
-    params = {"rig_type": "biped", "spec": RIG_SPEC, "model": RIG_MODEL, "out_format": "glb"}
+    rig_model = args.rig_model or RIG_MODEL
+    params = {"rig_type": "biped", "spec": RIG_SPEC, "model": rig_model, "out_format": "glb"}
 
     def save(status, msg, outputs=(), **extra):
         if not args.dry_run:
@@ -697,7 +705,7 @@ def stage_rig(brief, m, args):
 
     if pick is None:
         cmd = tripo_command("tripo anim rig", shlex.quote(rel(model)), "--rig-type biped", f"--spec {RIG_SPEC}",
-                            "--out-format glb", param_flags({"model": RIG_MODEL}),
+                            "--out-format glb", param_flags({"model": rig_model}),
                             f"-o {next_attempt_dir(aid, 'rig', attempts)} --no-open --json")
         print("rig: the raw download isn't rigged yet. Rig-check it (free: `tripo anim check <glb>`), then run "
               "through the tripo skill:\n  " + cmd)
@@ -849,6 +857,8 @@ def main():
     ap.add_argument("--variants", type=int, metavar="K", help="print K new concept commands (1-4), even if concepts exist")
     ap.add_argument("--refine", type=int, metavar="N", help="print an image-to-image refine of concept-N (needs --edit)")
     ap.add_argument("--edit", metavar="TEXT", help="the refine instruction, e.g. from the user's review")
+    ap.add_argument("--rig-model", choices=RIG_MODELS,
+                    help=f"rig stage only: rig model to print (default {RIG_MODEL}, humanoids; v2.5 for creatures)")
     ap.add_argument("--approve-concept", type=int, metavar="N",
                     help="record the user's approval of concept-N; only after they approve it in chat")
     args = ap.parse_args()
