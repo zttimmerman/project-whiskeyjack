@@ -6,7 +6,11 @@ extends Node
 # project's autoloads load:
 #   godot --path . res://scripts/review/level1_compare.tscn -- --player <glb> --levy <glb> --out <dir>
 #       [--ambient-energy <float>] [--torch-energy <float>] [--tag <name>]
+#       [--fill <energy>,<range>,<up>,<back>]   character fill light on CHARACTER_LAYER, placed in the
+#                                               camera rig's space (up from the pivot, back toward the camera)
 # The energy overrides try level-side lighting changes without editing Level1.tscn.
+
+const CHARACTER_LAYER := 2  # render layer the fill light is limited to; only the player sits on it
 
 const SHOTS := {
 	# Player's back to the camera at gameplay framing; the levy 5 m ahead, facing the player.
@@ -41,6 +45,18 @@ func _ready() -> void:
 	var cam := Camera3D.new()
 	level.add_child(cam)
 	cam.current = true
+	var fill: OmniLight3D = null
+	if args.has("fill"):
+		var f: Array = Array(args["fill"].split(",")).map(func(x): return float(x))
+		fill = OmniLight3D.new()
+		fill.light_energy = f[0]
+		fill.omni_range = f[1]
+		fill.light_color = Color(1.0, 0.8, 0.5)  # Torch Amber: reads as the player's own torchlight
+		fill.light_cull_mask = 1 << (CHARACTER_LAYER - 1)
+		fill.set_meta("offset", Vector3(0, f[2], f[3]))
+		level.add_child(fill)
+		for mi in player.find_children("*", "VisualInstance3D", true, false):
+			(mi as VisualInstance3D).layers |= 1 << (CHARACTER_LAYER - 1)
 	for shot in SHOTS:
 		var s: Dictionary = SHOTS[shot]
 		_place(player, s["player"])
@@ -48,6 +64,8 @@ func _ready() -> void:
 		# Same construction as the player's camera rig: yaw at the pivot, pitch on the arm, camera at +Z
 		var rig := Transform3D(Basis(Vector3.UP, deg_to_rad(s["yaw"])) * Basis(Vector3.RIGHT, s["pitch"]), s["pivot"])
 		cam.global_transform = rig * Transform3D(Basis(), Vector3(0, 0, s["arm"]))
+		if fill:
+			fill.global_position = Transform3D(Basis(Vector3.UP, deg_to_rad(s["yaw"])), s["pivot"]) * fill.get_meta("offset")
 		for i in 6:
 			await get_tree().process_frame
 		await RenderingServer.frame_post_draw

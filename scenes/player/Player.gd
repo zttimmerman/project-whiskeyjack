@@ -3,6 +3,8 @@ extends CharacterBody3D
 signal died
 signal inventory_toggled
 
+const CHARACTER_LIGHT_LAYER := 2  # render layer of CameraRig/FillLight's cull mask (value 2 = layer 2)
+
 @export var stats: CharacterStats
 @export var inventory: Inventory
 @export var move_speed: float = 5.0
@@ -24,7 +26,8 @@ signal inventory_toggled
 @onready var hitbox: HitboxComponent = $HitboxComponent
 @onready var _sfx_swing: AudioStreamPlayer3D = $SFXSwing
 @onready var _sfx_footstep: AudioStreamPlayer3D = $SFXFootstep
-@onready var _anim_player: AnimationPlayer = $PlayerModel/AnimationPlayer
+# The model may have no clips yet (animation comes from the shared library)
+@onready var _anim_player: AnimationPlayer = get_node_or_null("PlayerModel/AnimationPlayer")
 
 var _is_dodging: bool = false
 var _dodge_timer: float = 0.0
@@ -54,6 +57,10 @@ var _playing_oneshot: bool = false  # True while a non-looping anim plays
 
 func _ready() -> void:
 	add_to_group("player")
+	# CameraRig/FillLight only lights render layer CHARACTER_LIGHT_LAYER, so it separates the player
+	# from dark interiors without lighting walls or enemies
+	for mesh in $PlayerModel.find_children("*", "VisualInstance3D", true, false):
+		(mesh as VisualInstance3D).layers |= 1 << (CHARACTER_LIGHT_LAYER - 1)
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	_cam_yaw = camera_rig.rotation.y + rotation.y
 	_cam_pitch = spring_arm.rotation.x
