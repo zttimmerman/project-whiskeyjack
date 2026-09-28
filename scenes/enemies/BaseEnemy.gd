@@ -24,6 +24,8 @@ var state: State = State.IDLE
 var _player: CharacterBody3D = null
 var _nav_agent: NavigationAgent3D = null
 var _hitbox: HitboxComponent = null
+const HeldProps := preload("res://scripts/combat/HeldProps.gd")
+
 var _anim_player: AnimationPlayer = null
 
 var _stagger_timer: float = 0.0
@@ -69,9 +71,12 @@ func _physics_process(delta: float) -> void:
 		State.STAGGER:
 			_tick_stagger(delta)
 		State.DEAD:
-			pass
+			# Collapse in place: no knockback or chase velocity carries through the death clip
+			velocity.x = 0.0
+			velocity.z = 0.0
 
-	_get_next_action()
+	if state != State.DEAD:
+		_get_next_action()
 	move_and_slide()
 
 
@@ -176,27 +181,14 @@ func _change_state(new_state: State) -> void:
 			_play_anim("stagger")
 		State.DEAD:
 			_hitbox.deactivate()
+			velocity = Vector3.ZERO
+			_nav_agent.target_position = global_position
 			_play_anim("death")
 
 
 # Parents each held prop to a BoneAttachment3D on the bone its socket maps to
 func _attach_held_props(model_node: Node) -> void:
-	if held_props.is_empty():
-		return
-	var skeletons: Array[Node] = model_node.find_children("*", "Skeleton3D", true, false)
-	if skeletons.is_empty() or not socket_map:
-		push_warning("%s: held_props set but no Skeleton3D or socket_map" % name)
-		return
-	var skeleton := skeletons[0] as Skeleton3D
-	for socket in held_props:
-		var bone := socket_map.get_bone(socket)
-		if skeleton.find_bone(bone) == -1:
-			push_warning("%s: socket '%s' maps to missing bone '%s'" % [name, socket, bone])
-			continue
-		var attachment := BoneAttachment3D.new()
-		attachment.bone_name = bone
-		skeleton.add_child(attachment)
-		attachment.add_child((held_props[socket] as PackedScene).instantiate())
+	HeldProps.attach(model_node, socket_map, held_props, name)
 
 
 func _play_anim(anim_name: String) -> void:

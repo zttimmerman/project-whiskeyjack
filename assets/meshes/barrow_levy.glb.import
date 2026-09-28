@@ -40,7 +40,8 @@ materials/extract_path=""
 _subresources={
 "nodes": {
 "PATH:Armature/Skeleton3D": {
-"retarget/bone_map": Resource("res://data/rigs/mixamorig_bone_map.tres")
+"retarget/bone_map": Resource("res://data/rigs/mixamorig_bone_map.tres"),
+"retarget/rest_fixer/fix_silhouette/enable": true
 }
 }
 }
