@@ -3,7 +3,7 @@
   "stages": {
     "concept": {
       "status": "ok",
-      "timestamp": "2026-09-28T01:07:29+00:00",
+      "timestamp": "2026-09-28T02:06:59+00:00",
       "inputs": [
         {
           "path": "assets/briefs/barrow_levy.yaml",
@@ -11,7 +11,7 @@
         },
         {
           "path": "docs/art-bible.md",
-          "sha256": "16852c583e0b4aa58a391aa2e6b5a0c84428da37ac9b956091ec2a35862aeddd"
+          "sha256": "3a37a6a6d5d6bde589a71e4bfed662c76449b74d865adb07f3c304bcec5d8094"
         },
         {
           "path": ".tripo-out/barrow_levy/concept-1.spend.json",
@@ -192,7 +192,7 @@
     },
     "model": {
       "status": "ok",
-      "timestamp": "2026-09-28T01:07:29+00:00",
+      "timestamp": "2026-09-28T02:06:59+00:00",
       "inputs": [
         {
           "path": "assets/briefs/barrow_levy.yaml",
@@ -200,7 +200,7 @@
         },
         {
           "path": "docs/art-bible.md",
-          "sha256": "16852c583e0b4aa58a391aa2e6b5a0c84428da37ac9b956091ec2a35862aeddd"
+          "sha256": "3a37a6a6d5d6bde589a71e4bfed662c76449b74d865adb07f3c304bcec5d8094"
         },
         {
           "path": ".tripo-out/barrow_levy/attempt-1.spend.json",
@@ -372,7 +372,7 @@
     },
     "clean": {
       "status": "ok",
-      "timestamp": "2026-09-28T01:07:30+00:00",
+      "timestamp": "2026-09-28T02:07:01+00:00",
       "inputs": [
         {
           "path": "assets/briefs/barrow_levy.yaml",
@@ -384,17 +384,21 @@
         },
         {
           "path": "scripts/blender_cleanup.py",
-          "sha256": "ba95d655b2acaa545f803259f56c572f6ef2560bdc9a311c3c9491af173e2f83"
+          "sha256": "1d37060a1c6e0e08adc81039e61e8ee407c4209656c91229335a0472f0129e57"
         },
         {
           "path": ".tripo-out/barrow_levy/rig-2/tripo-out/rig-2-974e2d40/task.json",
           "sha256": "7b95196bffecadffb7ecec8f6b566c1e706200fb493725d5e4a508338fa53ad3"
+        },
+        {
+          "path": ".tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png",
+          "sha256": "d62266500028543ed1fc0600b1bf974f74c07ba35be79684b580dd40be22f3f2"
         }
       ],
       "outputs": [
         {
           "path": "assets/meshes/barrow_levy.glb",
-          "sha256": "2dda39fa6ff424b360b11a78299ea6cbebb8c491fcce9c0253e60b92ed390d28"
+          "sha256": "11226bd2e2fde86cfadc888b11a1737995243d22c40261b5a53a72642870fbc4"
         }
       ],
       "tool_versions": {
@@ -439,7 +443,8 @@
           "Saddle Leather": "#4A2A10",
           "Blackened Iron": "#242424",
           "Signal Red": "#C71F14"
-        }
+        },
+        "reference_image": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png"
       },
       "report": {
         "status": "pass",
@@ -1278,47 +1283,123 @@
           "weld_distance_m": 1e-05,
           "note": "baseline only; nothing fails on these yet"
         },
-        "palette_correction": [
+        "color_correction": [
           {
             "image": "Color_3b290be3-59a9-423a-9598-d746d1330ecd",
             "size": [
               256,
               256
             ],
-            "groups": [
+            "method": "approved concept (hue and saturation restored; lightness lifted to the matched concept tone, never lowered)",
+            "reference": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png",
+            "concept_background": "#787576",
+            "clusters": [
               {
-                "color": "Old Bone",
-                "target": "#CCB484",
-                "share": 0.7515,
-                "median_before": "#A79B85",
-                "delta_e_before": 17.6,
+                "concept": "#B6A281",
+                "concept_share": 0.223,
+                "texture_before": "#A69A84",
+                "texture_share": 0.672,
+                "delta_e_before": 7.5,
                 "applied": true,
-                "median_after": "#CAB384",
-                "delta_e_after": 0.7
+                "texture_after": "#B6A382",
+                "delta_ab_after": 0.3,
+                "lightness": [
+                  64.2,
+                  67.8,
+                  67.6
+                ],
+                "delta_ab_before": 6.7
               },
               {
-                "color": "Saddle Leather",
-                "target": "#4A2A10",
-                "share": 0.2471,
-                "median_before": "#50231C",
-                "delta_e_before": 11.4,
+                "concept": "#260E0D",
+                "concept_share": 0.001,
+                "texture_before": "#36271F",
+                "texture_share": 0.001,
+                "delta_e_before": 12.9,
+                "applied": false,
+                "reason": "covers 0.1% of the texture"
+              },
+              {
+                "concept": "#613430",
+                "concept_share": 0.133,
+                "texture_before": "#5D362E",
+                "texture_share": 0.021,
+                "delta_e_before": 2.5,
+                "applied": false,
+                "reason": "covers 2.1% of the texture"
+              },
+              {
+                "concept": "#7A6854",
+                "concept_share": 0.081,
+                "texture_before": "#7C6954",
+                "texture_share": 0.055,
+                "delta_e_before": 1.0,
                 "applied": true,
-                "median_after": "#4B2A11",
-                "delta_e_after": 0.8
+                "texture_after": "#7A6954",
+                "delta_ab_after": 0.5,
+                "lightness": [
+                  45.6,
+                  45.6,
+                  45.2
+                ],
+                "delta_ab_before": 1.0
               },
               {
-                "color": "Blackened Iron",
-                "target": "#242424",
-                "share": 0.0013,
+                "concept": "#CCB790",
+                "concept_share": 0.286,
+                "texture_before": "#CCB790",
+                "texture_share": 0.0,
+                "delta_e_before": 0.0,
                 "applied": false,
-                "reason": "covers 0.1% (< 3%); not really present"
+                "reason": "covers 0.0% of the texture"
               },
               {
-                "color": "Signal Red",
-                "target": "#C71F14",
-                "share": 0.0,
-                "applied": false,
-                "reason": "covers 0.0% (< 3%); not really present"
+                "concept": "#5B473B",
+                "concept_share": 0.077,
+                "texture_before": "#684F3C",
+                "texture_share": 0.059,
+                "delta_e_before": 6.2,
+                "applied": true,
+                "texture_after": "#645043",
+                "delta_ab_after": 0.9,
+                "lightness": [
+                  35.8,
+                  35.8,
+                  31.9
+                ],
+                "delta_ab_before": 4.9
+              },
+              {
+                "concept": "#9D8B6F",
+                "concept_share": 0.186,
+                "texture_before": "#94846E",
+                "texture_share": 0.064,
+                "delta_e_before": 4.5,
+                "applied": true,
+                "texture_after": "#9E8C6F",
+                "delta_ab_after": 0.3,
+                "lightness": [
+                  56.0,
+                  59.1,
+                  58.8
+                ],
+                "delta_ab_before": 3.5
+              },
+              {
+                "concept": "#422220",
+                "concept_share": 0.013,
+                "texture_before": "#4B1B16",
+                "texture_share": 0.129,
+                "delta_e_before": 10.0,
+                "applied": true,
+                "texture_after": "#41221F",
+                "delta_ab_after": 0.2,
+                "lightness": [
+                  17.3,
+                  17.2,
+                  17.6
+                ],
+                "delta_ab_before": 10.0
               }
             ]
           }
@@ -1745,7 +1826,7 @@
     },
     "validate": {
       "status": "failed",
-      "timestamp": "2026-09-28T01:07:31+00:00",
+      "timestamp": "2026-09-28T02:07:02+00:00",
       "inputs": [
         {
           "path": "assets/briefs/barrow_levy.yaml",
@@ -1753,7 +1834,7 @@
         },
         {
           "path": "assets/meshes/barrow_levy.glb",
-          "sha256": "2dda39fa6ff424b360b11a78299ea6cbebb8c491fcce9c0253e60b92ed390d28"
+          "sha256": "11226bd2e2fde86cfadc888b11a1737995243d22c40261b5a53a72642870fbc4"
         },
         {
           "path": "scripts/godot_validate.gd",
@@ -1771,27 +1852,27 @@
       "outputs": [
         {
           "path": "assets/manifests/barrow_levy/front.png",
-          "sha256": "2f5c1fbb912b1ac6f5ca9028bd69010674f0aebd52f24ba12abf7b531807385f"
+          "sha256": "1a86ab209b6c84d0e7283c2074c2dbbda52dbd8e57bfea40e60753b016930e1d"
         },
         {
           "path": "assets/manifests/barrow_levy/right.png",
-          "sha256": "1ca8db481a3341180f757d8aa2a6bd992125aa3c9e21486802b8e9305298c0ec"
+          "sha256": "bb7e1fb4fc7c967aa82ff6b5dce0e9add83fe30d18c22efeed757711b4752d6a"
         },
         {
           "path": "assets/manifests/barrow_levy/back.png",
-          "sha256": "23186549db19875919363492cac2fbedee92f5a813effa97b499ccffbc76bf89"
+          "sha256": "8eed50ce4e9cb761b81845c7cc77aef0e49ade0e9016a21c36e83fc6692ec097"
         },
         {
           "path": "assets/manifests/barrow_levy/top.png",
-          "sha256": "dca9917a3c32abb560ea1e04a698d9149fa107f7ee42e8faf1908b7c50d3cb2e"
+          "sha256": "605a4f7f46ccf5131b27e5f76e644d39a500ec7e1f7b636cfe70aec58eae53b6"
         },
         {
           "path": "assets/manifests/barrow_levy/clay_front.png",
-          "sha256": "319e89205bd8cafccd45968bb4d0bb16fb059b96c29a2447935295f1f2ccec2c"
+          "sha256": "411f6b8e48f9f023084d224240ec28e7a6f3aadfc81950884d1313f42801b592"
         },
         {
           "path": "assets/manifests/barrow_levy/wireframe_front.png",
-          "sha256": "6cc912ab7462103396c7befdb82281ecf70615e476a4fba4c65aa96619cd7886"
+          "sha256": "42eb341a2e86b6ab614b8a2d3cea0f766230af2acf2d1e30994e019f9c10f332"
         }
       ],
       "tool_versions": {
@@ -2144,7 +2225,7 @@
     "sha256": "cc5d3c68aa78e5aa2f8def1a6437af599d1a00d9d901bbe9e036a5193d6dc203"
   },
   "total_cost_credits": 155,
-  "updated_at": "2026-09-28T01:07:31+00:00",
+  "updated_at": "2026-09-28T02:07:02+00:00",
   "concept_approval": {
     "attempt": "concept-3",
     "image": {

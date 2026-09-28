@@ -3,7 +3,7 @@
   "stages": {
     "concept": {
       "status": "ok",
-      "timestamp": "2026-09-28T00:27:22+00:00",
+      "timestamp": "2026-09-28T01:27:49+00:00",
       "inputs": [
         {
           "path": "assets/briefs/prop_levy_blade.yaml",
@@ -11,7 +11,7 @@
         },
         {
           "path": "docs/art-bible.md",
-          "sha256": "4b0e09b9f61a569991a9065c18ca191f6b8f6a4f0bea0f25dd3eb15bae8d63cc"
+          "sha256": "26b6a7174caaa432b6436aaea14663f18ea842151ce439cc8863a26c48011802"
         }
       ],
       "outputs": [],
@@ -33,7 +33,7 @@
     },
     "model": {
       "status": "ok",
-      "timestamp": "2026-09-28T00:27:22+00:00",
+      "timestamp": "2026-09-28T01:27:49+00:00",
       "inputs": [
         {
           "path": "assets/briefs/prop_levy_blade.yaml",
@@ -41,7 +41,7 @@
         },
         {
           "path": "docs/art-bible.md",
-          "sha256": "4b0e09b9f61a569991a9065c18ca191f6b8f6a4f0bea0f25dd3eb15bae8d63cc"
+          "sha256": "26b6a7174caaa432b6436aaea14663f18ea842151ce439cc8863a26c48011802"
         },
         {
           "path": ".tripo-out/prop_levy_blade/attempt-1.spend.json",
@@ -192,7 +192,7 @@
     },
     "clean": {
       "status": "ok",
-      "timestamp": "2026-09-28T00:27:23+00:00",
+      "timestamp": "2026-09-28T02:06:18+00:00",
       "inputs": [
         {
           "path": "assets/briefs/prop_levy_blade.yaml",
@@ -204,7 +204,7 @@
         },
         {
           "path": "scripts/blender_cleanup.py",
-          "sha256": "764675eefb06a8d0fff69e0d6ef3f0e4bde9f6705c5766afc1e35432b1d888de"
+          "sha256": "1d37060a1c6e0e08adc81039e61e8ee407c4209656c91229335a0472f0129e57"
         },
         {
           "path": ".tripo-out/prop_levy_blade/attempt-2/tripo-out/stylized-low-poly-3d-game-asset-2-e7bd2854/task.json",
@@ -214,7 +214,7 @@
       "outputs": [
         {
           "path": "assets/meshes/prop_levy_blade.glb",
-          "sha256": "ac5e0cf6998a37fedb8b923777638e811fd26b6550bcfb25ef947b8740cfb814"
+          "sha256": "07f80b0f47a63441667ac4f4d366f2b185e4c54ee6fe79e4ab57db9dfb51b8eb"
         }
       ],
       "tool_versions": {
@@ -242,6 +242,7 @@
         "animations": null,
         "exclude_objects": null,
         "tip_end": "top",
+        "rigid_parts": null,
         "source_forward": {
           "axis": "+x",
           "source": "Tripo API default (.tripo-out/prop_levy_blade/attempt-2/tripo-out/stylized-low-poly-3d-game-asset-2-e7bd2854/task.json sets no export_orientation)"
@@ -250,7 +251,8 @@
           "Blackened Iron": "#242424",
           "Saddle Leather": "#4A2A10",
           "Old Bone": "#CCB484"
-        }
+        },
+        "reference_image": null
       },
       "report": {
         "status": "pass",
@@ -475,8 +477,8 @@
                 "median_before": "#382E28",
                 "delta_e_before": 8.4,
                 "applied": true,
-                "median_after": "#252423",
-                "delta_e_after": 0.7
+                "median_after": "#30302F",
+                "delta_e_after": 5.6
               },
               {
                 "color": "Saddle Leather",
@@ -485,8 +487,8 @@
                 "median_before": "#5B3C1D",
                 "delta_e_before": 8.0,
                 "applied": true,
-                "median_after": "#4A2B12",
-                "delta_e_after": 1.0
+                "median_after": "#5D3B20",
+                "delta_e_after": 7.7
               },
               {
                 "color": "Old Bone",
@@ -495,8 +497,8 @@
                 "median_before": "#8E764B",
                 "delta_e_before": 23.3,
                 "applied": true,
-                "median_after": "#B0996B",
-                "delta_e_after": 10.2
+                "median_after": "#CAB282",
+                "delta_e_after": 0.9
               }
             ]
           }
@@ -533,7 +535,7 @@
     },
     "validate": {
       "status": "ok",
-      "timestamp": "2026-09-28T00:27:24+00:00",
+      "timestamp": "2026-09-28T02:06:20+00:00",
       "inputs": [
         {
           "path": "assets/briefs/prop_levy_blade.yaml",
@@ -541,7 +543,7 @@
         },
         {
           "path": "assets/meshes/prop_levy_blade.glb",
-          "sha256": "ac5e0cf6998a37fedb8b923777638e811fd26b6550bcfb25ef947b8740cfb814"
+          "sha256": "07f80b0f47a63441667ac4f4d366f2b185e4c54ee6fe79e4ab57db9dfb51b8eb"
         },
         {
           "path": "scripts/godot_validate.gd",
@@ -555,27 +557,27 @@
       "outputs": [
         {
           "path": "assets/manifests/prop_levy_blade/front.png",
-          "sha256": "3555138b8cca0eb54fd4922a9c48d0d3c34e393b6300a90a4606932f36f54d8a"
+          "sha256": "bc6c8166cd357d834c59de0cfbcd13cdb5cb5ca855411a4118a4b06c33d60c04"
         },
         {
           "path": "assets/manifests/prop_levy_blade/right.png",
-          "sha256": "f5aa3b6441faab8fdde06ee3002fc4dab0c806e75be47300bfd4287bba0c9cd8"
+          "sha256": "59e59e07f13dfc8b2bb8e768fd651203b36c94b635dff14298e42b204e2c3cda"
         },
         {
           "path": "assets/manifests/prop_levy_blade/back.png",
-          "sha256": "d7a5bb32d31570db794db38032d243af1119f43e49b7e6f7c0c52e6218255947"
+          "sha256": "4ccd560518b13c0d0823de6a055697475a0cf26f2210dd28073bd223df3615b0"
         },
         {
           "path": "assets/manifests/prop_levy_blade/top.png",
-          "sha256": "ea8ff727dc24e27c7456d7a4fdfcd05d869351c4def29bfef20703fcd6fec187"
+          "sha256": "95a91fdc352a531e632b79cde73ad2c4fc9d52e88ad49c7c1ae9962ed4b7b28c"
         },
         {
           "path": "assets/manifests/prop_levy_blade/clay_front.png",
-          "sha256": "e3706138fcac8ca765149c66a0a6a3463b21f934027f7e106e3216194ca3538c"
+          "sha256": "b3bd1bd1dc7860657e60120212f16eabd9ef990910bc389e9ec5419d2336ecd7"
         },
         {
           "path": "assets/manifests/prop_levy_blade/wireframe_front.png",
-          "sha256": "fc1fbff33d7407ab3bd584bfcf0e35ceca451eee884e436cfce8c3f8c1ef87bc"
+          "sha256": "46552d8f32686d581946758a98b375348b69caf4f8a8210ef65f36b0e9675f7e"
         }
       ],
       "tool_versions": {
@@ -603,6 +605,7 @@
         "animations": null,
         "exclude_objects": null,
         "tip_end": "top",
+        "rigid_parts": null,
         "blender_triangle_count": 1017
       },
       "report": {
@@ -717,5 +720,5 @@
     "sha256": "d2b53fa6313767d0f8488e0f0beaead69bd439820e5e79c4a363db50380c5533"
   },
   "total_cost_credits": 80,
-  "updated_at": "2026-09-28T00:27:24+00:00"
+  "updated_at": "2026-09-28T02:06:20+00:00"
 }
