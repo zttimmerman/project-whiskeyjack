@@ -151,10 +151,17 @@ func _check_rig(root: Node, params: Dictionary, report: Dictionary) -> void:
 		if sm == null or not "bones" in sm:
 			report["errors"].append("socket map %s didn't load as a SocketMap" % socket_path)
 		else:
+			# In the game the GLB is imported with the brief's BoneMap, which renames bones to
+			# SkeletonProfileHumanoid names (the socket map uses those); this runtime import doesn't,
+			# so translate through the same BoneMap.
+			var bone_map: BoneMap = load("res://" + params["bone_map"]) if params.get("bone_map") else null
 			for socket in sm.bones:
 				var bone: String = sm.bones[socket]
-				var found := skel.find_bone(bone) != -1
-				sockets[socket] = {"bone": bone, "found": found}
+				var raw := bone
+				if bone_map and bone_map.profile.find_bone(bone) != -1:
+					raw = String(bone_map.get_skeleton_bone_name(bone))
+				var found := skel.find_bone(raw) != -1
+				sockets[socket] = {"bone": bone, "skeleton_bone": raw, "found": found}
 				if not found:
 					report["errors"].append("socket '%s' maps to bone '%s', which this rig doesn't have" % [socket, bone])
 		report["rig"]["sockets"] = sockets

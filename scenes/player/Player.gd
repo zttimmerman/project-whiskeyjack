@@ -8,8 +8,8 @@ const CHARACTER_LIGHT_LAYER := 2  # render layer of CameraRig/FillLight's cull m
 @export var stats: CharacterStats
 @export var inventory: Inventory
 @export var move_speed: float = 5.0
-@export var dodge_speed: float = 12.0
-@export var dodge_duration: float = 0.35
+@export var dodge_speed: float = 8.4   # 4.2 m over the dodge, as before
+@export var dodge_duration: float = 0.5  # fits the roll clip's core at 1.8x
 @export var gravity: float = 20.0
 @export var camera_sensitivity: float = 0.003   # radians per pixel (mouse)
 @export var camera_pad_speed: float = 2.0        # radians per second (keys/gamepad)

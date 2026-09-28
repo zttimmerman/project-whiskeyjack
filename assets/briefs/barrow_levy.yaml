@@ -21,3 +21,5 @@ socket_map: data/rigs/barrow_levy_sockets.tres
 animations: [idle, run, attack, stagger, death]
 # A skeleton is built from separate rigid bones: each part is bound whole to its nearest bone.
 rigid_parts: true
+# Retarget: the GLB's import settings use this BoneMap (bones renamed to SkeletonProfileHumanoid names)
+bone_map: data/rigs/mixamorig_bone_map.tres

@@ -16,6 +16,8 @@ enum State { IDLE, PATROL, CHASE, ATTACK, STAGGER, DEAD }
 
 const STAGGER_DURATION: float = 0.4
 const ATTACK_ACTIVE_TIME: float = 0.3
+const DEATH_FADE_TIME: float = 0.3
+const DEATH_FALLBACK_TIME: float = 2.4  # Death01's length, if the model has no death clip
 const ATTACK_COOLDOWN: float = 1.5
 
 var state: State = State.IDLE
@@ -262,9 +264,28 @@ func die() -> void:
 	_change_state(State.DEAD)
 	GameManager.award_player_xp(xp_reward)
 	emit_signal("died")
-	# Delay queue_free so the death animation has time to play (~1.25s at 24fps)
-	var timer: SceneTreeTimer = get_tree().create_timer(1.5)
-	timer.timeout.connect(queue_free)
+	# Free once the death clip has played, fading the model out over its last DEATH_FADE_TIME
+	var length := DEATH_FALLBACK_TIME
+	if _anim_player and _anim_player.has_animation("death"):
+		length = _anim_player.get_animation("death").length
+	var tween := create_tween()
+	tween.tween_interval(maxf(length - DEATH_FADE_TIME, 0.0))
+	# Fade through material alpha: the Compatibility renderer doesn't draw GeometryInstance3D.transparency.
+	# Each surface gets its own copy, since the material is shared with every other levy.
+	var first := true
+	for mesh in find_children("*", "MeshInstance3D", true, false):
+		var mi := mesh as MeshInstance3D
+		for s in mi.mesh.get_surface_count():
+			var mat := mi.get_active_material(s)
+			if not mat is BaseMaterial3D:
+				continue
+			var fading := (mat as BaseMaterial3D).duplicate() as BaseMaterial3D
+			fading.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			mi.set_surface_override_material(s, fading)
+			# The first fade follows the wait; the rest run alongside it
+			(tween if first else tween.parallel()).tween_property(fading, "albedo_color:a", 0.0, DEATH_FADE_TIME)
+			first = false
+	tween.tween_callback(queue_free)
 
 
 func _on_stats_died() -> void:

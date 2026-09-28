@@ -10,6 +10,7 @@
 [ext_resource type="AudioStream" path="res://assets/audio/sfx_impact.ogg" id="8_impact"]
 [ext_resource type="PackedScene" path="res://assets/meshes/player.glb" id="9_model"]
 
+[ext_resource type="AnimationLibrary" path="res://data/animations/player_library.tres" id="30_anims"]
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gfjak"]
 radius = 0.4
 height = 1.8
@@ -51,11 +52,11 @@ transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, -0.9, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 
 [node name="FillLight" type="OmniLight3D" parent="CameraRig"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 1.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 2.5)
 light_color = Color(1, 0.8, 0.5, 1)
-light_energy = 3.0
+light_energy = 3.5
 light_cull_mask = 2
-omni_range = 4.0
+omni_range = 5.0
 
 [node name="SpringArm3D" type="SpringArm3D" parent="CameraRig" unique_id=783708106]
 spring_length = 4.0
@@ -91,3 +92,7 @@ bus = "SFX"
 [node name="SFXFootstep" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("7_step")
 bus = "SFX"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="PlayerModel"]
+root_node = NodePath("..")
+libraries = {&"": ExtResource("30_anims")}

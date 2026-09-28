@@ -1,0 +1,16 @@
+[gd_resource type="AnimationLibrary" format=3]
+
+[ext_resource type="Animation" path="res://data/animations/clips/Sword_Regular_A.res" id="1_rtjwg"]
+[ext_resource type="Animation" path="res://data/animations/clips/Death01.res" id="2_1b2fb"]
+[ext_resource type="Animation" path="res://data/animations/clips/Sword_Idle_loop.res" id="3_1pce8"]
+[ext_resource type="Animation" path="res://data/animations/clips/Jog_Fwd_Loop_x0.75_loop.res" id="4_bskl2"]
+[ext_resource type="Animation" path="res://data/animations/clips/Hit_Chest.res" id="5_0yb4k"]
+
+[resource]
+_data = {
+&"attack": ExtResource("1_rtjwg"),
+&"death": ExtResource("2_1b2fb"),
+&"idle": ExtResource("3_1pce8"),
+&"run": ExtResource("4_bskl2"),
+&"stagger": ExtResource("5_0yb4k")
+}

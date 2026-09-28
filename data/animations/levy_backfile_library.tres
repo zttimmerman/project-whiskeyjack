@@ -1,0 +1,16 @@
+[gd_resource type="AnimationLibrary" format=3]
+
+[ext_resource type="Animation" path="res://data/animations/clips/OverhandThrow.res" id="1_naxwb"]
+[ext_resource type="Animation" path="res://data/animations/clips/Death01.res" id="2_iw1fx"]
+[ext_resource type="Animation" path="res://data/animations/clips/Idle_Loop_loop.res" id="3_44ccg"]
+[ext_resource type="Animation" path="res://data/animations/clips/Walk_Formal_Loop_x1.44_loop.res" id="4_evqtv"]
+[ext_resource type="Animation" path="res://data/animations/clips/Hit_Chest.res" id="5_2wkd2"]
+
+[resource]
+_data = {
+&"attack": ExtResource("1_naxwb"),
+&"death": ExtResource("2_iw1fx"),
+&"idle": ExtResource("3_44ccg"),
+&"run": ExtResource("4_evqtv"),
+&"stagger": ExtResource("5_2wkd2")
+}

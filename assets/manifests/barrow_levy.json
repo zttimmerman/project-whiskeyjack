@@ -1828,11 +1828,11 @@
     },
     "validate": {
       "status": "ok",
-      "timestamp": "2026-09-28T02:32:14+00:00",
+      "timestamp": "2026-09-28T03:36:20+00:00",
       "inputs": [
         {
           "path": "assets/briefs/barrow_levy.yaml",
-          "sha256": "cc5d3c68aa78e5aa2f8def1a6437af599d1a00d9d901bbe9e036a5193d6dc203"
+          "sha256": "e3c912c2d51344044c0821f976f228a9e696dd91507c20577536912144ece15a"
         },
         {
           "path": "assets/meshes/barrow_levy.glb",
@@ -1840,7 +1840,7 @@
         },
         {
           "path": "scripts/godot_validate.gd",
-          "sha256": "7206c588708da230432d1771d350537f8b5d64c7cfc4150a3b6b77cb409d8e51"
+          "sha256": "b6e15053c4219818c4d819d9d64720b11aa7cddbef876e106eee74cbca31e554"
         },
         {
           "path": "scripts/blender_views.py",
@@ -1848,33 +1848,37 @@
         },
         {
           "path": "data/rigs/barrow_levy_sockets.tres",
-          "sha256": "4790aef3a993bf7de5aad512e56037ebba70a52ddbe9e86a865f744b539d48bc"
+          "sha256": "3742443fb65a33287c720419a9aefb70e0a95dd2c7e85d19388089074ec6bd3a"
+        },
+        {
+          "path": "data/rigs/mixamorig_bone_map.tres",
+          "sha256": "fd9ef8777ff44c8f8e377c1b57c06954c36e8a5bfce2807d2312fcd3ecc0a19a"
         }
       ],
       "outputs": [
         {
           "path": "assets/manifests/barrow_levy/front.png",
-          "sha256": "d26bd797ba4bd20a86e15d6358af90893297050b67c039c6ca21bc7f6e902b4f"
+          "sha256": "8b2d3f36ab8d1db8b1af249bda15c86734cb9d3b5b43c29c55cbf95573ab6398"
         },
         {
           "path": "assets/manifests/barrow_levy/right.png",
-          "sha256": "929eb58a54476ed9d2c39144c0d9433ee6bdf611e713beba81652bbc453c659f"
+          "sha256": "38d80e60ad94c07cdac1a90582aba5e4db17eb909486b6d346eb64b50636ff0c"
         },
         {
           "path": "assets/manifests/barrow_levy/back.png",
-          "sha256": "bf7caa38d34d946f2b8d35c5a0c44f4f344fb9b94018a3e6cc24e9fb007b33c2"
+          "sha256": "a0025c5f835112abe84746e30efff182be172782051224754b13d8f49af1642e"
         },
         {
           "path": "assets/manifests/barrow_levy/top.png",
-          "sha256": "ffe00c735e51c263021ca33a1571483fe69b21f496ae7c9b861640ed95db3a37"
+          "sha256": "819e97175523fe05f211e107a4a18237feab874bc26e463f6f936de924890e73"
         },
         {
           "path": "assets/manifests/barrow_levy/clay_front.png",
-          "sha256": "9e45d031536080e08b83f185e5a2b4e7da27f1373794388b160a1c3c2684cd5a"
+          "sha256": "7d0d931ef036acf6c362accf87efa8932a748c09e70c3fe3dc33796483da6644"
         },
         {
           "path": "assets/manifests/barrow_levy/wireframe_front.png",
-          "sha256": "4f03ee8257400f2051f557e0da0aa22c2b5040460e73ae0c97767df74153ee73"
+          "sha256": "b631668b5f6b9c6ff05246f1ac4dcf70d976b7c10cc4a74a86dc01b6e8aa7396"
         }
       ],
       "tool_versions": {
@@ -1900,6 +1904,7 @@
           "Signal Red"
         ],
         "socket_map": "data/rigs/barrow_levy_sockets.tres",
+        "bone_map": "data/rigs/mixamorig_bone_map.tres",
         "animations": [
           "idle",
           "run",
@@ -2013,12 +2018,14 @@
           "skeleton_path": "Armature/Skeleton3D",
           "sockets": {
             "hand_l": {
-              "bone": "mixamorig_LeftHand",
-              "found": true
+              "bone": "LeftHand",
+              "found": true,
+              "skeleton_bone": "mixamorig_LeftHand"
             },
             "hand_r": {
-              "bone": "mixamorig_RightHand",
-              "found": true
+              "bone": "RightHand",
+              "found": true,
+              "skeleton_bone": "mixamorig_RightHand"
             }
           },
           "unmapped_bones": [
@@ -2222,10 +2229,10 @@
   },
   "brief": {
     "path": "assets/briefs/barrow_levy.yaml",
-    "sha256": "cc5d3c68aa78e5aa2f8def1a6437af599d1a00d9d901bbe9e036a5193d6dc203"
+    "sha256": "e3c912c2d51344044c0821f976f228a9e696dd91507c20577536912144ece15a"
   },
   "total_cost_credits": 155,
-  "updated_at": "2026-09-28T02:32:14+00:00",
+  "updated_at": "2026-09-28T03:36:20+00:00",
   "concept_approval": {
     "attempt": "concept-3",
     "image": {

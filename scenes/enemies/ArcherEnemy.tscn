@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" path="res://assets/meshes/barrow_levy.glb" id="7_model"]
 [ext_resource type="Resource" path="res://data/rigs/barrow_levy_sockets.tres" id="20_sockets"]
 
+[ext_resource type="AnimationLibrary" path="res://data/animations/levy_backfile_library.tres" id="30_anims"]
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.4
 height = 1.8
@@ -19,7 +20,7 @@ max_hp = 20
 current_hp = 20
 attack = 6
 defense = 1
-speed = 2.5
+speed = 1.4
 level = 1
 experience = 0
 experience_to_next_level = 100
@@ -69,3 +70,7 @@ damage = 6
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="HitboxComponent"]
 shape = SubResource("SphereShape3D_hitbox")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="SkeletonModel"]
+root_node = NodePath("..")
+libraries = {&"": ExtResource("30_anims")}

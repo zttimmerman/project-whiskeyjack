@@ -223,7 +223,7 @@ def load_brief(asset_id):
     for ov in b.get("texture_overlays") or []:
         if not (ROOT / ov).exists() or not (ROOT / ov).with_suffix(".json").exists():
             errors.append(f"texture overlay {ov} (and its .json sidecar) must exist; make it with scripts/make_texture_overlay.py")
-    for opt in ("source_glb", "socket_map"):
+    for opt in ("source_glb", "socket_map", "bone_map"):
         if b.get(opt) and not (ROOT / b[opt]).exists():
             errors.append(f"'{opt}' points at a missing file: {b[opt]}")
     if errors:
@@ -645,7 +645,7 @@ def stage_model(brief, m, args):
 
 def stage_params(brief):
     keys = ("asset_id", "type", "face_limit", "triangle_budget", "texture_size", "target_size_m", "pivot",
-            "palette", "socket_map", "animations", "exclude_objects", "tip_end", "rigid_parts", "skirt_reweight")
+            "palette", "socket_map", "bone_map", "animations", "exclude_objects", "tip_end", "rigid_parts", "skirt_reweight")
     return {k: brief.get(k) for k in keys}
 
 
@@ -795,7 +795,8 @@ def stage_validate(brief, m, args):
             return EXIT_OK
         print(f"validate: {rel(glb)} doesn't exist; run the clean stage first")
         return EXIT_AWAITING
-    inputs = [brief["_path"], glb, GODOT_SCRIPT, VIEWS_SCRIPT] + ([ROOT / brief["socket_map"]] if brief.get("socket_map") else [])
+    inputs = ([brief["_path"], glb, GODOT_SCRIPT, VIEWS_SCRIPT] + ([ROOT / brief["socket_map"]] if brief.get("socket_map") else [])
+              + ([ROOT / brief["bone_map"]] if brief.get("bone_map") else []))
     views_dir = MANIFESTS / aid
     view_pngs = [views_dir / f"{n}.png" for n in VIEW_NAMES]
     if not force and up_to_date(m["stages"].get("validate"), inputs, view_pngs):

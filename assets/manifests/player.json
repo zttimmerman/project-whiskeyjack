@@ -893,11 +893,11 @@
     },
     "validate": {
       "status": "ok",
-      "timestamp": "2026-09-28T02:30:43+00:00",
+      "timestamp": "2026-09-28T03:36:22+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player.yaml",
-          "sha256": "bd9d565951642359fa071d71282e647f22e7a839d54c629053c34d26377adfa9"
+          "sha256": "ee9664699c8771285f584c5351ad7868007de99a1ab2bf7385fca6d4ebcc849b"
         },
         {
           "path": "assets/meshes/player.glb",
@@ -905,37 +905,41 @@
         },
         {
           "path": "scripts/godot_validate.gd",
-          "sha256": "7206c588708da230432d1771d350537f8b5d64c7cfc4150a3b6b77cb409d8e51"
+          "sha256": "b6e15053c4219818c4d819d9d64720b11aa7cddbef876e106eee74cbca31e554"
         },
         {
           "path": "scripts/blender_views.py",
           "sha256": "debc0bfee9633437a28f041585e1422ec94aa009a068e18c0826528ed36d9d85"
+        },
+        {
+          "path": "data/rigs/mixamorig_bone_map.tres",
+          "sha256": "fd9ef8777ff44c8f8e377c1b57c06954c36e8a5bfce2807d2312fcd3ecc0a19a"
         }
       ],
       "outputs": [
         {
           "path": "assets/manifests/player/front.png",
-          "sha256": "c7a692e8f62283703b2f47a6b56d8931ad6bd1cb9e2bb4ea81b34ec139e7e4ac"
+          "sha256": "f22ac8ce1f63fb916a5fc1b412e6acf291be3fb5e6d26d6fe95c921c4099458f"
         },
         {
           "path": "assets/manifests/player/right.png",
-          "sha256": "499acc6f8b7d69f22c6648590c9bdae2b6566a18134e7830a032250963eeb98c"
+          "sha256": "d86e7716c99aa7db171b9d4b5d58791458f37b1fd1c476e1a5beea12f4442ca2"
         },
         {
           "path": "assets/manifests/player/back.png",
-          "sha256": "a078bfe9e104ac7c13160eeb7d3d2ab0b29be407edcf4648ec88ba5b04bf0f63"
+          "sha256": "99008358d9eb54f023adc5acdbc10019f8208c5e1df8958a13ae7cfa4e5ba49b"
         },
         {
           "path": "assets/manifests/player/top.png",
-          "sha256": "3cdba5897ad6472e89ec21104c9d96eebc891a60a807c5c0c4da19714116729e"
+          "sha256": "718ae66bb4c31f3313c7e35098626e45a1ff8ee6fb7bb46205817c9f3a84b052"
         },
         {
           "path": "assets/manifests/player/clay_front.png",
-          "sha256": "6ae716b4233a06df3fa9c3b4236c26a69dc01c99bd615ea20272cdc0b6d89acf"
+          "sha256": "842a871f09102636a8eecfb07c15351d2d5ed3b4d23124efd1e285633c12a24b"
         },
         {
           "path": "assets/manifests/player/wireframe_front.png",
-          "sha256": "78536ffd383217a1470bda1da85c0fd89b9c44e49a25d2275c2a5b6e28ed15e1"
+          "sha256": "f34f22306bec3b1e07a62d2627f9e15576b620a7ff1c428dcd8acc26d1e6fed5"
         }
       ],
       "tool_versions": {
@@ -961,6 +965,7 @@
           "Tarnished Gold"
         ],
         "socket_map": null,
+        "bone_map": "data/rigs/mixamorig_bone_map.tres",
         "animations": [
           "idle",
           "run",
@@ -1143,10 +1148,10 @@
   },
   "brief": {
     "path": "assets/briefs/player.yaml",
-    "sha256": "bd9d565951642359fa071d71282e647f22e7a839d54c629053c34d26377adfa9"
+    "sha256": "ee9664699c8771285f584c5351ad7868007de99a1ab2bf7385fca6d4ebcc849b"
   },
   "total_cost_credits": 100,
-  "updated_at": "2026-09-28T02:30:43+00:00",
+  "updated_at": "2026-09-28T03:36:22+00:00",
   "concept_approval": {
     "attempt": "concept-1",
     "image": {
