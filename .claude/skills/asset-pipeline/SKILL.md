@@ -1,6 +1,6 @@
 ---
 name: asset-pipeline
-description: Orchestrates 3D asset production for this project with scripts/pipeline.py. It owns briefs, stage order (concept → multiview → model → clean → validate), Blender cleanup, Godot validation and the per-asset manifest. Use when creating, regenerating, cleaning or validating any mesh in assets/meshes/.
+description: Orchestrates 3D asset production for this project with scripts/pipeline.py. It owns briefs, stage order (concept → multiview → model → rig → clean → validate), Blender cleanup, Godot validation and the per-asset manifest. Use when creating, regenerating, cleaning or validating any mesh in assets/meshes/.
 ---
 
 # Asset pipeline (orchestrator)
@@ -12,7 +12,7 @@ description: Orchestrates 3D asset production for this project with scripts/pipe
 ## Command
 
 ```
-python3 scripts/pipeline.py <asset-id> --stage <concept|multiview|model|clean|validate|all> [--dry-run] [--force]
+python3 scripts/pipeline.py <asset-id> --stage <concept|multiview|model|rig|clean|validate|all> [--dry-run] [--force]
         [--concept-model banana_pro|seedream_v5] [--variants K] [--refine N --edit TEXT]
 python3 scripts/pipeline.py <asset-id> --approve-concept N
 ```
@@ -56,7 +56,8 @@ The Tripo chain is **text-to-image → (optional refine) → image-to-multiview 
    - Concepts are `.tripo-out/<id>/concept-<n>/`, one image each (the CLI's `preview.png` copy is ignored). A hand-made concept dropped into a `concept-<n>/` folder works too, and needs no spend record.
 2a. **multiview**. Needs the approved concept (otherwise it exits 4). It prints `tripo generate image-to-multiview <approved image>` into `multiview-<n>` and exits 3. It ingests the newest usable sheet **whose spend record's `command` names the approved image**, so a sheet made from an older concept is never used. It fails (exit 2) if the sheet has no front view or fewer than 2 views. Show the user the sheet (the four `*_view` images) before asking to spend on the model.
 2b. **model**. Uses the brief's `source_glb` for existing assets. Otherwise it ingests the newest usable Tripo download (`attempt-<n>`, skipping attempts whose spend record is `rejected`, `lost` or `failed`) and copies every attempt's spend record into the manifest. If nothing is on disk, it prints `tripo make <front> <left> <back> <right> --model <tripo_model> --param pbr=false --param texture=true --param face_limit=<brief>` from the current sheet and exits 3. `make` is used rather than `generate multiview-to-model` because only `make` has `--dry-run`.
-3. **clean**. Runs `blender -b --factory-startup -P scripts/blender_cleanup.py`:
+2c. **rig** (characters only; props and `source_glb` assets skip it). Rigs the **raw** download, because Tripo's rigger expects its own +X orientation and a cleaned, rotated GLB rig-checks as unriggable. It prints `tripo anim rig <raw model.glb> --rig-type biped --spec mixamo --out-format glb --param model=<RIG_MODEL>` into `rig-<n>` and exits 3. It ingests the newest usable `rig-<n>` whose spend record's `command` names the current raw download. Before the paid run, rig-check the same file (`tripo anim check`, free); it has to return `riggable: true`. After the run, check the bone names and the part-to-bone weights: Tripo returned its generic limb rig despite `--spec mixamo`, with a defective left arm.
+3. **clean**. For characters it reads the rigged GLB from 2c; for props, the model download. Runs `blender -b --factory-startup -P scripts/blender_cleanup.py`:
    - removes Blender's importer-made bone display shapes, and anything listed in `exclude_objects`;
    - fails if a rigged asset has a mesh that isn't attached to the armature;
    - characters: detects facing and snaps it to −Y. A rig uses its foot bones (heel to toe). Without a rig, it reads the source's export axis from the Tripo `task.json` beside the download (`export_orientation`, or the API default `+x` when that's unset) and cross-checks it against the geometry: the arm span gives the lateral axis, the feet give forward. If the metadata and the geometry disagree it **fails**; with neither, it warns and assumes −Y. **Tripo's rigger expects Tripo's own +X orientation**, so rig the raw download before cleaning; a cleaned, rotated GLB rig-checks as unriggable;
@@ -66,6 +67,7 @@ The Tripo chain is **text-to-image → (optional refine) → image-to-multiview 
    - **flat shading:** clears the imported custom normals, then flat-shades every edge sharper than 30° (`SMOOTH_ANGLE_DEG`). Unrigged meshes are welded first so UV-seam splits don't read as hard edges; this keeps UVs and the triangle count;
    - bakes the albedo with Cycles when it comes from a node chain rather than an image (one material only);
    - downscales the texture to `texture_size`, and fails if there's more than one texture;
+   - **palette correction:** moves the albedo toward the brief's palette hex values (docs/art-bible.md). A color is corrected when it covers at least 3% of the texture and its median is within 30 ΔE of the target, and texels blend the shifts by distance. Every group is reported in `palette_correction` with its median before and after. Tripo's texture pass desaturates;
    - records **mesh health** as a baseline and never fails on it: triangle/quad/n-gon counts and ratios, non-manifold edges, boundary edges and loops (holes), wire edges, loose vertices, degenerate faces, zero-length edges, and the **part count** (welded connected pieces, each with its triangles, vertices and size). The part count is a rigging risk to watch on characters before auto-rigging. Everything is counted twice: as imported, and welded at 0.01 mm. The glTF importer doesn't merge vertices, so every UV seam shows up as an "as imported" boundary; the welded numbers are the real topology;
    - records the true dimensions (`true_dims_m`, `true_length_m`) after alignment;
    - checks the **triangle** count (n-gons count n−2), and **fails loudly when over budget. It never decimates, and a rigged mesh is never touched.** The fix is to regenerate at the brief's `face_limit`;

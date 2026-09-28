@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Asset pipeline orchestrator.
 
-    python3 scripts/pipeline.py <asset-id> --stage <concept|multiview|model|clean|validate|all> [--dry-run] [--force]
+    python3 scripts/pipeline.py <asset-id> --stage <concept|multiview|model|rig|clean|validate|all> [--dry-run] [--force]
         [--concept-model banana_pro|seedream_v5] [--variants K] [--refine N --edit TEXT]
     python3 scripts/pipeline.py <asset-id> --approve-concept N
 
@@ -11,7 +11,9 @@ Stages:
   multiview  Image-to-multiview from the approved concept: a front/left/back/right sheet.
   model      Ingest the base mesh: the brief's source_glb, or the newest Tripo download on disk.
              Otherwise prints multiview-to-3D for the current sheet. Never text-to-3D.
-  clean      Blender (headless): scale, pivot, facing, albedo-only, texture size, triangle budget, export GLB.
+  rig        Characters only: auto-rig the RAW download (Tripo's rigger expects its +X orientation).
+  clean      Blender (headless): scale, pivot, facing, albedo-only, palette correction, flat shading,
+             texture size, triangle budget, export GLB. Characters are cleaned from the rigged GLB.
   validate   Godot (headless): bone names, SkeletonProfileHumanoid mapping, triangle count, textures.
 
 This script never runs a paid Tripo command. When a stage's output is missing, it prints the
@@ -47,7 +49,7 @@ BLENDER_SCRIPT = ROOT / "scripts" / "blender_cleanup.py"
 GODOT_SCRIPT = ROOT / "scripts" / "godot_validate.gd"
 VIEWS_SCRIPT = ROOT / "scripts" / "blender_views.py"
 VIEW_NAMES = ("front", "right", "back", "top", "clay_front", "wireframe_front")
-STAGES = ["concept", "multiview", "model", "clean", "validate"]
+STAGES = ["concept", "multiview", "model", "rig", "clean", "validate"]
 
 EXIT_OK, EXIT_ERROR, EXIT_CHECK_FAILED, EXIT_AWAITING, EXIT_AWAITING_APPROVAL = 0, 1, 2, 3, 4
 
@@ -60,6 +62,10 @@ CONCEPT_MODELS = {
     "seedream_v5": {"portrait": {"size": "1536x2048"}},
 }
 DEFAULT_CONCEPT_MODEL = "banana_pro"
+# Tripo auto-rig, pinned like tripo_model (the CLI default today). Mixamo bone names are the ones
+# Godot's BoneMap auto-mapper and godot_validate.gd's humanoid heuristic recognise.
+RIG_MODEL = "v2.5-20260210"
+RIG_SPEC = "mixamo"
 
 
 class PipelineError(Exception):
@@ -125,6 +131,13 @@ def parse_brief_yaml(text, path):
 
 
 PALETTE_ROW = re.compile(r"^\| ([A-Z][A-Za-z ]+?) \| `#[0-9A-Fa-f]{6}` \| ([^|]+?) \|", re.M)
+PALETTE_HEX = re.compile(r"^\| ([A-Z][A-Za-z ]+?) \| `(#[0-9A-Fa-f]{6})` \|", re.M)
+
+
+def palette_targets(brief):
+    """{name: hex} for the brief's palette subset, from docs/art-bible.md: the clean stage's color targets."""
+    hexes = dict(PALETTE_HEX.findall(ART_BIBLE.read_text()))
+    return {name: hexes[name] for name in brief["palette"]}
 
 
 def art_bible_palette():
@@ -644,6 +657,61 @@ def work_dir(asset_id):
     return TRIPO_OUT / asset_id / "work"
 
 
+def current_rig(brief, model):
+    """(attempt, glb, attempts) for the newest usable rig-<n> whose spend record's command rigged this raw download."""
+    attempts = tripo_attempts(brief["asset_id"], "rig", ["*.glb"])
+    made_from = [a for a in attempts if is_usable(a) and spend_input(a, "rig") == Path(model).resolve()]
+    pick = made_from[-1] if made_from else None
+    return pick, (pick["files"][0] if pick else None), attempts
+
+
+def needs_rig(brief):
+    return brief["type"] == "character" and not brief.get("source_glb")
+
+
+def clean_input(brief):
+    """What the clean stage reads: characters are rigged from the RAW download first (Tripo's rigger
+    expects Tripo's +X orientation, and a cleaned, rotated GLB rig-checks as unriggable)."""
+    model, _ = resolve_model(brief)
+    if model is None or not needs_rig(brief):
+        return model
+    return current_rig(brief, model)[1]
+
+
+def stage_rig(brief, m, args):
+    aid = brief["asset_id"]
+    if not needs_rig(brief):
+        print(f"rig: not needed ({'existing source_glb' if brief.get('source_glb') else 'props have no skeleton'})")
+        return EXIT_OK
+    model, _ = resolve_model(brief)
+    if model is None:
+        print("rig: no raw download yet; run the model stage first")
+        return EXIT_AWAITING
+    pick, glb, attempts = current_rig(brief, model)
+    inputs = [model] + [a["spend_path"] for a in attempts if a["spend_path"].exists()]
+    params = {"rig_type": "biped", "spec": RIG_SPEC, "model": RIG_MODEL, "out_format": "glb"}
+
+    def save(status, msg, outputs=(), **extra):
+        if not args.dry_run:
+            record(m, "rig", status, inputs, list(outputs), msg, params=params, **spend_fields(attempts), **extra)
+
+    if pick is None:
+        cmd = tripo_command("tripo anim rig", shlex.quote(rel(model)), "--rig-type biped", f"--spec {RIG_SPEC}",
+                            "--out-format glb", param_flags({"model": RIG_MODEL}),
+                            f"-o {next_attempt_dir(aid, 'rig', attempts)} --no-open --json")
+        print("rig: the raw download isn't rigged yet. Rig-check it (free: `tripo anim check <glb>`), then run "
+              "through the tripo skill:\n  " + cmd)
+        save("awaiting", "waiting on a Tripo rig run", suggested_command=cmd)
+        return EXIT_AWAITING
+    if not args.force and up_to_date(m["stages"].get("rig"), inputs, [glb]):
+        print("rig: up to date")
+        return EXIT_OK
+    msg = f"rigged {rel(glb)} from {rel(model)}"
+    print(f"rig: {msg}")
+    save("ok", msg, [glb])
+    return EXIT_OK
+
+
 def source_forward(task_json):
     """Which way a Tripo download faces, from the task.json the CLI writes beside it. Tripo exports
     along +x unless the request set export_orientation (API default), so a Tripo task without the
@@ -659,9 +727,10 @@ def source_forward(task_json):
 def stage_clean(brief, m, args):
     dry_run, force = args.dry_run, args.force
     aid = brief["asset_id"]
-    model, _ = resolve_model(brief)
+    model = clean_input(brief)
     if model is None:
-        print("clean: no base mesh yet; run the model stage first")
+        print("clean: no " + ("rigged mesh yet; run the rig stage first" if needs_rig(brief) and resolve_model(brief)[0]
+                              else "base mesh yet; run the model stage first"))
         return EXIT_AWAITING
     out = MESHES / f"{aid}.glb"
     if out.resolve() == model.resolve():
@@ -673,7 +742,8 @@ def stage_clean(brief, m, args):
         return EXIT_OK
     wd = work_dir(aid)
     params_path, report_path = wd / "clean-params.json", wd / "clean-report.json"
-    params = {**stage_params(brief), "source_forward": source_forward(task_json)}
+    params = {**stage_params(brief), "source_forward": source_forward(task_json),
+              "palette_targets": palette_targets(brief)}
     if not dry_run:
         wd.mkdir(parents=True, exist_ok=True)
         params_path.write_text(json.dumps(params, indent=2))
@@ -764,7 +834,7 @@ def gross_flags(views, m):
     return flags
 
 
-STAGE_FUNCS = {"concept": stage_concept, "multiview": stage_multiview, "model": stage_model,
+STAGE_FUNCS = {"concept": stage_concept, "multiview": stage_multiview, "model": stage_model, "rig": stage_rig,
                "clean": stage_clean, "validate": stage_validate}
 
 

@@ -70,6 +70,8 @@ func _validate(args: Dictionary, report: Dictionary) -> void:
 	if typeof(params) != TYPE_DICTIONARY:
 		report["errors"].append("couldn't read params JSON")
 		return
+	# The same import extension the editor plugin registers, so this reports what the game gets
+	GLTFDocument.register_gltf_document_extension(preload("res://addons/stylized_materials/no_specular_gltf.gd").new())
 	var doc := GLTFDocument.new()
 	var state := GLTFState.new()
 	var err := doc.append_from_file(args["glb"], state)

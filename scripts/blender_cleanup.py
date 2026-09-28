@@ -10,7 +10,7 @@ Imports the GLB and then:
   (Tripo exports face +X by default) cross-checked against the geometry (arm span, feet);
 - rebuilds every material as albedo-only (base color, plus alpha if used), stripping
   normal/roughness/metallic/emission maps and baking non-image albedo; roughness 1, specular 0;
-- downscales the albedo to texture_size;
+- downscales the albedo to texture_size, then shifts it toward the brief's palette (palette_correct);
 - replaces imported smooth normals with flat shading above SMOOTH_ANGLE_DEG (welding UV-seam
   splits first on unrigged meshes, so the angle test sees real edges);
 - aligns props along their principal axis and fails if the residual tilt exceeds PROP_AXIS_TOLERANCE_DEG;
@@ -37,6 +37,8 @@ PROP_AXIS_TOLERANCE_DEG = 2.0
 TIP_SLICE = 0.12        # fraction of the length measured at each end
 TIP_AMBIGUOUS_RATIO = 0.8  # thin/thick cross-section ratio above which the tip can't be told
 STRIP_NOTE = "normal, roughness, metallic, specular, emission and occlusion inputs are not carried over"
+PALETTE_MIN_SHARE = 0.03   # a palette color must cover this much of the texture to be corrected
+PALETTE_MAX_DRIFT = 30.0   # CIE76 dE: a group further than this from its target is a different material
 SMOOTH_ANGLE_DEG = 30.0  # art bible: flat-shade every edge sharper than this; smooth-shaded low poly reads as inflated plastic
 # Source export axes (glTF frame, which the importer keeps for X) mapped to Blender forward vectors.
 # Tripo's +y/-y aren't mapped: which way its "y" points in a Y-up glTF is unverified.
@@ -346,7 +348,82 @@ def bake_albedo(mat, color_socket, users, size, report):
     return img
 
 
-def rebuild_materials(meshes, size, report):
+def _srgb_to_lab(rgb):
+    """sRGB in 0-1 (N, 3) to CIE Lab (D65)."""
+    lin = np.where(rgb <= 0.04045, rgb / 12.92, ((rgb + 0.055) / 1.055) ** 2.4)
+    xyz = lin @ np.array([[0.4124, 0.3576, 0.1805], [0.2126, 0.7152, 0.0722], [0.0193, 0.1192, 0.9505]]).T
+    xyz = xyz / np.array([0.95047, 1.0, 1.08883])
+    f = np.where(xyz > 216 / 24389, np.cbrt(xyz), (24389 / 27 * xyz + 16) / 116)
+    return np.stack([116 * f[:, 1] - 16, 500 * (f[:, 0] - f[:, 1]), 200 * (f[:, 1] - f[:, 2])], axis=1)
+
+
+def _lab_to_srgb(lab):
+    fy = (lab[:, 0] + 16) / 116
+    f = np.stack([fy + lab[:, 1] / 500, fy, fy - lab[:, 2] / 200], axis=1)
+    xyz = np.where(f ** 3 > 216 / 24389, f ** 3, (116 * f - 16) / (24389 / 27)) * np.array([0.95047, 1.0, 1.08883])
+    lin = xyz @ np.array([[3.2406, -1.5372, -0.4986], [-0.9689, 1.8758, 0.0415], [0.0557, -0.2040, 1.0570]]).T
+    lin = np.clip(lin, 0.0, 1.0)
+    return np.where(lin <= 0.0031308, lin * 12.92, 1.055 * lin ** (1 / 2.4) - 0.055)
+
+
+def _hex(rgb):
+    return "#%02X%02X%02X" % tuple(int(round(c * 255)) for c in rgb)
+
+
+def palette_correct(img, targets, report):
+    """Shifts the albedo toward the brief's palette (docs/art-bible.md hex values). Tripo's texture
+    pass desaturates: the Barrow-levy's bone came back #A89C86 against Old Bone #CCB484.
+
+    Deterministic, no per-asset tuning: every texel joins its nearest palette color (CIE Lab). A group
+    is corrected only if it covers at least PALETTE_MIN_SHARE of the texture (the color is really
+    there) and its median is within PALETTE_MAX_DRIFT of the target (it's that color drifted, not a
+    different material such as peat staining). Each corrected group moves by target minus its median,
+    which keeps its internal variation (stains, wear). Texels blend the offsets by inverse distance,
+    so there are no seams at group borders."""
+    w, h = img.size
+    ch = img.channels
+    px = np.array(img.pixels[:], dtype=np.float64).reshape(-1, ch)
+    lab = _srgb_to_lab(px[:, :3])
+    names = list(targets)
+    tgt = _srgb_to_lab(np.array([[int(targets[n][i:i + 2], 16) / 255 for i in (1, 3, 5)] for n in names]))
+    dist = np.linalg.norm(lab[:, None, :] - tgt[None, :, :], axis=2)
+    nearest = dist.argmin(axis=1)
+    offsets = np.zeros_like(tgt)
+    groups = []
+    for k, name in enumerate(names):
+        members = lab[nearest == k]
+        share = len(members) / len(lab)
+        entry = {"color": name, "target": targets[name], "share": round(share, 4)}
+        if share < PALETTE_MIN_SHARE:
+            entry["applied"] = False
+            entry["reason"] = f"covers {share:.1%} (< {PALETTE_MIN_SHARE:.0%}); not really present"
+        else:
+            median = np.median(members, axis=0)
+            drift = float(np.linalg.norm(tgt[k] - median))
+            entry.update(median_before=_hex(_lab_to_srgb(median[None])[0]), delta_e_before=round(drift, 1))
+            if drift > PALETTE_MAX_DRIFT:
+                entry["applied"] = False
+                entry["reason"] = f"median is {drift:.0f} dE from the target (> {PALETTE_MAX_DRIFT:.0f}); a different material"
+            else:
+                offsets[k] = tgt[k] - median
+                entry["applied"] = True
+        groups.append(entry)
+    weights = 1.0 / (dist + 1.0) ** 4
+    weights /= weights.sum(axis=1, keepdims=True)
+    lab_out = lab + weights @ offsets
+    px[:, :3] = _lab_to_srgb(lab_out)
+    img.pixels[:] = px.ravel().tolist()
+    img.update()
+    after = _srgb_to_lab(px[:, :3])
+    for k, entry in enumerate(groups):
+        if entry.get("applied"):
+            median = np.median(after[nearest == k], axis=0)
+            entry.update(median_after=_hex(_lab_to_srgb(median[None])[0]),
+                         delta_e_after=round(float(np.linalg.norm(tgt[k] - median)), 1))
+    report.setdefault("palette_correction", []).append({"image": img.name, "size": [w, h], "groups": groups})
+
+
+def rebuild_materials(meshes, size, report, targets):
     by_mat = {}
     for o in meshes:
         for slot in o.material_slots:
@@ -415,6 +492,9 @@ def rebuild_materials(meshes, size, report):
         if longest > size:
             w, h = max(1, round(before[0] * size / longest)), max(1, round(before[1] * size / longest))
             img.scale(w, h)
+        if targets:
+            palette_correct(img, targets, report)
+        if longest > size or targets:
             # Pack only modified images: pack() on an already-packed, unmodified image unpacks it
             # and leaves the exporter with no image data.
             img.pack()
@@ -572,7 +652,7 @@ def run(args, params, report):
     report["transform"] = xf
     report["mesh_health"] = mesh_health(meshes)
 
-    rebuild_materials(meshes, params["texture_size"], report)
+    rebuild_materials(meshes, params["texture_size"], report, params.get("palette_targets"))
     flat_shade_by_angle(meshes, weld=not rigged, report=report)
 
     # Budget is in triangles (n-gon = n-2). Vertex counts are metrics only: they move with UV-seam splits.
