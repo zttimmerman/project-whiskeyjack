@@ -42,6 +42,14 @@ func _ready() -> void:
 	var levy := _load_glb(args["levy"])
 	level.add_child(player)
 	level.add_child(levy)
+	if args.has("levy-transparency"):  # checks the death fade (material alpha) renders
+		for m in levy.find_children("*", "MeshInstance3D", true, false):
+			var mi := m as MeshInstance3D
+			for i in mi.mesh.get_surface_count():
+				var mat := (mi.get_active_material(i) as BaseMaterial3D).duplicate() as BaseMaterial3D
+				mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+				mat.albedo_color.a = 1.0 - float(args["levy-transparency"])
+				mi.set_surface_override_material(i, mat)
 	var cam := Camera3D.new()
 	level.add_child(cam)
 	cam.current = true
