@@ -1,0 +1,40 @@
+{
+  "verdict": "pass",
+  "summary": "The shipped player mesh matches the approved concept part for part, including the recorded vest design change. It is within budget, every color assertion passes and validation passes; only minor findings remain.",
+  "findings": [
+    {
+      "check": "malformed",
+      "severity": "minor",
+      "observation": "Thin horizontal slivers stick out sideways in the wireframe at belt height (about y=240) and at the tunic hem / boot-top height (about y=378). They look like degenerate or near-zero-width triangles. They don't show in the clay or textured views, so they can't be seen at gameplay distance. The metrics also report 13 non-manifold edges.",
+      "evidence": "assets/manifests/judge_replays/player_mesh/judge/mesh-1/07_wireframe_front.png, assets/manifests/judge_replays/player_mesh/judge/mesh-1/06_clay_front.png; metrics.mesh.non_manifold_edges = 13"
+    },
+    {
+      "check": "other",
+      "severity": "minor",
+      "observation": "Besides the main body there are 4 tiny separate parts (1-4 cm, 38-50 triangles each). By size and symmetric pairing they are most likely eyes or other small face pieces. None of them appears as a stray fragment in any view.",
+      "evidence": "metrics.mesh.parts; assets/manifests/judge_replays/player_mesh/judge/mesh-1/02_front.png"
+    },
+    {
+      "check": "color",
+      "severity": "minor",
+      "observation": "In the renders the face and the tunic look darker and flatter than in the concept, and the mouth is only faintly visible. This is consistent with the render lighting, since the corrected texture clusters are all within 1.3 ab of the concept.",
+      "evidence": "assets/manifests/judge_replays/player_mesh/judge/mesh-1/01_approved_concept.png vs 02_front.png; color_vs_concept"
+    }
+  ],
+  "questions_answered": [
+    "Present: spiky dark hair, deep teal knee-length tunic with a front slit and flared hem, leather vest with crossed straps on the front only, waist belt, dark iron-grey wrist bracers, dark trousers, tall reddish-brown boots, empty hands, T-pose. Changed as recorded in the design notes: the back is a plain vest panel with two horizontal waist straps (04_back). Nothing is absent.",
+    "No holes of note (2 boundary loops, limit 10). No fused limbs, spikes, floating fragments or extra props in the clay or textured views. The 4 tiny extra parts look like face pieces. There are a few thin degenerate slivers in the wireframe at belt and hem height and 13 non-manifold edges; all minor.",
+    "Yes. 4,893 triangles against a 5,500 budget. One 256x256 albedo. Height 1.8 m matches the target.",
+    "Yes, every color assertion passes (kept ratio and ab distance after correction for all 5 checked concept colors). No concept or palette color was lost, and no large area is in an off-brief color. The colors under 5% share were not checked, as designed.",
+    "Validate passes with humanoid_mappable true and no missing required bones. Sockets are null (none configured yet), so there is nothing to resolve at this stage. The animations come from the shared library."
+  ],
+  "images_seen": [
+    "assets/manifests/judge_replays/player_mesh/judge/mesh-1/01_approved_concept.png",
+    "assets/manifests/judge_replays/player_mesh/judge/mesh-1/02_front.png",
+    "assets/manifests/judge_replays/player_mesh/judge/mesh-1/03_right.png",
+    "assets/manifests/judge_replays/player_mesh/judge/mesh-1/04_back.png",
+    "assets/manifests/judge_replays/player_mesh/judge/mesh-1/05_top.png",
+    "assets/manifests/judge_replays/player_mesh/judge/mesh-1/06_clay_front.png",
+    "assets/manifests/judge_replays/player_mesh/judge/mesh-1/07_wireframe_front.png"
+  ]
+}

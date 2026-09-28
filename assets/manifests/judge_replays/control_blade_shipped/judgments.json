@@ -1,0 +1,93 @@
+{
+  "replay": "control_blade_shipped",
+  "asset_id": "prop_levy_blade",
+  "judgments": [
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-09-28T05:21:16+00:00",
+      "packet": "assets/manifests/judge_replays/control_blade_shipped/judge/mesh-1/packet.json",
+      "packet_sha256": "b6035f9175b6ccfa306205ade99e95fa22ef5caa85af20a0fc9e22c71d44ff54",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/prop_levy_blade.glb",
+        "sha256": "07f80b0f47a63441667ac4f4d366f2b185e4c54ee6fe79e4ab57db9dfb51b8eb",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/judge_replays/control_blade_shipped/judge/mesh-1/01_front.png",
+          "sha256": "bc6c8166cd357d834c59de0cfbcd13cdb5cb5ca855411a4118a4b06c33d60c04",
+          "source": "assets/manifests/prop_levy_blade/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/judge_replays/control_blade_shipped/judge/mesh-1/02_right.png",
+          "sha256": "59e59e07f13dfc8b2bb8e768fd651203b36c94b635dff14298e42b204e2c3cda",
+          "source": "assets/manifests/prop_levy_blade/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/judge_replays/control_blade_shipped/judge/mesh-1/03_back.png",
+          "sha256": "4ccd560518b13c0d0823de6a055697475a0cf26f2210dd28073bd223df3615b0",
+          "source": "assets/manifests/prop_levy_blade/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/judge_replays/control_blade_shipped/judge/mesh-1/04_top.png",
+          "sha256": "95a91fdc352a531e632b79cde73ad2c4fc9d52e88ad49c7c1ae9962ed4b7b28c",
+          "source": "assets/manifests/prop_levy_blade/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/judge_replays/control_blade_shipped/judge/mesh-1/05_clay_front.png",
+          "sha256": "b3bd1bd1dc7860657e60120212f16eabd9ef990910bc389e9ec5419d2336ecd7",
+          "source": "assets/manifests/prop_levy_blade/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/judge_replays/control_blade_shipped/judge/mesh-1/06_wireframe_front.png",
+          "sha256": "46552d8f32686d581946758a98b375348b69caf4f8a8210ef65f36b0e9675f7e",
+          "source": "assets/manifests/prop_levy_blade/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "concept_match",
+          "severity": "minor",
+          "observation": "A thin flat guard plate sits between blade and grip and sticks out slightly past the blade on both sides. The brief asks for no crossguard, with the blade's shoulders meeting the grip directly. The plate is thin and barely wider than the blade, so it doesn't change the blade read at 10 m.",
+          "evidence": "assets/manifests/judge_replays/control_blade_shipped/judge/mesh-1/01_front.png, 03_back.png, 05_clay_front.png (base of blade); 04_top.png (plate outline wider than the blade cross-section)"
+        },
+        {
+          "check": "concept_match",
+          "severity": "minor",
+          "observation": "The blade is broad and mostly straight-sided with a tapered point, not clearly leaf-shaped (swelling toward the point). The chipped, notched edges are present as the prompt asks.",
+          "evidence": "assets/manifests/judge_replays/control_blade_shipped/judge/mesh-1/01_front.png, 05_clay_front.png"
+        },
+        {
+          "check": "malformed",
+          "severity": "minor",
+          "observation": "The part list includes a 6-triangle fragment about 1.5 cm across (part 3), separate from the blade and grip. None of the views show where it is; at that size it can't be seen at gameplay distance. Also noted: 4 boundary loops (accepted grip slits) and 16 non-manifold edges.",
+          "evidence": "metrics.mesh.parts[2], holes_boundary_loops, non_manifold_edges; 06_wireframe_front.png"
+        },
+        {
+          "check": "color",
+          "severity": "minor",
+          "observation": "A narrow tan/beige collar band sits at the top of the grip, just under the guard. It's small, fits the Old Bone palette color, and is not a large off-brief area.",
+          "evidence": "assets/manifests/judge_replays/control_blade_shipped/judge/mesh-1/01_front.png, 02_right.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The shipped Levy Blade is in budget, at the brief's size and palette, and reads clearly as a dark iron blade with a leather-wrapped grip and a bone pommel. Every assertion passes, and the few small departures from the prompt are minor only.",
+      "next": "proceed to the next stage"
+    }
+  ]
+}

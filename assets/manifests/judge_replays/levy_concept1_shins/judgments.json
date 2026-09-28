@@ -1,0 +1,72 @@
+{
+  "replay": "levy_concept1_shins",
+  "asset_id": "barrow_levy",
+  "judgments": [
+    {
+      "kind": "verdict",
+      "stage": "concept",
+      "recorded_at": "2026-09-28T05:21:16+00:00",
+      "packet": "assets/manifests/judge_replays/levy_concept1_shins/judge/concept-1/packet.json",
+      "packet_sha256": "9ca4dd27864dab21098bdaf8d7d9dd26227dde955530ce8a4af070aa8b4cb6df",
+      "subject": {
+        "kind": "concept image",
+        "attempt": "concept-1",
+        "path": ".tripo-out/barrow_levy/concept-1/tripo-out/stylized-low-poly-3d-game-asset-3-00f86eee/generated_image.png",
+        "sha256": "f249d5898a6e5b8c4d48d49fcaa31d4585b92ad79c61da200bfabc4a6635b397"
+      },
+      "images": [
+        {
+          "role": "concept",
+          "path": "assets/manifests/judge_replays/levy_concept1_shins/judge/concept-1/01_concept.png",
+          "sha256": "3edfec02671d545e07d65b34c1960ca62c40f0589d0c0337b416be55165166fe",
+          "source": ".tripo-out/barrow_levy/concept-1/tripo-out/stylized-low-poly-3d-game-asset-3-00f86eee/generated_image.png"
+        }
+      ],
+      "images_unseen": [],
+      "assertions_failed": [],
+      "judge_verdict": "revise",
+      "verdict": "revise",
+      "override": null,
+      "action": "auto_refine",
+      "findings": [
+        {
+          "check": "malformed",
+          "severity": "major",
+          "observation": "Each shin is drawn as two separate parallel bones (tibia and fibula) with a visible gap between them, knee to ankle, on both legs. This is the paired-bone detail the face_limit of 5000 destroys.",
+          "evidence": "assets/manifests/judge_replays/levy_concept1_shins/judge/concept-1/01_concept.png (both lower legs)"
+        },
+        {
+          "check": "malformed",
+          "severity": "major",
+          "observation": "Each forearm is two thin parallel bones (radius and ulna) with a gap between them, elbow to wrist, on both arms.",
+          "evidence": "assets/manifests/judge_replays/levy_concept1_shins/judge/concept-1/01_concept.png (both forearms)"
+        },
+        {
+          "check": "malformed",
+          "severity": "major",
+          "observation": "The hands are splayed individual finger bones, thin and separated, on both hands.",
+          "evidence": "assets/manifests/judge_replays/levy_concept1_shins/judge/concept-1/01_concept.png (both hands)"
+        },
+        {
+          "check": "malformed",
+          "severity": "minor",
+          "observation": "The ribs are thin, separate curved strands with gaps between them. The prompt asks for a readable ribcage, so this is borderline, but the ribs could be thicker with narrower gaps.",
+          "evidence": "assets/manifests/judge_replays/levy_concept1_shins/judge/concept-1/01_concept.png (ribcage)"
+        },
+        {
+          "check": "concept_match",
+          "severity": "minor",
+          "observation": "The image is a front view only, so the straps crossing the back can't be checked. The chest X-straps and the belt are present.",
+          "evidence": "assets/manifests/judge_replays/levy_concept1_shins/judge/concept-1/01_concept.png"
+        }
+      ],
+      "revise": {
+        "action": "refine_concept",
+        "edit_prompt": "Keep everything exactly as it is except the limbs and hands: make each forearm and each shin one single thick solid bone, and make each hand a simple chunky mitten shape with the fingers joined into one block. Keep the pale yellowed beige bone, the peat-brown joints and the dark reddish-brown harness."
+      },
+      "escalation_reason": null,
+      "summary": "The concept matches the prompt and palette, but the forearms and shins are paired parallel bones with gaps, and the hands have separate fingers; the face_limit can't hold either, and one concept edit fixes both.",
+      "next": "paid (confirm with the user through the tripo skill): python3 scripts/pipeline.py barrow_levy --stage concept --refine 1 --edit 'Keep everything exactly as it is except the limbs and hands: make each forearm and each shin one single thick solid bone, and make each hand a simple chunky mitten shape with the fingers joined into one block. Keep the pale yellowed beige bone, the peat-brown joints and the dark reddish-brown harness.'"
+    }
+  ]
+}

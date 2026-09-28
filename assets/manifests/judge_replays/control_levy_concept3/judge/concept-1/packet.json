@@ -1,0 +1,203 @@
+{
+  "asset_id": "barrow_levy",
+  "stage": "concept",
+  "created_at": "2026-09-28T05:16:10+00:00",
+  "replay": "control_levy_concept3",
+  "packet_dir": "assets/manifests/judge_replays/control_levy_concept3/judge/concept-1",
+  "brief": {
+    "type": "character",
+    "brief": "The slice's only enemy model, used for both Front-file (melee) and Back-file\n(archer) variants. Posture and the held prop carry the read; Back-file adds a\nSignal Red wrap material variant.",
+    "prompt": "A humanoid skeleton in Old Bone, stained peat-brown at the joints, with a clearly\nreadable skull and ribcage, wearing a rotted leather harness in Saddle Leather: a belt\nat the waist and two straps crossing the chest and back. Empty hands, T-pose.",
+    "face_limit": 5000,
+    "triangle_budget": 5500,
+    "texture_size": 256,
+    "target_size_m": 1.8,
+    "pivot": "base",
+    "tip_end": null,
+    "rigid_parts": true,
+    "skirt_reweight": null
+  },
+  "brief_palette": {
+    "Old Bone": {
+      "hex": "#CCB484",
+      "plain": "pale yellowed beige"
+    },
+    "Saddle Leather": {
+      "hex": "#4A2A10",
+      "plain": "dark reddish-brown"
+    },
+    "Blackened Iron": {
+      "hex": "#242424",
+      "plain": "near-black charcoal"
+    },
+    "Signal Red": {
+      "hex": "#C71F14",
+      "plain": "vivid scarlet red"
+    }
+  },
+  "art_bible": {
+    "brief_section": "## Brief: Barrow-levy \u2014 skeleton (Front-file and Back-file)\n\n- **File / Source:** `assets/meshes/barrow_levy.glb`, **generated with Tripo from this brief**. This is the pilot for the Tripo path. It replaces the shipped Sketchfab `archer_enemy.glb` (1,277 vertices, a 28-bone rig with rest-pose defects; see `docs/audit.md`), which stays in the game until the new mesh passes the pipeline.\n- **Role:** the slice's only enemy model: Front-file melee (\u00d75) and Back-file archer (\u00d72).\n- **Silhouette:** Front-file hunched forward with a blade; Back-file upright with a bow. Posture and the held prop carry the read.\n- **Budget:** \u2264 5,500 triangles (Tripo `face_limit` 5,000 + 10%); albedo at 256\u00d7256.\n- **Palette:** Old Bone \u00b7 Saddle Leather harness scraps \u00b7 Blackened Iron (via props) \u00b7 **Back-file only:** Signal Red rag wraps on the forearms and brow.\n- **Back-file variant:** a second albedo, `barrow_levy_backfile_baseColor.png` (256\u00b2), identical except for the painted Signal Red wraps. It's applied as a material override in `ArcherEnemy.tscn`, so there's no second mesh.\n- **Materials & wear:** peat-stained joints, cracked bone and rotted leather, all painted in the albedo. The root tendrils and wool scraps are lore (`docs/world/05-bestiary.md`), not geometry, and are kept out of the prompt.\n- **Rig / attachment:** the new rig must map onto `SkeletonProfileHumanoid`; pipeline stage 4 proposes the `BoneMap`. Sockets `hand_r` (blade) and `hand_l` (bow) are mapped to bones **only** in `data/rigs/barrow_levy_sockets.tres`, which still names the Sketchfab bones: update that file for the new rig, and nothing else. Stage 4 fails until the sockets resolve.\n- **Rig order:** raw Tripo download \u2192 Tripo auto-rig (`v1.0-20240301`, humanoid) \u2192 clean (see the player brief). **Rigid rebind** (`rigid_parts: true`): each of the 35 separate bone pieces is bound at weight 1.0 to its nearest bone. **Known quirk:** Tripo puts the Foot bones at floor level, so the feet bind to ToeBase, which is Foot's child and follows it rigidly. Quaternius drives Foot, not the toes, so it doesn't read at gameplay distance.\n- **Scale & pivot:** 1.8 m tall, feet at origin, facing \u2212Y in Blender. The model node keeps `Transform3D(-1,0,0,0,1,0,0,0,-1,0,-0.9,0)`.\n- **Animation:** the code plays `idle`, `run`, `attack`, `stagger`, `death` for **both** variants. The library must provide a melee `attack` for Front-file and a bow-draw `attack` for Back-file, remapped per variant. Built: each variant has its own library over the shared clips (asset-pipeline skill \u2192 Animation library). Front-file: `Sword_Idle` (hunched), `Jog_Fwd_Loop`, `Sword_Regular_A`. Back-file: `Idle_Loop` and `Walk_Loop` (upright), plus **`OverhandThrow` as a stand-in for the bow draw**. Neither Standard pack has a bow clip; they're in a UAL2 tier not bought yet.\n- **Prompt:** FORM block + *\"A humanoid skeleton in Old Bone, stained peat-brown at the joints, with a clearly readable skull and ribcage, wearing a rotted leather harness in Saddle Leather: a belt at the waist and two straps crossing the chest and back. Empty hands, T-pose.\"*\n- **Accept when:** the retarget plays all 5 clips on both variants; Back-file is distinguishable from Front-file at 15 m in the Level 1 corridor with props hidden; budget still met.\n- **Cost:** 1 Tripo generation, plus one per rejected attempt. The Back-file texture and the bone map are manual or scripted work.",
+    "form_block": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art.",
+    "concept_lighting_block": "Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights.",
+    "tolerances": "## Judge tolerances\n\nThe numeric assertions the asset judge checks (`scripts/judge.py`, which reads this table; nothing else holds these numbers). \u0394E is CIE76 in Lab. Each value was calibrated so every shipped asset and clip passes, and the known-bad replays fail (`assets/manifests/judge_replays/`).\n\n| Check | Limit | Applies to | Why |\n|---|---|---|---|\n| `concept_palette_de` | 25 | concept | A brief palette color counts as present when one of the concept's main colors (\u2265 3% of the figure) sits within this distance. Loose on purpose: the player's approved \"deep dark teal\" rendered as navy #14313F. |\n| `color_min_share` | 0.05 | model, mesh | Colors covering less of the concept (or texture) than this are details, not checked. |\n| `color_kept_ratio` | 0.33 | model, mesh | A concept color must keep at least this fraction of its concept share in the texture, or the model lost it. |\n| `color_dab_after` | 5 | model, mesh | Hue/saturation distance (Lab a, b) between a corrected texture cluster and its concept color. |\n| `palette_de_before` | 20 | model, mesh | Concept-less assets: distance before correction for a palette group covering at least `color_min_share`. Correction can repaint a wrong color: blade attempt 1's olive-green blade grouped under Old Bone (27.5 \u0394E) and came out bone-colored. |\n| `palette_de_after` | 12 | model, mesh | Concept-less assets: distance between a corrected palette group's median and its palette color. |\n| `mesh_max_holes` | 10 | model, mesh | Open boundary loops after welding. Fewer are reported for the judge to weigh (the blade's 4 grip slits are recorded and accepted). |\n| `motion_root_travel_m` | 0.15 | death, in-place clips | Horizontal Hips travel from the first frame. The pre-fix `Death01` travelled about 0.5 m. |\n| `motion_foot_slide_mps` | 0.6 | clips with foot contact | 90th-percentile ground-relative speed of a planted foot, at the clip's gameplay speed. |\n| `motion_bind_deviation_m` | 1.2 | every clip | Largest vertex displacement from the bind pose in the Hips frame (1.8 m characters); beyond it a part has detached or flipped. |\n| `motion_edge_stretch` | 0.6 | every clip | Largest relative change of any mesh edge's length from the bind pose; beyond it the skin tears or balloons. |"
+  },
+  "design_notes": [],
+  "images": [
+    {
+      "role": "concept",
+      "path": "assets/manifests/judge_replays/control_levy_concept3/judge/concept-1/01_concept.png",
+      "sha256": "812c02afbac64302de9f0fe25bc6e91f3ca67317ad547d849677ffc7e2b329b2",
+      "source": ".tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png",
+      "source_sha256": "d62266500028543ed1fc0600b1bf974f74c07ba35be79684b580dd40be22f3f2",
+      "size": [
+        765,
+        1024
+      ]
+    }
+  ],
+  "metrics": {
+    "concept_main_colors": {
+      "background": "#787576",
+      "foreground_share": 0.1317,
+      "colors": [
+        {
+          "hex": "#CCB790",
+          "lab": [
+            75.2,
+            1.5,
+            22.4
+          ],
+          "share": 0.285
+        },
+        {
+          "hex": "#B6A381",
+          "lab": [
+            67.8,
+            1.8,
+            20.0
+          ],
+          "share": 0.217
+        },
+        {
+          "hex": "#A18E72",
+          "lab": [
+            59.9,
+            2.6,
+            17.6
+          ],
+          "share": 0.156
+        },
+        {
+          "hex": "#623632",
+          "lab": [
+            27.9,
+            19.0,
+            11.1
+          ],
+          "share": 0.144
+        },
+        {
+          "hex": "#8A7960",
+          "lab": [
+            51.6,
+            2.7,
+            16.0
+          ],
+          "share": 0.071
+        },
+        {
+          "hex": "#705D4C",
+          "lab": [
+            41.0,
+            4.6,
+            12.7
+          ],
+          "share": 0.058
+        },
+        {
+          "hex": "#554335",
+          "lab": [
+            30.0,
+            5.5,
+            11.4
+          ],
+          "share": 0.057
+        },
+        {
+          "hex": "#3E1F1E",
+          "lab": [
+            16.2,
+            14.7,
+            7.6
+          ],
+          "share": 0.012
+        }
+      ]
+    },
+    "concept_palette_presence": [
+      {
+        "palette": "Old Bone",
+        "hex": "#CCB484",
+        "nearest": "#CCB790",
+        "nearest_share": 0.285,
+        "delta_e": 5.4
+      },
+      {
+        "palette": "Saddle Leather",
+        "hex": "#4A2A10",
+        "nearest": "#623632",
+        "nearest_share": 0.144,
+        "delta_e": 15.3
+      }
+    ]
+  },
+  "assertions": [
+    {
+      "name": "palette color present: Old Bone",
+      "passed": true,
+      "value": 5.4,
+      "limit": 25.0,
+      "detail": "nearest main color #CCB790 (28% of the image)"
+    },
+    {
+      "name": "palette color present: Saddle Leather",
+      "passed": true,
+      "value": 15.3,
+      "limit": 25.0,
+      "detail": "nearest main color #623632 (14% of the image)"
+    }
+  ],
+  "questions": [
+    "Does the image show every element the brief's prompt names, in the named colors? List each element as present or absent.",
+    "Is anything malformed, or too fine to survive the brief's face_limit: thin separate strands, paired parallel bones, gaps narrower than a finger, individual fingers, fused or duplicated limbs? (Art bible: judge concepts as low-poly game assets; a detailed concept makes a detailed mesh that face_limit destroys.)",
+    "Characters: is it a T- or A-pose with the arms clear of the body, hands empty, the full body in frame?",
+    "Lighting: flat and shadowless on a plain uniform background, per the CONCEPT LIGHTING block?",
+    "Colors: do the color assertions pass? Name any brief palette color the image lacks, or any large area in a color the brief doesn't ask for."
+  ],
+  "escalate_rules": [
+    "Open style or taste questions (is it appealing, is the silhouette strong enough, is this the right design) are not yours: escalate them.",
+    "A deliberate, recorded design change (see design_notes) is not a defect: don't flag it again, but say so if the asset contradicts the note.",
+    "When the evidence can't settle a question (the view that would show it is missing), escalate rather than guess.",
+    "Revise only when one concrete edit would fix every blocker and major finding. Otherwise escalate."
+  ],
+  "refine_budget": {
+    "per_stage": 1,
+    "used": 0
+  },
+  "tool_versions": {
+    "python": "3.14.7",
+    "blender": "Blender 5.0.1",
+    "godot": "4.6.1.stable.official.14d19694e",
+    "tripo": "0.5.1"
+  },
+  "subject": {
+    "kind": "concept image",
+    "attempt": "concept-3",
+    "path": ".tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png",
+    "sha256": "d62266500028543ed1fc0600b1bf974f74c07ba35be79684b580dd40be22f3f2"
+  },
+  "refine_hint": {
+    "refine_of": 3
+  },
+  "assertions_failed": 0
+}

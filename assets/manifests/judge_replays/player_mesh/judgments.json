@@ -1,0 +1,306 @@
+{
+  "replay": "player_mesh",
+  "asset_id": "player",
+  "judgments": [
+    {
+      "kind": "verdict",
+      "stage": "model",
+      "recorded_at": "2026-09-28T05:21:16+00:00",
+      "packet": "assets/manifests/judge_replays/player_mesh/judge/model-1/packet.json",
+      "packet_sha256": "f18539e4b6f705a7ff8aba32395bc7048b554f029fa398234d12a1469dc4e6d5",
+      "subject": {
+        "kind": "raw model download (preview-cleaned, unrigged)",
+        "path": ".tripo-out/player/attempt-1/tripo-out/generate-multiview-image-front-v-2-e2b61bb2/model.glb",
+        "sha256": "0910cebda7cd474de61a86030328c667191eb141b9a8141cfdcc9d7d4899d53a",
+        "concept": {
+          "path": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+          "sha256": "e92b55a11a671ace6e50e37e78578afaa6a2e46e7d230da2da61ef368c2e9f98"
+        }
+      },
+      "images": [
+        {
+          "role": "approved_concept",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-1/01_approved_concept.png",
+          "sha256": "c489317c17b7d21da9d8bc493eab7a50cbdb13f7855a9d485539534444ad21a1",
+          "source": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png"
+        },
+        {
+          "role": "front",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-1/02_front.png",
+          "sha256": "982b8f50aa0ad68c6e849e9aac61144e604f86d9cb77390afb2c56f570271e8c",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-1/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-1/03_right.png",
+          "sha256": "4581369c2cb38d1630d21ee84446fc1c24be1a3047f25bafb720cb662aa71b8b",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-1/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-1/04_back.png",
+          "sha256": "17742572d73d85810d969b7c9426f7f6f121bda040d49f45ee6f6c5b2d0aa315",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-1/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-1/05_top.png",
+          "sha256": "e937cce4a9d55c03dd9911a75a3c776b72b4748877fcd0efadb1562579ea910b",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-1/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-1/06_clay_front.png",
+          "sha256": "c8bbd4b697a44b21971f88ee85ab9461cce324a44b7266c7bfe3b1c03932d103",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-1/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-1/07_wireframe_front.png",
+          "sha256": "7a02dce159d2801d915c9d3bd0e65bd1803e7e62f544e6300da62c363a76b4b3",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-1/work/views/wireframe_front.png"
+        },
+        {
+          "role": "tripo_preview_uncorrected",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-1/08_tripo_preview_uncorrected.png",
+          "sha256": "ae8d0d3fcd187045cbcfebfd049d7fa6a07c63c71232f780e6883086ed3b76d4",
+          "source": ".tripo-out/player/attempt-1/tripo-out/generate-multiview-image-front-v-2-e2b61bb2/preview.png"
+        }
+      ],
+      "images_unseen": [],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "malformed",
+          "severity": "minor",
+          "observation": "Besides the 4,713-triangle body, the mesh has four small detached parts (two 50-triangle pieces about 6.8 x 2.9 x 1.4 cm, plus 42- and 38-triangle pieces about 2 to 2.5 cm across). From their size and symmetry they are most likely facial features or buckle pieces, not stray fragments, and none of them is visible as floating geometry in any view.",
+          "evidence": "metrics.mesh.parts, metrics.mesh.part_count; 02_front.png, 06_clay_front.png, 07_wireframe_front.png"
+        },
+        {
+          "check": "malformed",
+          "severity": "minor",
+          "observation": "There are 13 non-manifold edges and 2 open boundary loops (the limit is 10). They are not visible at render distance.",
+          "evidence": "metrics.mesh.non_manifold_edges, assertion 'holes (welded boundary loops)'"
+        },
+        {
+          "check": "concept_match",
+          "severity": "minor",
+          "observation": "The mouth barely shows on the face. The art bible already covers this with a texture overlay applied at clean time.",
+          "evidence": "02_front.png (face), art_bible.brief_section Mouth note"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The raw model matches the approved concept part for part, is within budget, and every color assertion passes; only minor detached parts and non-manifold edges remain.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-09-28T05:21:16+00:00",
+      "packet": "assets/manifests/judge_replays/player_mesh/judge/mesh-1/packet.json",
+      "packet_sha256": "3f0b43f5094f78ad5816783ac3855390d4c60aa49e79dd23333a5c55525265d9",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/player.glb",
+        "sha256": "9a3e7b28de7be3e945296d51c781b8f17f1e09a90274532f17ce6e1a777ebdab",
+        "concept": {
+          "path": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+          "sha256": "e92b55a11a671ace6e50e37e78578afaa6a2e46e7d230da2da61ef368c2e9f98"
+        }
+      },
+      "images": [
+        {
+          "role": "approved_concept",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/mesh-1/01_approved_concept.png",
+          "sha256": "c489317c17b7d21da9d8bc493eab7a50cbdb13f7855a9d485539534444ad21a1",
+          "source": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png"
+        },
+        {
+          "role": "front",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/mesh-1/02_front.png",
+          "sha256": "f22ac8ce1f63fb916a5fc1b412e6acf291be3fb5e6d26d6fe95c921c4099458f",
+          "source": "assets/manifests/player/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/mesh-1/03_right.png",
+          "sha256": "d86e7716c99aa7db171b9d4b5d58791458f37b1fd1c476e1a5beea12f4442ca2",
+          "source": "assets/manifests/player/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/mesh-1/04_back.png",
+          "sha256": "99008358d9eb54f023adc5acdbc10019f8208c5e1df8958a13ae7cfa4e5ba49b",
+          "source": "assets/manifests/player/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/mesh-1/05_top.png",
+          "sha256": "718ae66bb4c31f3313c7e35098626e45a1ff8ee6fb7bb46205817c9f3a84b052",
+          "source": "assets/manifests/player/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/mesh-1/06_clay_front.png",
+          "sha256": "842a871f09102636a8eecfb07c15351d2d5ed3b4d23124efd1e285633c12a24b",
+          "source": "assets/manifests/player/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/mesh-1/07_wireframe_front.png",
+          "sha256": "f34f22306bec3b1e07a62d2627f9e15576b620a7ff1c428dcd8acc26d1e6fed5",
+          "source": "assets/manifests/player/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "malformed",
+          "severity": "minor",
+          "observation": "Thin horizontal slivers stick out sideways in the wireframe at belt height (about y=240) and at the tunic hem / boot-top height (about y=378). They look like degenerate or near-zero-width triangles. They don't show in the clay or textured views, so they can't be seen at gameplay distance. The metrics also report 13 non-manifold edges.",
+          "evidence": "assets/manifests/judge_replays/player_mesh/judge/mesh-1/07_wireframe_front.png, assets/manifests/judge_replays/player_mesh/judge/mesh-1/06_clay_front.png; metrics.mesh.non_manifold_edges = 13"
+        },
+        {
+          "check": "other",
+          "severity": "minor",
+          "observation": "Besides the main body there are 4 tiny separate parts (1-4 cm, 38-50 triangles each). By size and symmetric pairing they are most likely eyes or other small face pieces. None of them appears as a stray fragment in any view.",
+          "evidence": "metrics.mesh.parts; assets/manifests/judge_replays/player_mesh/judge/mesh-1/02_front.png"
+        },
+        {
+          "check": "color",
+          "severity": "minor",
+          "observation": "In the renders the face and the tunic look darker and flatter than in the concept, and the mouth is only faintly visible. This is consistent with the render lighting, since the corrected texture clusters are all within 1.3 ab of the concept.",
+          "evidence": "assets/manifests/judge_replays/player_mesh/judge/mesh-1/01_approved_concept.png vs 02_front.png; color_vs_concept"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The shipped player mesh matches the approved concept part for part, including the recorded vest design change. It is within budget, every color assertion passes and validation passes; only minor findings remain.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "model",
+      "recorded_at": "2026-09-28T05:23:29+00:00",
+      "packet": "assets/manifests/judge_replays/player_mesh/judge/model-2/packet.json",
+      "packet_sha256": "5e9c1f52291f5be1e0a7d50062ff320ead3089db5a657af15b04f8276df41e3a",
+      "subject": {
+        "kind": "raw model download (preview-cleaned, unrigged)",
+        "path": ".tripo-out/player/attempt-1/tripo-out/generate-multiview-image-front-v-2-e2b61bb2/model.glb",
+        "sha256": "0910cebda7cd474de61a86030328c667191eb141b9a8141cfdcc9d7d4899d53a",
+        "concept": {
+          "path": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+          "sha256": "e92b55a11a671ace6e50e37e78578afaa6a2e46e7d230da2da61ef368c2e9f98"
+        }
+      },
+      "images": [
+        {
+          "role": "approved_concept",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-2/01_approved_concept.png",
+          "sha256": "c489317c17b7d21da9d8bc493eab7a50cbdb13f7855a9d485539534444ad21a1",
+          "source": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png"
+        },
+        {
+          "role": "front",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-2/02_front.png",
+          "sha256": "cbd123c339148b3d8b340eac0fbe43cca0bafb7e73c9cd8355ce9b405830138a",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-2/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-2/03_right.png",
+          "sha256": "cb7f6d14113fb41df1a34cdafd33aae3bbbfe69ebfa05c0136a4d2eda58f5a04",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-2/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-2/04_back.png",
+          "sha256": "b1a3a0a8b5bd62c536ba38fc54ee86a290659659ea4ff219b05e26a15d2fe4c6",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-2/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-2/05_top.png",
+          "sha256": "cdbffcaacc7a3ec8af2b3867eb1ed047b1784362656576169ee80fdaba897cff",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-2/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-2/06_clay_front.png",
+          "sha256": "e60f76c764ce4d0504df3e8effaca353a92a10537172e5342bf1ab6a0af6454e",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-2/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-2/07_wireframe_front.png",
+          "sha256": "6b75717ea1e92561ec1779e9eb036349b59869e7d7d1920c290ad6cb3864e1a3",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-2/work/views/wireframe_front.png"
+        },
+        {
+          "role": "closeup_front",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-2/08_closeup_front.png",
+          "sha256": "b2c5814e2a1d47f69b1645acf2216e05bd84430537e050b515b937fe99fde04c",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-2/work/views/closeup_front.png"
+        },
+        {
+          "role": "closeup_back",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-2/09_closeup_back.png",
+          "sha256": "781bea9f0cd46d52a0ba71e12390a20fd0fab5e6310646c2992483d125160d84",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-2/work/views/closeup_back.png"
+        },
+        {
+          "role": "tripo_preview_uncorrected",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-2/10_tripo_preview_uncorrected.png",
+          "sha256": "ae8d0d3fcd187045cbcfebfd049d7fa6a07c63c71232f780e6883086ed3b76d4",
+          "source": ".tripo-out/player/attempt-1/tripo-out/generate-multiview-image-front-v-2-e2b61bb2/preview.png"
+        }
+      ],
+      "images_unseen": [],
+      "assertions_failed": [],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "missing",
+          "severity": "major",
+          "observation": "The harness straps don't cross on the back. The back of the harness is one solid Saddle Leather vest panel from shoulders to mid-back, with no X of straps. The brief prompt asks for 'two straps crossing the chest and back', and the silhouette section names 'harness straps crossing the back' as an identity mark for a camera that sits behind the player. The front X is present.",
+          "evidence": "assets/manifests/judge_replays/player_mesh/judge/model-2/04_back.png, assets/manifests/judge_replays/player_mesh/judge/model-2/09_closeup_back.png (vs 08_closeup_front.png and 01_approved_concept.png)"
+        },
+        {
+          "check": "malformed",
+          "severity": "minor",
+          "observation": "The back of the vest is asymmetric. A raised strap or flap runs down the right shoulder blade only, with nothing matching it on the left.",
+          "evidence": "assets/manifests/judge_replays/player_mesh/judge/model-2/09_closeup_back.png"
+        },
+        {
+          "check": "other",
+          "severity": "minor",
+          "observation": "The mesh has 5 parts. Besides the body there are two 6.8 cm pieces and two pieces of about 2 cm, which look like the eyebrows and eyes on the face; nothing is floating in the views. There are 13 non-manifold edges and 2 boundary loops, which is within the holes limit.",
+          "evidence": "metrics.mesh.parts, metrics.mesh.non_manifold_edges, assertion 'holes (welded boundary loops)', 08_closeup_front.png"
+        },
+        {
+          "check": "color",
+          "severity": "minor",
+          "observation": "The skin renders greyer and darker in the lit views than the concept's warm skin tone, although the cluster itself was corrected to within 0.1 ab.",
+          "evidence": "assets/manifests/judge_replays/player_mesh/judge/model-2/08_closeup_front.png vs 01_approved_concept.png; color_vs_concept #BC9781"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "The only major finding is the missing back straps. It breaks the brief, but the approved concept is front-only, so the evidence can't show whether the concept causes it or whether it is multiview generator noise. A refine_concept can't show the back, and a reroll may not add the straps. The user should decide: accept the plain back as the design, reroll, or add a back view of the concept.",
+      "summary": "The front of the mesh matches the approved concept closely and every assertion passes, but the back has no crossing harness straps, which the brief names as an identity mark. The concept only shows the front, so it can't tell us whether a concept edit or a reroll would fix it.",
+      "next": "surface to the user: the escalation reason and findings"
+    }
+  ]
+}
