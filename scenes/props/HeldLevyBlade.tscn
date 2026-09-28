@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://assets/meshes/prop_levy_blade.glb" id="1_wu0br"]
+
+[node name="HeldLevyBlade" type="Node3D" unique_id=15911403]
+
+[node name="Prop" type="Node3D" parent="." unique_id=1357842503 instance=ExtResource("1_wu0br")]
+transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, -0.075, 0.08, 0.02)

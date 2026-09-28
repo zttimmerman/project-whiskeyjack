@@ -3,9 +3,14 @@ extends CharacterBody3D
 signal died
 signal inventory_toggled
 
+const HeldProps := preload("res://scripts/combat/HeldProps.gd")
 const CHARACTER_LIGHT_LAYER := 2  # render layer of CameraRig/FillLight's cull mask (value 2 = layer 2)
 
 @export var stats: CharacterStats
+## Bone names for this model's rig; the only place socket bones are named
+@export var socket_map: SocketMap
+## Props to hold, keyed by socket name, e.g. {"hand_r": PackedScene}
+@export var held_props: Dictionary = {}
 @export var inventory: Inventory
 @export var move_speed: float = 5.0
 @export var dodge_speed: float = 8.4   # 4.2 m over the dodge, as before
@@ -59,6 +64,7 @@ func _ready() -> void:
 	add_to_group("player")
 	# CameraRig/FillLight only lights render layer CHARACTER_LIGHT_LAYER, so it separates the player
 	# from dark interiors without lighting walls or enemies
+	HeldProps.attach($PlayerModel, socket_map, held_props, name)
 	for mesh in $PlayerModel.find_children("*", "VisualInstance3D", true, false):
 		(mesh as VisualInstance3D).layers |= 1 << (CHARACTER_LIGHT_LAYER - 1)
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED

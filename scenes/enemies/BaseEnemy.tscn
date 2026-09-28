@@ -9,6 +9,7 @@
 [ext_resource type="Resource" path="res://data/rigs/barrow_levy_sockets.tres" id="20_sockets"]
 
 [ext_resource type="AnimationLibrary" path="res://data/animations/levy_frontfile_library.tres" id="30_anims"]
+[ext_resource type="PackedScene" path="res://scenes/props/HeldLevyBlade.tscn" id="31_blade"]
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.4
 height = 1.8
@@ -35,6 +36,7 @@ radius = 0.6
 script = ExtResource("1_enemy")
 stats = SubResource("CharacterStats_enemy")
 socket_map = ExtResource("20_sockets")
+held_props = {"hand_r": ExtResource("31_blade")}
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_body")

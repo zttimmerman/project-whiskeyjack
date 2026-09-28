@@ -3,8 +3,10 @@ extends Node
 # Review tool: a contact sheet of every clip in a character's AnimationLibrary, posed on the imported
 # (retargeted) model. One row per clip, one column per point in the clip. Windowed run:
 #   godot --path . res://scripts/review/anim_sheet.tscn -- --model <res:// glb> --library <res:// tres> --out <png>
+#       [--held <Bone>=<res:// prop scene>[,<Bone>=<scene>]]   props on bones, as held_props would attach them
+#       [--yaw <degrees>] [--columns <n>]   view angle (-25 three-quarter, 90 side) and points per clip
 
-const FRACTIONS := [0.2, 0.5, 0.8]
+var FRACTIONS := [0.2, 0.5, 0.8]
 const SPACING := Vector2(1.6, 2.1)  # metres between columns, rows
 
 
@@ -13,7 +15,11 @@ func _ready() -> void:
 	var argv := OS.get_cmdline_user_args()
 	for i in range(0, argv.size() - 1, 2):
 		args[argv[i].trim_prefix("--")] = argv[i + 1]
-	get_window().size = Vector2i(1200, 1600)
+	if args.has("columns"):
+		var n := int(args["columns"])
+		FRACTIONS = range(n).map(func(i): return (i + 0.5) / n)
+	var yaw := float(args.get("yaw", -25))
+	get_window().size = Vector2i(400 * FRACTIONS.size(), 1600)
 	var lib: AnimationLibrary = load(args["library"])
 	var names: Array = lib.get_animation_list()
 	names.sort()
@@ -32,7 +38,15 @@ func _ready() -> void:
 			var model: Node3D = (load(args["model"]) as PackedScene).instantiate()
 			add_child(model)
 			# Models face +Z in Godot; turn them three-quarters toward the camera
-			model.transform = Transform3D(Basis(Vector3.UP, deg_to_rad(-25)), Vector3(c * SPACING.x, -r * SPACING.y, 0))
+			model.transform = Transform3D(Basis(Vector3.UP, deg_to_rad(yaw)), Vector3(c * SPACING.x, -r * SPACING.y, 0))
+			if args.has("held"):
+				var sk: Skeleton3D = model.find_children("*", "Skeleton3D", true, false)[0]
+				for pair in String(args["held"]).split(","):
+					var kv := pair.split("=")
+					var att := BoneAttachment3D.new()
+					att.bone_name = kv[0]
+					sk.add_child(att)
+					att.add_child((load(kv[1]) as PackedScene).instantiate())
 			var ap := AnimationPlayer.new()
 			model.add_child(ap)
 			ap.root_node = NodePath("..")

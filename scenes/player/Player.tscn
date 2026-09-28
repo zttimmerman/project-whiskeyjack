@@ -11,6 +11,8 @@
 [ext_resource type="PackedScene" path="res://assets/meshes/player.glb" id="9_model"]
 
 [ext_resource type="AnimationLibrary" path="res://data/animations/player_library.tres" id="30_anims"]
+[ext_resource type="Resource" path="res://data/rigs/player_sockets.tres" id="32_sockets"]
+[ext_resource type="PackedScene" path="res://scenes/props/HeldLevyBlade.tscn" id="31_blade"]
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gfjak"]
 radius = 0.4
 height = 1.8
@@ -41,6 +43,8 @@ radius = 0.4
 script = ExtResource("1_wr5hl")
 stats = SubResource("CharacterStats_player")
 inventory = SubResource("Inventory_player")
+socket_map = ExtResource("32_sockets")
+held_props = {"hand_r": ExtResource("31_blade")}
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1706130590]
 shape = SubResource("CapsuleShape3D_gfjak")

@@ -39,6 +39,13 @@ func _ready() -> void:
 	while t < duration:
 		if args.has("kill-at") and not killed and t >= float(args["kill-at"]):
 			killed = true
+			# Kill the enemy nearest the player, so the death is in view
+			var nearest: Node3D = null
+			for body in level.find_children("*", "CharacterBody3D", true, false):
+				if body != player and body.has_method("die") and (nearest == null or
+						body.global_position.distance_to(player.global_position) < nearest.global_position.distance_to(player.global_position)):
+					nearest = body
+			enemy = nearest
 			enemy.call("die")
 		await get_tree().process_frame
 		t += get_process_delta_time()
