@@ -37,6 +37,8 @@ From https://developers.tripo3d.ai/en/pricing (checked 2026-09-27; re-check if a
 | 2026-09-27 | text → image, `template=t_pose`, `aspect_ratio=3:4` (came back 1792×2400) | banana_pro | 15 | **15** | 15 |
 | 2026-09-27 | image → image refine, `template=t_pose`, `aspect_ratio=3:4` (came back 1792×2400) | banana_pro | 15 | **15** | 15 |
 | 2026-09-27 | image → image refine of a refine (short two-item edit) | banana_pro | 15 | **15** | 15 |
+| 2026-09-27 | image → multiview (four 1024² JPEG views) | none (endpoint takes no model) | unknown | **10** | 10 |
+| 2026-09-27 | multiview → 3D, standard texture, `face_limit` 5000 | P1-20260311 | 40–60 | **50** | 50 |
 
 The pricing-page table below undercounted P1 by half. The page has H-, P- and Splat-series tabs; this table was read from its flattened text and is most likely the **H-series** price. Estimate P-series work from the observed-costs table, and add each new operation type to it after its first run.
 
@@ -53,8 +55,6 @@ Add-ons stack on top: HD texture +10, Smart Low-poly +10 (not available on P1), 
 | Operation | Working estimate | Basis |
 |---|---|---|
 | text → image, `seedream_v5` | unknown, expected below banana_pro | none yet |
-| image → multiview | unknown | the pricing page doesn't list it |
-| multiview → 3D, P1, standard texture | ≥ 40 (P1 text → 3D observed) | the page's H-series 30 × P1's observed 2× would be 60; give the user the 40–60 range |
 
 After each first run, move the row into the observed table above and delete it here.
 

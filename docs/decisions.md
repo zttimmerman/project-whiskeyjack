@@ -25,8 +25,10 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 - banana_pro image-to-image refine (same params): **15 credits**, the same as text-to-image (Barrow-levy concept-2).
 - **Chained refines converge when the edit is short.** A five-item refine landed 3 of 5 changes (concept-2); a two-item follow-up ("keep everything exactly as it is except …") landed both and preserved the rest (concept-3). Budget 2–3 images per character concept.
 - **Three concept images per asset, at most.** This is about cost, and also about drift: each chained image-to-image pass degrades the image a little. By the third, the background had picked up a lighter centre instead of staying even grey, and edges were over-sharpened with slight color banding (Barrow-levy concept-3). Both feed straight into multiview.
-- Not yet observed: seedream_v5, image-to-multiview, multiview-to-3D. Add each to the tripo skill's table after its first run.
-- Project spend so far: 125 (80 on the blade, 45 on Barrow-levy concepts 1–3); balance 875.
+- image-to-multiview: **10 credits**, matching the CLI's report (Barrow-levy multiview-1). It returns four 1024² JPEGs on a white background.
+- P1 multiview-to-3D at `face_limit` 5000: **50 credits**, matching the CLI (Barrow-levy attempt-1). That's 10 more than P1 text-to-3D.
+- Not yet observed: seedream_v5. Add each to the tripo skill's table after its first run.
+- Project spend so far: 185 (80 on the blade; Barrow-levy 105: concepts 45, multiview 10, model 50); balance 815.
 
 ## Open risks
 
@@ -35,6 +37,10 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 - **Tripo's overshoot is unverified on characters.** The 10% triangle headroom rests on a single prop (+2.6% at `face_limit` 1000).
 - **The blade's grip wrap has 4 small slits and 16 non-manifold edges** (recorded, not repaired). Mesh health is a baseline only; nothing fails on it yet.
 - **The Barrow-levy socket map still names the Sketchfab bones.** Stage 4 fails until `data/rigs/barrow_levy_sockets.tres` is updated for the new rig.
+
+- **The cleaned Barrow-levy GLB rig-checks as unriggable; Tripo's raw download rig-checks as a riggable biped** (both free). Tripo's downstream tasks read a model in Tripo's own +X orientation, and the clean stage rotates characters to −Y. Proposed order: rig the raw download, then clean the rigged GLB (not decided yet).
+- **Tripo's texture comes back desaturated.** Barrow-levy bone is #A89C86 (grey taupe) against the concept's pale beige and Old Bone #CCB484. Cleanup keeps it exactly; the change happens in Tripo, and its `delight` default is a suspect.
+- **Godot 4.6 ignores glTF specular**, so every asset imports with specular 0.5 whatever the GLB says.
 
 ## Next
 

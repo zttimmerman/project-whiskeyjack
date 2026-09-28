@@ -3,7 +3,7 @@
   "stages": {
     "concept": {
       "status": "ok",
-      "timestamp": "2026-09-27T22:17:45+00:00",
+      "timestamp": "2026-09-27T23:23:45+00:00",
       "inputs": [
         {
           "path": "assets/briefs/barrow_levy.yaml",
@@ -26,19 +26,14 @@
           "sha256": "5bfdd6499cb6a1012334badc89acb99302b6877e8557c9bf1f65a15ceec396a3"
         }
       ],
-      "outputs": [
-        {
-          "path": ".tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png",
-          "sha256": "d62266500028543ed1fc0600b1bf974f74c07ba35be79684b580dd40be22f3f2"
-        }
-      ],
+      "outputs": [],
       "tool_versions": {
         "python": "3.14.7",
         "blender": "Blender 5.0.1",
         "godot": "4.6.1.stable.official.14d19694e",
         "tripo": "0.5.1"
       },
-      "message": "approved concept-3 (.tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png)",
+      "message": "not needed: the base mesh is already on disk",
       "actual_cost_credits": 45,
       "concept_model": "banana_pro",
       "params": {
@@ -196,39 +191,1278 @@
       "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. Keep everything exactly as it is except the lower legs and hands: merge each shin into one single solid bone, and join each hand's fingers into one simple mitten shape."
     },
     "model": {
-      "status": "awaiting",
-      "timestamp": "2026-09-27T19:08:39+00:00",
+      "status": "ok",
+      "timestamp": "2026-09-27T23:23:45+00:00",
       "inputs": [
         {
           "path": "assets/briefs/barrow_levy.yaml",
-          "sha256": "ee3848b0102b7f1f436463a3aa343985e8735beb1ff8f1ae06de44d407f97a47"
+          "sha256": "60e0fcf09ab08bba0b8e0454cf34a6b6ba7303e1d4342b3b8cb1af3896f6ad52"
+        },
+        {
+          "path": "docs/art-bible.md",
+          "sha256": "cb73de850024b6ead62e38f9eb74c10b60b7cfccc4a97381f61fdb2cfeb8c9a3"
+        },
+        {
+          "path": ".tripo-out/barrow_levy/attempt-1.spend.json",
+          "sha256": "fe70d78a1e6f9654924df53a13799a4f574f8942c6e09e66d6da1db051d024ad"
         }
       ],
-      "outputs": [],
+      "outputs": [
+        {
+          "path": ".tripo-out/barrow_levy/attempt-1/tripo-out/generate-multiview-image-front-v-3b290be3/model.glb",
+          "sha256": "073aebe1050e4ab25b1abf168541fdb0d801b20e54f36e316663b23af62e1197"
+        }
+      ],
       "tool_versions": {
         "python": "3.14.7",
         "blender": "Blender 5.0.1",
         "godot": "4.6.1.stable.official.14d19694e",
         "tripo": "0.5.1"
       },
-      "message": "waiting on a Tripo run",
-      "actual_cost_credits": 0,
-      "prompt": "A humanoid skeleton of Old Bone stained peat-brown at the joints, in a rotted Saddle Leather harness, scraps of wool clinging to the ribs, roots threading the pelvis, empty hands, T-pose.",
+      "message": "Tripo download .tripo-out/barrow_levy/attempt-1/tripo-out/generate-multiview-image-front-v-3b290be3/model.glb",
+      "actual_cost_credits": 50,
+      "prompt": null,
       "params": {
         "pbr": false,
         "texture": true,
         "face_limit": 5000
       },
+      "tripo_model": "P1-20260311",
+      "estimate_credits": 50,
       "cost_unknown_attempts": [],
-      "suggested_command": "tripo make \"A humanoid skeleton of Old Bone stained peat-brown at the joints, in a rotted Saddle Leather harness, scraps of wool clinging to the ribs, roots threading the pelvis, empty hands, T-pose.\" --param pbr=false --param texture=true --param face_limit=5000 -o .tripo-out/barrow_levy/attempt-1 --no-open --json"
+      "cost_check": [
+        {
+          "attempt": "attempt-1",
+          "status": "generated",
+          "estimate_credits": 50,
+          "actual_balance_delta": 50,
+          "cli_reported_credits": 50,
+          "estimate_error": 0
+        }
+      ],
+      "tripo_attempts": [
+        {
+          "status": "generated",
+          "started_at": "2026-09-27T23:20:48+00:00",
+          "user_confirmed_at": "2026-09-27T23:20:48+00:00",
+          "tripo_cli_version": "0.5.1",
+          "model_version": "P1-20260311",
+          "model_selection": "pinned via --model (brief tripo_model)",
+          "region": "ov",
+          "command": "tripo make .tripo-out/barrow_levy/multiview-1/tripo-out/tripo-out-barrow-levy-concept-3-d15a0aca/generate_multiview_image.front_view.jpeg .tripo-out/barrow_levy/multiview-1/tripo-out/tripo-out-barrow-levy-concept-3-d15a0aca/generate_multiview_image.left_view.jpeg .tripo-out/barrow_levy/multiview-1/tripo-out/tripo-out-barrow-levy-concept-3-d15a0aca/generate_multiview_image.back_view.jpeg .tripo-out/barrow_levy/multiview-1/tripo-out/tripo-out-barrow-levy-concept-3-d15a0aca/generate_multiview_image.right_view.jpeg --model P1-20260311 --param pbr=false --param texture=true --param face_limit=5000 -o .tripo-out/barrow_levy/attempt-1 --no-open --json",
+          "prompt": null,
+          "params": {
+            "pbr": false,
+            "texture": true,
+            "face_limit": 5000
+          },
+          "source_sheet": "multiview-1",
+          "source_concept": "concept-3",
+          "dry_run": {
+            "valid": true,
+            "warnings": [],
+            "cost_notes": [],
+            "model_reason": "explicit --model"
+          },
+          "estimate_credits": 50,
+          "estimate_source": "range 40-60 unconfirmed: P1 text-to-3D observed 40; pricing page H-series multiview 30 x P1's 2x = 60",
+          "balance_before": {
+            "balance": 865,
+            "frozen": 0
+          },
+          "finished_at": "2026-09-27T23:23:39+00:00",
+          "balance_after": {
+            "balance": 815,
+            "frozen": 0
+          },
+          "actual_spend": 50,
+          "cli_reported_credits": 50,
+          "exit_code": 0,
+          "task_ids": [
+            "3b290be3-59a9-423a-9598-d746d1330ecd"
+          ]
+        }
+      ]
+    },
+    "multiview": {
+      "status": "ok",
+      "timestamp": "2026-09-27T22:25:54+00:00",
+      "inputs": [
+        {
+          "path": ".tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png",
+          "sha256": "d62266500028543ed1fc0600b1bf974f74c07ba35be79684b580dd40be22f3f2"
+        },
+        {
+          "path": ".tripo-out/barrow_levy/multiview-1.spend.json",
+          "sha256": "6b685a5a8098ccac531935d8dbdd5d72cc54bb232ad488af62dd7b70fe91555b"
+        }
+      ],
+      "outputs": [
+        {
+          "path": ".tripo-out/barrow_levy/multiview-1/tripo-out/tripo-out-barrow-levy-concept-3-d15a0aca/generate_multiview_image.front_view.jpeg",
+          "sha256": "dfecebd312b221821297434e1ed52358f7dd8bbf00718bbb3dda5aa4f4502e6b"
+        },
+        {
+          "path": ".tripo-out/barrow_levy/multiview-1/tripo-out/tripo-out-barrow-levy-concept-3-d15a0aca/generate_multiview_image.left_view.jpeg",
+          "sha256": "c6daf07ad89dff36fa21133161a549d6cb0840946bd08caf619b48debbac3ea0"
+        },
+        {
+          "path": ".tripo-out/barrow_levy/multiview-1/tripo-out/tripo-out-barrow-levy-concept-3-d15a0aca/generate_multiview_image.back_view.jpeg",
+          "sha256": "e3bc79f4bc6acfb00efb4a1e09fef7ff4491d5a7dfcd9cded05060eead8eed3c"
+        },
+        {
+          "path": ".tripo-out/barrow_levy/multiview-1/tripo-out/tripo-out-barrow-levy-concept-3-d15a0aca/generate_multiview_image.right_view.jpeg",
+          "sha256": "0a97da730d239f0ced1da89938090ee128eb3f26f88e7ecdcc5ca1dcb56a23a9"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.6.1.stable.official.14d19694e",
+        "tripo": "0.5.1"
+      },
+      "message": "sheet multiview-1 from concept-3: front, left, back, right",
+      "actual_cost_credits": 10,
+      "cost_unknown_attempts": [],
+      "cost_check": [
+        {
+          "attempt": "multiview-1",
+          "status": "generated",
+          "estimate_credits": null,
+          "actual_balance_delta": 10,
+          "cli_reported_credits": 10,
+          "estimate_error": null
+        }
+      ],
+      "tripo_attempts": [
+        {
+          "status": "generated",
+          "started_at": "2026-09-27T22:24:33+00:00",
+          "user_confirmed_at": "2026-09-27T22:24:33+00:00",
+          "tripo_cli_version": "0.5.1",
+          "model_version": null,
+          "region": "ov",
+          "command": "tripo generate image-to-multiview .tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png -o .tripo-out/barrow_levy/multiview-1 --no-open --json",
+          "prompt": null,
+          "params": {},
+          "source_concept": "concept-3",
+          "dry_run": {
+            "valid": null,
+            "note": "tripo generate has no --dry-run; checked via pipeline.py --dry-run"
+          },
+          "estimate_credits": null,
+          "estimate_source": "unknown: first image-to-multiview run; not on the pricing page",
+          "balance_before": {
+            "balance": 875,
+            "frozen": 0
+          },
+          "finished_at": "2026-09-27T22:25:34+00:00",
+          "balance_after": {
+            "balance": 865,
+            "frozen": 0
+          },
+          "actual_spend": 10,
+          "cli_reported_credits": 10,
+          "exit_code": 0,
+          "task_ids": [
+            "d15a0aca-20d1-4c7a-ad29-9c7672b0fd32"
+          ]
+        }
+      ]
+    },
+    "clean": {
+      "status": "ok",
+      "timestamp": "2026-09-28T00:07:34+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/barrow_levy.yaml",
+          "sha256": "60e0fcf09ab08bba0b8e0454cf34a6b6ba7303e1d4342b3b8cb1af3896f6ad52"
+        },
+        {
+          "path": ".tripo-out/barrow_levy/attempt-1/tripo-out/generate-multiview-image-front-v-3b290be3/model.glb",
+          "sha256": "073aebe1050e4ab25b1abf168541fdb0d801b20e54f36e316663b23af62e1197"
+        },
+        {
+          "path": "scripts/blender_cleanup.py",
+          "sha256": "9ba500a3c1f8e383402cba2a421ca45b5defd7b5179839f8b1e56e61ade4a336"
+        },
+        {
+          "path": ".tripo-out/barrow_levy/attempt-1/tripo-out/generate-multiview-image-front-v-3b290be3/task.json",
+          "sha256": "194a5bd3fbd41540dfc696af8015458c8a49a2e2a41fc61d6ccb38b631a8d273"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "assets/meshes/barrow_levy.glb",
+          "sha256": "e3b28376fb7a80acced312a8a4a10e32923e87d135e3cabbb996f229fef6b0fa"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.6.1.stable.official.14d19694e",
+        "tripo": "0.5.1"
+      },
+      "message": "exported assets/meshes/barrow_levy.glb",
+      "actual_cost_credits": 0,
+      "params": {
+        "asset_id": "barrow_levy",
+        "type": "character",
+        "face_limit": 5000,
+        "triangle_budget": 5500,
+        "texture_size": 256,
+        "target_size_m": 1.8,
+        "pivot": "base",
+        "palette": [
+          "Old Bone",
+          "Saddle Leather",
+          "Blackened Iron",
+          "Signal Red"
+        ],
+        "socket_map": "data/rigs/barrow_levy_sockets.tres",
+        "animations": [
+          "idle",
+          "run",
+          "attack",
+          "stagger",
+          "death"
+        ],
+        "exclude_objects": null,
+        "tip_end": null,
+        "source_forward": {
+          "axis": "+x",
+          "source": "Tripo API default (.tripo-out/barrow_levy/attempt-1/tripo-out/generate-multiview-image-front-v-3b290be3/task.json sets no export_orientation)"
+        }
+      },
+      "report": {
+        "status": "pass",
+        "errors": [],
+        "warnings": [],
+        "blender_version": "5.0.1",
+        "input": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/barrow_levy/attempt-1/tripo-out/generate-multiview-image-front-v-3b290be3/model.glb",
+        "output": "/Users/zach/Documents/repos/project-whiskeyjack/assets/meshes/barrow_levy.glb",
+        "materials": [
+          {
+            "name": "tripo_material_3b290be3-59a9-423a-9598-d746d1330ecd",
+            "stripped": "normal, roughness, metallic, specular, emission and occlusion inputs are not carried over",
+            "converted_from": "principled",
+            "texture": "Color_3b290be3-59a9-423a-9598-d746d1330ecd",
+            "alpha": false
+          }
+        ],
+        "textures": [
+          {
+            "name": "Color_3b290be3-59a9-423a-9598-d746d1330ecd",
+            "size_before": [
+              2048,
+              2048
+            ],
+            "size_after": [
+              256,
+              256
+            ]
+          }
+        ],
+        "removed_objects": [],
+        "rigged": false,
+        "transform": {
+          "pivot": "base",
+          "size_before_m": [
+            0.1973,
+            0.7832,
+            0.998
+          ],
+          "geometry_forward": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "geometry_note": "geometry (arm span along y, feet +0.039 along x)",
+          "source_forward": {
+            "axis": "+x",
+            "source": "Tripo API default (.tripo-out/barrow_levy/attempt-1/tripo-out/generate-multiview-image-front-v-3b290be3/task.json sets no export_orientation)"
+          },
+          "facing_detected_by": "source metadata: +x (Tripo API default (.tripo-out/barrow_levy/attempt-1/tripo-out/generate-multiview-image-front-v-3b290be3/task.json sets no export_orientation)); geometry agrees",
+          "forward_before": [
+            1.0,
+            0.0
+          ],
+          "rotation_z_deg": -90,
+          "scale_factor": 1.80352,
+          "size_after_m": [
+            1.4125,
+            0.3558,
+            1.8
+          ],
+          "true_dims_m": {
+            "x": 1.4125,
+            "y": 0.3558,
+            "z": 1.8
+          },
+          "true_length_m": 1.8,
+          "min_after": [
+            -0.7063,
+            -0.1779,
+            0.0
+          ]
+        },
+        "mesh_health": {
+          "totals": {
+            "as_imported": {
+              "vertices": 7432,
+              "edges": 11227,
+              "faces": 5046,
+              "triangles": 5046,
+              "quads": 0,
+              "ngons": 0,
+              "non_manifold_edges": 0,
+              "boundary_edges": 7316,
+              "boundary_loops": 1296,
+              "wire_edges": 0,
+              "loose_vertices": 0,
+              "degenerate_faces": 0,
+              "zero_length_edges": 0,
+              "quad_ratio": 0.0,
+              "triangle_ratio": 1.0
+            },
+            "welded": {
+              "vertices": 2580,
+              "edges": 7562,
+              "faces": 5046,
+              "triangles": 5046,
+              "quads": 0,
+              "ngons": 0,
+              "non_manifold_edges": 7,
+              "boundary_edges": 0,
+              "boundary_loops": 0,
+              "wire_edges": 0,
+              "loose_vertices": 0,
+              "degenerate_faces": 0,
+              "zero_length_edges": 0,
+              "part_count": 36,
+              "parts": [
+                {
+                  "triangles": 942,
+                  "vertices": 470,
+                  "size_m": [
+                    0.0916,
+                    0.1585,
+                    0.6341
+                  ]
+                },
+                {
+                  "triangles": 490,
+                  "vertices": 247,
+                  "size_m": [
+                    0.3135,
+                    0.2748,
+                    0.2325
+                  ]
+                },
+                {
+                  "triangles": 402,
+                  "vertices": 197,
+                  "size_m": [
+                    0.2853,
+                    0.1832,
+                    0.2184
+                  ]
+                },
+                {
+                  "triangles": 232,
+                  "vertices": 118,
+                  "size_m": [
+                    0.1796,
+                    0.2431,
+                    0.2219
+                  ]
+                },
+                {
+                  "triangles": 204,
+                  "vertices": 103,
+                  "size_m": [
+                    0.1233,
+                    0.1409,
+                    0.162
+                  ]
+                },
+                {
+                  "triangles": 204,
+                  "vertices": 104,
+                  "size_m": [
+                    0.1233,
+                    0.1409,
+                    0.162
+                  ]
+                },
+                {
+                  "triangles": 176,
+                  "vertices": 90,
+                  "size_m": [
+                    0.1198,
+                    0.0916,
+                    0.4438
+                  ]
+                },
+                {
+                  "triangles": 176,
+                  "vertices": 90,
+                  "size_m": [
+                    0.1198,
+                    0.0916,
+                    0.4403
+                  ]
+                },
+                {
+                  "triangles": 164,
+                  "vertices": 84,
+                  "size_m": [
+                    0.2607,
+                    0.1233,
+                    0.2748
+                  ]
+                },
+                {
+                  "triangles": 164,
+                  "vertices": 84,
+                  "size_m": [
+                    0.2607,
+                    0.1233,
+                    0.2748
+                  ]
+                },
+                {
+                  "triangles": 150,
+                  "vertices": 77,
+                  "size_m": [
+                    0.1057,
+                    0.0916,
+                    0.4297
+                  ]
+                },
+                {
+                  "triangles": 150,
+                  "vertices": 77,
+                  "size_m": [
+                    0.1057,
+                    0.0916,
+                    0.4297
+                  ]
+                },
+                {
+                  "triangles": 130,
+                  "vertices": 67,
+                  "size_m": [
+                    0.236,
+                    0.0775,
+                    0.236
+                  ]
+                },
+                {
+                  "triangles": 130,
+                  "vertices": 67,
+                  "size_m": [
+                    0.236,
+                    0.074,
+                    0.236
+                  ]
+                },
+                {
+                  "triangles": 128,
+                  "vertices": 64,
+                  "size_m": [
+                    0.3346,
+                    0.3311,
+                    0.0599
+                  ]
+                },
+                {
+                  "triangles": 124,
+                  "vertices": 64,
+                  "size_m": [
+                    0.2818,
+                    0.3205,
+                    0.4685
+                  ]
+                },
+                {
+                  "triangles": 124,
+                  "vertices": 64,
+                  "size_m": [
+                    0.2783,
+                    0.3205,
+                    0.472
+                  ]
+                },
+                {
+                  "triangles": 100,
+                  "vertices": 52,
+                  "size_m": [
+                    0.1585,
+                    0.1198,
+                    0.1339
+                  ]
+                },
+                {
+                  "triangles": 72,
+                  "vertices": 38,
+                  "size_m": [
+                    0.1339,
+                    0.2748,
+                    0.155
+                  ]
+                },
+                {
+                  "triangles": 68,
+                  "vertices": 36,
+                  "size_m": [
+                    0.1057,
+                    0.2254,
+                    0.074
+                  ]
+                },
+                {
+                  "triangles": 68,
+                  "vertices": 36,
+                  "size_m": [
+                    0.1057,
+                    0.2219,
+                    0.074
+                  ]
+                },
+                {
+                  "triangles": 68,
+                  "vertices": 36,
+                  "size_m": [
+                    0.1374,
+                    0.2748,
+                    0.1515
+                  ]
+                },
+                {
+                  "triangles": 60,
+                  "vertices": 32,
+                  "size_m": [
+                    0.1444,
+                    0.1092,
+                    0.155
+                  ]
+                },
+                {
+                  "triangles": 60,
+                  "vertices": 32,
+                  "size_m": [
+                    0.1444,
+                    0.1092,
+                    0.155
+                  ]
+                },
+                {
+                  "triangles": 52,
+                  "vertices": 28,
+                  "size_m": [
+                    0.1303,
+                    0.2571,
+                    0.1479
+                  ]
+                },
+                {
+                  "triangles": 52,
+                  "vertices": 28,
+                  "size_m": [
+                    0.1198,
+                    0.2325,
+                    0.1374
+                  ]
+                },
+                {
+                  "triangles": 52,
+                  "vertices": 28,
+                  "size_m": [
+                    0.1303,
+                    0.2607,
+                    0.1479
+                  ]
+                },
+                {
+                  "triangles": 52,
+                  "vertices": 28,
+                  "size_m": [
+                    0.1162,
+                    0.229,
+                    0.1339
+                  ]
+                },
+                {
+                  "triangles": 48,
+                  "vertices": 24,
+                  "size_m": [
+                    0.1127,
+                    0.0176,
+                    0.081
+                  ]
+                },
+                {
+                  "triangles": 44,
+                  "vertices": 24,
+                  "size_m": [
+                    0.0528,
+                    0.1233,
+                    0.0669
+                  ]
+                },
+                {
+                  "triangles": 44,
+                  "vertices": 24,
+                  "size_m": [
+                    0.0564,
+                    0.1233,
+                    0.0669
+                  ]
+                },
+                {
+                  "triangles": 28,
+                  "vertices": 16,
+                  "size_m": [
+                    0.0669,
+                    0.0106,
+                    0.0634
+                  ]
+                },
+                {
+                  "triangles": 28,
+                  "vertices": 16,
+                  "size_m": [
+                    0.0634,
+                    0.0141,
+                    0.0634
+                  ]
+                },
+                {
+                  "triangles": 22,
+                  "vertices": 13,
+                  "size_m": [
+                    0.0317,
+                    0.0599,
+                    0.0317
+                  ]
+                },
+                {
+                  "triangles": 22,
+                  "vertices": 13,
+                  "size_m": [
+                    0.0317,
+                    0.0599,
+                    0.0282
+                  ]
+                },
+                {
+                  "triangles": 16,
+                  "vertices": 10,
+                  "size_m": [
+                    0.0211,
+                    0.0035,
+                    0.0106
+                  ]
+                }
+              ],
+              "quad_ratio": 0.0,
+              "triangle_ratio": 1.0
+            }
+          },
+          "per_mesh": [
+            {
+              "mesh": "tripo_node_3b290be3-59a9-423a-9598-d746d1330ecd",
+              "as_imported": {
+                "vertices": 7432,
+                "edges": 11227,
+                "faces": 5046,
+                "triangles": 5046,
+                "quads": 0,
+                "ngons": 0,
+                "quad_ratio": 0.0,
+                "triangle_ratio": 1.0,
+                "non_manifold_edges": 0,
+                "boundary_edges": 7316,
+                "boundary_loops": 1296,
+                "wire_edges": 0,
+                "loose_vertices": 0,
+                "degenerate_faces": 0,
+                "zero_length_edges": 0
+              },
+              "welded": {
+                "vertices": 2580,
+                "edges": 7562,
+                "faces": 5046,
+                "triangles": 5046,
+                "quads": 0,
+                "ngons": 0,
+                "quad_ratio": 0.0,
+                "triangle_ratio": 1.0,
+                "non_manifold_edges": 7,
+                "boundary_edges": 0,
+                "boundary_loops": 0,
+                "wire_edges": 0,
+                "loose_vertices": 0,
+                "degenerate_faces": 0,
+                "zero_length_edges": 0,
+                "parts": [
+                  {
+                    "triangles": 942,
+                    "vertices": 470,
+                    "size_m": [
+                      0.0916,
+                      0.1585,
+                      0.6341
+                    ]
+                  },
+                  {
+                    "triangles": 490,
+                    "vertices": 247,
+                    "size_m": [
+                      0.3135,
+                      0.2748,
+                      0.2325
+                    ]
+                  },
+                  {
+                    "triangles": 402,
+                    "vertices": 197,
+                    "size_m": [
+                      0.2853,
+                      0.1832,
+                      0.2184
+                    ]
+                  },
+                  {
+                    "triangles": 232,
+                    "vertices": 118,
+                    "size_m": [
+                      0.1796,
+                      0.2431,
+                      0.2219
+                    ]
+                  },
+                  {
+                    "triangles": 204,
+                    "vertices": 103,
+                    "size_m": [
+                      0.1233,
+                      0.1409,
+                      0.162
+                    ]
+                  },
+                  {
+                    "triangles": 204,
+                    "vertices": 104,
+                    "size_m": [
+                      0.1233,
+                      0.1409,
+                      0.162
+                    ]
+                  },
+                  {
+                    "triangles": 176,
+                    "vertices": 90,
+                    "size_m": [
+                      0.1198,
+                      0.0916,
+                      0.4438
+                    ]
+                  },
+                  {
+                    "triangles": 176,
+                    "vertices": 90,
+                    "size_m": [
+                      0.1198,
+                      0.0916,
+                      0.4403
+                    ]
+                  },
+                  {
+                    "triangles": 164,
+                    "vertices": 84,
+                    "size_m": [
+                      0.2607,
+                      0.1233,
+                      0.2748
+                    ]
+                  },
+                  {
+                    "triangles": 164,
+                    "vertices": 84,
+                    "size_m": [
+                      0.2607,
+                      0.1233,
+                      0.2748
+                    ]
+                  },
+                  {
+                    "triangles": 150,
+                    "vertices": 77,
+                    "size_m": [
+                      0.1057,
+                      0.0916,
+                      0.4297
+                    ]
+                  },
+                  {
+                    "triangles": 150,
+                    "vertices": 77,
+                    "size_m": [
+                      0.1057,
+                      0.0916,
+                      0.4297
+                    ]
+                  },
+                  {
+                    "triangles": 130,
+                    "vertices": 67,
+                    "size_m": [
+                      0.236,
+                      0.0775,
+                      0.236
+                    ]
+                  },
+                  {
+                    "triangles": 130,
+                    "vertices": 67,
+                    "size_m": [
+                      0.236,
+                      0.074,
+                      0.236
+                    ]
+                  },
+                  {
+                    "triangles": 128,
+                    "vertices": 64,
+                    "size_m": [
+                      0.3346,
+                      0.3311,
+                      0.0599
+                    ]
+                  },
+                  {
+                    "triangles": 124,
+                    "vertices": 64,
+                    "size_m": [
+                      0.2818,
+                      0.3205,
+                      0.4685
+                    ]
+                  },
+                  {
+                    "triangles": 124,
+                    "vertices": 64,
+                    "size_m": [
+                      0.2783,
+                      0.3205,
+                      0.472
+                    ]
+                  },
+                  {
+                    "triangles": 100,
+                    "vertices": 52,
+                    "size_m": [
+                      0.1585,
+                      0.1198,
+                      0.1339
+                    ]
+                  },
+                  {
+                    "triangles": 72,
+                    "vertices": 38,
+                    "size_m": [
+                      0.1339,
+                      0.2748,
+                      0.155
+                    ]
+                  },
+                  {
+                    "triangles": 68,
+                    "vertices": 36,
+                    "size_m": [
+                      0.1057,
+                      0.2254,
+                      0.074
+                    ]
+                  },
+                  {
+                    "triangles": 68,
+                    "vertices": 36,
+                    "size_m": [
+                      0.1057,
+                      0.2219,
+                      0.074
+                    ]
+                  },
+                  {
+                    "triangles": 68,
+                    "vertices": 36,
+                    "size_m": [
+                      0.1374,
+                      0.2748,
+                      0.1515
+                    ]
+                  },
+                  {
+                    "triangles": 60,
+                    "vertices": 32,
+                    "size_m": [
+                      0.1444,
+                      0.1092,
+                      0.155
+                    ]
+                  },
+                  {
+                    "triangles": 60,
+                    "vertices": 32,
+                    "size_m": [
+                      0.1444,
+                      0.1092,
+                      0.155
+                    ]
+                  },
+                  {
+                    "triangles": 52,
+                    "vertices": 28,
+                    "size_m": [
+                      0.1303,
+                      0.2571,
+                      0.1479
+                    ]
+                  },
+                  {
+                    "triangles": 52,
+                    "vertices": 28,
+                    "size_m": [
+                      0.1198,
+                      0.2325,
+                      0.1374
+                    ]
+                  },
+                  {
+                    "triangles": 52,
+                    "vertices": 28,
+                    "size_m": [
+                      0.1303,
+                      0.2607,
+                      0.1479
+                    ]
+                  },
+                  {
+                    "triangles": 52,
+                    "vertices": 28,
+                    "size_m": [
+                      0.1162,
+                      0.229,
+                      0.1339
+                    ]
+                  },
+                  {
+                    "triangles": 48,
+                    "vertices": 24,
+                    "size_m": [
+                      0.1127,
+                      0.0176,
+                      0.081
+                    ]
+                  },
+                  {
+                    "triangles": 44,
+                    "vertices": 24,
+                    "size_m": [
+                      0.0528,
+                      0.1233,
+                      0.0669
+                    ]
+                  },
+                  {
+                    "triangles": 44,
+                    "vertices": 24,
+                    "size_m": [
+                      0.0564,
+                      0.1233,
+                      0.0669
+                    ]
+                  },
+                  {
+                    "triangles": 28,
+                    "vertices": 16,
+                    "size_m": [
+                      0.0669,
+                      0.0106,
+                      0.0634
+                    ]
+                  },
+                  {
+                    "triangles": 28,
+                    "vertices": 16,
+                    "size_m": [
+                      0.0634,
+                      0.0141,
+                      0.0634
+                    ]
+                  },
+                  {
+                    "triangles": 22,
+                    "vertices": 13,
+                    "size_m": [
+                      0.0317,
+                      0.0599,
+                      0.0317
+                    ]
+                  },
+                  {
+                    "triangles": 22,
+                    "vertices": 13,
+                    "size_m": [
+                      0.0317,
+                      0.0599,
+                      0.0282
+                    ]
+                  },
+                  {
+                    "triangles": 16,
+                    "vertices": 10,
+                    "size_m": [
+                      0.0211,
+                      0.0035,
+                      0.0106
+                    ]
+                  }
+                ],
+                "part_count": 36
+              }
+            }
+          ],
+          "weld_distance_m": 1e-05,
+          "note": "baseline only; nothing fails on these yet"
+        },
+        "shading": {
+          "angle_deg": 30.0,
+          "welded_vertices_removed": 4852,
+          "custom_normals_cleared": [
+            "tripo_node_3b290be3-59a9-423a-9598-d746d1330ecd"
+          ],
+          "welded": true
+        },
+        "triangle_count": 5046,
+        "triangle_budget": 5500,
+        "vertex_metrics": {
+          "split_at_seams": 2580,
+          "welded": 2580,
+          "note": "metrics only; the budget is in triangles"
+        },
+        "animations": [],
+        "exported": {
+          "images": 1,
+          "materials": [
+            {
+              "name": "tripo_material_3b290be3-59a9-423a-9598-d746d1330ecd",
+              "alphaMode": "OPAQUE",
+              "base_color_texture": true
+            }
+          ],
+          "animations": 0,
+          "skins": 0
+        }
+      }
+    },
+    "validate": {
+      "status": "failed",
+      "timestamp": "2026-09-28T00:07:36+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/barrow_levy.yaml",
+          "sha256": "60e0fcf09ab08bba0b8e0454cf34a6b6ba7303e1d4342b3b8cb1af3896f6ad52"
+        },
+        {
+          "path": "assets/meshes/barrow_levy.glb",
+          "sha256": "e3b28376fb7a80acced312a8a4a10e32923e87d135e3cabbb996f229fef6b0fa"
+        },
+        {
+          "path": "scripts/godot_validate.gd",
+          "sha256": "c3c45a435eaeb12de0a6fa665485af6e6c4f1eed4dddceb9088fedee1e72c571"
+        },
+        {
+          "path": "scripts/blender_views.py",
+          "sha256": "debc0bfee9633437a28f041585e1422ec94aa009a068e18c0826528ed36d9d85"
+        },
+        {
+          "path": "data/rigs/barrow_levy_sockets.tres",
+          "sha256": "e74298c00fab59368bb0992a7852d9ebad7bcbf073d2c00b0608c29a183bdbb7"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "assets/manifests/barrow_levy/front.png",
+          "sha256": "d7add9c71648f503f7c3ca74666394817685ea2f160716143379290e8709e947"
+        },
+        {
+          "path": "assets/manifests/barrow_levy/right.png",
+          "sha256": "8d10027752d406302e2ab0cf8ec0fa144924d2184d0d12db295e88de23a93a4c"
+        },
+        {
+          "path": "assets/manifests/barrow_levy/back.png",
+          "sha256": "883b63a143b6b1e3902220f4cd10a7ac0493cd9ca82f1b8db8817258d7bbf358"
+        },
+        {
+          "path": "assets/manifests/barrow_levy/top.png",
+          "sha256": "d638505fb30c0d7790bd1b471857830194c1f130ca42cfdb98387b66f8f8f92a"
+        },
+        {
+          "path": "assets/manifests/barrow_levy/clay_front.png",
+          "sha256": "517951df4e333d0569a0c31a3590058a7efa078e9a9f7f299decee30c18245e5"
+        },
+        {
+          "path": "assets/manifests/barrow_levy/wireframe_front.png",
+          "sha256": "3212f7a6d7ccf15bced9b1379194384dc6535a9bda641790615a016f85635495"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.6.1.stable.official.14d19694e",
+        "tripo": "0.5.1"
+      },
+      "message": "character has no Skeleton3D",
+      "actual_cost_credits": 0,
+      "params": {
+        "asset_id": "barrow_levy",
+        "type": "character",
+        "face_limit": 5000,
+        "triangle_budget": 5500,
+        "texture_size": 256,
+        "target_size_m": 1.8,
+        "pivot": "base",
+        "palette": [
+          "Old Bone",
+          "Saddle Leather",
+          "Blackened Iron",
+          "Signal Red"
+        ],
+        "socket_map": "data/rigs/barrow_levy_sockets.tres",
+        "animations": [
+          "idle",
+          "run",
+          "attack",
+          "stagger",
+          "death"
+        ],
+        "exclude_objects": null,
+        "tip_end": null,
+        "blender_triangle_count": 5046
+      },
+      "report": {
+        "animations": {
+          "expected": [
+            "idle",
+            "run",
+            "attack",
+            "stagger",
+            "death"
+          ],
+          "missing": [
+            "idle",
+            "run",
+            "attack",
+            "stagger",
+            "death"
+          ],
+          "present": []
+        },
+        "errors": [
+          "character has no Skeleton3D"
+        ],
+        "godot_version": "4.6.1-stable (official)",
+        "import_method": "GLTFDocument (runtime); editor import settings such as a BoneMap don't apply",
+        "materials": [
+          {
+            "albedo_texture": [
+              256,
+              256
+            ],
+            "extra_maps": [],
+            "mesh": "tripo_node_3b290be3-59a9-423a-9598-d746d1330ecd",
+            "metallic": 0.0,
+            "metallic_specular": 0.5,
+            "roughness": 1.0,
+            "specular_mode": "schlick_ggx",
+            "surface": 0,
+            "transparency": "disabled",
+            "unshaded": false
+          }
+        ],
+        "rig": {
+          "skeleton": false
+        },
+        "status": "fail",
+        "textures": {
+          "count": 1,
+          "max_allowed": 256,
+          "sizes": [
+            [
+              256,
+              256
+            ]
+          ]
+        },
+        "triangles": {
+          "blender_count": 5046.0,
+          "budget": 5500,
+          "count": 5046
+        },
+        "vertex_metrics": {
+          "gpu_count": 8117,
+          "note": "metrics only; the budget is in triangles"
+        },
+        "warnings": [
+          "surface 0 of 'tripo_node_3b290be3-59a9-423a-9598-d746d1330ecd' imports with specular 0.50 (a highlight)",
+          "animations missing (they'll come from the shared library): [\"idle\", \"run\", \"attack\", \"stagger\", \"death\"]"
+        ],
+        "views": {
+          "status": "ok",
+          "views": {
+            "front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/barrow_levy/front.png",
+              "coverage": 0.1039
+            },
+            "right": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/barrow_levy/right.png",
+              "coverage": 0.0642
+            },
+            "back": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/barrow_levy/back.png",
+              "coverage": 0.1039
+            },
+            "top": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/barrow_levy/top.png",
+              "coverage": 0.0736
+            },
+            "clay_front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/barrow_levy/clay_front.png",
+              "coverage": 0.1039
+            },
+            "wireframe_front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/barrow_levy/wireframe_front.png",
+              "coverage": 0.0917
+            }
+          },
+          "errors": [],
+          "triangles": 5046,
+          "pieces_welded": 36
+        },
+        "gross_flags": []
+      }
     }
   },
   "brief": {
     "path": "assets/briefs/barrow_levy.yaml",
     "sha256": "60e0fcf09ab08bba0b8e0454cf34a6b6ba7303e1d4342b3b8cb1af3896f6ad52"
   },
-  "total_cost_credits": 45,
-  "updated_at": "2026-09-27T22:17:45+00:00",
+  "total_cost_credits": 105,
+  "updated_at": "2026-09-28T00:07:36+00:00",
   "concept_approval": {
     "attempt": "concept-3",
     "image": {
