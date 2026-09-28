@@ -11,7 +11,8 @@ Imports the GLB and then:
 - rebuilds every material as albedo-only (base color, plus alpha if used), stripping
   normal/roughness/metallic/emission maps and baking non-image albedo; roughness 1, specular 0;
 - downscales the albedo to texture_size, then shifts it back toward the approved concept's colors
-  (concept_correct), or toward the brief's palette when the asset has no concept (palette_correct);
+  (concept_correct), or toward the brief's palette when the asset has no concept (palette_correct),
+  then composites the brief's texture_overlays (e.g. a mouth line) over it;
 - replaces imported smooth normals with flat shading above SMOOTH_ANGLE_DEG (welding UV-seam
   splits first on unrigged meshes, so the angle test sees real edges);
 - aligns props along their principal axis and fails if the residual tilt exceeds PROP_AXIS_TOLERANCE_DEG;
@@ -605,7 +606,34 @@ def concept_correct(img, ref_path, report):
                                                        "reference": ref_path, "concept_background": bg, "clusters": clusters})
 
 
-def rebuild_materials(meshes, size, report, targets, reference=None):
+def composite_overlays(img, overlays, input_path, report):
+    """Alpha-composites checked-in overlay PNGs (scripts/make_texture_overlay.py) over the albedo,
+    after color correction. An overlay only fits the UV layout it was drawn on, so its sidecar's
+    uv_source_sha256 must match this stage's input GLB."""
+    import hashlib
+    have = hashlib.sha256(open(input_path, "rb").read()).hexdigest()
+    w, h = img.size
+    px = np.array(img.pixels[:], dtype=np.float64).reshape(-1, img.channels)
+    done = []
+    for path in overlays:
+        side = json.load(open(path.rsplit(".", 1)[0] + ".json"))
+        if side["uv_source_sha256"] != have:
+            raise RuntimeError(f"overlay {path} was drawn on a different mesh's UVs "
+                               f"({side['uv_source']}); regenerate it for this input")
+        ov = bpy.data.images.load(path)
+        if tuple(ov.size) != (w, h):
+            ov.scale(w, h)
+        o = np.array(ov.pixels[:], dtype=np.float64).reshape(-1, 4)
+        bpy.data.images.remove(ov)
+        a = o[:, 3:4]
+        px[:, :3] = px[:, :3] * (1 - a) + o[:, :3] * a
+        done.append({"overlay": path, "pixels": int((a > 0).sum())})
+    img.pixels[:] = px.ravel().tolist()
+    img.update()
+    report["overlays"] = done
+
+
+def rebuild_materials(meshes, size, report, targets, reference=None, overlays=None, input_path=None):
     by_mat = {}
     for o in meshes:
         for slot in o.material_slots:
@@ -680,7 +708,9 @@ def rebuild_materials(meshes, size, report, targets, reference=None):
             concept_correct(img, reference, report)
         elif targets:
             palette_correct(img, targets, report)
-        if longest > size or targets or reference:
+        if overlays:
+            composite_overlays(img, overlays, input_path, report)
+        if longest > size or targets or reference or overlays:
             # Pack only modified images: pack() on an already-packed, unmodified image unpacks it
             # and leaves the exporter with no image data.
             img.pack()
@@ -838,7 +868,8 @@ def run(args, params, report):
     report["transform"] = xf
     report["mesh_health"] = mesh_health(meshes)
 
-    rebuild_materials(meshes, params["texture_size"], report, params.get("palette_targets"), params.get("reference_image"))
+    rebuild_materials(meshes, params["texture_size"], report, params.get("palette_targets"), params.get("reference_image"),
+                      params.get("texture_overlays"), args.input)
     flat_shade_by_angle(meshes, weld=not rigged, report=report)
     if params.get("rigid_parts"):
         if not rigged:

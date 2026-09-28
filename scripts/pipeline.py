@@ -216,9 +216,12 @@ def load_brief(asset_id):
         errors.append("'rigid_parts' must be true or false")
     if b.get("rigid_parts") and b.get("type") != "character":
         errors.append("'rigid_parts' applies to characters only")
-    for opt in ("animations", "exclude_objects"):
+    for opt in ("animations", "exclude_objects", "texture_overlays"):
         if opt in b and not (isinstance(b[opt], list) and all(isinstance(x, str) for x in b[opt])):
             errors.append(f"'{opt}' must be a list of names")
+    for ov in b.get("texture_overlays") or []:
+        if not (ROOT / ov).exists() or not (ROOT / ov).with_suffix(".json").exists():
+            errors.append(f"texture overlay {ov} (and its .json sidecar) must exist; make it with scripts/make_texture_overlay.py")
     for opt in ("source_glb", "socket_map"):
         if b.get(opt) and not (ROOT / b[opt]).exists():
             errors.append(f"'{opt}' points at a missing file: {b[opt]}")
@@ -746,14 +749,17 @@ def stage_clean(brief, m, args):
     task_json = model.parent / "task.json"
     # The approved concept is the color reference (art bible: the concept governs correction)
     reference, _ = approved_concept(brief, m)
-    inputs = [brief["_path"], model, BLENDER_SCRIPT] + ([task_json] if task_json.exists() else []) + ([reference] if reference else [])
+    overlays = [ROOT / ov for ov in brief.get("texture_overlays") or []]
+    inputs = ([brief["_path"], model, BLENDER_SCRIPT] + ([task_json] if task_json.exists() else []) + ([reference] if reference else [])
+              + overlays + [ov.with_suffix(".json") for ov in overlays])
     if not force and up_to_date(m["stages"].get("clean"), inputs, [out]):
         print("clean: up to date")
         return EXIT_OK
     wd = work_dir(aid)
     params_path, report_path = wd / "clean-params.json", wd / "clean-report.json"
     params = {**stage_params(brief), "source_forward": source_forward(task_json),
-              "palette_targets": palette_targets(brief), "reference_image": str(reference) if reference else None}
+              "palette_targets": palette_targets(brief), "reference_image": str(reference) if reference else None,
+              "texture_overlays": [str(ov) for ov in overlays]}
     if not dry_run:
         wd.mkdir(parents=True, exist_ok=True)
         params_path.write_text(json.dumps(params, indent=2))
