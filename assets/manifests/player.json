@@ -3,15 +3,15 @@
   "stages": {
     "concept": {
       "status": "ok",
-      "timestamp": "2026-09-28T02:15:22+00:00",
+      "timestamp": "2026-09-28T02:28:09+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player.yaml",
-          "sha256": "b8f7e3e56b741e5a552f9153ead28d318a385dfce5daecd85f8c2c040bc44960"
+          "sha256": "bd9d565951642359fa071d71282e647f22e7a839d54c629053c34d26377adfa9"
         },
         {
           "path": "docs/art-bible.md",
-          "sha256": "3a37a6a6d5d6bde589a71e4bfed662c76449b74d865adb07f3c304bcec5d8094"
+          "sha256": "13a21b89c95c7cf1aec01c6b7af8aa805a3365e6c2f1e05f75359bb74ca020e5"
         },
         {
           "path": ".tripo-out/player/concept-1.spend.json",
@@ -96,15 +96,15 @@
     },
     "model": {
       "status": "ok",
-      "timestamp": "2026-09-28T02:15:22+00:00",
+      "timestamp": "2026-09-28T02:28:10+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player.yaml",
-          "sha256": "b8f7e3e56b741e5a552f9153ead28d318a385dfce5daecd85f8c2c040bc44960"
+          "sha256": "bd9d565951642359fa071d71282e647f22e7a839d54c629053c34d26377adfa9"
         },
         {
           "path": "docs/art-bible.md",
-          "sha256": "3a37a6a6d5d6bde589a71e4bfed662c76449b74d865adb07f3c304bcec5d8094"
+          "sha256": "13a21b89c95c7cf1aec01c6b7af8aa805a3365e6c2f1e05f75359bb74ca020e5"
         },
         {
           "path": ".tripo-out/player/attempt-1.spend.json",
@@ -361,11 +361,11 @@
     },
     "clean": {
       "status": "ok",
-      "timestamp": "2026-09-28T02:18:04+00:00",
+      "timestamp": "2026-09-28T02:30:41+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player.yaml",
-          "sha256": "223a2457fb2fcf5929f7911169959f2bf4860272724c55c7c59d13ff68781620"
+          "sha256": "bd9d565951642359fa071d71282e647f22e7a839d54c629053c34d26377adfa9"
         },
         {
           "path": ".tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/model.glb",
@@ -373,7 +373,7 @@
         },
         {
           "path": "scripts/blender_cleanup.py",
-          "sha256": "8a229bb6bbafc6501917b8b4e7c02cfa05e12e3624df6436828c411816fa7885"
+          "sha256": "41f70e42f2d0f10c0cc372afbd1ab7f8e5391e069387a1a69caecf8780057fac"
         },
         {
           "path": ".tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/task.json",
@@ -395,7 +395,7 @@
       "outputs": [
         {
           "path": "assets/meshes/player.glb",
-          "sha256": "f77b0dde075156ddefb848643f3a203899d436a06bbf1254f81b6e1b16ff0bb0"
+          "sha256": "9a3e7b28de7be3e945296d51c781b8f17f1e09a90274532f17ce6e1a777ebdab"
         }
       ],
       "tool_versions": {
@@ -432,6 +432,7 @@
         "exclude_objects": null,
         "tip_end": null,
         "rigid_parts": null,
+        "skirt_reweight": true,
         "source_forward": {
           "axis": "+x",
           "source": "Tripo API default (.tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/task.json sets no export_orientation)"
@@ -853,18 +854,25 @@
             "pixels": 19
           }
         ],
+        "skirt_reweight": {
+          "vertices": 351,
+          "waist_z": 0.805,
+          "hem_z": 0.406,
+          "knee_z": 0.329,
+          "method": "vertices between knee and waist, further than 0.085 m from both thigh bones: Hips at the waist grading linearly to the thighs at the hem, split by inverse squared distance; no shin weight"
+        },
         "shading": {
           "angle_deg": 30.0,
-          "welded_vertices_removed": 0,
+          "welded_vertices_removed": 4062,
           "custom_normals_cleared": [
             "tripo_node_e2b61bb2-f8dc-43c6-8eea-39854"
           ],
-          "welded": false
+          "welded": "same_weights"
         },
         "triangle_count": 4893,
         "triangle_budget": 5500,
         "vertex_metrics": {
-          "split_at_seams": 6564,
+          "split_at_seams": 2502,
           "welded": 2481,
           "note": "metrics only; the budget is in triangles"
         },
@@ -885,15 +893,15 @@
     },
     "validate": {
       "status": "ok",
-      "timestamp": "2026-09-28T02:18:17+00:00",
+      "timestamp": "2026-09-28T02:30:43+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player.yaml",
-          "sha256": "223a2457fb2fcf5929f7911169959f2bf4860272724c55c7c59d13ff68781620"
+          "sha256": "bd9d565951642359fa071d71282e647f22e7a839d54c629053c34d26377adfa9"
         },
         {
           "path": "assets/meshes/player.glb",
-          "sha256": "f77b0dde075156ddefb848643f3a203899d436a06bbf1254f81b6e1b16ff0bb0"
+          "sha256": "9a3e7b28de7be3e945296d51c781b8f17f1e09a90274532f17ce6e1a777ebdab"
         },
         {
           "path": "scripts/godot_validate.gd",
@@ -907,27 +915,27 @@
       "outputs": [
         {
           "path": "assets/manifests/player/front.png",
-          "sha256": "df61577afb5da4dc8a093237cf9b99c1de88462c728c58a8f639cad3129712c8"
+          "sha256": "c7a692e8f62283703b2f47a6b56d8931ad6bd1cb9e2bb4ea81b34ec139e7e4ac"
         },
         {
           "path": "assets/manifests/player/right.png",
-          "sha256": "90bd35d5c02d9257cd25b1f322eb5c3f875d5569fcaa5913010b4905e977f12a"
+          "sha256": "499acc6f8b7d69f22c6648590c9bdae2b6566a18134e7830a032250963eeb98c"
         },
         {
           "path": "assets/manifests/player/back.png",
-          "sha256": "1f412b4a4110f3fd86bbbc3c9fa4235ab6f2e0d1a3b59fea0121d363392cc80c"
+          "sha256": "a078bfe9e104ac7c13160eeb7d3d2ab0b29be407edcf4648ec88ba5b04bf0f63"
         },
         {
           "path": "assets/manifests/player/top.png",
-          "sha256": "4943ffa349a9204ff911c28723b26c4727e0c242922122362e38827607d9330f"
+          "sha256": "3cdba5897ad6472e89ec21104c9d96eebc891a60a807c5c0c4da19714116729e"
         },
         {
           "path": "assets/manifests/player/clay_front.png",
-          "sha256": "785df729e8bb14b417121b322b1944d990b751ea8aff2e8dafd0a7203dd0feac"
+          "sha256": "6ae716b4233a06df3fa9c3b4236c26a69dc01c99bd615ea20272cdc0b6d89acf"
         },
         {
           "path": "assets/manifests/player/wireframe_front.png",
-          "sha256": "bced4ceb63d5507067fdf203f726b624af3b49a2d77b006f0a568ebead94a0bd"
+          "sha256": "78536ffd383217a1470bda1da85c0fd89b9c44e49a25d2275c2a5b6e28ed15e1"
         }
       ],
       "tool_versions": {
@@ -964,6 +972,7 @@
         "exclude_objects": null,
         "tip_end": null,
         "rigid_parts": null,
+        "skirt_reweight": true,
         "blender_triangle_count": 4893
       },
       "report": {
@@ -1087,7 +1096,7 @@
           "count": 4893
         },
         "vertex_metrics": {
-          "gpu_count": 7272,
+          "gpu_count": 7242,
           "note": "metrics only; the budget is in triangles"
         },
         "warnings": [
@@ -1119,7 +1128,7 @@
             },
             "wireframe_front": {
               "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/player/wireframe_front.png",
-              "coverage": 0.1591
+              "coverage": 0.159
             }
           },
           "errors": [],
@@ -1134,10 +1143,10 @@
   },
   "brief": {
     "path": "assets/briefs/player.yaml",
-    "sha256": "223a2457fb2fcf5929f7911169959f2bf4860272724c55c7c59d13ff68781620"
+    "sha256": "bd9d565951642359fa071d71282e647f22e7a839d54c629053c34d26377adfa9"
   },
   "total_cost_credits": 100,
-  "updated_at": "2026-09-28T02:18:17+00:00",
+  "updated_at": "2026-09-28T02:30:43+00:00",
   "concept_approval": {
     "attempt": "concept-1",
     "image": {

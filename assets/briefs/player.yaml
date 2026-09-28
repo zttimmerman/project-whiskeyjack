@@ -21,3 +21,5 @@ animations: [idle, run, dodge_roll, attack_light, attack_heavy, death]
 # Mouth line painted over the albedo at clean time (Tripo's delight pass flattened it into the skin).
 # Tied to the rig-1 UV layout by its sidecar's hash: regenerate it if the model or rig is regenerated.
 texture_overlays: [assets/overlays/player_mouth.png]
+# The knee-length tunic skirt: Hips at the waist grading to the thighs at the hem, no shin weight.
+skirt_reweight: true

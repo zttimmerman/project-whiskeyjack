@@ -3,7 +3,7 @@
   "stages": {
     "concept": {
       "status": "ok",
-      "timestamp": "2026-09-28T02:06:59+00:00",
+      "timestamp": "2026-09-28T02:28:05+00:00",
       "inputs": [
         {
           "path": "assets/briefs/barrow_levy.yaml",
@@ -11,7 +11,7 @@
         },
         {
           "path": "docs/art-bible.md",
-          "sha256": "3a37a6a6d5d6bde589a71e4bfed662c76449b74d865adb07f3c304bcec5d8094"
+          "sha256": "13a21b89c95c7cf1aec01c6b7af8aa805a3365e6c2f1e05f75359bb74ca020e5"
         },
         {
           "path": ".tripo-out/barrow_levy/concept-1.spend.json",
@@ -192,7 +192,7 @@
     },
     "model": {
       "status": "ok",
-      "timestamp": "2026-09-28T02:06:59+00:00",
+      "timestamp": "2026-09-28T02:28:06+00:00",
       "inputs": [
         {
           "path": "assets/briefs/barrow_levy.yaml",
@@ -200,7 +200,7 @@
         },
         {
           "path": "docs/art-bible.md",
-          "sha256": "3a37a6a6d5d6bde589a71e4bfed662c76449b74d865adb07f3c304bcec5d8094"
+          "sha256": "13a21b89c95c7cf1aec01c6b7af8aa805a3365e6c2f1e05f75359bb74ca020e5"
         },
         {
           "path": ".tripo-out/barrow_levy/attempt-1.spend.json",
@@ -372,7 +372,7 @@
     },
     "clean": {
       "status": "ok",
-      "timestamp": "2026-09-28T02:07:01+00:00",
+      "timestamp": "2026-09-28T02:30:37+00:00",
       "inputs": [
         {
           "path": "assets/briefs/barrow_levy.yaml",
@@ -384,7 +384,7 @@
         },
         {
           "path": "scripts/blender_cleanup.py",
-          "sha256": "1d37060a1c6e0e08adc81039e61e8ee407c4209656c91229335a0472f0129e57"
+          "sha256": "41f70e42f2d0f10c0cc372afbd1ab7f8e5391e069387a1a69caecf8780057fac"
         },
         {
           "path": ".tripo-out/barrow_levy/rig-2/tripo-out/rig-2-974e2d40/task.json",
@@ -398,7 +398,7 @@
       "outputs": [
         {
           "path": "assets/meshes/barrow_levy.glb",
-          "sha256": "11226bd2e2fde86cfadc888b11a1737995243d22c40261b5a53a72642870fbc4"
+          "sha256": "7869032a3bf8af8412b7b80c2694863e9e55fbf8de9a0b5561a912c83742e422"
         }
       ],
       "tool_versions": {
@@ -434,6 +434,7 @@
         "exclude_objects": null,
         "tip_end": null,
         "rigid_parts": true,
+        "skirt_reweight": null,
         "source_forward": {
           "axis": "+x",
           "source": "Tripo API default (.tripo-out/barrow_levy/rig-2/tripo-out/rig-2-974e2d40/task.json sets no export_orientation)"
@@ -444,7 +445,8 @@
           "Blackened Iron": "#242424",
           "Signal Red": "#C71F14"
         },
-        "reference_image": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png"
+        "reference_image": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png",
+        "texture_overlays": []
       },
       "report": {
         "status": "pass",
@@ -1404,16 +1406,8 @@
             ]
           }
         ],
-        "shading": {
-          "angle_deg": 30.0,
-          "welded_vertices_removed": 0,
-          "custom_normals_cleared": [
-            "tripo_node_3b290be3-59a9-423a-9598-d746d"
-          ],
-          "welded": false
-        },
         "rigid_rebind": {
-          "method": "each disconnected part at weight 1.0 on the bone whose rest segment is nearest its center (candidates: bones that carried weight)",
+          "method": "each disconnected part at weight 1.0 on the bone whose joint span (head to child joint) is nearest its center (candidates: bones that carried weight)",
           "parts": [
             {
               "mesh": "tripo_node_3b290be3-59a9-423a-9598-d746d",
@@ -1566,8 +1560,8 @@
                 0.012,
                 1.03
               ],
-              "bone": "mixamorig:Hips",
-              "share_before": 0.1
+              "bone": "mixamorig:Spine",
+              "share_before": 0.2
             },
             {
               "mesh": "tripo_node_3b290be3-59a9-423a-9598-d746d",
@@ -1720,8 +1714,8 @@
                 -0.155,
                 1.03
               ],
-              "bone": "mixamorig:Hips",
-              "share_before": 0.43
+              "bone": "mixamorig:Spine",
+              "share_before": 0.44
             },
             {
               "mesh": "tripo_node_3b290be3-59a9-423a-9598-d746d",
@@ -1764,8 +1758,8 @@
                 -0.031,
                 0.487
               ],
-              "bone": "mixamorig:LeftUpLeg",
-              "share_before": 0.29
+              "bone": "mixamorig:LeftLeg",
+              "share_before": 0.71
             },
             {
               "mesh": "tripo_node_3b290be3-59a9-423a-9598-d746d",
@@ -1797,15 +1791,23 @@
                 -0.162,
                 1.03
               ],
-              "bone": "mixamorig:Hips",
-              "share_before": 0.42
+              "bone": "mixamorig:Spine",
+              "share_before": 0.43
             }
           ]
+        },
+        "shading": {
+          "angle_deg": 30.0,
+          "welded_vertices_removed": 4861,
+          "custom_normals_cleared": [
+            "tripo_node_3b290be3-59a9-423a-9598-d746d"
+          ],
+          "welded": "same_weights"
         },
         "triangle_count": 5046,
         "triangle_budget": 5500,
         "vertex_metrics": {
-          "split_at_seams": 7441,
+          "split_at_seams": 2580,
           "welded": 2580,
           "note": "metrics only; the budget is in triangles"
         },
@@ -1825,8 +1827,8 @@
       }
     },
     "validate": {
-      "status": "failed",
-      "timestamp": "2026-09-28T02:07:02+00:00",
+      "status": "ok",
+      "timestamp": "2026-09-28T02:32:14+00:00",
       "inputs": [
         {
           "path": "assets/briefs/barrow_levy.yaml",
@@ -1834,7 +1836,7 @@
         },
         {
           "path": "assets/meshes/barrow_levy.glb",
-          "sha256": "11226bd2e2fde86cfadc888b11a1737995243d22c40261b5a53a72642870fbc4"
+          "sha256": "7869032a3bf8af8412b7b80c2694863e9e55fbf8de9a0b5561a912c83742e422"
         },
         {
           "path": "scripts/godot_validate.gd",
@@ -1846,33 +1848,33 @@
         },
         {
           "path": "data/rigs/barrow_levy_sockets.tres",
-          "sha256": "e74298c00fab59368bb0992a7852d9ebad7bcbf073d2c00b0608c29a183bdbb7"
+          "sha256": "4790aef3a993bf7de5aad512e56037ebba70a52ddbe9e86a865f744b539d48bc"
         }
       ],
       "outputs": [
         {
           "path": "assets/manifests/barrow_levy/front.png",
-          "sha256": "1a86ab209b6c84d0e7283c2074c2dbbda52dbd8e57bfea40e60753b016930e1d"
+          "sha256": "d26bd797ba4bd20a86e15d6358af90893297050b67c039c6ca21bc7f6e902b4f"
         },
         {
           "path": "assets/manifests/barrow_levy/right.png",
-          "sha256": "bb7e1fb4fc7c967aa82ff6b5dce0e9add83fe30d18c22efeed757711b4752d6a"
+          "sha256": "929eb58a54476ed9d2c39144c0d9433ee6bdf611e713beba81652bbc453c659f"
         },
         {
           "path": "assets/manifests/barrow_levy/back.png",
-          "sha256": "8eed50ce4e9cb761b81845c7cc77aef0e49ade0e9016a21c36e83fc6692ec097"
+          "sha256": "bf7caa38d34d946f2b8d35c5a0c44f4f344fb9b94018a3e6cc24e9fb007b33c2"
         },
         {
           "path": "assets/manifests/barrow_levy/top.png",
-          "sha256": "605a4f7f46ccf5131b27e5f76e644d39a500ec7e1f7b636cfe70aec58eae53b6"
+          "sha256": "ffe00c735e51c263021ca33a1571483fe69b21f496ae7c9b861640ed95db3a37"
         },
         {
           "path": "assets/manifests/barrow_levy/clay_front.png",
-          "sha256": "411f6b8e48f9f023084d224240ec28e7a6f3aadfc81950884d1313f42801b592"
+          "sha256": "9e45d031536080e08b83f185e5a2b4e7da27f1373794388b160a1c3c2684cd5a"
         },
         {
           "path": "assets/manifests/barrow_levy/wireframe_front.png",
-          "sha256": "42eb341a2e86b6ab614b8a2d3cea0f766230af2acf2d1e30994e019f9c10f332"
+          "sha256": "4f03ee8257400f2051f557e0da0aa22c2b5040460e73ae0c97767df74153ee73"
         }
       ],
       "tool_versions": {
@@ -1881,7 +1883,7 @@
         "godot": "4.6.1.stable.official.14d19694e",
         "tripo": "0.5.1"
       },
-      "message": "socket 'hand_l' maps to bone 'hand.L_09', which this rig doesn't have; socket 'hand_r' maps to bone 'hand.R_013', which this rig doesn't have",
+      "message": "all checks passed",
       "actual_cost_credits": 0,
       "params": {
         "asset_id": "barrow_levy",
@@ -1908,6 +1910,7 @@
         "exclude_objects": null,
         "tip_end": null,
         "rigid_parts": true,
+        "skirt_reweight": null,
         "blender_triangle_count": 5046
       },
       "report": {
@@ -1928,10 +1931,7 @@
           ],
           "present": []
         },
-        "errors": [
-          "socket 'hand_l' maps to bone 'hand.L_09', which this rig doesn't have",
-          "socket 'hand_r' maps to bone 'hand.R_013', which this rig doesn't have"
-        ],
+        "errors": [],
         "godot_version": "4.6.1-stable (official)",
         "import_method": "GLTFDocument (runtime); editor import settings such as a BoneMap don't apply",
         "materials": [
@@ -2013,19 +2013,19 @@
           "skeleton_path": "Armature/Skeleton3D",
           "sockets": {
             "hand_l": {
-              "bone": "hand.L_09",
-              "found": false
+              "bone": "mixamorig_LeftHand",
+              "found": true
             },
             "hand_r": {
-              "bone": "hand.R_013",
-              "found": false
+              "bone": "mixamorig_RightHand",
+              "found": true
             }
           },
           "unmapped_bones": [
             "Root"
           ]
         },
-        "status": "fail",
+        "status": "pass",
         "textures": {
           "count": 1,
           "max_allowed": 256,
@@ -2042,7 +2042,7 @@
           "count": 5046
         },
         "vertex_metrics": {
-          "gpu_count": 8137,
+          "gpu_count": 8117,
           "note": "metrics only; the budget is in triangles"
         },
         "warnings": [
@@ -2225,7 +2225,7 @@
     "sha256": "cc5d3c68aa78e5aa2f8def1a6437af599d1a00d9d901bbe9e036a5193d6dc203"
   },
   "total_cost_credits": 155,
-  "updated_at": "2026-09-28T02:07:02+00:00",
+  "updated_at": "2026-09-28T02:32:14+00:00",
   "concept_approval": {
     "attempt": "concept-3",
     "image": {
