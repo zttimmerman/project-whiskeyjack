@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://dwaci7nqyra4a" path="res://scripts/combat/HurtboxComponent.gd" id="3_hurtbox"]
 [ext_resource type="Script" uid="uid://hitboxcmp001" path="res://scripts/combat/HitboxComponent.gd" id="4_hitbox"]
 [ext_resource type="AudioStream" path="res://assets/audio/sfx_impact.ogg" id="5_impact"]
-[ext_resource type="PackedScene" path="res://assets/meshes/archer_enemy.glb" id="6_model"]
+[ext_resource type="PackedScene" path="res://assets/meshes/barrow_levy.glb" id="6_model"]
 [ext_resource type="Resource" path="res://data/rigs/barrow_levy_sockets.tres" id="20_sockets"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]

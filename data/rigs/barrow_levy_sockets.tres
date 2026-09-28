@@ -4,4 +4,4 @@
 
 [resource]
 script = ExtResource("1_socketmap")
-bones = {"hand_l": "hand.L_09", "hand_r": "hand.R_013"}
+bones = {"hand_l": "mixamorig_LeftHand", "hand_r": "mixamorig_RightHand"}
