@@ -286,7 +286,7 @@ Base meshes should be **AI-generated** whenever possible, then brought within th
 Every generated or sourced mesh goes through `python3 scripts/pipeline.py <asset-id> --stage clean` (headless Blender, `scripts/blender_cleanup.py`) before it lands in `assets/meshes/`. The asset-pipeline skill describes what it does:
 1. **Scale, pivot, facing:** to the brief's target size, with the base or center at the origin, and characters facing −Y
 2. **Budget:** asserted, never fixed by decimation. Over budget fails loudly; regenerate at the brief's `face_limit`
-3. **Albedo only:** the material is rebuilt as base color (plus cutout alpha); normal, metallic/roughness, occlusion, emissive and specular maps are dropped; the texture is downscaled to the brief's size and shifted toward the brief's palette (Tripo's texture pass desaturates)
+3. **Albedo only:** the material is rebuilt as base color (plus cutout alpha); normal, metallic/roughness, occlusion, emissive and specular maps are dropped; the texture is downscaled to the brief's size and its color corrected toward the approved concept (hue and saturation fully, lightness lifted only; the palette when there's no concept), since Tripo's delight pass desaturates and darkens
 4. **Flat shading:** imported smooth normals are cleared and every edge sharper than 30° is flat-shaded
 5. **Do NOT attempt fine mesh surgery** (removing baked-in weapons, rebuilding hands, fixing faces) via MCP scripting — it burns tokens and damages the mesh. Regenerate with a better prompt instead, or fix manually in Blender's GUI
 

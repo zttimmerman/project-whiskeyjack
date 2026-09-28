@@ -10,7 +10,8 @@ Imports the GLB and then:
   (Tripo exports face +X by default) cross-checked against the geometry (arm span, feet);
 - rebuilds every material as albedo-only (base color, plus alpha if used), stripping
   normal/roughness/metallic/emission maps and baking non-image albedo; roughness 1, specular 0;
-- downscales the albedo to texture_size, then shifts it toward the brief's palette (palette_correct);
+- downscales the albedo to texture_size, then shifts it back toward the approved concept's colors
+  (concept_correct), or toward the brief's palette when the asset has no concept (palette_correct);
 - replaces imported smooth normals with flat shading above SMOOTH_ANGLE_DEG (welding UV-seam
   splits first on unrigged meshes, so the angle test sees real edges);
 - aligns props along their principal axis and fails if the residual tilt exceeds PROP_AXIS_TOLERANCE_DEG;
@@ -38,6 +39,9 @@ PROP_AXIS_TOLERANCE_DEG = 2.0
 TIP_SLICE = 0.12        # fraction of the length measured at each end
 TIP_AMBIGUOUS_RATIO = 0.8  # thin/thick cross-section ratio above which the tip can't be told
 STRIP_NOTE = "normal, roughness, metallic, specular, emission and occlusion inputs are not carried over"
+CONCEPT_CLUSTERS = 8        # main colors taken from the approved concept
+CONCEPT_BG_DE = 10.0        # concept pixels this close to the border color are background
+CONCEPT_KMEANS_ITERS = 20
 PALETTE_MIN_SHARE = 0.03   # a palette color must cover this much of the texture to be corrected
 PALETTE_MAX_DRIFT = 30.0   # CIE76 dE: a group further than this from its target is a different material
 SMOOTH_ANGLE_DEG = 30.0  # art bible: flat-shade every edge sharper than this; smooth-shaded low poly reads as inflated plastic
@@ -452,8 +456,9 @@ def palette_correct(img, targets, report):
     is corrected only if it covers at least PALETTE_MIN_SHARE of the texture (the color is really
     there) and its median is within PALETTE_MAX_DRIFT of the target (it's that color drifted, not a
     different material such as peat staining). Each corrected group moves by target minus its median,
-    which keeps its internal variation (stains, wear). Texels blend the offsets by inverse distance,
-    so there are no seams at group borders."""
+    which keeps its internal variation (stains, wear). Texels blend the offsets by inverse distance
+    to each group's source median, so there are no seams at group borders, and the shift fades to zero
+    for texels more than PALETTE_MAX_DRIFT from every corrected group (colors not in the palette)."""
     w, h = img.size
     ch = img.channels
     px = np.array(img.pixels[:], dtype=np.float64).reshape(-1, ch)
@@ -463,6 +468,7 @@ def palette_correct(img, targets, report):
     dist = np.linalg.norm(lab[:, None, :] - tgt[None, :, :], axis=2)
     nearest = dist.argmin(axis=1)
     offsets = np.zeros_like(tgt)
+    medians = {}
     groups = []
     for k, name in enumerate(names):
         members = lab[nearest == k]
@@ -480,11 +486,23 @@ def palette_correct(img, targets, report):
                 entry["reason"] = f"median is {drift:.0f} dE from the target (> {PALETTE_MAX_DRIFT:.0f}); a different material"
             else:
                 offsets[k] = tgt[k] - median
+                # Same policy as concept_correct: hue and saturation fully, lightness only lifted
+                offsets[k][0] = max(offsets[k][0], 0.0)
+                medians[k] = median
                 entry["applied"] = True
         groups.append(entry)
-    weights = 1.0 / (dist + 1.0) ** 4
+    applied = sorted(medians)
+    if not applied:
+        report.setdefault("palette_correction", []).append({"image": img.name, "size": [w, h], "groups": groups})
+        return
+    # Distances to each corrected group's SOURCE median decide how much a texel moves: full within half
+    # of PALETTE_MAX_DRIFT, fading to nothing at PALETTE_MAX_DRIFT. Colors outside the brief's palette
+    # (skin, hair, trousers) sit far from every group and stay put instead of inheriting a blend of shifts.
+    dsrc = np.linalg.norm(lab[:, None, :] - np.array([medians[k] for k in applied])[None, :, :], axis=2)
+    weights = 1.0 / (dsrc + 1.0) ** 4
     weights /= weights.sum(axis=1, keepdims=True)
-    lab_out = lab + weights @ offsets
+    falloff = np.clip((PALETTE_MAX_DRIFT - dsrc.min(axis=1)) / (PALETTE_MAX_DRIFT / 2), 0.0, 1.0)
+    lab_out = lab + falloff[:, None] * (weights @ offsets[applied])
     px[:, :3] = _lab_to_srgb(lab_out)
     img.pixels[:] = px.ravel().tolist()
     img.update()
@@ -497,7 +515,97 @@ def palette_correct(img, targets, report):
     report.setdefault("palette_correction", []).append({"image": img.name, "size": [w, h], "groups": groups})
 
 
-def rebuild_materials(meshes, size, report, targets):
+def _kmeans(lab, init, iters=CONCEPT_KMEANS_ITERS):
+    """Plain Lloyd iterations from fixed starting centers: deterministic, and cluster i stays cluster i."""
+    centers = init.copy()
+    for _ in range(iters):
+        near = np.linalg.norm(lab[:, None, :] - centers[None, :, :], axis=2).argmin(axis=1)
+        for k in range(len(centers)):
+            if np.any(near == k):
+                centers[k] = lab[near == k].mean(axis=0)
+    near = np.linalg.norm(lab[:, None, :] - centers[None, :, :], axis=2).argmin(axis=1)
+    return centers, near
+
+
+def concept_colors(path):
+    """The approved concept's CONCEPT_CLUSTERS main colors (CIE Lab), background removed. The
+    background is the median of a thin border frame; pixels within CONCEPT_BG_DE of it are dropped.
+    Seeding is farthest-point from the median color, so the result is deterministic."""
+    ref = bpy.data.images.load(path)
+    w, h = ref.size
+    px = np.array(ref.pixels[:], dtype=np.float64).reshape(h, w, ref.channels)[:, :, :3]
+    bpy.data.images.remove(ref)
+    b = max(4, min(w, h) // 50)
+    border = np.concatenate([px[:b].reshape(-1, 3), px[-b:].reshape(-1, 3), px[:, :b].reshape(-1, 3), px[:, -b:].reshape(-1, 3)])
+    bg = _srgb_to_lab(np.median(border, axis=0)[None])[0]
+    lab = _srgb_to_lab(px[::4, ::4].reshape(-1, 3))
+    lab = lab[np.linalg.norm(lab - bg, axis=1) > CONCEPT_BG_DE]
+    seeds = [np.median(lab, axis=0)]
+    for _ in range(CONCEPT_CLUSTERS - 1):
+        d = np.min(np.linalg.norm(lab[:, None, :] - np.array(seeds)[None, :, :], axis=2), axis=1)
+        seeds.append(lab[d.argmax()])
+    centers, near = _kmeans(lab, np.array(seeds))
+    shares = np.bincount(near, minlength=len(centers)) / len(near)
+    return centers, shares, _hex(_lab_to_srgb(bg[None])[0])
+
+
+def concept_correct(img, ref_path, report):
+    """Shifts the albedo's hue and saturation back toward the APPROVED CONCEPT's colors, and lifts
+    lightness (never lowers it) to the matched concept tone: the concept is the design of
+    record, and Tripo's texture pass drifts (desaturates) away from it. The art bible's palette
+    governs briefs (what we ask for); the approved concept governs correction (what we got).
+
+    Texture clusters start at the concept's colors and move to where each landed in the texture,
+    so cluster i of the texture is concept color i drifted (no nearest-color guessing between
+    similar darks). Each cluster shifts by (concept color - its texture center). A cluster that
+    moved more than PALETTE_MAX_DRIFT, or holds under PALETTE_MIN_SHARE of the texture, didn't
+    find its color and is left alone. Texels blend the shifts by inverse distance to the texture
+    centers, fading to nothing beyond PALETTE_MAX_DRIFT (colors the concept doesn't have)."""
+    concept, concept_share, bg = concept_colors(ref_path)
+    w, h = img.size
+    px = np.array(img.pixels[:], dtype=np.float64).reshape(-1, img.channels)
+    lab = _srgb_to_lab(px[:, :3])
+    centers, near = _kmeans(lab, concept)
+    share = np.bincount(near, minlength=len(centers)) / len(near)
+    moved = np.linalg.norm(centers - concept, axis=1)
+    use = (share >= PALETTE_MIN_SHARE) & (moved <= PALETTE_MAX_DRIFT)
+    clusters = []
+    for k in range(len(centers)):
+        clusters.append({"concept": _hex(_lab_to_srgb(concept[k][None])[0]), "concept_share": round(float(concept_share[k]), 3),
+                         "texture_before": _hex(_lab_to_srgb(centers[k][None])[0]), "texture_share": round(float(share[k]), 3),
+                         "delta_e_before": round(float(moved[k]), 1), "applied": bool(use[k])})
+        if not use[k]:
+            clusters[-1]["reason"] = (f"covers {share[k]:.1%} of the texture" if share[k] < PALETTE_MIN_SHARE
+                                      else f"moved {moved[k]:.0f} dE (> {PALETTE_MAX_DRIFT:.0f}); didn't find its color")
+    if use.any():
+        src = centers[use]
+        d = np.linalg.norm(lab[:, None, :] - src[None, :, :], axis=2)
+        weights = 1.0 / (d + 1.0) ** 4
+        weights /= weights.sum(axis=1, keepdims=True)
+        falloff = np.clip((PALETTE_MAX_DRIFT - d.min(axis=1)) / (PALETTE_MAX_DRIFT / 2), 0.0, 1.0)
+        # Tripo's delight pass desaturates AND darkens. Hue and saturation (a, b) are restored fully.
+        # Lightness is only lifted, up to the matched concept cluster, never lowered. Texture clusters
+        # land on the concept's darker shaded facets (the concept is shaded per face), so lightness
+        # can never exceed a tone the concept actually contained: assets read slightly darker than
+        # the concept's lit facets by design.
+        shift = concept[use] - src
+        shift[:, 0] = np.maximum(shift[:, 0], 0.0)
+        lab = lab + falloff[:, None] * (weights @ shift)
+        px[:, :3] = _lab_to_srgb(lab)
+        img.pixels[:] = px.ravel().tolist()
+        img.update()
+        after = _srgb_to_lab(px[:, :3])
+        for k in np.flatnonzero(use):
+            m = np.median(after[near == k], axis=0)
+            clusters[k].update(texture_after=_hex(_lab_to_srgb(m[None])[0]),
+                               delta_ab_after=round(float(np.linalg.norm(concept[k][1:] - m[1:])), 1),
+                               lightness=[round(float(centers[k][0]), 1), round(float(m[0]), 1), round(float(concept[k][0]), 1)],
+                               delta_ab_before=round(float(np.linalg.norm(concept[k][1:] - centers[k][1:])), 1))
+    report.setdefault("color_correction", []).append({"image": img.name, "size": [w, h], "method": "approved concept (hue and saturation restored; lightness lifted to the matched concept tone, never lowered)",
+                                                       "reference": ref_path, "concept_background": bg, "clusters": clusters})
+
+
+def rebuild_materials(meshes, size, report, targets, reference=None):
     by_mat = {}
     for o in meshes:
         for slot in o.material_slots:
@@ -566,9 +674,13 @@ def rebuild_materials(meshes, size, report, targets):
         if longest > size:
             w, h = max(1, round(before[0] * size / longest)), max(1, round(before[1] * size / longest))
             img.scale(w, h)
-        if targets:
+        # The approved concept is the reference when there is one; assets generated without a concept
+        # (text-to-3D, like the blade) fall back to the brief's palette.
+        if reference:
+            concept_correct(img, reference, report)
+        elif targets:
             palette_correct(img, targets, report)
-        if longest > size or targets:
+        if longest > size or targets or reference:
             # Pack only modified images: pack() on an already-packed, unmodified image unpacks it
             # and leaves the exporter with no image data.
             img.pack()
@@ -726,7 +838,7 @@ def run(args, params, report):
     report["transform"] = xf
     report["mesh_health"] = mesh_health(meshes)
 
-    rebuild_materials(meshes, params["texture_size"], report, params.get("palette_targets"))
+    rebuild_materials(meshes, params["texture_size"], report, params.get("palette_targets"), params.get("reference_image"))
     flat_shade_by_angle(meshes, weld=not rigged, report=report)
     if params.get("rigid_parts"):
         if not rigged:

@@ -20,7 +20,12 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 - **Rigid rebind for rigid-part characters** (brief `rigid_parts: true`): each disconnected part goes at weight 1.0 to its nearest weighted bone. This is an explicit exception to CLAUDE.md's no-weight-scripting rule, because it's a deterministic algorithm rather than hand-tuning. It never applies to continuous-skin characters.
 - **Quaternius stays the animation source; Tripo's rig v1.0 presets (90+) are a fallback only.** The reasons are the same as for Quaternius over Tripo retarget: licensing, and cost per character.
 - **Characters: raw download → Tripo auto-rig → clean.** Tripo's rigger reads models in Tripo's own +X orientation, and the clean stage rotates characters to −Y, so the cleaned Barrow-levy rig-checked as unriggable while the raw download was a riggable biped (both checks free).
-- **Cleanup corrects the albedo toward the palette.** Tripo's texture pass desaturates (bone #A89C86 against Old Bone #CCB484, likely its `delight` step). The correction is deterministic and driven by the brief's palette subset (art bible → Shading and palette correction).
+- **Cleanup corrects the albedo toward the approved concept, not the palette** (art bible → Color correction). Tripo's delight pass both desaturates and darkens. Hue and saturation are restored fully; lightness is lifted only, to the matched concept tone, which lands on the concept's shaded facets, so it never exceeds a tone the concept contained. Assets read slightly darker than the concept's lit facets by design.
+  - **Why not the palette:** nearest-palette grouping put every dark, low-saturation color on the player (a navy tunic, a purple-brown vest) under Blackened Iron.
+  - **Why not full lightness:** the concept's shaded facets contaminate lightness anchoring, and the Barrow-levy moved 9.7 ΔE darker.
+  - **Why not hue and saturation only:** it left Tripo's darkening, 3.5 lightness below even the shaded tone.
+  - **Rules:** concept-less assets use the palette under the same rule; readability problems are fixed level-side (ambient and torch energy), never with per-asset texture brightening.
+  - **Measured effect:** 7.5 ΔE median on the Barrow-levy; 5.9 ΔE on the blade against its old palette correction.
 - **Specular 0 is set at import in Godot**, by a glTF import extension (`addons/stylized_materials`), because Godot 4.6 ignores glTF's own specular. It was chosen over a per-GLB import script, which every new asset's fresh `.import` would silently miss, and over a shared enemy material, which covers only enemies and would have to override per-asset albedo.
 - **The art bible is the only source of budget numbers.** Briefs copy them; skills and scripts never hardcode them.
 

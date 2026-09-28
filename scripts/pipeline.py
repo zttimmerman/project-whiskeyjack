@@ -744,14 +744,16 @@ def stage_clean(brief, m, args):
     if out.resolve() == model.resolve():
         raise PipelineError(f"clean would overwrite its own input {rel(model)}; give the asset a different id")
     task_json = model.parent / "task.json"
-    inputs = [brief["_path"], model, BLENDER_SCRIPT] + ([task_json] if task_json.exists() else [])
+    # The approved concept is the color reference (art bible: the concept governs correction)
+    reference, _ = approved_concept(brief, m)
+    inputs = [brief["_path"], model, BLENDER_SCRIPT] + ([task_json] if task_json.exists() else []) + ([reference] if reference else [])
     if not force and up_to_date(m["stages"].get("clean"), inputs, [out]):
         print("clean: up to date")
         return EXIT_OK
     wd = work_dir(aid)
     params_path, report_path = wd / "clean-params.json", wd / "clean-report.json"
     params = {**stage_params(brief), "source_forward": source_forward(task_json),
-              "palette_targets": palette_targets(brief)}
+              "palette_targets": palette_targets(brief), "reference_image": str(reference) if reference else None}
     if not dry_run:
         wd.mkdir(parents=True, exist_ok=True)
         params_path.write_text(json.dumps(params, indent=2))
