@@ -10,8 +10,8 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
   - Barrow-levy, player and Levy Bow generated; Quaternius animation retargeted onto all three characters.
   - **Asset judge** (`scripts/judge.py` + `.claude/agents/asset-judge.md`): a packet per stage, a fresh-context verdict, one auto-refine per stage, a verdict log. **Motion review** (`scripts/review/motion_review.tscn`): strips, onion skins, plots, metrics. Replays in `assets/manifests/judge_replays/`.
 - **Waiting on the user (escalated by the judge):**
-  1. **Levy death foot sweep.** `in_place` moved `Death01`'s 0.5 m hip travel into the feet (p90 1.1–1.2 m/s while planted). The judge's one auto-refine, trimming the first 0.15 s, didn't fix it and was reverted. Options: a clip that collapses in place, partial root removal (≤ 0.15 m), or exempting death clips from the foot-slide limit.
-  2. **Player hem stretch.** The tunic's front slit and the hem between the legs stretch 4.4× (idle) and 7.7× (run), below the knee where `skirt_reweight` stops, and they carry shin weight. They're mostly hidden under the tunic. Fix the weights (extend the reweight to the hem), or accept it and record it.
+  1. **Player knee-crease stretch.** The skirt reweight now blends over 2.5 cm inside the trouser radius, which removed the hard seam at the tunic slit. Worst stretch per clip: run 7.7 → 4.6, dodge roll 18.8 → 3.9, idle 4.4 → 3.0. What's left (2.7–5.6×) sits at the knee creases and the inner knee under the tunic, and it isn't visible at strip scale. The 99th percentile didn't move (about 0.68 in the run). The judge still escalates the run on the 1.0 stretch limit, which can't tell a normal low-poly knee crease from a tear. Decide: accept the knee creases (and scope the stretch check to non-joint edges or raise its limit), or keep working the weights.
+- **Resolved this session:** the levy death. Keeping part of `Death01`'s travel can't meet both limits (keeping 30% still slid 0.80 m/s), so death clips are exempt from the foot-slide limit and the shipped fully pinned clip passes the judge.
 - **Next:**
   1. The escalations above.
   2. Playtest the slice in motion.
@@ -86,6 +86,7 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 - **`in_place` moves travel, it doesn't remove it:** pinning `Death01`'s hips makes the feet sweep along the floor at 1–3 m/s during the fall. The motion review's foot-slide plot shows it; the onion skin alone doesn't.
 - **The judge can misdiagnose a cause** (it blamed an "opening lurch" and trimmed 0.15 s; the sweep stayed). One auto-refine, then escalation, is the right budget: the second verdict escalated with the correct diagnosis.
 - **Agent definitions load at session start;** a judge added mid-session runs as a general-purpose agent told to follow `.claude/agents/asset-judge.md` with Read only.
+- **The face question half-worked:** the judge now reports the player's raw mouth as "faint, a thin line", but it still didn't raise that as a finding, even though the question says it should. Treat mouths and eyes as a known blind spot; check faces yourself on new characters.
 - **Evidence size:** the replays commit 12 MB of packet images (scratch `work/` dirs are ignored). Motion strips are the largest; watch it as the log grows.
 
 ## Observed Tripo costs

@@ -361,11 +361,11 @@
     },
     "clean": {
       "status": "ok",
-      "timestamp": "2026-09-28T02:30:41+00:00",
+      "timestamp": "2026-09-28T21:47:07+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player.yaml",
-          "sha256": "bd9d565951642359fa071d71282e647f22e7a839d54c629053c34d26377adfa9"
+          "sha256": "ee9664699c8771285f584c5351ad7868007de99a1ab2bf7385fca6d4ebcc849b"
         },
         {
           "path": ".tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/model.glb",
@@ -373,7 +373,7 @@
         },
         {
           "path": "scripts/blender_cleanup.py",
-          "sha256": "41f70e42f2d0f10c0cc372afbd1ab7f8e5391e069387a1a69caecf8780057fac"
+          "sha256": "9eefccd91bc8f3e81c819903a6d2838716a4ccc0e95d3f681147dfa2b65fb0fe"
         },
         {
           "path": ".tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/task.json",
@@ -395,7 +395,7 @@
       "outputs": [
         {
           "path": "assets/meshes/player.glb",
-          "sha256": "9a3e7b28de7be3e945296d51c781b8f17f1e09a90274532f17ce6e1a777ebdab"
+          "sha256": "acbd75c9f85b278841e0cd5e716ce73c3728b6453598ca1592a3f4fd30001a14"
         }
       ],
       "tool_versions": {
@@ -421,6 +421,7 @@
           "Tarnished Gold"
         ],
         "socket_map": null,
+        "bone_map": "data/rigs/mixamorig_bone_map.tres",
         "animations": [
           "idle",
           "run",
@@ -856,10 +857,11 @@
         ],
         "skirt_reweight": {
           "vertices": 351,
+          "blended_vertices": 107,
           "waist_z": 0.805,
           "hem_z": 0.406,
           "knee_z": 0.329,
-          "method": "vertices between knee and waist, further than 0.085 m from both thigh bones: Hips at the waist grading linearly to the thighs at the hem, split by inverse squared distance; no shin weight"
+          "method": "vertices between knee and waist, further than 0.085 m from both thigh bones: Hips at the waist grading linearly to the thighs at the hem, split by inverse squared distance; no shin weight. Within 0.025 m inside that radius, blended linearly from the vertex's own weights"
         },
         "shading": {
           "angle_deg": 30.0,
@@ -893,7 +895,7 @@
     },
     "validate": {
       "status": "ok",
-      "timestamp": "2026-09-28T03:36:22+00:00",
+      "timestamp": "2026-09-28T21:48:16+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player.yaml",
@@ -901,7 +903,7 @@
         },
         {
           "path": "assets/meshes/player.glb",
-          "sha256": "9a3e7b28de7be3e945296d51c781b8f17f1e09a90274532f17ce6e1a777ebdab"
+          "sha256": "acbd75c9f85b278841e0cd5e716ce73c3728b6453598ca1592a3f4fd30001a14"
         },
         {
           "path": "scripts/godot_validate.gd",
@@ -909,7 +911,7 @@
         },
         {
           "path": "scripts/blender_views.py",
-          "sha256": "debc0bfee9633437a28f041585e1422ec94aa009a068e18c0826528ed36d9d85"
+          "sha256": "9ca1b243e3bb4d5ab1247b718cd1a0e1648e89e2683dacf2a71d3eede55a6388"
         },
         {
           "path": "data/rigs/mixamorig_bone_map.tres",
@@ -919,27 +921,27 @@
       "outputs": [
         {
           "path": "assets/manifests/player/front.png",
-          "sha256": "f22ac8ce1f63fb916a5fc1b412e6acf291be3fb5e6d26d6fe95c921c4099458f"
+          "sha256": "0d9dcae8109c5d692bafc5358ccb674363aa00c4f976ed4c2d5bc86f0d2d1335"
         },
         {
           "path": "assets/manifests/player/right.png",
-          "sha256": "d86e7716c99aa7db171b9d4b5d58791458f37b1fd1c476e1a5beea12f4442ca2"
+          "sha256": "28c85e3b76af356734658d9dd565f435c1c1109590e6962a56380874abceb74f"
         },
         {
           "path": "assets/manifests/player/back.png",
-          "sha256": "99008358d9eb54f023adc5acdbc10019f8208c5e1df8958a13ae7cfa4e5ba49b"
+          "sha256": "dfee172f02f7f7f8cc3453ec9ec63d89621d5277480cf4cdeb800e70da7b9716"
         },
         {
           "path": "assets/manifests/player/top.png",
-          "sha256": "718ae66bb4c31f3313c7e35098626e45a1ff8ee6fb7bb46205817c9f3a84b052"
+          "sha256": "b0725daf8dc5c4a76ca0c8c9b797336bf1775cc8699c77fa3a0cca06e024534e"
         },
         {
           "path": "assets/manifests/player/clay_front.png",
-          "sha256": "842a871f09102636a8eecfb07c15351d2d5ed3b4d23124efd1e285633c12a24b"
+          "sha256": "eda74a7ccce3732b9c97e6421117f21ce6ffadad8c19cf39d9e0e35b7c595043"
         },
         {
           "path": "assets/manifests/player/wireframe_front.png",
-          "sha256": "f34f22306bec3b1e07a62d2627f9e15576b620a7ff1c428dcd8acc26d1e6fed5"
+          "sha256": "fe3c3bf771bc03deb75216e5124fc2aa54f4dccb56901d04cb6b8c7ee6d9dae3"
         }
       ],
       "tool_versions": {
@@ -1151,7 +1153,7 @@
     "sha256": "ee9664699c8771285f584c5351ad7868007de99a1ab2bf7385fca6d4ebcc849b"
   },
   "total_cost_credits": 100,
-  "updated_at": "2026-09-28T03:36:22+00:00",
+  "updated_at": "2026-09-28T21:50:11+00:00",
   "concept_approval": {
     "attempt": "concept-1",
     "image": {
@@ -1163,5 +1165,178 @@
     "concept_model": "banana_pro",
     "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A young frontier soldier in a knee-length wool tunic in deep dark teal that flares at the hem, a leather harness in dark reddish-brown with two straps crossing the chest and back, leather boots in dark reddish-brown, spiky dark hair, empty hands, T-pose.",
     "command": "tripo generate text-to-image 'Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A young frontier soldier in a knee-length wool tunic in deep dark teal that flares at the hem, a leather harness in dark reddish-brown with two straps crossing the chest and back, leather boots in dark reddish-brown, spiky dark hair, empty hands, T-pose.' --model banana_pro --param template=t_pose --param aspect_ratio=3:4 -o .tripo-out/player/concept-1 --no-open --json"
-  }
+  },
+  "judgments": [
+    {
+      "kind": "verdict",
+      "stage": "motion:run",
+      "recorded_at": "2026-09-28T21:50:11+00:00",
+      "packet": "assets/manifests/player/judge/motion-run-1/packet.json",
+      "packet_sha256": "5eaa27cb3e465ab9742d49f7c89bc63e3fd49b5c320b645daed8ff0521ff110a",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "run",
+        "source": "res://data/animations/player_library.tres:run",
+        "model": "res://assets/meshes/player.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player/motion/run_metrics.json",
+          "sha256": "25aa63e5a3f77f8532df4f0c6d33a7ab2297e401151d5524397993940db090f8"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/player/judge/motion-run-1/01_frame_strip.png",
+          "sha256": "b18217a7bce4960db90f9d47b1f618eea975a5d24ceb8e4a7efd3233e2eff0f1",
+          "source": ".tripo-out/player/motion/run_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/player/judge/motion-run-1/02_onion_skin.png",
+          "sha256": "54de39a21bac8b7664bb3c70b6c22da7527791778ac68530648a34e98a4abdaf",
+          "source": ".tripo-out/player/motion/run_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/player/judge/motion-run-1/03_plots.png",
+          "sha256": "afebd95a6b85f9280529c72b7e3ea309de5286cb03bbb5f8204a18927bd42668",
+          "source": ".tripo-out/player/motion/run_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/player/judge/motion-run-1/04_stretch_detail.png",
+          "sha256": "9fa9f2a45447ad63c9e389e946e302151924b038ef71eb9da37455e8fd73b08a",
+          "source": ".tripo-out/player/motion/run_stretch.png"
+        }
+      ],
+      "images_unseen": [],
+      "assertions_failed": [
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "Edges stretch up to 5.56x their bind length at t=0.23 s. The worst edges are on LeftUpperLeg, where the inner tunic hem meets the trouser and boot top. Front view: two clusters, one at the inside of the right-side knee and boot top, one lower at the left shin where the hem joins the trouser. Back view: the same seam, one cluster mid-hem and one at the boot top. The stretch stays high (about 3.5-4.5x) over most of each stride, dropping only near foot contact (about 1.3x at 0.10 s and 0.63 s). So the hem-to-leg edges are being pulled between hem vertices weighted to the Hips and leg vertices that follow the thigh and shin. At strip scale the surface doesn't visibly tear. The tunic between the legs shows a vertical split and crease in the front view, but the red edges are drawn through the mesh, so these may be partly hidden interior edges.",
+          "evidence": "assertion 'skin stretch (edge length vs bind pose)' 4.558 > 1.0; metrics.motion.edge_stretch_worst_bone LeftUpperLeg, p99 0.684; assets/manifests/player/judge/motion-run-1/04_stretch_detail.png; assets/manifests/player/judge/motion-run-1/03_plots.png (bottom-right edge stretch curve)"
+        },
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "The Hips sway sideways (x) by up to 0.033 m and return to 0 by the last frame. This is ordinary run sway and well under the limit, with no drift or fling in either onion-skin view.",
+          "evidence": "assets/manifests/player/judge/motion-run-1/02_onion_skin.png; 03_plots.png top-left; assertion 'root stays in place' 0.033 <= 0.15"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "The one failing assertion, skin stretch, comes from how the skirt is weighted: skirt_reweight grades the hem from Hips to the thighs, and the stretch sits on the hem-to-leg seam. It isn't from the clip's build options, so no library_change (in_place, a trim or another clip) would fix it, and reroll and refine_concept don't apply to a motion stage. At strip scale the images don't show a visible tear, and the worst edges are drawn through the mesh and may be interior. So it's unclear whether this is a visible defect at gameplay distance or a measurement dominated by hidden seam edges. Someone needs to check the skirt reweight region and its knee/hem boundary in scripts/blender_cleanup.py, look at the knee in a close render during the stride, and decide whether to fix the weights or accept the result.",
+      "summary": "The run clip stays in place and its planted feet hold well within tolerance, but skin stretch fails at 4.56x (limit 1.0) where the tunic hem meets the left leg, and that is a skirt-weighting problem the motion revise actions can't fix.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-09-28T21:50:11+00:00",
+      "packet": "assets/manifests/player/judge/mesh-1/packet.json",
+      "packet_sha256": "5ec51437201d6eb17a2f6ce739cd1efe953a30ff5bdb1f852dbd1b69c76429b3",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/player.glb",
+        "sha256": "acbd75c9f85b278841e0cd5e716ce73c3728b6453598ca1592a3f4fd30001a14",
+        "concept": {
+          "path": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+          "sha256": "e92b55a11a671ace6e50e37e78578afaa6a2e46e7d230da2da61ef368c2e9f98"
+        }
+      },
+      "images": [
+        {
+          "role": "approved_concept",
+          "path": "assets/manifests/player/judge/mesh-1/01_approved_concept.png",
+          "sha256": "c489317c17b7d21da9d8bc493eab7a50cbdb13f7855a9d485539534444ad21a1",
+          "source": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png"
+        },
+        {
+          "role": "front",
+          "path": "assets/manifests/player/judge/mesh-1/02_front.png",
+          "sha256": "0037edc154d8127ad653e867feeea396645d9810f0db2cffaa81661c6e4315d6",
+          "source": "assets/manifests/player/judge/mesh-1/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/player/judge/mesh-1/03_right.png",
+          "sha256": "6edc47a8072eec95b9b7410686e4e688cabc65a1487f7e411fdc0a90de52a319",
+          "source": "assets/manifests/player/judge/mesh-1/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/player/judge/mesh-1/04_back.png",
+          "sha256": "1292dc930e1c996c91a03836e1943b107d1f018c265823bd9cfccef4e047c837",
+          "source": "assets/manifests/player/judge/mesh-1/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/player/judge/mesh-1/05_top.png",
+          "sha256": "3528af2d643af724932de344ab3a379dd19a264bae0607ed8a0588844e47950f",
+          "source": "assets/manifests/player/judge/mesh-1/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/player/judge/mesh-1/06_clay_front.png",
+          "sha256": "e4b141491cffc80c951f76c57daeac063d3785c76228e3c1f868713978a0777d",
+          "source": "assets/manifests/player/judge/mesh-1/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/player/judge/mesh-1/07_wireframe_front.png",
+          "sha256": "e6e65b6ca1576222e048ba8b3472490178b3fb57f486c954025d57f4b42f932b",
+          "source": "assets/manifests/player/judge/mesh-1/work/views/wireframe_front.png"
+        },
+        {
+          "role": "closeup_front",
+          "path": "assets/manifests/player/judge/mesh-1/08_closeup_front.png",
+          "sha256": "3f6d1073302a0dde602121ac32e4dcdbe77613b43d718945c3c2f82da8a17d07",
+          "source": "assets/manifests/player/judge/mesh-1/work/views/closeup_front.png"
+        },
+        {
+          "role": "closeup_back",
+          "path": "assets/manifests/player/judge/mesh-1/09_closeup_back.png",
+          "sha256": "dc9179392a85de0b26d19bb1702ee641a744f4775a3e2fd9c5fbd5f57f4a33a6",
+          "source": "assets/manifests/player/judge/mesh-1/work/views/closeup_back.png"
+        }
+      ],
+      "images_unseen": [],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "malformed",
+          "severity": "minor",
+          "observation": "Thin horizontal stray lines stick out of the silhouette in the wireframe: at belt height on both sides of the waist, and at knee height left of the left boot cuff. They look like degenerate sliver triangles or stray edges. They can't be seen in the shaded or clay views, and they fit the 13 non-manifold edges and 2 open boundary loops in the metrics.",
+          "evidence": "assets/manifests/player/judge/mesh-1/07_wireframe_front.png; assets/manifests/player/judge/mesh-1/06_clay_front.png; metrics.mesh.non_manifold_edges=13, holes_boundary_loops=2"
+        },
+        {
+          "check": "concept_match",
+          "severity": "minor",
+          "observation": "The back of the vest has an extra strap or flap over the right shoulder only, so the plain back panel is slightly lopsided. Close up only; the back still reads as the plain panel with horizontal waist straps that the design note records.",
+          "evidence": "assets/manifests/player/judge/mesh-1/09_closeup_back.png; assets/manifests/player/judge/mesh-1/04_back.png"
+        },
+        {
+          "check": "other",
+          "severity": "minor",
+          "observation": "The mouth is present but soft and smudged compared with the concept's cleaner mouth line, as expected from the painted overlay. It still reads.",
+          "evidence": "assets/manifests/player/judge/mesh-1/08_closeup_front.png; assets/manifests/player/judge/mesh-1/01_approved_concept.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The shipped player mesh matches the approved concept part for part. It is within budget at 4,893 of 5,500 triangles, keeps the concept colors after correction, has a clearly present face and follows the recorded vest and front-only X-strap design change. The only findings are minor.",
+      "next": "proceed to the next stage"
+    }
+  ]
 }

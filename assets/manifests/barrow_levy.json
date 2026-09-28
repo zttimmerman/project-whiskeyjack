@@ -2232,7 +2232,7 @@
     "sha256": "e3c912c2d51344044c0821f976f228a9e696dd91507c20577536912144ece15a"
   },
   "total_cost_credits": 155,
-  "updated_at": "2026-09-28T03:36:20+00:00",
+  "updated_at": "2026-09-28T21:50:04+00:00",
   "concept_approval": {
     "attempt": "concept-3",
     "image": {
@@ -2244,5 +2244,68 @@
     "concept_model": "banana_pro",
     "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. Keep everything exactly as it is except the lower legs and hands: merge each shin into one single solid bone, and join each hand's fingers into one simple mitten shape.",
     "command": "tripo generate image-to-image .tripo-out/barrow_levy/concept-2/tripo-out/tripo-out-barrow-levy-concept-1-8d6f1884/generated_image.png --model banana_pro --prompt 'Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. Keep everything exactly as it is except the lower legs and hands: merge each shin into one single solid bone, and join each hand'\"'\"'s fingers into one simple mitten shape.' --param template=t_pose --param aspect_ratio=3:4 -o .tripo-out/barrow_levy/concept-3 --no-open --json"
-  }
+  },
+  "judgments": [
+    {
+      "kind": "verdict",
+      "stage": "motion:death",
+      "recorded_at": "2026-09-28T21:50:04+00:00",
+      "packet": "assets/manifests/barrow_levy/judge/motion-death-1/packet.json",
+      "packet_sha256": "696c7f1055b9cf3d168f71ffa345a0606b5318aa2a7e32967c20da28d617d23f",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "death",
+        "source": "res://data/animations/levy_frontfile_library.tres:death",
+        "model": "res://assets/meshes/barrow_levy.glb",
+        "metrics_file": {
+          "path": ".tripo-out/barrow_levy/motion/frontfile/death_metrics.json",
+          "sha256": "43a374d26e4ebe75285f7af3b17ef501dceb905d43d0373cd0b2225764d890f5"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/barrow_levy/judge/motion-death-1/01_frame_strip.png",
+          "sha256": "8a91db07f4088bd0ae050a1ccef2f2b8a8cfd8801bc2e2684225e365417606dc",
+          "source": ".tripo-out/barrow_levy/motion/frontfile/death_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/barrow_levy/judge/motion-death-1/02_onion_skin.png",
+          "sha256": "f6690de62d6587482308004d6c60da2ec2d6663f16bd3da0306ccc8dcb0da021",
+          "source": ".tripo-out/barrow_levy/motion/frontfile/death_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/barrow_levy/judge/motion-death-1/03_plots.png",
+          "sha256": "125a9d7b411aedfc13b1f3c51b972caa2e303f263434357dc71a6753b88c28c0",
+          "source": ".tripo-out/barrow_levy/motion/frontfile/death_plots.png"
+        }
+      ],
+      "images_unseen": [],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "The planted feet slide at p90 1.10 m/s (max 1.13) over the 16 contact frames at the start of the clip (0 to about 0.25 s), and both feet shuffle at about 0.9 m/s before they lift. The tolerances report this only for deaths, because the feet kick out while the body collapses onto pinned Hips, so it is not asserted. The largest foot speeds (3.2 to 3.6 m/s around 0.8 to 0.9 s) come after the feet leave the ground, as the legs swing up during the fall.",
+          "evidence": "assets/manifests/barrow_levy/judge/motion-death-1/03_plots.png (ground-relative speed and heights panels); metrics foot_slide_p90_mps, foot_slide_max_mps, contact_frames"
+        },
+        {
+          "check": "pose",
+          "severity": "minor",
+          "observation": "Because the Hips are pinned, the fall pivots around the origin: the legs swing forward and up (about 0.44 m foot height at 1.1 to 1.3 s) and the torso lands behind the origin. In the side onion skin, parts of the final red pose seem to reach slightly below the floor line. The final Hips height stays at about 0.07 m, so this is most likely projection or depth in the view, not real ground penetration. The evidence doesn't settle it, and it would only be visible up close.",
+          "evidence": "assets/manifests/barrow_levy/judge/motion-death-1/02_onion_skin.png (SIDE panel); assets/manifests/barrow_levy/judge/motion-death-1/03_plots.png (heights panel)"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The Front-file death clip keeps the Hips pinned at the origin and collapses into a clean supine pose with no broken joints or stretch; all three assertions pass, and the only issue is a reported-only foot slide the tolerances already accept for deaths.",
+      "next": "proceed to the next stage"
+    }
+  ]
 }

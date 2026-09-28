@@ -301,6 +301,114 @@
       "escalation_reason": "The only major finding is the missing back straps. It breaks the brief, but the approved concept is front-only, so the evidence can't show whether the concept causes it or whether it is multiview generator noise. A refine_concept can't show the back, and a reroll may not add the straps. The user should decide: accept the plain back as the design, reroll, or add a back view of the concept.",
       "summary": "The front of the mesh matches the approved concept closely and every assertion passes, but the back has no crossing harness straps, which the brief names as an identity mark. The concept only shows the front, so it can't tell us whether a concept edit or a reroll would fix it.",
       "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "model",
+      "recorded_at": "2026-09-28T21:50:31+00:00",
+      "packet": "assets/manifests/judge_replays/player_mesh/judge/model-3/packet.json",
+      "packet_sha256": "612e845d1b69180f2e266e599139c00252cd6f39638784c34350463ab37ecc80",
+      "subject": {
+        "kind": "raw model download (preview-cleaned, unrigged)",
+        "path": ".tripo-out/player/attempt-1/tripo-out/generate-multiview-image-front-v-2-e2b61bb2/model.glb",
+        "sha256": "0910cebda7cd474de61a86030328c667191eb141b9a8141cfdcc9d7d4899d53a",
+        "concept": {
+          "path": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+          "sha256": "e92b55a11a671ace6e50e37e78578afaa6a2e46e7d230da2da61ef368c2e9f98"
+        }
+      },
+      "images": [
+        {
+          "role": "approved_concept",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-3/01_approved_concept.png",
+          "sha256": "c489317c17b7d21da9d8bc493eab7a50cbdb13f7855a9d485539534444ad21a1",
+          "source": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png"
+        },
+        {
+          "role": "front",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-3/02_front.png",
+          "sha256": "661dcfbac0a8b78f068ecd1eeabb747e0d8c55258903e9fb659d5ad824334316",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-3/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-3/03_right.png",
+          "sha256": "ec5aa2831d859bf3063eed90643bac7f83148c4b169d2666ad87d70031a19b56",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-3/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-3/04_back.png",
+          "sha256": "aec0cf375973ae709a4eef2b2717d87e3fcc3450d5d838d3543adff7c2644b42",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-3/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-3/05_top.png",
+          "sha256": "ca68e277313f383b145ec8e04356bc8f3b27380bed94cbaef305510dd820ca9f",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-3/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-3/06_clay_front.png",
+          "sha256": "045403e071b5b4ae3f8df669fa583ea20e14a136e4e0e3b8eef67c7c9f035f6c",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-3/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-3/07_wireframe_front.png",
+          "sha256": "a698666dff22b1e4b95f70409be9b33d753fc1dad3d151af1d7b3713686eb88e",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-3/work/views/wireframe_front.png"
+        },
+        {
+          "role": "closeup_front",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-3/08_closeup_front.png",
+          "sha256": "5858c2f7ea06b2903d6d07e74536ad5f99f29f0a299473f418b51ee8e216c8c6",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-3/work/views/closeup_front.png"
+        },
+        {
+          "role": "closeup_back",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-3/09_closeup_back.png",
+          "sha256": "86b48a1343edb12fed9d2605a2e09d970e6d1961935d8b7f09927924a1fe08f1",
+          "source": "assets/manifests/judge_replays/player_mesh/judge/model-3/work/views/closeup_back.png"
+        },
+        {
+          "role": "tripo_preview_uncorrected",
+          "path": "assets/manifests/judge_replays/player_mesh/judge/model-3/10_tripo_preview_uncorrected.png",
+          "sha256": "ae8d0d3fcd187045cbcfebfd049d7fa6a07c63c71232f780e6883086ed3b76d4",
+          "source": ".tripo-out/player/attempt-1/tripo-out/generate-multiview-image-front-v-2-e2b61bb2/preview.png"
+        }
+      ],
+      "images_unseen": [],
+      "assertions_failed": [],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "concept_match",
+          "severity": "major",
+          "observation": "Harness straps don't cross the back. From behind, the harness is one solid dark reddish-brown vest panel from the shoulders to the mid-back, with only a strap edge over the right shoulder and a doubled belt at the waist. The brief (silhouette and identity marks) asks for 'harness straps crossing the back', and the camera sits behind the player. The approved concept shows only the front, so the multiview stage made up the back.",
+          "evidence": "assets/manifests/judge_replays/player_mesh/judge/model-3/04_back.png, assets/manifests/judge_replays/player_mesh/judge/model-3/09_closeup_back.png, assets/manifests/judge_replays/player_mesh/judge/model-3/01_approved_concept.png"
+        },
+        {
+          "check": "malformed",
+          "severity": "minor",
+          "observation": "Besides the 4,713-triangle body, the mesh has four small separate parts (two about 6.8 x 2.9 x 1.4 cm, two about 2 x 1.4 x 2.5 cm). They are probably buckles or eye pieces, but they can't be picked out in the renders. There are also 13 non-manifold edges and 2 boundary loops, which is within the hole limit.",
+          "evidence": "metrics.mesh.parts, metrics.mesh.non_manifold_edges, assertion 'holes (welded boundary loops)'"
+        },
+        {
+          "check": "malformed",
+          "severity": "minor",
+          "observation": "The hands are modelled with separate fingers, which is fine detail this 5,000-face budget may not hold well once rigged. They look intact in the renders.",
+          "evidence": "assets/manifests/judge_replays/player_mesh/judge/model-3/05_top.png, assets/manifests/judge_replays/player_mesh/judge/model-3/06_clay_front.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "The only major finding is that the harness straps don't cross the back, which the brief names as an identity mark. The approved concept shows only the front, so this isn't generator noise against the concept: the back was never specified. refine_concept can't show a back on a front-only image, and a reroll isn't sure to produce back straps. The user should decide how to fix it: accept the vest back, add a back view or reference to the concept or multiview input, or reroll the multiview and hope.",
+      "summary": "The front matches the approved concept closely and every assertion passes, but the back is a plain leather vest panel instead of crossing harness straps. The brief names those straps as an identity mark, and the front-only concept doesn't show a back, so no single concept edit or reroll is sure to fix it.",
+      "next": "surface to the user: the escalation reason and findings"
     }
   ]
 }

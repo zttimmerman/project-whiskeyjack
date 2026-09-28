@@ -47,6 +47,7 @@ CONCEPT_KMEANS_ITERS = 20
 PALETTE_MIN_SHARE = 0.03   # a palette color must cover this much of the texture to be corrected
 PALETTE_MAX_DRIFT = 30.0   # CIE76 dE: a group further than this from its target is a different material
 SKIRT_TROUSER_RADIUS = 0.085  # m (1.8 m character): closer than this to a thigh bone is trousers, not skirt
+SKIRT_BLEND_WIDTH = 0.025     # m inside that radius over which weights blend from the leg's to the skirt's
 SKIRT_WAIST_OFFSET = 0.05     # m below the Hips joint where the skirt starts
 SKIRT_BELOW_KNEE = 0.12       # m below the knee joints where the skirt search stops
 SMOOTH_ANGLE_DEG = 30.0  # art bible: flat-shade every edge sharper than this; smooth-shaded low poly reads as inflated plastic
@@ -227,7 +228,10 @@ def skirt_reweight(meshes, arms, report):
     the legs when walking. The skirt is the part of the mesh between knee and hip height that sits
     further than SKIRT_TROUSER_RADIUS from both thigh bones (inside that radius is the trousers).
     It's reweighted deterministically: Hips at the waist grading linearly to the thighs at the hem,
-    split between the two thighs by inverse squared distance, with zero weight on the shins."""
+    split between the two thighs by inverse squared distance, with zero weight on the shins.
+    Vertices within SKIRT_BLEND_WIDTH inside the radius blend linearly from their own weights to the
+    skirt weights: a hard boundary put a skirt vertex (no shin weight) 2.5 cm from a trouser vertex at
+    72% shin, and that edge stretched 8.7x in the run (the motion review's skin-stretch check)."""
     seg = joint_segments(arms[0])
     find = lambda token: next((n for n in seg if n.lower().endswith(token.lower())), None)
     hips, lthigh, rthigh = find("Hips"), find("LeftUpLeg"), find("RightUpLeg")
@@ -240,32 +244,39 @@ def skirt_reweight(meshes, arms, report):
     for o in meshes:
         me = o.data
         groups = {n: (o.vertex_groups.get(n) or o.vertex_groups.new(name=n)) for n in (hips, lthigh, rthigh)}
-        skirt = []
+        skirt = []  # (index, position, dist to left thigh, dist to right thigh, share of skirt weights 0-1)
         for v in me.vertices:
             p = o.matrix_world @ v.co
             if knee_z < p.z < waist_z:
                 dl, dr = _segment_distance(p, *seg[lthigh]), _segment_distance(p, *seg[rthigh])
-                if min(dl, dr) > SKIRT_TROUSER_RADIUS:
-                    skirt.append((v.index, p, dl, dr))
+                s = (min(dl, dr) - (SKIRT_TROUSER_RADIUS - SKIRT_BLEND_WIDTH)) / SKIRT_BLEND_WIDTH
+                if s > 0:
+                    skirt.append((v.index, p, dl, dr, min(s, 1.0)))
         if not skirt:
             continue
-        hem_z = min(p.z for _, p, _, _ in skirt)
-        idx = [i for i, _, _, _ in skirt]
+        full = [row for row in skirt if row[4] >= 1.0]
+        hem_z = min(p.z for _, p, _, _, _ in (full or skirt))
+        names = {g.index: g.name for g in o.vertex_groups}
+        own = {i: {names[g.group]: g.weight for g in me.vertices[i].groups} for i, _, _, _, s in skirt if s < 1.0}
+        idx = [row[0] for row in skirt]
         for g in o.vertex_groups:
             g.remove(idx)
-        for i, p, dl, dr in skirt:
+        for i, p, dl, dr, s in skirt:
             t = max(0.0, min(1.0, (waist_z - p.z) / max(waist_z - hem_z, 1e-6)))
             wl, wr = 1 / dl ** 2, 1 / dr ** 2
-            if 1 - t > 0:
-                groups[hips].add([i], 1 - t, "REPLACE")
-            if t > 0:
-                groups[lthigh].add([i], t * wl / (wl + wr), "REPLACE")
-                groups[rthigh].add([i], t * wr / (wl + wr), "REPLACE")
-        rows["vertices"] += len(skirt)
+            w = {hips: (1 - t) * s, lthigh: t * s * wl / (wl + wr), rthigh: t * s * wr / (wl + wr)}
+            for name, weight in own.get(i, {}).items():
+                w[name] = w.get(name, 0.0) + (1 - s) * weight
+            for name, weight in w.items():
+                if weight > 0:
+                    (o.vertex_groups.get(name) or o.vertex_groups.new(name=name)).add([i], weight, "REPLACE")
+        rows["vertices"] += len(full)
+        rows["blended_vertices"] = rows.get("blended_vertices", 0) + len(skirt) - len(full)
         rows.update(waist_z=round(waist_z, 3), hem_z=round(hem_z, 3), knee_z=round(knee_z, 3))
     rows["method"] = ("vertices between knee and waist, further than %.3f m from both thigh bones: Hips at the waist "
-                      "grading linearly to the thighs at the hem, split by inverse squared distance; no shin weight"
-                      % SKIRT_TROUSER_RADIUS)
+                      "grading linearly to the thighs at the hem, split by inverse squared distance; no shin weight. "
+                      "Within %.3f m inside that radius, blended linearly from the vertex's own weights"
+                      % (SKIRT_TROUSER_RADIUS, SKIRT_BLEND_WIDTH))
     report["skirt_reweight"] = rows
 
 
