@@ -133,6 +133,69 @@
       "escalation_reason": null,
       "summary": "The fling is fixed (Hips travel 0.0 m, and the body falls backward onto its origin), but both planted feet skate at about 1 m/s for the first 3 to 4 frames, so the foot-slide assertion fails.",
       "next": "free: apply the library change, rebuild (scripts/tools/build_animation_library.gd), re-run the motion review: In scripts/tools/build_animation_library.gd, trim the start of the levy 'death' clip by about 0.15 s (5 frames at 30 fps) so it begins after the opening foot lurch. Keep the current in_place root handling, which already fixes the fling. If the trim leaves any planted frames above 0.5 m/s, trim up to 0.25 s."
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:death",
+      "recorded_at": "2026-09-28T05:30:41+00:00",
+      "packet": "assets/manifests/judge_replays/levy_death_fling/judge/motion-death-2/packet.json",
+      "packet_sha256": "c87e39409700cafb99544635434e07916bf186e5caefbea3f371cee98333596c",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "death",
+        "source": "res://data/animations/levy_frontfile_library.tres:death",
+        "model": "res://assets/meshes/barrow_levy.glb",
+        "metrics_file": {
+          "path": ".tripo-out/barrow_levy/motion/frontfile/death_metrics.json",
+          "sha256": "061ed1d924630ea0d66b5ee460db61fe1a9429f528b14dc01106d0788b42da9e"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/judge_replays/levy_death_fling/judge/motion-death-2/01_frame_strip.png",
+          "sha256": "0f388ede205d0ad252e29cac0883d67552a1abfb5c124d3c7909ab71478247d5",
+          "source": ".tripo-out/barrow_levy/motion/frontfile/death_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/judge_replays/levy_death_fling/judge/motion-death-2/02_onion_skin.png",
+          "sha256": "73d4fb4cdd0dfbc544487bdd46ad6312513671153a521ce81517ef68206e45d5",
+          "source": ".tripo-out/barrow_levy/motion/frontfile/death_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/judge_replays/levy_death_fling/judge/motion-death-2/03_plots.png",
+          "sha256": "c90fe0f285208d13eb36cde1b6557c6665e67cb86b15c1e49dc3b851ce360495",
+          "source": ".tripo-out/barrow_levy/motion/frontfile/death_plots.png"
+        }
+      ],
+      "images_unseen": [],
+      "assertions_failed": [
+        "planted feet don't slide"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "The feet skid forward while still flagged as planted during the fall. The right foot reaches about 2.4 m/s near 0.55 s, at the end of its planted window, and the left foot about 3.0 m/s at 0.65\u20130.72 s, still inside its planted window. In the side strip, frames 4\u20135 (0.52\u20130.69 s) show the feet sliding out toward +Z as the body sits back, while the Hips stay over the origin post. This is the in-place Hips lock pushing the source clip's backward Hips travel onto the feet: feet that stood still in the source now move at the speed the Hips originally travelled.",
+          "evidence": "assertion 'planted feet don't slide' (1.227 > 0.5, max 3.059); 03_plots.png (ground-relative speed panel, planted bars 0\u20130.72 s); 01_frame_strip.png (side row, frames 4\u20135); 02_onion_skin.png (side view: the body falls back past the post while the feet spread forward of it)"
+        },
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "Root travel is exactly 0.000 m for the whole clip, so the Hips are hard-pinned rather than just limited. The final pose lies centred on the origin: the head is to the right of the post in the side view, the feet are to the left, and the top view is symmetric about the origin. That's acceptable for a death, but it confirms that all of the fall's travel has gone into the limbs.",
+          "evidence": "assertion 'root stays in place' (0.0); 03_plots.png root offset panel (flat line); 02_onion_skin.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "Two limits conflict for this clip. The source Death01 falls backward with 0.45\u20130.51 m of Hips travel, which is the fling the root-travel limit exists to catch. Pinning the Hips (the current trimmed in_place build) moves that travel into planted-foot slide instead. Three fixes are possible, and each is a design choice: (a) a different death clip that collapses roughly in place, such as a drop to the knees; (b) partial root removal that allows up to 0.15 m of Hips travel and removes the rest; (c) accepting the feet kicking out in a death as intended, and exempting death clips from the foot-slide limit the way action clips already are. The refine budget is spent (1/1). The user should choose.",
+      "summary": "The fling is gone: Hips travel is locked at 0.00 m. But because the Hips are pinned, the backward fall now slides the planted feet forward (p90 1.227 m/s against a 0.5 limit), and no single library change clearly satisfies both motion limits for this clip.",
+      "next": "surface to the user: the escalation reason and findings"
     }
   ]
 }

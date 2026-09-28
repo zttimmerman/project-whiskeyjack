@@ -84,6 +84,35 @@ The Tripo chain is **text-to-image → (optional refine) → image-to-multiview 
    - material transparency;
    - animations against the brief (missing ones only warn, since they'll come from the shared library).
 
+## Judge (after every stage)
+
+A fresh-context subagent rules on each stage's output from an evidence packet: `pass`, `revise` (with a concrete edit), or `escalate` (to the user). **Checkable questions only:** does it match the concept (or, with no concept, the brief's prompt), are the colors within tolerance, is anything missing or malformed, is it in budget, does the motion drift, slide, stretch or break. Style and taste always escalate.
+
+```
+python3 scripts/judge.py packet <asset-id> --stage concept|multiview|model|mesh|motion [--subject N] [--clip NAME --motion-dir DIR]
+python3 scripts/judge.py record <packet-dir> <verdict.json>      # exit 0 pass, 5 revise, 6 escalate
+python3 scripts/judge.py resolve <asset-id> --stage KEY --decision TEXT
+python3 scripts/judge.py log <asset-id>
+```
+
+1. `pipeline.py` prints a `judge:` line after each stage that has something to judge: concepts while they wait for approval, then multiview, model (the raw download, **before** rig spend) and mesh (after validate).
+2. `packet` copies every image the judge will see into `assets/manifests/<asset-id>/judge/<stage>-<n>/` (so the log keeps the exact render behind each verdict), adds metrics and numeric assertions (tolerances from the art bible's **Judge tolerances**, the only source), the stage's questions, and the brief's recorded design decisions. The model stage cleans the raw download into the packet's scratch `work/` and adds Tripo's uncorrected preview, because color correction can repaint a wrong color (blade attempt 1's olive blade came out bone).
+3. Spawn the **`asset-judge`** subagent (`.claude/agents/asset-judge.md`, Read-only) with the packet path. Agent definitions load at session start, so in a session that began before the file existed, spawn a general-purpose agent told to Read that file, follow it, and use only Read. Save its reply to `verdict.json`.
+4. `record` validates the reply, appends it to the manifest's `judgments` (with the images' hashes, and any the judge didn't report reading), and prints the next action:
+   - **pass:** go on. A `pass` with failing assertions is recorded as `escalate`.
+   - **revise:** one auto-refine per stage (`AUTO_REFINES_PER_STAGE`). `refine_concept` prints the `--refine N --edit` command and `reroll` a re-run: **both are paid, so they go through the tripo skill's confirmation like any other spend.** `library_change` (motion) is free: apply it, rebuild the library, re-run the motion review and judge again. A second `revise` for the same stage is recorded as `escalate`, regardless of what the judge said.
+   - **escalate:** show the user the reason and findings. After they decide, `resolve` records the decision and resets the stage's refine budget.
+5. **Replays** (`--replay NAME`, plus `--input`, `--concept`, `--no-design-notes`) judge historical inputs into `assets/manifests/judge_replays/NAME/` without touching the asset's manifest or mesh. Use `--no-design-notes` for an input judged before a recorded decision existed; otherwise the judge reads the decision.
+
+**Motion review** (the motion stage's evidence), a windowed Godot run:
+
+```
+godot --path . res://scripts/review/motion_review.tscn -- --model res://assets/meshes/<id>.glb --library res://data/animations/<lib>.tres \
+    [--clips a,b] [--ground-speed run=<m/s>] [--raw UAL1:Death01=death_raw] --out .tripo-out/<id>/motion[/<variant>]
+```
+
+For each clip it writes a timestamped 14-frame strip (side and three-quarter, origin marked), an onion skin (every frame overlaid blue to red over a 0.25 m grid, with the Hips path), plots (Hips offset, heights, ground-relative foot vs root speed with contacts shaded, per-frame bind deviation and stretch), a close-up of the worst skin-stretch frame, and `<clip>_metrics.json`. Pass each locomotion clip's gameplay speed (the table below) as `--ground-speed`, or the foot-slide numbers mean nothing. `--raw` reviews a pack clip before the build options (how the pre-fix death fling is replayed). Judge one packet per clip (`--stage motion --clip <name>`).
+
 ## Animation library (Quaternius, CC0)
 
 `assets/animations/quaternius/UAL1_Standard.glb` and `UAL2_Standard.glb` (the Universal Animation Library 1 and 2, **Standard** tier, 43 clips each, non-root-motion) are committed. The extracted packs next to them are gitignored and have `.gdignore`. Both packs share one 65-bone Unreal-mannequin-style skeleton.

@@ -4,24 +4,30 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 
 ## Session handoff (update at the end of every session)
 
-- **Branch** `world-bible-slice`; main is at `1467dbf`. Last session ended 2026-09-28 (the handoff commit follows `69752d0`).
+- **Branch** `world-bible-slice`; main is at `1467dbf`. Last session ended 2026-09-28 (autonomous asset validation).
 - **Done:**
   - Tripo image pipeline: concept (approval gate) → multiview → P1 3D → rig v1.0 → clean → validate.
-  - Barrow-levy, player and Levy Bow generated; blade re-cleaned. Color correction is anchored to the approved concept.
-  - Quaternius animation retargeted: both enemy variants and the player animate in Level 1 and hold their weapons.
+  - Barrow-levy, player and Levy Bow generated; Quaternius animation retargeted onto all three characters.
+  - **Asset judge** (`scripts/judge.py` + `.claude/agents/asset-judge.md`): a packet per stage, a fresh-context verdict, one auto-refine per stage, a verdict log. **Motion review** (`scripts/review/motion_review.tscn`): strips, onion skins, plots, metrics. Replays in `assets/manifests/judge_replays/`.
+- **Waiting on the user (escalated by the judge):**
+  1. **Levy death foot sweep.** `in_place` moved `Death01`'s 0.5 m hip travel into the feet (p90 1.1–1.2 m/s while planted). The judge's one auto-refine, trimming the first 0.15 s, didn't fix it and was reverted. Options: a clip that collapses in place, partial root removal (≤ 0.15 m), or exempting death clips from the foot-slide limit.
+  2. **Player hem stretch.** The tunic's front slit and the hem between the legs stretch 4.4× (idle) and 7.7× (run), below the knee where `skirt_reweight` stops, and they carry shin weight. They're mostly hidden under the tunic. Fix the weights (extend the reweight to the hem), or accept it and record it.
 - **Next:**
-  1. Playtest the slice in motion.
-  2. The CC0 import path for downloaded props (queued below).
-  3. Per-hit combo names (`Sword_Regular_A/B/C`) in `Player.gd`.
-  4. Enemy spacing (levies crowd into the player).
+  1. The escalations above.
+  2. Playtest the slice in motion.
+  3. The CC0 import path for downloaded props.
+  4. Per-hit combo names (`Sword_Regular_A/B/C`) in `Player.gd`.
+  5. Enemy spacing.
 - **Open questions:**
-  - Is `OverhandThrow` acceptable as the Back-file's bow attack, or buy the UAL2 tier with `Bow_*`? The user wants to see it in motion first.
+  - Is `OverhandThrow` acceptable as the Back-file's bow attack, or buy the UAL2 tier with `Bow_*`?
   - Is the player's sword a new asset, or keep reusing the Levy Blade?
-- **Before any Tripo spend:** read the tripo skill. The cap is 500 per session, and each session starts at 0 used. Balance is 590. Costs: concept 15, multiview 10, model 50, rig 25.
+  - The levy's jog slides at 0.80 m/s p90 at 4.0 m/s and the Back-file walk at 0.64 (the player's run: 0.35). Probably shorter legs than the mannequin; not asserted, since run clips are `in_place` only for Hips travel. Worth a look with the playtest.
+- **Before any Tripo spend:** read the tripo skill. The cap is 500 per session, and each session starts at 0 used. Balance is 590 (no spend this session). Costs: concept 15, multiview 10, model 50, rig 25.
 - **Tools:**
-  - `scripts/pipeline.py <id> --stage all`;
+  - `scripts/pipeline.py <id> --stage all` (it prints the `judge:` command after each stage);
+  - `scripts/judge.py packet|record|resolve|log`;
   - `scripts/tools/build_animation_library.gd`, `make_bone_maps.gd` and `make_held_props.gd`;
-  - review scenes in `scripts/review/`: `anim_sheet`, `level1_play_capture` and `level1_compare`.
+  - review scenes in `scripts/review/`: `motion_review`, `anim_sheet`, `level1_play_capture` and `level1_compare`.
 
 ## Settled
 
@@ -69,6 +75,18 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 - **`Walk_Formal_Loop` clasps the hands behind the back,** so it's unusable for armed characters.
 - **Props attach through generated wrapper scenes** (`scenes/props/Held*.tscn`, `scripts/tools/make_held_props.gd`) in the hand bone's retargeted frame, with one helper (`scripts/combat/HeldProps.gd`) for the player and the enemies.
 - **Observed Tripo costs:** concept 15, multiview 10, model 50, rig 25, so a character is about 100 and a prop about 75.
+
+## Learned 2026-09-28 (asset judge)
+
+- **Replays match the user's own calls on 3 of 4 flagged defects.** Levy concept-1: revise for the paired shins, forearms and separate fingers, with an edit prompt close to the one that made concept-3. Blade attempt 1: escalate for the crossguard (4 welded parts) and the olive blade. Player raw model: escalate for the missing back X-straps (the vest decision), found without being told. **Missed: the flattened mouth.** The close-up shows it, but the judge called the face recognizable. Controls (the shipped blade, the approved concept-3) pass. The pre-fix death fling: revise with `in_place`, the fix that shipped.
+- **Palette correction can hide a wrong color.** Blade attempt 1's olive blade grouped under Old Bone (27.5 ΔE) and came out bone-colored, so the corrected renders looked plausible. Model packets now carry Tripo's uncorrected preview and a pre-correction distance assertion (`palette_de_before`).
+- **Replays must not see later decisions.** The first player replay passed because the art bible's brief section carried the "Shipped design change" bullet. `--no-design-notes` now strips it from the brief section too.
+- **A retargeted skeleton's rest pose isn't its bind pose** (the rest fixer moves the rests; 13 cm off on the player). Skinning metrics take bind positions from the mesh vertices.
+- **Edges under 1 cm make stretch ratios meaningless** (a 3.6 mm crotch edge read 14×).
+- **`in_place` moves travel, it doesn't remove it:** pinning `Death01`'s hips makes the feet sweep along the floor at 1–3 m/s during the fall. The motion review's foot-slide plot shows it; the onion skin alone doesn't.
+- **The judge can misdiagnose a cause** (it blamed an "opening lurch" and trimmed 0.15 s; the sweep stayed). One auto-refine, then escalation, is the right budget: the second verdict escalated with the correct diagnosis.
+- **Agent definitions load at session start;** a judge added mid-session runs as a general-purpose agent told to follow `.claude/agents/asset-judge.md` with Read only.
+- **Evidence size:** the replays commit 12 MB of packet images (scratch `work/` dirs are ignored). Motion strips are the largest; watch it as the log grows.
 
 ## Observed Tripo costs
 
