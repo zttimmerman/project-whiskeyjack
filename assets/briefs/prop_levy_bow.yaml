@@ -6,9 +6,10 @@ brief: |
   Visual-only short recurve bow held by Back-file levies in socket hand_l. The
   curled tips must read at 15 m.
 prompt: |
-  A single short recurve bow with strongly curled tips, isolated prop, no hands, no
-  arrow, front view. Darkened oak limbs with cracks, small bone tip caps, a faded red
-  cloth grip wrap, one thin string.
+  A single short recurve bow standing upright, seen from the front, as an isolated prop.
+  Two Barrow Oak limbs curl strongly outward at each tip and end in small Old Bone caps;
+  the grip in the middle is wrapped in Signal Red cloth, and one thin straight string runs
+  from tip to tip.
 face_limit: 1200
 tripo_model: P1-20260311
 triangle_budget: 1320

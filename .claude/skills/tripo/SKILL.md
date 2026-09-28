@@ -39,6 +39,7 @@ From https://developers.tripo3d.ai/en/pricing (checked 2026-09-27; re-check if a
 | 2026-09-27 | image → image refine of a refine (short two-item edit) | banana_pro | 15 | **15** | 15 |
 | 2026-09-27 | image → multiview (four 1024² JPEG views) | none (endpoint takes no model) | unknown | **10** | 10 |
 | 2026-09-27 | multiview → 3D, standard texture, `face_limit` 5000 | P1-20260311 | 40–60 | **50** | 50 |
+| 2026-09-28 | multiview → 3D, standard texture, `face_limit` 1200 (Levy Bow) | P1-20260311 | 50 | **50** | 50 |
 | 2026-09-27 | rig-check (`tripo anim check`), twice | none | 0 | **0** | 0 |
 | 2026-09-27 | auto-rig, biped, `--spec mixamo` (ignored: returned Tripo's limb rig) | v2.5-20260210 requested (not echoed in task input) | 25 | **25** | 25 |
 | 2026-09-27 | auto-rig, biped, `--spec mixamo` (**honoured**: `mixamorig:` names, full chains) | v1.0-20240301 requested (not echoed in task input) | 25 | **25** | 25 |
