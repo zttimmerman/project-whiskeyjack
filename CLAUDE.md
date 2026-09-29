@@ -233,6 +233,7 @@ For consumables, use `stats_modifier = {"heal": 30}` — the `use()` method read
 - **Merge through a pull request** (`gh pr create`, then `gh pr merge --merge --delete-branch`). Use a merge commit so the atomic commit history survives; don't squash. Merge only when the user says to; GitHub doesn't allow approving your own PR, so "approve" means the user's OK in chat.
 - **Merge often.** GLBs, textures and hand-edited `.tscn` files don't merge well, so two long-lived branches touching the same asset or scene means one side gets redone by hand.
 - **Delete branches once merged.** GitHub deletes head branches automatically; locally, `git fetch --prune` and the `clean_gone` command. Mark milestones with tags (`poc-slice`, `mvp`), not kept branches.
+- **Name the branch right before opening its PR.** Renaming a PR's head branch on GitHub closes the PR (PR #2 was lost that way and replaced by #3).
 - **Parallel agents** each get their own worktree and branch; clean both up when done.
 - **Refresh the session handoff** in `docs/decisions.md` before opening a PR.
 
