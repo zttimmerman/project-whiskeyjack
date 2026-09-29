@@ -255,6 +255,8 @@ func die() -> void:
 		return
 	_change_state(State.DEAD)
 	GameManager.award_player_xp(xp_reward)
+	# Recorded for the save's world state, so this enemy stays dead once a later save loads
+	SaveManager.record_enemy_killed(self)
 	emit_signal("died")
 	# Free once the death clip has played, fading the model out over its last DEATH_FADE_TIME
 	var length := DEATH_FALLBACK_TIME
@@ -278,6 +280,10 @@ func die() -> void:
 			(tween if first else tween.parallel()).tween_property(fading, "albedo_color:a", 0.0, DEATH_FADE_TIME)
 			first = false
 	tween.tween_callback(queue_free)
+
+
+func is_dead() -> bool:
+	return state == State.DEAD
 
 
 func _on_stats_died() -> void:

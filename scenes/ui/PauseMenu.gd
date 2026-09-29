@@ -56,7 +56,8 @@ func _on_save_pressed() -> void:
 
 func _on_load_pressed() -> void:
 	_do_resume()
-	SaveManager.load_game()
+	# Reload the scene before applying the save, so enemies killed since the save come back
+	GameManager.reload_from_save()
 
 
 func _on_quit_pressed() -> void:
