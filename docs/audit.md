@@ -13,7 +13,7 @@
 >
 > **Partially addressed**
 > - **B3 talk stage:** `return_to_keeper` is implemented (`data/quests/clear_eastern_road.json`, `scenes/npcs/NPC.gd` `return_stage_id`, `scenes/world/Level1.gd`), but progression is still hardcoded in `Level1.gd`, so B2/B3's data-driven objectives remain open.
-> - **§4 CLAUDE.md split:** the art and asset sections are rewritten in place, but the core/skills split hasn't been done. The `blender-animation` skill and `blender-animator` agent now contradict CLAUDE.md (no per-model keyframing) and need removing or rewriting.
+> - **§4 CLAUDE.md split:** the art and asset sections are rewritten in place, but the core/skills split hasn't been done. The `blender-animation` skill and `blender-animator` agent now contradict CLAUDE.md (no per-model keyframing) and need removing or rewriting. *(Resolved 2026-09-29: both removed; animation goes through the asset-pipeline skill's Animation library.)*
 >
 > **Open (these feed Phases A–C)**
 > - **R1–R4, R6–R8, C1–C12, C17–C19, §1c:** doc and code contradictions, input conflict (E key), and UID/path hygiene. Feeds A3–A5.
