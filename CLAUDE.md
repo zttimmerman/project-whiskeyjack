@@ -37,51 +37,52 @@ This is a 3D action RPG built in Godot 4, inspired by early PS1/PS2 era games (t
 
 ```
 res://
-├── autoloads/
+├── autoloads/               # Global singletons (DialogueRunner is registered from scripts/dialogue/)
 │   ├── GameManager.gd       # Game state, scene transitions
 │   ├── SaveManager.gd       # Save/load via JSON
 │   ├── QuestManager.gd      # Active quests, quest state
-│   ├── DialogueRunner.gd    # Dialogue tree playback
 │   └── AudioManager.gd      # Audio buses, music, SFX helpers
+├── addons/
+│   └── stylized_materials/  # glTF import extension: specular 0 on every imported material
 ├── scenes/
-│   ├── player/
-│   │   ├── Player.tscn
-│   │   └── Player.gd
-│   ├── enemies/
-│   │   ├── BaseEnemy.tscn
-│   │   └── BaseEnemy.gd
-│   ├── npcs/
-│   │   ├── NPC.tscn
-│   │   └── NPC.gd
-│   ├── world/
-│   │   └── (individual area/level scenes)
-│   └── ui/
-│       ├── HUD.tscn
-│       ├── InventoryUI.tscn
-│       ├── DialogueUI.tscn
-│       ├── QuestLogUI.tscn
-│       └── PauseMenu.tscn
+│   ├── player/              # Player.tscn / Player.gd
+│   ├── enemies/             # BaseEnemy, ArcherEnemy, Projectile
+│   ├── npcs/                # NPC.tscn / NPC.gd
+│   ├── props/               # Held*.tscn wrappers aligning held props to a hand bone
+│   ├── world/               # area/level scenes (Level1, Level2)
+│   └── ui/                  # HUD, InventoryUI, DialogueUI, QuestLogUI, PauseMenu
 ├── scripts/
-│   ├── combat/
-│   │   ├── HitboxComponent.gd
-│   │   └── HurtboxComponent.gd
-│   ├── inventory/
-│   │   ├── Inventory.gd
-│   │   └── Item.gd
-│   ├── dialogue/
-│   │   └── DialogueRunner.gd
-│   └── stats/
-│       └── CharacterStats.gd
+│   ├── combat/              # HitboxComponent, HurtboxComponent, HeldProps
+│   ├── inventory/           # Inventory.gd, Item.gd
+│   ├── dialogue/            # DialogueRunner.gd (autoload)
+│   ├── stats/               # CharacterStats.gd
+│   ├── pipeline.py          # asset pipeline orchestrator (asset-pipeline skill)
+│   ├── blender_cleanup.py   # pipeline clean stage (headless Blender)
+│   ├── blender_views.py     # review renders
+│   ├── godot_validate.gd    # pipeline validate stage (headless Godot)
+│   ├── judge.py             # asset judge packets and verdict log
+│   ├── judge_images.py      # judge image copies and color metrics (headless Blender)
+│   ├── make_texture_overlay.py
+│   ├── tools/               # build_animation_library, make_bone_maps, make_held_props
+│   └── review/              # motion_review, anim_sheet, level1_play_capture, level1_compare
 ├── data/
-│   ├── items/               # JSON item definitions
+│   ├── items/               # Item .tres resources
 │   ├── dialogues/           # JSON dialogue trees
-│   └── quests/              # JSON quest definitions
+│   ├── quests/              # JSON quest definitions
+│   ├── rigs/                # BoneMaps and per-rig SocketMaps
+│   └── animations/          # per-character AnimationLibraries and shared clips (built, don't hand-edit)
+├── docs/                    # art-bible.md (budgets, palette, briefs, judge tolerances), decisions.md (handoff), world/
 └── assets/
-    ├── meshes/
+    ├── briefs/              # per-asset brief YAML (copied from the art bible)
+    ├── manifests/           # per-asset pipeline manifests and judge logs (JSON committed, images local)
+    ├── meshes/              # cleaned, shipped .glb files
+    ├── overlays/            # texture overlays composited at clean time
+    ├── animations/          # Quaternius packs (CC0)
     ├── textures/
     ├── audio/
     └── fonts/
 ```
+Outside `res://`: `.claude/skills/` (asset-pipeline, tripo), `.claude/agents/` (asset-judge), and the gitignored `.tripo-out/` (raw Tripo downloads, spend records, scratch work).
 
 ---
 
@@ -157,7 +158,7 @@ res://
 - BaseEnemy handles: health, taking damage, death, basic NavigationAgent3D pathfinding toward player
 - Each enemy type is its own scene that extends BaseEnemy and overrides `_get_next_action()` for unique behavior
 - States: IDLE, PATROL, CHASE, ATTACK, STAGGER, DEAD — use a simple enum + match statement, not a full state machine plugin
-- **Animation:** BaseEnemy looks for `$SkeletonModel/AnimationPlayer` in `_ready()` and plays state-driven animations (idle, run, attack, stagger, death). Locomotion anim (idle vs run) updates each frame during CHASE based on horizontal speed. `die()` delays `queue_free()` by 1.5s so death animation can play. Subclasses that override `_change_state()` must call `_play_anim()` themselves for the overridden state (see ArcherEnemy)
+- **Animation:** BaseEnemy looks for `$SkeletonModel/AnimationPlayer` in `_ready()` and plays state-driven animations (idle, run, attack, stagger, death). Locomotion anim (idle vs run) updates each frame during CHASE based on horizontal speed. On death, velocity and navigation stop that frame, and the enemy is freed after the death clip (2.4 s), fading out over the last 0.3 s through material alpha. Subclasses that override `_change_state()` must call `_play_anim()` themselves for the overridden state (see ArcherEnemy)
 - **Model node convention:** Enemy scenes use a `SkeletonModel` node (instanced GLB) with `Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, -0.9, 0)` — same 180° Y rotation + grounding offset as the player
 
 ---
@@ -225,15 +226,28 @@ For consumables, use `stats_modifier = {"heal": 30}` — the `use()` method read
 
 ---
 
-## Git Practices
+## Git Workflow
 
-- **Commit atomically** — one logical change per commit (e.g. a new system, a bug fix, a scene setup); do not bundle unrelated changes
-- **Always commit `.tscn` files alongside their `.gd` files** — a script and its scene are one logical unit
-- **Commit `.uid` files** — Godot 4 generates these alongside scripts; they should be tracked
-- **Never commit `.godot/`** — already gitignored; contains editor cache and shader cache
-- **Never commit `.DS_Store`** — already gitignored
-- **Commit message format:** imperative subject line summarizing the "what", body bullet points for the "why" and notable details
-- **Ask before committing** — do not create commits unless explicitly asked
+### Branches and pull requests
+- **Never commit directly to `main`.** Start each feature or session on a short-lived branch off an up-to-date `main`, named after the work (`playtest-slice`, `cc0-import`).
+- **Merge through a pull request** (`gh pr create`, then `gh pr merge --merge --delete-branch`). Use a merge commit so the atomic commit history survives; don't squash. Merge only when the user says to; GitHub doesn't allow approving your own PR, so "approve" means the user's OK in chat.
+- **Merge often.** GLBs, textures and hand-edited `.tscn` files don't merge well, so two long-lived branches touching the same asset or scene means one side gets redone by hand.
+- **Delete branches once merged.** GitHub deletes head branches automatically; locally, `git fetch --prune` and the `clean_gone` command. Mark milestones with tags (`poc-slice`, `mvp`), not kept branches.
+- **Parallel agents** each get their own worktree and branch; clean both up when done.
+- **Refresh the session handoff** in `docs/decisions.md` before opening a PR.
+
+### Commits
+- **Commit atomically:** one logical change per commit (a new system, a bug fix, a scene setup); don't bundle unrelated changes.
+- **Ask before committing** unless the user has asked for commits in this session (for example "commit at logical checkpoints").
+- **Commit message format:** an imperative subject line saying what changed, then body bullets for the why and notable details.
+- **Always commit `.tscn` files with their `.gd` files:** a script and its scene are one logical unit.
+- **Commit `.uid` files:** Godot 4 generates them alongside scripts, and they should be tracked.
+
+### What stays out of git
+- **Never commit** `.godot/` (editor and shader cache), `.DS_Store`, or `.tripo-out/` (raw downloads and scratch). All are gitignored.
+- **Commit finished assets, not their working artifacts.** `assets/meshes/`, `assets/overlays/`, briefs and manifest JSON are committed. Pipeline evidence images under `assets/manifests/` (review renders, judge packet copies, replays, animation sheets) stay local and gitignored; the committed JSON records each image's SHA-256.
+- **Secrets never go in the repo or the remote URL.** GitHub access goes through `gh` (`gh auth login`, `gh auth setup-git`), and `origin` is the bare `https://github.com/...` URL. Check new commits for tokens before a first push.
+- **Never rewrite pushed history.** To drop files, make a removal commit (`git rm --cached` plus a `.gitignore` rule), not a rewrite.
 
 ---
 
@@ -259,6 +273,7 @@ All meshes live in `assets/meshes/` as `.glb` files. There are two tools:
 Base meshes should be **AI-generated** whenever possible, then brought within the triangle budget and texture rules (see Visual Style Rules). Do not hand-code complex geometry vertex-by-vertex — that's only appropriate for simple shapes (hair spikes, flat panels, accessories).
 
 - **Two skills, two layers:** the **asset-pipeline** skill (`scripts/pipeline.py <asset-id> --stage concept|multiview|model|rig|clean|validate|all`) orchestrates briefs, stages, Blender cleanup, Godot validation and manifests. The Tripo chain is text-to-image → image-to-multiview → multiview-to-3D, and the pipeline stops after the concept until the user approves it (`--approve-concept N`). Characters are rigged from the **raw** download before cleaning, because Tripo's rigger expects its own +X orientation. The **tripo** skill is the vendor adapter, and every paid `tripo` call goes through it (dry run → the user confirms the cost → paid run). `pipeline.py` only prints `tripo` commands; it never runs a paid one.
+- **Judge every stage:** after each stage `pipeline.py` prints a `judge:` command. Build the packet (`scripts/judge.py packet`), spawn the `asset-judge` subagent on it, and `record` its verdict. `revise` gets one auto-refine per stage (paid refines still go through the tripo skill's confirmation), and an `escalate` goes to the user with its findings. Animation clips are judged from the motion review (`scripts/review/motion_review.tscn`). Details are in the asset-pipeline skill; tolerances are in the art bible. The judge misses faint facial features, so check faces on new characters yourself.
 - **Art-bible parameters:** `--param pbr=false --param texture=true --param face_limit=<from the brief>`, GLB output only. Never use the `--for` presets; they request PBR materials, 15K faces and 2048² FBX conversion.
 - **Manifest:** `assets/manifests/<asset-id>.json` (committed), written by `pipeline.py`. Each stage records its inputs and outputs (with hashes), the prompt, parameters, the actual credit cost, tool versions (tripo, Blender, Godot, Python) and a timestamp. The CLI is a moving dependency, so versions are always recorded.
 - **Output URLs expire ~5 minutes after a task succeeds:** download in the same run. Resuming is file-based (raw output in the gitignored `.tripo-out/`), never task-ID-based.
