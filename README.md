@@ -1,6 +1,6 @@
 # Project Whiskeyjack
 
-A 3D low-poly action RPG built in Godot 4, inspired by early PS1/PS2 era titles — think early Final Fantasy, Legend of Dragoon, and Zelda 3D. The aesthetic leans into chunky geometry, bold flat colors, and minimal polygons. Combat is real-time in the style of early Zelda / Dark Souls.
+A 3D low-poly action RPG built in Godot 4, inspired by early PS1/PS2 era titles — think early Final Fantasy, Legend of Dragoon, and Zelda 3D. The look is stylized low-poly with generous budgets: bold colors, readable silhouettes, and simple albedo-only textures over realism. Combat is real-time in the style of early Zelda / Dark Souls.
 
 ---
 

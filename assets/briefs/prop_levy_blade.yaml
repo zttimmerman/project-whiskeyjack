@@ -1,0 +1,21 @@
+# Carried from docs/art-bible.md, "Brief: Levy Blade (pilot asset)".
+# The art bible is the only source for these numbers: change it there first, then copy here.
+asset_id: prop_levy_blade
+type: prop
+brief: |
+  Visual-only blade held by Front-file levies in socket hand_r. Must read as a
+  blade, not a club, at 10 m.
+prompt: |
+  A single short leaf-shaped sword as an isolated prop, seen from the side. The blade
+  tapers straight into the leather-wrapped grip in one continuous piece, its shoulders
+  meeting the grip directly. The blade is blackened, near-black desaturated iron with a
+  cold grey-brown cast, pitted, with a chipped edge. The grip is wrapped in rotted dark
+  leather and capped with a small bone pommel.
+face_limit: 1000
+tripo_model: P1-20260311
+triangle_budget: 1100
+texture_size: 128
+target_size_m: 0.55
+pivot: base
+tip_end: top
+palette: [Blackened Iron, Saddle Leather, Old Bone]

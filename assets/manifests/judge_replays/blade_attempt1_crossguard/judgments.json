@@ -1,0 +1,110 @@
+{
+  "replay": "blade_attempt1_crossguard",
+  "asset_id": "prop_levy_blade",
+  "judgments": [
+    {
+      "kind": "verdict",
+      "stage": "model",
+      "recorded_at": "2026-09-28T05:21:16+00:00",
+      "packet": "assets/manifests/judge_replays/blade_attempt1_crossguard/judge/model-1/packet.json",
+      "packet_sha256": "1ac4cda8d9b96173ec1b1241288cbcd0c903f321e5483cb7dee295e6ba8d33af",
+      "subject": {
+        "kind": "raw model download (preview-cleaned, unrigged)",
+        "path": ".tripo-out/prop_levy_blade/attempt-1/tripo-out/stylized-low-poly-3d-game-asset-af5c0376/model.glb",
+        "sha256": "95e0003d7a226ac4c7d8ec2d5df901d3cf3679a4a46d6f128ffcf4db2f9430b0",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/judge_replays/blade_attempt1_crossguard/judge/model-1/01_front.png",
+          "sha256": "f2c4d5143e97fb22f6a58fc602d7dbbed76a6a0da5c8736fe36320fa5a47a109",
+          "source": "assets/manifests/judge_replays/blade_attempt1_crossguard/judge/model-1/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/judge_replays/blade_attempt1_crossguard/judge/model-1/02_right.png",
+          "sha256": "999307956a79948c9e7b5b628f70b61f3bcb92df12d5ee7c1e7e65407d63bfba",
+          "source": "assets/manifests/judge_replays/blade_attempt1_crossguard/judge/model-1/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/judge_replays/blade_attempt1_crossguard/judge/model-1/03_back.png",
+          "sha256": "6f63f42b341e2d5708c70aa4031e3922865b39916e297d638c3321d97fa4b97f",
+          "source": "assets/manifests/judge_replays/blade_attempt1_crossguard/judge/model-1/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/judge_replays/blade_attempt1_crossguard/judge/model-1/04_top.png",
+          "sha256": "3a4f00534ce4a2c6bcae6df51e2ac1768d0b19cdae938eeb82a01d2e4b234233",
+          "source": "assets/manifests/judge_replays/blade_attempt1_crossguard/judge/model-1/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/judge_replays/blade_attempt1_crossguard/judge/model-1/05_clay_front.png",
+          "sha256": "be56a1ccdac13bb191f3d7579161c2c3976a0745cd09c14076c46bc558ebca31",
+          "source": "assets/manifests/judge_replays/blade_attempt1_crossguard/judge/model-1/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/judge_replays/blade_attempt1_crossguard/judge/model-1/06_wireframe_front.png",
+          "sha256": "392ab9a7db307195aa23ae8f470d3d9c838624c40626190fa845b10b4b26b9fb",
+          "source": "assets/manifests/judge_replays/blade_attempt1_crossguard/judge/model-1/work/views/wireframe_front.png"
+        },
+        {
+          "role": "tripo_preview_uncorrected",
+          "path": "assets/manifests/judge_replays/blade_attempt1_crossguard/judge/model-1/07_tripo_preview_uncorrected.png",
+          "sha256": "9ac39ac5b5bd676b74a561c8004a00b71bc10995c7fe632bcb1707cbf231d512",
+          "source": ".tripo-out/prop_levy_blade/attempt-1/tripo-out/stylized-low-poly-3d-game-asset-af5c0376/preview.png"
+        }
+      ],
+      "images_unseen": [],
+      "assertions_failed": [
+        "palette color Blackened Iron close before correction",
+        "palette color Blackened Iron within tolerance after correction",
+        "palette color Saddle Leather within tolerance after correction",
+        "palette color Old Bone close before correction"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "concept_match",
+          "severity": "major",
+          "observation": "There is a flat rectangular crossguard bar between the blade and the grip, sticking out well past both blade edges. The brief says no crossguard, with the blade shoulders meeting the grip directly. It shows in the mesh as a separate part.",
+          "evidence": "01_front.png, 03_back.png, 05_clay_front.png, 06_wireframe_front.png, 07_tripo_preview_uncorrected.png (orange ring/guard); metrics.mesh.parts[2] (0.039 x 0.029 x 0.008 m, 96 tris)"
+        },
+        {
+          "check": "color",
+          "severity": "major",
+          "observation": "Most of the blade face is olive/yellow-green in the raw texture. Only the bevelled edges are grey. Correction grouped the green under Old Bone and repainted the blade face pale beige, so the blade now reads as bone, not near-black Blackened Iron.",
+          "evidence": "07_tripo_preview_uncorrected.png (green blade), 01_front.png and 03_back.png (beige blade face); assertion 'palette color Old Bone close before correction' 27.5 > 20"
+        },
+        {
+          "check": "color",
+          "severity": "major",
+          "observation": "Blackened Iron is too light even after correction (median #545352 vs #242424, 21.1 dE). Saddle Leather also ends up too light and orange: #84593D vs #4A2A10, 21.3 dE after correction, worse than the 19.7 dE before it. The guard is bright orange-tan, a color the brief doesn't ask for.",
+          "evidence": "assertions 'Blackened Iron close before correction' 21.9>20, 'Blackened Iron within tolerance after correction' 21.1>12, 'Saddle Leather within tolerance after correction' 21.3>12; 01_front.png guard, 07_tripo_preview_uncorrected.png"
+        },
+        {
+          "check": "concept_match",
+          "severity": "major",
+          "observation": "The blade is a straight, parallel-sided slab with a clipped point. It isn't the short, broad leaf shape the brief asks for, and it doesn't taper into the grip.",
+          "evidence": "01_front.png, 05_clay_front.png, 06_wireframe_front.png"
+        },
+        {
+          "check": "malformed",
+          "severity": "minor",
+          "observation": "The mesh has 1 non-manifold edge. There are no open holes, and 4 parts: grip, blade, guard and a small wrap/pommel piece.",
+          "evidence": "metrics.mesh.non_manifold_edges=1, holes_boundary_loops=0, part_count=4"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "Several unrelated fixes are needed: remove the crossguard, fix the blade color (green, then repainted bone) and change the blade to a leaf shape. There is no concept (subject.concept is null), so refine_concept has nothing to edit. A reroll with the same prompt already produced a crossguard and a green blade despite the prompt, so it isn't a reliable fix. The user should decide whether to add an approved concept stage for this prop, reword the prompt, or source the asset another way. They should also note that the concept-less palette correction mapped the green blade to Old Bone.",
+      "summary": "The raw blade has a crossguard the brief rules out, an olive-green blade that correction repainted bone-beige instead of near-black iron, and a parallel-sided rather than leaf-shaped blade; there is no concept to refine, so this needs a prompt or pipeline decision.",
+      "next": "surface to the user: the escalation reason and findings"
+    }
+  ]
+}

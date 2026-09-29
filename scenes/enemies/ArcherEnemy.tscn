@@ -6,8 +6,11 @@
 [ext_resource type="Script" uid="uid://hitboxcmp001" path="res://scripts/combat/HitboxComponent.gd" id="4_hitbox"]
 [ext_resource type="PackedScene" uid="uid://projectile_sc1" path="res://scenes/enemies/Projectile.tscn" id="5_proj"]
 [ext_resource type="AudioStream" path="res://assets/audio/sfx_impact.ogg" id="6_impact"]
-[ext_resource type="PackedScene" path="res://assets/meshes/archer_enemy.glb" id="7_model"]
+[ext_resource type="PackedScene" path="res://assets/meshes/barrow_levy.glb" id="7_model"]
+[ext_resource type="Resource" path="res://data/rigs/barrow_levy_sockets.tres" id="20_sockets"]
 
+[ext_resource type="AnimationLibrary" path="res://data/animations/levy_backfile_library.tres" id="30_anims"]
+[ext_resource type="PackedScene" path="res://scenes/props/HeldLevyBow.tscn" id="31_bow"]
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.4
 height = 1.8
@@ -18,7 +21,7 @@ max_hp = 20
 current_hp = 20
 attack = 6
 defense = 1
-speed = 2.5
+speed = 1.4
 level = 1
 experience = 0
 experience_to_next_level = 100
@@ -37,6 +40,8 @@ detection_range = 14.0
 attack_range = 0.0
 xp_reward = 15
 projectile_scene = ExtResource("5_proj")
+socket_map = ExtResource("20_sockets")
+held_props = {"hand_l": ExtResource("31_bow")}
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_body")
@@ -67,3 +72,7 @@ damage = 6
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="HitboxComponent"]
 shape = SubResource("SphereShape3D_hitbox")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="SkeletonModel"]
+root_node = NodePath("..")
+libraries = {&"": ExtResource("30_anims")}

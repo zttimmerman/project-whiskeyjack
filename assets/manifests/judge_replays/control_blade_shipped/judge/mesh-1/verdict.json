@@ -1,0 +1,45 @@
+{
+  "verdict": "pass",
+  "summary": "The shipped Levy Blade is in budget, at the brief's size and palette, and reads clearly as a dark iron blade with a leather-wrapped grip and a bone pommel. Every assertion passes, and the few small departures from the prompt are minor only.",
+  "findings": [
+    {
+      "check": "concept_match",
+      "severity": "minor",
+      "observation": "A thin flat guard plate sits between blade and grip and sticks out slightly past the blade on both sides. The brief asks for no crossguard, with the blade's shoulders meeting the grip directly. The plate is thin and barely wider than the blade, so it doesn't change the blade read at 10 m.",
+      "evidence": "assets/manifests/judge_replays/control_blade_shipped/judge/mesh-1/01_front.png, 03_back.png, 05_clay_front.png (base of blade); 04_top.png (plate outline wider than the blade cross-section)"
+    },
+    {
+      "check": "concept_match",
+      "severity": "minor",
+      "observation": "The blade is broad and mostly straight-sided with a tapered point, not clearly leaf-shaped (swelling toward the point). The chipped, notched edges are present as the prompt asks.",
+      "evidence": "assets/manifests/judge_replays/control_blade_shipped/judge/mesh-1/01_front.png, 05_clay_front.png"
+    },
+    {
+      "check": "malformed",
+      "severity": "minor",
+      "observation": "The part list includes a 6-triangle fragment about 1.5 cm across (part 3), separate from the blade and grip. None of the views show where it is; at that size it can't be seen at gameplay distance. Also noted: 4 boundary loops (accepted grip slits) and 16 non-manifold edges.",
+      "evidence": "metrics.mesh.parts[2], holes_boundary_loops, non_manifold_edges; 06_wireframe_front.png"
+    },
+    {
+      "check": "color",
+      "severity": "minor",
+      "observation": "A narrow tan/beige collar band sits at the top of the grip, just under the guard. It's small, fits the Old Bone palette color, and is not a large off-brief area.",
+      "evidence": "assets/manifests/judge_replays/control_blade_shipped/judge/mesh-1/01_front.png, 02_right.png"
+    }
+  ],
+  "questions_answered": [
+    "No concept, judged against the prompt. Blade: present (blackened near-black iron, chipped edge; more straight-sided than leaf-shaped). Tapered point: present. Leather-wrapped grip: present, dark reddish-brown. Bone pommel: present. Shoulders meeting the grip directly: changed, because a thin guard plate was added.",
+    "No large holes, spikes or extra props. The 4 boundary loops are within the limit, and there is one tiny 6-triangle part (about 1.5 cm) that none of the views show. Blade and grip are separate parts, which is fine for a rigid prop.",
+    "Yes. 1017/1100 triangles, one 128x128 albedo texture, true length 0.55 m against a 0.55 m target.",
+    "Yes. All palette assertions pass (Blackened Iron 5.6, Saddle Leather 7.7, Old Bone 0.9 dE after correction). No palette color lost and no large off-brief area.",
+    "Not applicable: this is an unrigged prop with no skeleton or sockets."
+  ],
+  "images_seen": [
+    "assets/manifests/judge_replays/control_blade_shipped/judge/mesh-1/01_front.png",
+    "assets/manifests/judge_replays/control_blade_shipped/judge/mesh-1/02_right.png",
+    "assets/manifests/judge_replays/control_blade_shipped/judge/mesh-1/03_back.png",
+    "assets/manifests/judge_replays/control_blade_shipped/judge/mesh-1/04_top.png",
+    "assets/manifests/judge_replays/control_blade_shipped/judge/mesh-1/05_clay_front.png",
+    "assets/manifests/judge_replays/control_blade_shipped/judge/mesh-1/06_wireframe_front.png"
+  ]
+}

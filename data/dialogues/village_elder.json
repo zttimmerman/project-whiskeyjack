@@ -1,12 +1,12 @@
 [
-  { "id": "start", "speaker": "Elder", "text": "Traveler, you've arrived at last.", "choices": [
-    { "text": "What do you need from me?", "next_id": "quest_offer" },
-    { "text": "Just passing through.", "next_id": "farewell" }
+  { "id": "start", "speaker": "Idrenna", "text": "They sent one of you, then. One.", "choices": [
+    { "text": "What's the trouble?", "next_id": "quest_offer" },
+    { "text": "Just on patrol.", "next_id": "farewell" }
   ]},
-  { "id": "quest_offer", "speaker": "Elder", "text": "Monsters have taken the eastern road. Will you help?", "choices": [
-    { "text": "I'll do it.", "next_id": "quest_accept" },
-    { "text": "Not my problem.", "next_id": "farewell" }
+  { "id": "quest_offer", "speaker": "Idrenna", "text": "The dead are walking your road again. Will you put them down?", "choices": [
+    { "text": "I'll see to it.", "next_id": "quest_accept" },
+    { "text": "Not in my orders.", "next_id": "farewell" }
   ]},
-  { "id": "quest_accept", "speaker": "Elder", "text": "Thank you. Be safe.", "set_quest": "clear_eastern_road", "next_id": null },
-  { "id": "farewell", "speaker": "Elder", "text": "Safe travels.", "next_id": null }
+  { "id": "quest_accept", "speaker": "Idrenna", "text": "Walk soft past the barrows. They listen.", "set_quest": "clear_eastern_road", "next_id": null },
+  { "id": "farewell", "speaker": "Idrenna", "text": "Keep your feet dry, soldier.", "next_id": null }
 ]

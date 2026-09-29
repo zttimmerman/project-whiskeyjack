@@ -1,0 +1,144 @@
+{
+  "replay": "motion_player",
+  "asset_id": "player",
+  "judgments": [
+    {
+      "kind": "verdict",
+      "stage": "motion:run",
+      "recorded_at": "2026-09-28T05:28:29+00:00",
+      "packet": "assets/manifests/judge_replays/motion_player/judge/motion-run-1/packet.json",
+      "packet_sha256": "ed522b8ceb8aa7b4d1bce99a980880277552dc31ba79dd97fb7983ff17a78ef0",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "run",
+        "source": "res://data/animations/player_library.tres:run",
+        "model": "res://assets/meshes/player.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player/motion/run_metrics.json",
+          "sha256": "a39264b2710d9ec7602dc6b9adbc1ad93186617c59c993b60580accc208b93a2"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/judge_replays/motion_player/judge/motion-run-1/01_frame_strip.png",
+          "sha256": "97a3e0d24923465e9a79005842cc2235e2a1f6c6b182e81dbb4d3056cbf98d5e",
+          "source": ".tripo-out/player/motion/run_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/judge_replays/motion_player/judge/motion-run-1/02_onion_skin.png",
+          "sha256": "b07b228468e03e57ac6cc25227b3732f0678d3c7bbb224e648062f5effdb88f5",
+          "source": ".tripo-out/player/motion/run_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/judge_replays/motion_player/judge/motion-run-1/03_plots.png",
+          "sha256": "47d7e5ebe718c816e3b4dea46be155407f08aa0f069e3c1c7eab620acf769d29",
+          "source": ".tripo-out/player/motion/run_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/judge_replays/motion_player/judge/motion-run-1/04_stretch_detail.png",
+          "sha256": "f0af4c65521c365b216e48f5d3aa1a6731a84a506bfa8285c0387a9ca9d24220",
+          "source": ".tripo-out/player/motion/run_stretch.png"
+        }
+      ],
+      "images_unseen": [],
+      "assertions_failed": [
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "Skin stretch reaches 7.73 against a limit of 1.0. At t=0.60 s the worst edges stretch to 8.7 times their bind length, and the 12 worst range from 2.3 to 8.7. In both the front and back views they sit inside the tunic skirt: at the crotch between the legs (trouser and inner skirt edges on RightUpperLeg) and at the inner hem just above the knees and boot tops. The stretch plot stays between 3.5 and 8 on every frame, not in a single spike. This matches the skin weighting in that region (the skirt_reweight grading from Hips to the thighs, or the crotch weights) pulling apart as the legs scissor. The clip itself is not the cause.",
+          "evidence": "assertion 'skin stretch (edge length vs bind pose)' 7.732 > 1.0; assets/manifests/judge_replays/motion_player/judge/motion-run-1/04_stretch_detail.png; 03_plots.png (bottom-right edge stretch curve)"
+        },
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "The frame strip shows no torn or spiking geometry from the outside. The tunic hem and the trousers read cleanly in every side and 3/4 frame, so the stretch is hidden under the skirt at gameplay distance. It could still show on a low camera angle or when the legs cross at mid-stride (frames 9/14 and 10/14, t=0.62 s to 0.69 s).",
+          "evidence": "assets/manifests/judge_replays/motion_player/judge/motion-run-1/01_frame_strip.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "The only failing assertion is skin stretch, and it comes from the skin weights at the crotch and inner skirt (the skirt_reweight region of the clean stage), not from the run clip. Changing the animation library, which is the only revise action available for motion, would not fix it. The frame strip doesn't show the defect from outside, so the images can't tell whether it is visible in play. The user needs to decide between two paths. One is to fix the weights, either the skirt_reweight grading or the crotch weighting on RightUpperLeg. The other is to accept the stretch as hidden inner geometry and record it in docs/decisions.md.",
+      "summary": "The run clip stays in place and its planted feet hold, but skin stretch fails at 7.73 against a limit of 1.0; the stretched edges are hidden inside the tunic, so the images can't show whether the defect is visible, and changing the animation library would not fix it.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:idle",
+      "recorded_at": "2026-09-28T05:28:29+00:00",
+      "packet": "assets/manifests/judge_replays/motion_player/judge/motion-idle-1/packet.json",
+      "packet_sha256": "df48dc68bc55fee4d57046800ea68d43ad0f7edf680e4fd71ca7013ebd3b3847",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "idle",
+        "source": "res://data/animations/player_library.tres:idle",
+        "model": "res://assets/meshes/player.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player/motion/idle_metrics.json",
+          "sha256": "17193112260b124ac66837ec6529e2a0ded794bb1c0a1c2c24337321e36f828f"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/judge_replays/motion_player/judge/motion-idle-1/01_frame_strip.png",
+          "sha256": "41daa9331592712a0e22f42b11e2eb8ef32bdbf25d511e8f3f08eb2cbedbdd2f",
+          "source": ".tripo-out/player/motion/idle_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/judge_replays/motion_player/judge/motion-idle-1/02_onion_skin.png",
+          "sha256": "ce219fc8cf2837720eddd19adfaf1c8f338c28623f0e3e9978af2a14480e81e0",
+          "source": ".tripo-out/player/motion/idle_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/judge_replays/motion_player/judge/motion-idle-1/03_plots.png",
+          "sha256": "b45f2bf32e1993d0c7d98bbffabd7e298ac5c21a349746c3198d7fca8a4047d1",
+          "source": ".tripo-out/player/motion/idle_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/judge_replays/motion_player/judge/motion-idle-1/04_stretch_detail.png",
+          "sha256": "e85a5d8c1cb9da4f86f164e2e521c2f3dd3562e256f6b10c9bdbbc1ffc658d81",
+          "source": ".tripo-out/player/motion/idle_stretch.png"
+        }
+      ],
+      "images_unseen": [],
+      "assertions_failed": [
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "The tunic hem and inner-thigh skin between the legs are stretched to 2.6-5.4x their bind length. The worst edge, 5.42x, is on LeftUpperLeg. In the front view, a long thin sliver of hem runs from the inner left knee to the right boot top, and in the back view the hem polygons fan across the gap between the legs. The stretch stays at about 4.1-4.4 for the whole clip, so it comes from the wide, bent-knee idle stance compared with the bind pose, not from a pop partway through. The skirt region is weighted too strongly to the thighs near the hem, so spreading the legs pulls the hem between them.",
+          "evidence": "04_stretch_detail.png (front and back, red edges between the legs at hem height); 03_plots.png (edge stretch line flat at ~4.1-4.4 across 0-1.67 s); assertion 'skin stretch (edge length vs bind pose)' 4.419 > 1.0, p99 0.549"
+        },
+        {
+          "check": "pose",
+          "severity": "minor",
+          "observation": "The idle is a deep, hunched crouch: knees wide and bent, torso leaning forward, arms held low and out from the body with open palms. No limbs pass through the body, the arms stay in front, and no joint collapses. It reads as an intended ready stance, but it is wide enough to cause the hem stretch above.",
+          "evidence": "01_frame_strip.png (side and 3/4 rows, all 14 frames)"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "The one failing assertion traces to how the skirt is weighted: the clean stage's skirt_reweight grading from Hips at the waist to the thighs at the hem. None of the library_change options (in_place, trim, clip choice) fixes that directly, unless a narrower-stance idle clip is chosen instead. Deciding between a skirt-reweight adjustment (more Hips weight toward the hem) and a different idle clip is a pipeline and design call for the user. It is also open whether the stretch is visible from the gameplay camera: in the frame strip the area between the legs is dark and small.",
+      "summary": "The idle stays in place and the feet hold still, but the skin-stretch assertion fails (4.42x, limit 1.0): the tunic hem between the thighs stretches in every frame, and the fix looks like the clean stage's skirt reweighting, not a library change.",
+      "next": "surface to the user: the escalation reason and findings"
+    }
+  ]
+}

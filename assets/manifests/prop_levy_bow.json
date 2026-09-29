@@ -1,0 +1,899 @@
+{
+  "asset_id": "prop_levy_bow",
+  "stages": {
+    "concept": {
+      "status": "ok",
+      "timestamp": "2026-09-28T04:57:00+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/prop_levy_bow.yaml",
+          "sha256": "fecc2c8cd4b097798295ce40e44c6dc249ea93cc67edc5ab8e678a1f1f8ac95a"
+        },
+        {
+          "path": "docs/art-bible.md",
+          "sha256": "b445723816d2c890c27cb211bc488ae2c722f13efca379cf4a6d089f4345eaef"
+        },
+        {
+          "path": ".tripo-out/prop_levy_bow/concept-1.spend.json",
+          "sha256": "8a7bd5d276ce0fdba38e5929f5bae6c2ed975b2202b27987babd70a2377453b8"
+        }
+      ],
+      "outputs": [],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.6.1.stable.official.14d19694e",
+        "tripo": "0.5.1"
+      },
+      "message": "not needed: the base mesh is already on disk",
+      "actual_cost_credits": 15,
+      "concept_model": "banana_pro",
+      "params": {},
+      "approval": {
+        "attempt": "concept-1",
+        "image": {
+          "path": ".tripo-out/prop_levy_bow/concept-1/tripo-out/stylized-low-poly-3d-game-asset-5-eb13cfd1/generated_image.png",
+          "sha256": "d90625854d50b01709aea5b34ca355bd1ae2337033af998add3c3465d4d5d472"
+        },
+        "approved_at": "2026-09-28T04:48:13+00:00",
+        "approved_by": "user",
+        "concept_model": "banana_pro",
+        "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A single short recurve bow standing upright, seen from the front, as an isolated prop. Two warm mid-brown limbs curl strongly outward at each tip and end in small pale yellowed beige caps; the grip in the middle is wrapped in vivid scarlet red cloth, and one thin straight string runs from tip to tip.",
+        "command": "tripo generate text-to-image 'Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A single short recurve bow standing upright, seen from the front, as an isolated prop. Two warm mid-brown limbs curl strongly outward at each tip and end in small pale yellowed beige caps; the grip in the middle is wrapped in vivid scarlet red cloth, and one thin straight string runs from tip to tip.' --model banana_pro -o .tripo-out/prop_levy_bow/concept-1 --no-open --json"
+      },
+      "cost_unknown_attempts": [],
+      "cost_check": [
+        {
+          "attempt": "concept-1",
+          "status": "generated",
+          "estimate_credits": 15,
+          "actual_balance_delta": 15,
+          "cli_reported_credits": 15,
+          "estimate_error": 0
+        }
+      ],
+      "tripo_attempts": [
+        {
+          "status": "generated",
+          "started_at": "2026-09-28T04:42:08+00:00",
+          "user_confirmed_at": "2026-09-28T04:42:08+00:00",
+          "tripo_cli_version": "0.5.1",
+          "model_version": "banana_pro",
+          "region": "ov",
+          "command": "tripo generate text-to-image 'Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A single short recurve bow standing upright, seen from the front, as an isolated prop. Two warm mid-brown limbs curl strongly outward at each tip and end in small pale yellowed beige caps; the grip in the middle is wrapped in vivid scarlet red cloth, and one thin straight string runs from tip to tip.' --model banana_pro -o .tripo-out/prop_levy_bow/concept-1 --no-open --json",
+          "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A single short recurve bow standing upright, seen from the front, as an isolated prop. Two warm mid-brown limbs curl strongly outward at each tip and end in small pale yellowed beige caps; the grip in the middle is wrapped in vivid scarlet red cloth, and one thin straight string runs from tip to tip.",
+          "params": {},
+          "dry_run": {
+            "valid": null,
+            "note": "tripo generate has no --dry-run; checked via pipeline.py --dry-run"
+          },
+          "estimate_credits": 15,
+          "estimate_source": "observed: banana_pro text-to-image",
+          "balance_before": {
+            "balance": 665,
+            "frozen": 0
+          },
+          "finished_at": "2026-09-28T04:43:15+00:00",
+          "balance_after": {
+            "balance": 650,
+            "frozen": 0
+          },
+          "actual_spend": 15,
+          "cli_reported_credits": 15,
+          "exit_code": 0,
+          "task_ids": [
+            "eb13cfd1-4c2a-4c19-83a1-39a789219a83"
+          ]
+        }
+      ],
+      "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A single short recurve bow standing upright, seen from the front, as an isolated prop. Two warm mid-brown limbs curl strongly outward at each tip and end in small pale yellowed beige caps; the grip in the middle is wrapped in vivid scarlet red cloth, and one thin straight string runs from tip to tip."
+    },
+    "multiview": {
+      "status": "ok",
+      "timestamp": "2026-09-28T04:54:18+00:00",
+      "inputs": [
+        {
+          "path": ".tripo-out/prop_levy_bow/concept-1/tripo-out/stylized-low-poly-3d-game-asset-5-eb13cfd1/generated_image.png",
+          "sha256": "d90625854d50b01709aea5b34ca355bd1ae2337033af998add3c3465d4d5d472"
+        },
+        {
+          "path": ".tripo-out/prop_levy_bow/multiview-1.spend.json",
+          "sha256": "ad96ce9155bc6dd1ac34e885bf5b2688791a9b4367efc5acbcd4ec6cc63e0238"
+        }
+      ],
+      "outputs": [
+        {
+          "path": ".tripo-out/prop_levy_bow/multiview-1/tripo-out/tripo-out-prop-levy-bow-concept-a73faed1/generate_multiview_image.front_view.jpeg",
+          "sha256": "fb1588420a0f09d9773f5f86ac548cc8ebe3ae5162e57308988c89ec69f0a161"
+        },
+        {
+          "path": ".tripo-out/prop_levy_bow/multiview-1/tripo-out/tripo-out-prop-levy-bow-concept-a73faed1/generate_multiview_image.left_view.jpeg",
+          "sha256": "4b31f41dd9627d4049844a3120b45d598c1752f4060ee8ed4dcfa43586cb2dbe"
+        },
+        {
+          "path": ".tripo-out/prop_levy_bow/multiview-1/tripo-out/tripo-out-prop-levy-bow-concept-a73faed1/generate_multiview_image.back_view.jpeg",
+          "sha256": "cdd0d7ae79195b5729e2d0092449ad19d82ebda80ee9161de73904fb74c66b39"
+        },
+        {
+          "path": ".tripo-out/prop_levy_bow/multiview-1/tripo-out/tripo-out-prop-levy-bow-concept-a73faed1/generate_multiview_image.right_view.jpeg",
+          "sha256": "e351499ca8ad3df23e1ec02857e49cd100055a69ca559592c1d5037be2c418b8"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.6.1.stable.official.14d19694e",
+        "tripo": "0.5.1"
+      },
+      "message": "sheet multiview-1 from concept-1: front, left, back, right",
+      "actual_cost_credits": 10,
+      "cost_unknown_attempts": [],
+      "cost_check": [
+        {
+          "attempt": "multiview-1",
+          "status": "generated",
+          "estimate_credits": 10,
+          "actual_balance_delta": 10,
+          "cli_reported_credits": 10,
+          "estimate_error": 0
+        }
+      ],
+      "tripo_attempts": [
+        {
+          "status": "generated",
+          "started_at": "2026-09-28T04:48:21+00:00",
+          "user_confirmed_at": "2026-09-28T04:48:21+00:00",
+          "tripo_cli_version": "0.5.1",
+          "model_version": null,
+          "region": "ov",
+          "command": "tripo generate image-to-multiview .tripo-out/prop_levy_bow/concept-1/tripo-out/stylized-low-poly-3d-game-asset-5-eb13cfd1/generated_image.png -o .tripo-out/prop_levy_bow/multiview-1 --no-open --json",
+          "prompt": null,
+          "params": {},
+          "source_concept": "concept-1",
+          "dry_run": {
+            "valid": null,
+            "note": "tripo generate has no --dry-run; checked via pipeline.py --dry-run"
+          },
+          "estimate_credits": 10,
+          "estimate_source": "observed: image-to-multiview",
+          "balance_before": {
+            "balance": 650,
+            "frozen": 0
+          },
+          "finished_at": "2026-09-28T04:54:18+00:00",
+          "balance_after": {
+            "balance": 640,
+            "frozen": 0
+          },
+          "actual_spend": 10,
+          "cli_reported_credits": 10,
+          "exit_code": 0,
+          "task_ids": [
+            "a73faed1-4f3f-4ff9-ac0c-fcc47cd57c3e"
+          ]
+        }
+      ]
+    },
+    "model": {
+      "status": "ok",
+      "timestamp": "2026-09-28T04:57:01+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/prop_levy_bow.yaml",
+          "sha256": "fecc2c8cd4b097798295ce40e44c6dc249ea93cc67edc5ab8e678a1f1f8ac95a"
+        },
+        {
+          "path": "docs/art-bible.md",
+          "sha256": "b445723816d2c890c27cb211bc488ae2c722f13efca379cf4a6d089f4345eaef"
+        },
+        {
+          "path": ".tripo-out/prop_levy_bow/attempt-1.spend.json",
+          "sha256": "9980608f357e2d11d4160cab429ba6da99c9c4278db146040d8ebcda7d4cf142"
+        }
+      ],
+      "outputs": [
+        {
+          "path": ".tripo-out/prop_levy_bow/attempt-1/tripo-out/generate-multiview-image-front-v-3-00757d1a/model.glb",
+          "sha256": "f56fddeadf86aa6f6bd5a2a66d1b888b8c731130b3c67ee06de2ce31b40827a4"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.6.1.stable.official.14d19694e",
+        "tripo": "0.5.1"
+      },
+      "message": "Tripo download .tripo-out/prop_levy_bow/attempt-1/tripo-out/generate-multiview-image-front-v-3-00757d1a/model.glb",
+      "actual_cost_credits": 50,
+      "prompt": null,
+      "params": {
+        "pbr": false,
+        "texture": true,
+        "face_limit": 1200
+      },
+      "tripo_model": "P1-20260311",
+      "estimate_credits": 50,
+      "cost_unknown_attempts": [],
+      "cost_check": [
+        {
+          "attempt": "attempt-1",
+          "status": "generated",
+          "estimate_credits": 50,
+          "actual_balance_delta": 50,
+          "cli_reported_credits": 50,
+          "estimate_error": 0
+        }
+      ],
+      "tripo_attempts": [
+        {
+          "status": "generated",
+          "started_at": "2026-09-28T04:55:06+00:00",
+          "user_confirmed_at": "2026-09-28T04:55:06+00:00",
+          "tripo_cli_version": "0.5.1",
+          "model_version": "P1-20260311",
+          "model_selection": "pinned via --model (brief tripo_model)",
+          "region": "ov",
+          "command": "tripo make .tripo-out/prop_levy_bow/multiview-1/tripo-out/tripo-out-prop-levy-bow-concept-a73faed1/generate_multiview_image.front_view.jpeg .tripo-out/prop_levy_bow/multiview-1/tripo-out/tripo-out-prop-levy-bow-concept-a73faed1/generate_multiview_image.left_view.jpeg .tripo-out/prop_levy_bow/multiview-1/tripo-out/tripo-out-prop-levy-bow-concept-a73faed1/generate_multiview_image.back_view.jpeg .tripo-out/prop_levy_bow/multiview-1/tripo-out/tripo-out-prop-levy-bow-concept-a73faed1/generate_multiview_image.right_view.jpeg --model P1-20260311 --param pbr=false --param texture=true --param face_limit=1200 -o .tripo-out/prop_levy_bow/attempt-1 --no-open --json",
+          "prompt": null,
+          "params": {
+            "pbr": false,
+            "texture": true,
+            "face_limit": 1200
+          },
+          "source_sheet": "multiview-1",
+          "source_concept": "concept-1",
+          "dry_run": {
+            "valid": true,
+            "warnings": [],
+            "cost_notes": [],
+            "model_reason": "explicit --model"
+          },
+          "estimate_credits": 50,
+          "estimate_source": "observed: P1 multiview-to-3D at face_limit 5000 (price may not depend on face_limit)",
+          "balance_before": {
+            "balance": 640,
+            "frozen": 0
+          },
+          "finished_at": "2026-09-28T04:57:00+00:00",
+          "balance_after": {
+            "balance": 590,
+            "frozen": 0
+          },
+          "actual_spend": 50,
+          "cli_reported_credits": 50,
+          "exit_code": 0,
+          "task_ids": [
+            "00757d1a-f510-4041-b3c5-46e18fdc8bad"
+          ]
+        }
+      ]
+    },
+    "clean": {
+      "status": "ok",
+      "timestamp": "2026-09-28T04:57:02+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/prop_levy_bow.yaml",
+          "sha256": "fecc2c8cd4b097798295ce40e44c6dc249ea93cc67edc5ab8e678a1f1f8ac95a"
+        },
+        {
+          "path": ".tripo-out/prop_levy_bow/attempt-1/tripo-out/generate-multiview-image-front-v-3-00757d1a/model.glb",
+          "sha256": "f56fddeadf86aa6f6bd5a2a66d1b888b8c731130b3c67ee06de2ce31b40827a4"
+        },
+        {
+          "path": "scripts/blender_cleanup.py",
+          "sha256": "41f70e42f2d0f10c0cc372afbd1ab7f8e5391e069387a1a69caecf8780057fac"
+        },
+        {
+          "path": ".tripo-out/prop_levy_bow/attempt-1/tripo-out/generate-multiview-image-front-v-3-00757d1a/task.json",
+          "sha256": "9ee3f423ffe4fede7b7db411bf54c9958787f6f5a9fbe0cb8cecbb58afc53318"
+        },
+        {
+          "path": ".tripo-out/prop_levy_bow/concept-1/tripo-out/stylized-low-poly-3d-game-asset-5-eb13cfd1/generated_image.png",
+          "sha256": "d90625854d50b01709aea5b34ca355bd1ae2337033af998add3c3465d4d5d472"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "assets/meshes/prop_levy_bow.glb",
+          "sha256": "b507eeccc52ecabdadaeb671e711bd63b274d86c8e4d1fa73ac9f424d663c38e"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.6.1.stable.official.14d19694e",
+        "tripo": "0.5.1"
+      },
+      "message": "exported assets/meshes/prop_levy_bow.glb",
+      "actual_cost_credits": 0,
+      "params": {
+        "asset_id": "prop_levy_bow",
+        "type": "prop",
+        "face_limit": 1200,
+        "triangle_budget": 1320,
+        "texture_size": 128,
+        "target_size_m": 1.0,
+        "pivot": "center",
+        "palette": [
+          "Barrow Oak",
+          "Old Bone",
+          "Signal Red"
+        ],
+        "socket_map": null,
+        "bone_map": null,
+        "animations": null,
+        "exclude_objects": null,
+        "tip_end": "symmetric",
+        "rigid_parts": null,
+        "skirt_reweight": null,
+        "source_forward": {
+          "axis": "+x",
+          "source": "Tripo API default (.tripo-out/prop_levy_bow/attempt-1/tripo-out/generate-multiview-image-front-v-3-00757d1a/task.json sets no export_orientation)"
+        },
+        "palette_targets": {
+          "Barrow Oak": "#8C5933",
+          "Old Bone": "#CCB484",
+          "Signal Red": "#C71F14"
+        },
+        "reference_image": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/prop_levy_bow/concept-1/tripo-out/stylized-low-poly-3d-game-asset-5-eb13cfd1/generated_image.png",
+        "texture_overlays": []
+      },
+      "report": {
+        "status": "pass",
+        "errors": [],
+        "warnings": [],
+        "blender_version": "5.0.1",
+        "input": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/prop_levy_bow/attempt-1/tripo-out/generate-multiview-image-front-v-3-00757d1a/model.glb",
+        "output": "/Users/zach/Documents/repos/project-whiskeyjack/assets/meshes/prop_levy_bow.glb",
+        "materials": [
+          {
+            "name": "tripo_material_00757d1a-f510-4041-b3c5-46e18fdc8bad",
+            "stripped": "normal, roughness, metallic, specular, emission and occlusion inputs are not carried over",
+            "converted_from": "principled",
+            "texture": "Color_00757d1a-f510-4041-b3c5-46e18fdc8bad",
+            "alpha": false
+          }
+        ],
+        "textures": [
+          {
+            "name": "Color_00757d1a-f510-4041-b3c5-46e18fdc8bad",
+            "size_before": [
+              2048,
+              2048
+            ],
+            "size_after": [
+              128,
+              128
+            ]
+          }
+        ],
+        "removed_objects": [],
+        "rigged": false,
+        "transform": {
+          "pivot": "center",
+          "size_before_m": [
+            0.0645,
+            0.2324,
+            0.998
+          ],
+          "principal_axis_before": [
+            0.0,
+            -0.009,
+            1.0
+          ],
+          "tilt_from_z_before_deg": 0.5,
+          "tilt_from_z_after_deg": 0.0,
+          "end_cross_sections_before_scale": {
+            "bottom": 0.001443,
+            "top": 0.001414
+          },
+          "tip_check": "skipped (brief says symmetric)",
+          "scale_factor": 1.00194,
+          "size_after_m": [
+            0.2383,
+            0.0646,
+            1.0
+          ],
+          "true_dims_m": {
+            "x": 0.2383,
+            "y": 0.0646,
+            "z": 1.0
+          },
+          "true_length_m": 1.0,
+          "min_after": [
+            -0.1192,
+            -0.0323,
+            -0.5
+          ]
+        },
+        "mesh_health": {
+          "totals": {
+            "as_imported": {
+              "vertices": 1156,
+              "edges": 2257,
+              "faces": 1192,
+              "triangles": 1192,
+              "quads": 0,
+              "ngons": 0,
+              "non_manifold_edges": 0,
+              "boundary_edges": 938,
+              "boundary_loops": 91,
+              "wire_edges": 0,
+              "loose_vertices": 0,
+              "degenerate_faces": 0,
+              "zero_length_edges": 0,
+              "quad_ratio": 0.0,
+              "triangle_ratio": 1.0
+            },
+            "welded": {
+              "vertices": 595,
+              "edges": 1788,
+              "faces": 1192,
+              "triangles": 1192,
+              "quads": 0,
+              "ngons": 0,
+              "non_manifold_edges": 0,
+              "boundary_edges": 0,
+              "boundary_loops": 0,
+              "wire_edges": 0,
+              "loose_vertices": 0,
+              "degenerate_faces": 0,
+              "zero_length_edges": 0,
+              "part_count": 4,
+              "parts": [
+                {
+                  "triangles": 922,
+                  "vertices": 463,
+                  "size_m": [
+                    0.2383,
+                    0.0646,
+                    1.0
+                  ]
+                },
+                {
+                  "triangles": 120,
+                  "vertices": 60,
+                  "size_m": [
+                    0.0273,
+                    0.0333,
+                    0.0256
+                  ]
+                },
+                {
+                  "triangles": 118,
+                  "vertices": 59,
+                  "size_m": [
+                    0.0276,
+                    0.0333,
+                    0.0253
+                  ]
+                },
+                {
+                  "triangles": 32,
+                  "vertices": 18,
+                  "size_m": [
+                    0.0137,
+                    0.006,
+                    0.863
+                  ]
+                }
+              ],
+              "quad_ratio": 0.0,
+              "triangle_ratio": 1.0
+            }
+          },
+          "per_mesh": [
+            {
+              "mesh": "tripo_node_00757d1a-f510-4041-b3c5-46e18fdc8bad",
+              "as_imported": {
+                "vertices": 1156,
+                "edges": 2257,
+                "faces": 1192,
+                "triangles": 1192,
+                "quads": 0,
+                "ngons": 0,
+                "quad_ratio": 0.0,
+                "triangle_ratio": 1.0,
+                "non_manifold_edges": 0,
+                "boundary_edges": 938,
+                "boundary_loops": 91,
+                "wire_edges": 0,
+                "loose_vertices": 0,
+                "degenerate_faces": 0,
+                "zero_length_edges": 0
+              },
+              "welded": {
+                "vertices": 595,
+                "edges": 1788,
+                "faces": 1192,
+                "triangles": 1192,
+                "quads": 0,
+                "ngons": 0,
+                "quad_ratio": 0.0,
+                "triangle_ratio": 1.0,
+                "non_manifold_edges": 0,
+                "boundary_edges": 0,
+                "boundary_loops": 0,
+                "wire_edges": 0,
+                "loose_vertices": 0,
+                "degenerate_faces": 0,
+                "zero_length_edges": 0,
+                "parts": [
+                  {
+                    "triangles": 922,
+                    "vertices": 463,
+                    "size_m": [
+                      0.2383,
+                      0.0646,
+                      1.0
+                    ]
+                  },
+                  {
+                    "triangles": 120,
+                    "vertices": 60,
+                    "size_m": [
+                      0.0273,
+                      0.0333,
+                      0.0256
+                    ]
+                  },
+                  {
+                    "triangles": 118,
+                    "vertices": 59,
+                    "size_m": [
+                      0.0276,
+                      0.0333,
+                      0.0253
+                    ]
+                  },
+                  {
+                    "triangles": 32,
+                    "vertices": 18,
+                    "size_m": [
+                      0.0137,
+                      0.006,
+                      0.863
+                    ]
+                  }
+                ],
+                "part_count": 4
+              }
+            }
+          ],
+          "weld_distance_m": 1e-05,
+          "note": "baseline only; nothing fails on these yet"
+        },
+        "color_correction": [
+          {
+            "image": "Color_00757d1a-f510-4041-b3c5-46e18fdc8bad",
+            "size": [
+              128,
+              128
+            ],
+            "method": "approved concept (hue and saturation restored; lightness lifted to the matched concept tone, never lowered)",
+            "reference": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/prop_levy_bow/concept-1/tripo-out/stylized-low-poly-3d-game-asset-5-eb13cfd1/generated_image.png",
+            "concept_background": "#8A8A8A",
+            "clusters": [
+              {
+                "concept": "#875C39",
+                "concept_share": 0.497,
+                "texture_before": "#7E552F",
+                "texture_share": 0.179,
+                "delta_e_before": 3.8,
+                "applied": true,
+                "texture_after": "#875B38",
+                "delta_ab_after": 0.1,
+                "lightness": [
+                  39.9,
+                  42.6,
+                  43.0
+                ],
+                "delta_ab_before": 2.3
+              },
+              {
+                "concept": "#55372A",
+                "concept_share": 0.131,
+                "texture_before": "#3F1D0C",
+                "texture_share": 0.163,
+                "delta_e_before": 12.3,
+                "applied": true,
+                "texture_after": "#553729",
+                "delta_ab_after": 0.3,
+                "lightness": [
+                  15.1,
+                  26.2,
+                  26.2
+                ],
+                "delta_ab_before": 5.5
+              },
+              {
+                "concept": "#A72523",
+                "concept_share": 0.123,
+                "texture_before": "#A5030C",
+                "texture_share": 0.291,
+                "delta_e_before": 11.1,
+                "applied": true,
+                "texture_after": "#A62422",
+                "delta_ab_after": 0.2,
+                "lightness": [
+                  34.2,
+                  36.9,
+                  37.2
+                ],
+                "delta_ab_before": 10.7
+              },
+              {
+                "concept": "#BCA576",
+                "concept_share": 0.058,
+                "texture_before": "#A6926A",
+                "texture_share": 0.275,
+                "delta_e_before": 8.2,
+                "applied": true,
+                "texture_after": "#BCA577",
+                "delta_ab_after": 0.4,
+                "lightness": [
+                  61.2,
+                  68.8,
+                  68.6
+                ],
+                "delta_ab_before": 3.5
+              },
+              {
+                "concept": "#891918",
+                "concept_share": 0.056,
+                "texture_before": "#9B3728",
+                "texture_share": 0.018,
+                "delta_e_before": 9.2,
+                "applied": false,
+                "reason": "covers 1.8% of the texture"
+              },
+              {
+                "concept": "#8F7667",
+                "concept_share": 0.016,
+                "texture_before": "#8E724C",
+                "texture_share": 0.038,
+                "delta_e_before": 12.8,
+                "applied": true,
+                "texture_after": "#8F7864",
+                "delta_ab_after": 2.0,
+                "lightness": [
+                  49.7,
+                  52.0,
+                  51.7
+                ],
+                "delta_ab_before": 12.6
+              },
+              {
+                "concept": "#6D1715",
+                "concept_share": 0.012,
+                "texture_before": "#6B160E",
+                "texture_share": 0.007,
+                "delta_e_before": 3.3,
+                "applied": false,
+                "reason": "covers 0.7% of the texture"
+              },
+              {
+                "concept": "#623F2A",
+                "concept_share": 0.108,
+                "texture_before": "#5D3D23",
+                "texture_share": 0.029,
+                "delta_e_before": 3.1,
+                "applied": false,
+                "reason": "covers 2.9% of the texture"
+              }
+            ]
+          }
+        ],
+        "shading": {
+          "angle_deg": 30.0,
+          "welded_vertices_removed": 561,
+          "custom_normals_cleared": [
+            "tripo_node_00757d1a-f510-4041-b3c5-46e18fdc8bad"
+          ],
+          "welded": "all"
+        },
+        "triangle_count": 1192,
+        "triangle_budget": 1320,
+        "vertex_metrics": {
+          "split_at_seams": 595,
+          "welded": 595,
+          "note": "metrics only; the budget is in triangles"
+        },
+        "animations": [],
+        "exported": {
+          "images": 1,
+          "materials": [
+            {
+              "name": "tripo_material_00757d1a-f510-4041-b3c5-46e18fdc8bad",
+              "alphaMode": "OPAQUE",
+              "base_color_texture": true
+            }
+          ],
+          "animations": 0,
+          "skins": 0
+        }
+      }
+    },
+    "validate": {
+      "status": "ok",
+      "timestamp": "2026-09-28T04:57:04+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/prop_levy_bow.yaml",
+          "sha256": "fecc2c8cd4b097798295ce40e44c6dc249ea93cc67edc5ab8e678a1f1f8ac95a"
+        },
+        {
+          "path": "assets/meshes/prop_levy_bow.glb",
+          "sha256": "b507eeccc52ecabdadaeb671e711bd63b274d86c8e4d1fa73ac9f424d663c38e"
+        },
+        {
+          "path": "scripts/godot_validate.gd",
+          "sha256": "b6e15053c4219818c4d819d9d64720b11aa7cddbef876e106eee74cbca31e554"
+        },
+        {
+          "path": "scripts/blender_views.py",
+          "sha256": "debc0bfee9633437a28f041585e1422ec94aa009a068e18c0826528ed36d9d85"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "assets/manifests/prop_levy_bow/front.png",
+          "sha256": "0a02211297021606d3ca048d1a93e17ce3e1b7bb1af3d123c2c45633a07262fc"
+        },
+        {
+          "path": "assets/manifests/prop_levy_bow/right.png",
+          "sha256": "7ecbaa90195f26a77cffc07eefb285f4799d14cba21cb91982e1fc5b0ca2a025"
+        },
+        {
+          "path": "assets/manifests/prop_levy_bow/back.png",
+          "sha256": "acc03e6cb5c1e58d48e320aa98ddb59afa82b04d70b6cff72d52665934da0d3d"
+        },
+        {
+          "path": "assets/manifests/prop_levy_bow/top.png",
+          "sha256": "ed463e9ec8874cac92c989fbb1a6048dbca24b8319f08c4677fbc410d21d6e88"
+        },
+        {
+          "path": "assets/manifests/prop_levy_bow/clay_front.png",
+          "sha256": "83f45cd410d91efa5f44b37c75fac0ab9fc691e1d0f63058c216ac606acc71d5"
+        },
+        {
+          "path": "assets/manifests/prop_levy_bow/wireframe_front.png",
+          "sha256": "c0664e2b43c56138b121e08e0414da36e11198ff67d5dc552fb3c3ce145ee4c0"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.6.1.stable.official.14d19694e",
+        "tripo": "0.5.1"
+      },
+      "message": "all checks passed",
+      "actual_cost_credits": 0,
+      "params": {
+        "asset_id": "prop_levy_bow",
+        "type": "prop",
+        "face_limit": 1200,
+        "triangle_budget": 1320,
+        "texture_size": 128,
+        "target_size_m": 1.0,
+        "pivot": "center",
+        "palette": [
+          "Barrow Oak",
+          "Old Bone",
+          "Signal Red"
+        ],
+        "socket_map": null,
+        "bone_map": null,
+        "animations": null,
+        "exclude_objects": null,
+        "tip_end": "symmetric",
+        "rigid_parts": null,
+        "skirt_reweight": null,
+        "blender_triangle_count": 1192
+      },
+      "report": {
+        "animations": {
+          "expected": [],
+          "missing": [],
+          "present": []
+        },
+        "errors": [],
+        "godot_version": "4.6.1-stable (official)",
+        "import_method": "GLTFDocument (runtime); editor import settings such as a BoneMap don't apply",
+        "materials": [
+          {
+            "albedo_texture": [
+              128,
+              128
+            ],
+            "extra_maps": [],
+            "mesh": "tripo_node_00757d1a-f510-4041-b3c5-46e18fdc8bad",
+            "metallic": 0.0,
+            "metallic_specular": 0.0,
+            "roughness": 1.0,
+            "specular_mode": "schlick_ggx",
+            "surface": 0,
+            "transparency": "disabled",
+            "unshaded": false
+          }
+        ],
+        "rig": {
+          "skeleton": false
+        },
+        "status": "pass",
+        "textures": {
+          "count": 1,
+          "max_allowed": 128,
+          "sizes": [
+            [
+              128,
+              128
+            ]
+          ]
+        },
+        "triangles": {
+          "blender_count": 1192.0,
+          "budget": 1320,
+          "count": 1192
+        },
+        "vertex_metrics": {
+          "gpu_count": 2288,
+          "note": "metrics only; the budget is in triangles"
+        },
+        "warnings": [],
+        "views": {
+          "status": "ok",
+          "views": {
+            "front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/prop_levy_bow/front.png",
+              "coverage": 0.043
+            },
+            "right": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/prop_levy_bow/right.png",
+              "coverage": 0.0366
+            },
+            "back": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/prop_levy_bow/back.png",
+              "coverage": 0.0429
+            },
+            "top": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/prop_levy_bow/top.png",
+              "coverage": 0.1397
+            },
+            "clay_front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/prop_levy_bow/clay_front.png",
+              "coverage": 0.043
+            },
+            "wireframe_front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/prop_levy_bow/wireframe_front.png",
+              "coverage": 0.0329
+            }
+          },
+          "errors": [],
+          "triangles": 1192,
+          "pieces_welded": 4
+        },
+        "gross_flags": []
+      }
+    }
+  },
+  "brief": {
+    "path": "assets/briefs/prop_levy_bow.yaml",
+    "sha256": "fecc2c8cd4b097798295ce40e44c6dc249ea93cc67edc5ab8e678a1f1f8ac95a"
+  },
+  "total_cost_credits": 75,
+  "updated_at": "2026-09-28T04:57:04+00:00",
+  "concept_approval": {
+    "attempt": "concept-1",
+    "image": {
+      "path": ".tripo-out/prop_levy_bow/concept-1/tripo-out/stylized-low-poly-3d-game-asset-5-eb13cfd1/generated_image.png",
+      "sha256": "d90625854d50b01709aea5b34ca355bd1ae2337033af998add3c3465d4d5d472"
+    },
+    "approved_at": "2026-09-28T04:48:13+00:00",
+    "approved_by": "user",
+    "concept_model": "banana_pro",
+    "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A single short recurve bow standing upright, seen from the front, as an isolated prop. Two warm mid-brown limbs curl strongly outward at each tip and end in small pale yellowed beige caps; the grip in the middle is wrapped in vivid scarlet red cloth, and one thin straight string runs from tip to tip.",
+    "command": "tripo generate text-to-image 'Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A single short recurve bow standing upright, seen from the front, as an isolated prop. Two warm mid-brown limbs curl strongly outward at each tip and end in small pale yellowed beige caps; the grip in the middle is wrapped in vivid scarlet red cloth, and one thin straight string runs from tip to tip.' --model banana_pro -o .tripo-out/prop_levy_bow/concept-1 --no-open --json"
+  }
+}

@@ -23,6 +23,10 @@ QuestManager="*uid://cecws7ifxbeme"
 DialogueRunner="*uid://cpcd3cmu4tfwq"
 AudioManager="*uid://cxv82dw4qnwfb"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/stylized_materials/plugin.cfg")
+
 [input]
 
 move_forward={

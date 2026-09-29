@@ -1,0 +1,25 @@
+# Carried from docs/art-bible.md, "Brief: Barrow-levy — skeleton (Front-file and Back-file)".
+# The art bible is the only source for these numbers: change it there first, then copy here.
+asset_id: barrow_levy
+type: character
+brief: |
+  The slice's only enemy model, used for both Front-file (melee) and Back-file
+  (archer) variants. Posture and the held prop carry the read; Back-file adds a
+  Signal Red wrap material variant.
+prompt: |
+  A humanoid skeleton in Old Bone, stained peat-brown at the joints, with a clearly
+  readable skull and ribcage, wearing a rotted leather harness in Saddle Leather: a belt
+  at the waist and two straps crossing the chest and back. Empty hands, T-pose.
+face_limit: 5000
+tripo_model: P1-20260311
+triangle_budget: 5500
+texture_size: 256
+target_size_m: 1.8
+pivot: base
+palette: [Old Bone, Saddle Leather, Blackened Iron, Signal Red]
+socket_map: data/rigs/barrow_levy_sockets.tres
+animations: [idle, run, attack, stagger, death]
+# A skeleton is built from separate rigid bones: each part is bound whole to its nearest bone.
+rigid_parts: true
+# Retarget: the GLB's import settings use this BoneMap (bones renamed to SkeletonProfileHumanoid names)
+bone_map: data/rigs/mixamorig_bone_map.tres

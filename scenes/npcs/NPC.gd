@@ -8,6 +8,8 @@ signal quest_reward_given
 ## If this quest is complete, use completion_dialogue_id instead of dialogue_id
 @export var completion_quest_id: String = ""
 @export var completion_dialogue_id: String = ""
+## If completion_quest_id is at this stage, talking to this NPC completes the quest
+@export var return_stage_id: String = ""
 
 var _player_in_range: bool = false
 var _reward_given: bool = false
@@ -19,6 +21,9 @@ func _ready() -> void:
 
 func interact() -> void:
 	var active_dialogue := dialogue_id
+	if not return_stage_id.is_empty() and not completion_quest_id.is_empty() \
+			and QuestManager.get_quest_stage(completion_quest_id) == return_stage_id:
+		QuestManager.complete_quest(completion_quest_id)
 	if not completion_quest_id.is_empty() and QuestManager.is_quest_complete(completion_quest_id):
 		if not completion_dialogue_id.is_empty():
 			active_dialogue = completion_dialogue_id

@@ -3,11 +3,18 @@ extends CharacterBody3D
 signal died
 signal inventory_toggled
 
+const HeldProps := preload("res://scripts/combat/HeldProps.gd")
+const CHARACTER_LIGHT_LAYER := 2  # render layer of CameraRig/FillLight's cull mask (value 2 = layer 2)
+
 @export var stats: CharacterStats
+## Bone names for this model's rig; the only place socket bones are named
+@export var socket_map: SocketMap
+## Props to hold, keyed by socket name, e.g. {"hand_r": PackedScene}
+@export var held_props: Dictionary = {}
 @export var inventory: Inventory
 @export var move_speed: float = 5.0
-@export var dodge_speed: float = 12.0
-@export var dodge_duration: float = 0.35
+@export var dodge_speed: float = 8.4   # 4.2 m over the dodge, as before
+@export var dodge_duration: float = 0.5  # fits the roll clip's core at 1.8x
 @export var gravity: float = 20.0
 @export var camera_sensitivity: float = 0.003   # radians per pixel (mouse)
 @export var camera_pad_speed: float = 2.0        # radians per second (keys/gamepad)
@@ -24,7 +31,8 @@ signal inventory_toggled
 @onready var hitbox: HitboxComponent = $HitboxComponent
 @onready var _sfx_swing: AudioStreamPlayer3D = $SFXSwing
 @onready var _sfx_footstep: AudioStreamPlayer3D = $SFXFootstep
-@onready var _anim_player: AnimationPlayer = $PlayerModel/AnimationPlayer
+# The model may have no clips yet (animation comes from the shared library)
+@onready var _anim_player: AnimationPlayer = get_node_or_null("PlayerModel/AnimationPlayer")
 
 var _is_dodging: bool = false
 var _dodge_timer: float = 0.0
@@ -54,6 +62,11 @@ var _playing_oneshot: bool = false  # True while a non-looping anim plays
 
 func _ready() -> void:
 	add_to_group("player")
+	# CameraRig/FillLight only lights render layer CHARACTER_LIGHT_LAYER, so it separates the player
+	# from dark interiors without lighting walls or enemies
+	HeldProps.attach($PlayerModel, socket_map, held_props, name)
+	for mesh in $PlayerModel.find_children("*", "VisualInstance3D", true, false):
+		(mesh as VisualInstance3D).layers |= 1 << (CHARACTER_LIGHT_LAYER - 1)
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	_cam_yaw = camera_rig.rotation.y + rotation.y
 	_cam_pitch = spring_arm.rotation.x

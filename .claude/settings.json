@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "ask": [
+      "Bash(tripo make *)",
+      "Bash(tripo redo *)",
+      "Bash(tripo generate *)",
+      "Bash(tripo model *)",
+      "Bash(tripo anim *)",
+      "Bash(tripo mesh *)",
+      "Bash(tripo batch *)",
+      "Bash(tripo ai *)",
+      "Bash(tripo mcp *)",
+      "mcp__blender__generate_hyper3d_model_via_text",
+      "mcp__blender__generate_hyper3d_model_via_images",
+      "mcp__blender__generate_tripo_model",
+      "mcp__blender__generate_hunyuan3d_model"
+    ]
+  }
+}

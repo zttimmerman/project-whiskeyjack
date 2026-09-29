@@ -10,3 +10,26 @@
 
 # macOS
 .DS_Store
+
+# Raw Tripo CLI downloads (hidden dir, so Godot also skips importing it)
+.tripo-out/
+# Tripo CLI per-directory context (last task pointer; machine-local)
+.tripo/
+
+# Python bytecode
+__pycache__/
+
+# Quaternius packs as extracted (only the two non-root-motion GLBs are committed)
+assets/animations/quaternius/Universal Animation Library*[[]Standard[]]/
+
+# Judge packets: scratch (preview cleans, renders before copying); the packet keeps the evidence it copied
+assets/manifests/**/judge/*/work/
+
+# Pipeline evidence images (review renders, judge packet copies, replays, animation sheets) stay local.
+# The JSON beside them is committed and records every image's SHA-256; finished assets live in assets/meshes/.
+assets/manifests/**/*.png
+assets/manifests/**/*.jpg
+assets/manifests/**/*.jpeg
+assets/manifests/**/*.webp
+# The subagent's reply as it arrived; judge.py record writes the validated verdict.json beside it
+assets/manifests/**/verdict.raw.json

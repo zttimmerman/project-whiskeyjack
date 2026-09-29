@@ -9,15 +9,23 @@ enum State { IDLE, PATROL, CHASE, ATTACK, STAGGER, DEAD }
 @export var detection_range: float = 10.0
 @export var attack_range: float = 1.5
 @export var gravity: float = 20.0
+## Bone names for this model's rig; the only place socket bones are named
+@export var socket_map: SocketMap
+## Props to hold, keyed by socket name, e.g. {"hand_r": PackedScene}
+@export var held_props: Dictionary = {}
 
 const STAGGER_DURATION: float = 0.4
 const ATTACK_ACTIVE_TIME: float = 0.3
+const DEATH_FADE_TIME: float = 0.3
+const DEATH_FALLBACK_TIME: float = 2.4  # Death01's length, if the model has no death clip
 const ATTACK_COOLDOWN: float = 1.5
 
 var state: State = State.IDLE
 var _player: CharacterBody3D = null
 var _nav_agent: NavigationAgent3D = null
 var _hitbox: HitboxComponent = null
+const HeldProps := preload("res://scripts/combat/HeldProps.gd")
+
 var _anim_player: AnimationPlayer = null
 
 var _stagger_timer: float = 0.0
@@ -40,6 +48,8 @@ func _ready() -> void:
 	if _anim_player:
 		_anim_player.animation_finished.connect(_on_animation_finished)
 		_play_anim("idle")
+	if model_node:
+		_attach_held_props(model_node)
 	stats.died.connect(_on_stats_died)
 	# Connect enemy's own hurtbox to trigger stagger state (HurtboxComponent handles HP)
 	$HurtboxComponent.area_entered.connect(_on_hurtbox_hit)
@@ -61,9 +71,12 @@ func _physics_process(delta: float) -> void:
 		State.STAGGER:
 			_tick_stagger(delta)
 		State.DEAD:
-			pass
+			# Collapse in place: no knockback or chase velocity carries through the death clip
+			velocity.x = 0.0
+			velocity.z = 0.0
 
-	_get_next_action()
+	if state != State.DEAD:
+		_get_next_action()
 	move_and_slide()
 
 
@@ -168,7 +181,14 @@ func _change_state(new_state: State) -> void:
 			_play_anim("stagger")
 		State.DEAD:
 			_hitbox.deactivate()
+			velocity = Vector3.ZERO
+			_nav_agent.target_position = global_position
 			_play_anim("death")
+
+
+# Parents each held prop to a BoneAttachment3D on the bone its socket maps to
+func _attach_held_props(model_node: Node) -> void:
+	HeldProps.attach(model_node, socket_map, held_props, name)
 
 
 func _play_anim(anim_name: String) -> void:
@@ -236,9 +256,28 @@ func die() -> void:
 	_change_state(State.DEAD)
 	GameManager.award_player_xp(xp_reward)
 	emit_signal("died")
-	# Delay queue_free so the death animation has time to play (~1.25s at 24fps)
-	var timer: SceneTreeTimer = get_tree().create_timer(1.5)
-	timer.timeout.connect(queue_free)
+	# Free once the death clip has played, fading the model out over its last DEATH_FADE_TIME
+	var length := DEATH_FALLBACK_TIME
+	if _anim_player and _anim_player.has_animation("death"):
+		length = _anim_player.get_animation("death").length
+	var tween := create_tween()
+	tween.tween_interval(maxf(length - DEATH_FADE_TIME, 0.0))
+	# Fade through material alpha: the Compatibility renderer doesn't draw GeometryInstance3D.transparency.
+	# Each surface gets its own copy, since the material is shared with every other levy.
+	var first := true
+	for mesh in find_children("*", "MeshInstance3D", true, false):
+		var mi := mesh as MeshInstance3D
+		for s in mi.mesh.get_surface_count():
+			var mat := mi.get_active_material(s)
+			if not mat is BaseMaterial3D:
+				continue
+			var fading := (mat as BaseMaterial3D).duplicate() as BaseMaterial3D
+			fading.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			mi.set_surface_override_material(s, fading)
+			# The first fade follows the wait; the rest run alongside it
+			(tween if first else tween.parallel()).tween_property(fading, "albedo_color:a", 0.0, DEATH_FADE_TIME)
+			first = false
+	tween.tween_callback(queue_free)
 
 
 func _on_stats_died() -> void:

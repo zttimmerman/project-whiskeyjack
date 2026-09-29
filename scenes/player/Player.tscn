@@ -8,8 +8,11 @@
 [ext_resource type="AudioStream" path="res://assets/audio/sfx_swing.ogg" id="6_swing"]
 [ext_resource type="AudioStream" path="res://assets/audio/sfx_footstep.ogg" id="7_step"]
 [ext_resource type="AudioStream" path="res://assets/audio/sfx_impact.ogg" id="8_impact"]
-[ext_resource type="PackedScene" path="res://assets/meshes/player_character.glb" id="9_model"]
+[ext_resource type="PackedScene" path="res://assets/meshes/player.glb" id="9_model"]
 
+[ext_resource type="AnimationLibrary" path="res://data/animations/player_library.tres" id="30_anims"]
+[ext_resource type="Resource" path="res://data/rigs/player_sockets.tres" id="32_sockets"]
+[ext_resource type="PackedScene" path="res://scenes/props/HeldLevyBlade.tscn" id="31_blade"]
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gfjak"]
 radius = 0.4
 height = 1.8
@@ -40,6 +43,8 @@ radius = 0.4
 script = ExtResource("1_wr5hl")
 stats = SubResource("CharacterStats_player")
 inventory = SubResource("Inventory_player")
+socket_map = ExtResource("32_sockets")
+held_props = {"hand_r": ExtResource("31_blade")}
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1706130590]
 shape = SubResource("CapsuleShape3D_gfjak")
@@ -49,6 +54,13 @@ transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, -0.9, 0)
 
 [node name="CameraRig" type="Node3D" parent="." unique_id=1699920677]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="FillLight" type="OmniLight3D" parent="CameraRig"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 2.5)
+light_color = Color(1, 0.8, 0.5, 1)
+light_energy = 3.5
+light_cull_mask = 2
+omni_range = 5.0
 
 [node name="SpringArm3D" type="SpringArm3D" parent="CameraRig" unique_id=783708106]
 spring_length = 4.0
@@ -84,3 +96,7 @@ bus = "SFX"
 [node name="SFXFootstep" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("7_step")
 bus = "SFX"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="PlayerModel"]
+root_node = NodePath("..")
+libraries = {&"": ExtResource("30_anims")}

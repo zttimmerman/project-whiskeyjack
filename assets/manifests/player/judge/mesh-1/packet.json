@@ -1,0 +1,466 @@
+{
+  "asset_id": "player",
+  "stage": "mesh",
+  "created_at": "2026-09-28T21:49:11+00:00",
+  "replay": null,
+  "packet_dir": "assets/manifests/player/judge/mesh-1",
+  "brief": {
+    "type": "character",
+    "brief": "The player, a Frontier Line soldier. The camera sits behind them, so the back and\nshoulders read most. Identity marks: spiky dark hair, knee-length tunic flare,\nharness straps crossing the back.",
+    "prompt": "A young frontier soldier in a knee-length wool tunic in Garrison Teal that flares at\nthe hem, a leather harness in Saddle Leather with two straps crossing the chest and\nback, leather boots in Saddle Leather, spiky dark hair, empty hands, T-pose.",
+    "face_limit": 5000,
+    "triangle_budget": 5500,
+    "texture_size": 256,
+    "target_size_m": 1.8,
+    "pivot": "base",
+    "tip_end": null,
+    "rigid_parts": null,
+    "skirt_reweight": true
+  },
+  "brief_palette": {
+    "Garrison Teal": {
+      "hex": "#0C5454",
+      "plain": "deep dark teal"
+    },
+    "Saddle Leather": {
+      "hex": "#4A2A10",
+      "plain": "dark reddish-brown"
+    },
+    "Blackened Iron": {
+      "hex": "#242424",
+      "plain": "near-black charcoal"
+    },
+    "Tarnished Gold": {
+      "hex": "#E6BF1A",
+      "plain": "bright golden yellow"
+    }
+  },
+  "art_bible": {
+    "brief_section": "## Brief: Player \u2014 Line soldier\n\n- **File / Source:** `assets/meshes/player.glb`, **generated with Tripo from this brief** and run through the asset pipeline. It replaces the shipped `player_character.glb` (Rodin v2: 50,566 vertices, a 2048\u00b2 albedo, normal and metallic-roughness maps), which isn't cleaned or reused.\n- **Role:** the player; the camera sits behind them, so the back and shoulders read most.\n- **Silhouette:** spiky dark hair (the player's identity mark), knee-length tunic flare, harness straps crossing the back.\n- **Shipped design change (concept-1, 2026-09-27):** the harness came back as a **leather vest with two straps crossed over it**, plus a waist belt, iron-grey wrist bracers, and dark trousers under the tunic. Accepted, because a solid chest piece rigs better than floating straps; thin, separate geometry is what hurt the Barrow-levy. The multiview sheet (multiview-1, approved) gave the vest a **plain back panel with two horizontal waist straps**, so the X-straps are **front-only**. The back now reads from the vest panel and the spiky hair. Also accepted: re-rolling the sheet risked losing what came through well. **Mouth:** Tripo's delight pass flattened the mouth into the skin; a texture overlay (`assets/overlays/player_mouth.png`) paints it back at clean time.\n- **Budget:** \u2264 5,500 triangles (Tripo `face_limit` 5,000 + 10%); one albedo at 256\u00d7256.\n- **Palette:** Garrison Teal tunic \u00b7 Saddle Leather harness and boots \u00b7 Blackened Iron buckles \u00b7 Tarnished Gold company-number stitching under a Notch on the left shoulder.\n- **Materials & wear:** wool, oiled leather. The wear (a rain-darkened hem, scuffed boots, a patched elbow) and the Notch patch are painted in the albedo during the texture pass, and kept out of the prompt.\n- **Rig / attachment:** the generated mesh needs a humanoid skeleton that maps onto Godot's `SkeletonProfileHumanoid`; how it gets rigged is still open (CLAUDE.md \u2192 Rigging & Animation). Pipeline stage 4 proposes the `BoneMap`. The right hand is the weapon socket, mapped in a `SocketMap` like every other rig.\n- **Rig order:** raw Tripo download \u2192 Tripo auto-rig \u2192 clean. Tripo's rigger expects its own +X orientation, and a cleaned, rotated GLB rig-checks as unriggable. **The rig model follows the body plan, not recency:** `v1.0-20240301` is the humanoid rigger (and the server default), and `v2.5-20260210` is for creatures. Continuous skin, so no rigid rebind.\n- **Scale & pivot:** 1.8 m tall, feet at origin, facing \u2212Y in Blender. The `.tscn` transform is unchanged (CLAUDE.md \u2192 Blender \u2192 Godot gotchas).\n- **Animation:** library clips `idle`, `run`, `dodge_roll`, `attack_light`, `attack_heavy`, `death`. The current hand-keyed clips are retired.\n- **Prompt:** FORM block + *\"A young frontier soldier in a knee-length wool tunic in Garrison Teal that flares at the hem, a leather harness in Saddle Leather with two straps crossing the chest and back, leather boots in Saddle Leather, spiky dark hair, empty hands, T-pose.\"*\n- **Accept when:** \u2264 5,500 triangles; albedo only at \u2264 256\u00b2; retarget previews all 6 clips without breaking; teal and the hair read from the gameplay camera; face and hands still recognizable.\n- **Cost:** 1 Tripo generation, plus one per rejected attempt.",
+    "form_block": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art.",
+    "concept_lighting_block": "Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights.",
+    "tolerances": "## Judge tolerances\n\nThe numeric assertions the asset judge checks (`scripts/judge.py`, which reads this table; nothing else holds these numbers). \u0394E is CIE76 in Lab. Each value is set on principle and checked against the replays in `assets/manifests/judge_replays/`: the known-bad inputs fail, and where a shipped asset or clip fails too, it's a real finding recorded in `docs/decisions.md`, not a reason to loosen the limit.\n\n| Check | Limit | Applies to | Why |\n|---|---|---|---|\n| `concept_palette_de` | 25 | concept | A brief palette color counts as present when one of the concept's main colors (\u2265 3% of the figure) sits within this distance. Loose on purpose: the player's approved \"deep dark teal\" rendered as navy #14313F. |\n| `color_min_share` | 0.05 | model, mesh | Colors covering less of the concept (or texture) than this are details, not checked. |\n| `color_kept_ratio` | 0.33 | model, mesh | A concept color must keep at least this fraction of its concept share in the texture, or the model lost it. |\n| `color_dab_after` | 5 | model, mesh | Hue/saturation distance (Lab a, b) between a corrected texture cluster and its concept color. |\n| `palette_de_before` | 20 | model, mesh | Concept-less assets: distance before correction for a palette group covering at least `color_min_share`. Correction can repaint a wrong color: blade attempt 1's olive-green blade grouped under Old Bone (27.5 \u0394E) and came out bone-colored. |\n| `palette_de_after` | 12 | model, mesh | Concept-less assets: distance between a corrected palette group's median and its palette color. |\n| `mesh_max_holes` | 10 | model, mesh | Open boundary loops after welding. Fewer are reported for the judge to weigh (the blade's 4 grip slits are recorded and accepted). |\n| `motion_root_travel_m` | 0.15 | death, in-place clips | Horizontal Hips travel from the first frame. The pre-fix `Death01` travelled 0.45\u20130.51 m; shipped idles and runs stay under 0.07. |\n| `motion_foot_slide_mps` | 0.5 | in-place clips | 90th-percentile ground-relative speed of a planted foot (near its lowest point and not moving vertically), at the clip's gameplay speed: 10% of the player's run. Reported only for action clips (attacks and rolls pivot on planted feet on purpose) and deaths (the feet kick out as the body collapses onto its pinned Hips; `Death01` can't meet both this and the travel limit, since keeping 30% of its travel still slid 0.80 m/s). |\n| `motion_bind_deviation_m` | 1.8 | every clip | Largest vertex displacement from the bind pose in the Hips frame; a character's height, because no attached vertex gets that far from the hips. Normal clips reach 0.5\u20131.6 (arms swinging from the T-pose). |\n| `motion_edge_stretch` | 1.0 | every clip | Largest relative length change of any mesh edge of at least 1 cm from the bind pose: an edge has doubled. Rigid-part characters read 0. |"
+  },
+  "design_notes": [
+    "**Shipped design change (concept-1, 2026-09-27):** the harness came back as a **leather vest with two straps crossed over it**, plus a waist belt, iron-grey wrist bracers, and dark trousers under the tunic. Accepted, because a solid chest piece rigs better than floating straps; thin, separate geometry is what hurt the Barrow-levy. The multiview sheet (multiview-1, approved) gave the vest a **plain back panel with two horizontal waist straps**, so the X-straps are **front-only**. The back now reads from the vest panel and the spiky hair. Also accepted: re-rolling the sheet risked losing what came through well. **Mouth:** Tripo's delight pass flattened the mouth into the skin; a texture overlay (`assets/overlays/player_mouth.png`) paints it back at clean time."
+  ],
+  "images": [
+    {
+      "role": "approved_concept",
+      "path": "assets/manifests/player/judge/mesh-1/01_approved_concept.png",
+      "sha256": "c489317c17b7d21da9d8bc493eab7a50cbdb13f7855a9d485539534444ad21a1",
+      "source": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+      "source_sha256": "e92b55a11a671ace6e50e37e78578afaa6a2e46e7d230da2da61ef368c2e9f98",
+      "size": [
+        765,
+        1024
+      ]
+    },
+    {
+      "role": "front",
+      "path": "assets/manifests/player/judge/mesh-1/02_front.png",
+      "sha256": "0037edc154d8127ad653e867feeea396645d9810f0db2cffaa81661c6e4315d6",
+      "source": "assets/manifests/player/judge/mesh-1/work/views/front.png",
+      "source_sha256": "0037edc154d8127ad653e867feeea396645d9810f0db2cffaa81661c6e4315d6",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "right",
+      "path": "assets/manifests/player/judge/mesh-1/03_right.png",
+      "sha256": "6edc47a8072eec95b9b7410686e4e688cabc65a1487f7e411fdc0a90de52a319",
+      "source": "assets/manifests/player/judge/mesh-1/work/views/right.png",
+      "source_sha256": "6edc47a8072eec95b9b7410686e4e688cabc65a1487f7e411fdc0a90de52a319",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "back",
+      "path": "assets/manifests/player/judge/mesh-1/04_back.png",
+      "sha256": "1292dc930e1c996c91a03836e1943b107d1f018c265823bd9cfccef4e047c837",
+      "source": "assets/manifests/player/judge/mesh-1/work/views/back.png",
+      "source_sha256": "1292dc930e1c996c91a03836e1943b107d1f018c265823bd9cfccef4e047c837",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "top",
+      "path": "assets/manifests/player/judge/mesh-1/05_top.png",
+      "sha256": "3528af2d643af724932de344ab3a379dd19a264bae0607ed8a0588844e47950f",
+      "source": "assets/manifests/player/judge/mesh-1/work/views/top.png",
+      "source_sha256": "3528af2d643af724932de344ab3a379dd19a264bae0607ed8a0588844e47950f",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "clay_front",
+      "path": "assets/manifests/player/judge/mesh-1/06_clay_front.png",
+      "sha256": "e4b141491cffc80c951f76c57daeac063d3785c76228e3c1f868713978a0777d",
+      "source": "assets/manifests/player/judge/mesh-1/work/views/clay_front.png",
+      "source_sha256": "e4b141491cffc80c951f76c57daeac063d3785c76228e3c1f868713978a0777d",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "wireframe_front",
+      "path": "assets/manifests/player/judge/mesh-1/07_wireframe_front.png",
+      "sha256": "e6e65b6ca1576222e048ba8b3472490178b3fb57f486c954025d57f4b42f932b",
+      "source": "assets/manifests/player/judge/mesh-1/work/views/wireframe_front.png",
+      "source_sha256": "e6e65b6ca1576222e048ba8b3472490178b3fb57f486c954025d57f4b42f932b",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "closeup_front",
+      "path": "assets/manifests/player/judge/mesh-1/08_closeup_front.png",
+      "sha256": "3f6d1073302a0dde602121ac32e4dcdbe77613b43d718945c3c2f82da8a17d07",
+      "source": "assets/manifests/player/judge/mesh-1/work/views/closeup_front.png",
+      "source_sha256": "3f6d1073302a0dde602121ac32e4dcdbe77613b43d718945c3c2f82da8a17d07",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "closeup_back",
+      "path": "assets/manifests/player/judge/mesh-1/09_closeup_back.png",
+      "sha256": "dc9179392a85de0b26d19bb1702ee641a744f4775a3e2fd9c5fbd5f57f4a33a6",
+      "source": "assets/manifests/player/judge/mesh-1/work/views/closeup_back.png",
+      "source_sha256": "dc9179392a85de0b26d19bb1702ee641a744f4775a3e2fd9c5fbd5f57f4a33a6",
+      "size": [
+        512,
+        512
+      ]
+    }
+  ],
+  "metrics": {
+    "mesh": {
+      "triangles": 4893,
+      "triangle_budget": 5500,
+      "texture_sizes": [
+        [
+          256,
+          256
+        ]
+      ],
+      "part_count": 5,
+      "parts": [
+        {
+          "triangles": 4713,
+          "size_m": [
+            0.2211,
+            1.0,
+            0.9883
+          ]
+        },
+        {
+          "triangles": 50,
+          "size_m": [
+            0.0157,
+            0.0372,
+            0.0078
+          ]
+        },
+        {
+          "triangles": 50,
+          "size_m": [
+            0.0157,
+            0.0372,
+            0.0078
+          ]
+        },
+        {
+          "triangles": 42,
+          "size_m": [
+            0.0078,
+            0.0117,
+            0.0137
+          ]
+        },
+        {
+          "triangles": 38,
+          "size_m": [
+            0.0078,
+            0.0137,
+            0.0137
+          ]
+        }
+      ],
+      "holes_boundary_loops": 2,
+      "non_manifold_edges": 13,
+      "true_dims_m": {
+        "x": 1.8214,
+        "y": 0.4028,
+        "z": 1.8
+      },
+      "true_length_m": 1.8,
+      "target_size_m": 1.8,
+      "clean_warnings": [],
+      "clean_errors": [],
+      "view_coverage": {
+        "front": 0.1776,
+        "right": 0.1099,
+        "back": 0.1776,
+        "top": 0.079,
+        "closeup_front": 0.4691,
+        "closeup_back": 0.4691,
+        "clay_front": 0.1776,
+        "wireframe_front": 0.159
+      }
+    },
+    "color_vs_concept": [
+      [
+        {
+          "concept": "#14313F",
+          "concept_share": 0.32,
+          "texture_before": "#032C3F",
+          "texture_share": 0.351,
+          "texture_after": "#13303E",
+          "delta_e_before": 4.5,
+          "delta_ab_after": 0.3,
+          "applied": true,
+          "reason": null
+        },
+        {
+          "concept": "#BC9781",
+          "concept_share": 0.058,
+          "texture_before": "#AC9386",
+          "texture_share": 0.078,
+          "texture_after": "#BE9983",
+          "delta_e_before": 7.9,
+          "delta_ab_after": 0.1,
+          "applied": true,
+          "reason": null
+        },
+        {
+          "concept": "#646064",
+          "concept_share": 0.004,
+          "texture_before": "#5B4444",
+          "texture_share": 0.016,
+          "texture_after": null,
+          "delta_e_before": 13.8,
+          "delta_ab_after": null,
+          "applied": false,
+          "reason": "covers 1.6% of the texture"
+        },
+        {
+          "concept": "#957468",
+          "concept_share": 0.03,
+          "texture_before": "#7F6E68",
+          "texture_share": 0.023,
+          "texture_after": null,
+          "delta_e_before": 9.2,
+          "delta_ab_after": null,
+          "applied": false,
+          "reason": "covers 2.3% of the texture"
+        },
+        {
+          "concept": "#45282B",
+          "concept_share": 0.231,
+          "texture_before": "#441B21",
+          "texture_share": 0.246,
+          "texture_after": "#432629",
+          "delta_e_before": 7.8,
+          "delta_ab_after": 0.4,
+          "applied": true,
+          "reason": null
+        },
+        {
+          "concept": "#2C1D25",
+          "concept_share": 0.145,
+          "texture_before": "#281A21",
+          "texture_share": 0.159,
+          "texture_after": "#2B1A22",
+          "delta_e_before": 1.6,
+          "delta_ab_after": 1.3,
+          "applied": true,
+          "reason": null
+        },
+        {
+          "concept": "#383C43",
+          "concept_share": 0.021,
+          "texture_before": "#354149",
+          "texture_share": 0.029,
+          "texture_after": null,
+          "delta_e_before": 3.4,
+          "delta_ab_after": null,
+          "applied": false,
+          "reason": "covers 2.9% of the texture"
+        },
+        {
+          "concept": "#0B1C2C",
+          "concept_share": 0.19,
+          "texture_before": "#03122A",
+          "texture_share": 0.098,
+          "texture_after": "#071929",
+          "delta_e_before": 7.2,
+          "delta_ab_after": 0.4,
+          "applied": true,
+          "reason": null
+        }
+      ]
+    ],
+    "validate": {
+      "status": "pass",
+      "errors": [],
+      "warnings": [
+        "animations missing (they'll come from the shared library): [\"idle\", \"run\", \"dodge_roll\", \"attack_light\", \"attack_heavy\", \"death\"]",
+        "gross check: holes: 2 open boundary loops after welding"
+      ],
+      "humanoid_mappable": true,
+      "missing_required": [],
+      "sockets": null
+    }
+  },
+  "assertions": [
+    {
+      "name": "triangles within budget",
+      "passed": true,
+      "value": 4893,
+      "limit": 5500,
+      "detail": "art bible: triangles after triangulation, summed across the GLB"
+    },
+    {
+      "name": "one albedo texture at the brief's size",
+      "passed": true,
+      "value": [
+        [
+          256,
+          256
+        ]
+      ],
+      "limit": 256,
+      "detail": ""
+    },
+    {
+      "name": "holes (welded boundary loops)",
+      "passed": true,
+      "value": 2,
+      "limit": 10.0,
+      "detail": "open boundary loops after welding at 0.01 mm"
+    },
+    {
+      "name": "concept color #14313F kept in the texture",
+      "passed": true,
+      "value": 0.351,
+      "limit": 0.106,
+      "detail": "covers 32% of the concept"
+    },
+    {
+      "name": "concept color #14313F matched after correction",
+      "passed": true,
+      "value": 0.3,
+      "limit": 5.0,
+      "detail": "hue/saturation distance (Lab a, b) after correction"
+    },
+    {
+      "name": "concept color #BC9781 kept in the texture",
+      "passed": true,
+      "value": 0.078,
+      "limit": 0.019,
+      "detail": "covers 6% of the concept"
+    },
+    {
+      "name": "concept color #BC9781 matched after correction",
+      "passed": true,
+      "value": 0.1,
+      "limit": 5.0,
+      "detail": "hue/saturation distance (Lab a, b) after correction"
+    },
+    {
+      "name": "concept color #45282B kept in the texture",
+      "passed": true,
+      "value": 0.246,
+      "limit": 0.076,
+      "detail": "covers 23% of the concept"
+    },
+    {
+      "name": "concept color #45282B matched after correction",
+      "passed": true,
+      "value": 0.4,
+      "limit": 5.0,
+      "detail": "hue/saturation distance (Lab a, b) after correction"
+    },
+    {
+      "name": "concept color #2C1D25 kept in the texture",
+      "passed": true,
+      "value": 0.159,
+      "limit": 0.048,
+      "detail": "covers 14% of the concept"
+    },
+    {
+      "name": "concept color #2C1D25 matched after correction",
+      "passed": true,
+      "value": 1.3,
+      "limit": 5.0,
+      "detail": "hue/saturation distance (Lab a, b) after correction"
+    },
+    {
+      "name": "concept color #0B1C2C kept in the texture",
+      "passed": true,
+      "value": 0.098,
+      "limit": 0.063,
+      "detail": "covers 19% of the concept"
+    },
+    {
+      "name": "concept color #0B1C2C matched after correction",
+      "passed": true,
+      "value": 0.4,
+      "limit": 5.0,
+      "detail": "hue/saturation distance (Lab a, b) after correction"
+    },
+    {
+      "name": "validate stage passed",
+      "passed": true,
+      "value": "pass",
+      "limit": "pass",
+      "detail": ""
+    }
+  ],
+  "questions": [
+    "Does the mesh match the approved concept (or, with no concept, the brief's prompt) part for part? List each named element as present, absent or changed.",
+    "Is anything missing or malformed: holes, fused limbs or parts that should be separate, separate pieces that should be one (see the part list), spikes, floating fragments, extra props?",
+    "Budget and scale: do the triangle, texture and size assertions pass?",
+    "Colors: do the color assertions pass? Name any concept or palette color the texture lost, or a large area in a color the brief doesn't ask for.",
+    "Rigged characters: does the validate report map every required humanoid bone, and do the sockets resolve?",
+    "Face (characters): in the closeups (or the concept), list the eyes, nose and mouth, each as clearly present, faint, or absent. A faint or absent feature the concept shows is a missing finding."
+  ],
+  "escalate_rules": [
+    "Open style or taste questions (is it appealing, is the silhouette strong enough, is this the right design) are not yours: escalate them.",
+    "A deliberate, recorded design change (see design_notes) is not a defect: don't flag it again, but say so if the asset contradicts the note.",
+    "When the evidence can't settle a question (the view that would show it is missing), escalate rather than guess.",
+    "Revise only when one concrete edit would fix every blocker and major finding. Otherwise escalate."
+  ],
+  "refine_budget": {
+    "per_stage": 1,
+    "used": 0
+  },
+  "tool_versions": {
+    "python": "3.14.7",
+    "blender": "Blender 5.0.1",
+    "godot": "4.6.1.stable.official.14d19694e",
+    "tripo": "0.5.1"
+  },
+  "subject": {
+    "kind": "shipped mesh",
+    "path": "assets/meshes/player.glb",
+    "sha256": "acbd75c9f85b278841e0cd5e716ce73c3728b6453598ca1592a3f4fd30001a14",
+    "concept": {
+      "path": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+      "sha256": "e92b55a11a671ace6e50e37e78578afaa6a2e46e7d230da2da61ef368c2e9f98"
+    }
+  },
+  "assertions_failed": 0
+}

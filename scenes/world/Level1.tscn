@@ -1,23 +1,21 @@
 [gd_scene format=3 uid="uid://dys6tb5xur4iu"]
 
-[ext_resource type="Script" path="res://scenes/world/Level1.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://cg78qyj818tf7" path="res://scenes/world/Level1.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://cyibe5n4nuirt" path="res://scenes/player/Player.tscn" id="2_player"]
 [ext_resource type="PackedScene" uid="uid://cr6q16h3br23g" path="res://scenes/enemies/BaseEnemy.tscn" id="3_baseenemy"]
-[ext_resource type="PackedScene" uid="uid://archerenemy_sc" path="res://scenes/enemies/ArcherEnemy.tscn" id="4_archer"]
-[ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="5_hud"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/ArcherEnemy.tscn" id="4_archer"]
+[ext_resource type="PackedScene" uid="uid://bhud00tscn01" path="res://scenes/ui/HUD.tscn" id="5_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/InventoryUI.tscn" id="6_invui"]
 [ext_resource type="PackedScene" path="res://scenes/ui/DialogueUI.tscn" id="7_dlgui"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="8_pause"]
 [ext_resource type="PackedScene" path="res://scenes/ui/QuestLogUI.tscn" id="9_questlog"]
-[ext_resource type="PackedScene" path="res://assets/meshes/prop_torch.glb" id="10_torch"]
-[ext_resource type="PackedScene" path="res://assets/meshes/prop_weapon_rack.glb" id="11_weaponrack"]
+[ext_resource type="PackedScene" uid="uid://bexl2exnx2xva" path="res://assets/meshes/prop_torch.glb" id="10_torch"]
+[ext_resource type="PackedScene" uid="uid://cui1gyiyh5sam" path="res://assets/meshes/prop_weapon_rack.glb" id="11_weaponrack"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/NPC.tscn" id="12_npc"]
 
 [sub_resource type="NavigationMesh" id="NavMesh_1"]
-cell_size = 0.25
-agent_radius = 0.4
 agent_height = 1.8
-region_min_size = 2.0
+agent_radius = 0.4
 
 [sub_resource type="StandardMaterial3D" id="Mat_floor"]
 albedo_color = Color(0.3, 0.28, 0.25, 1)
@@ -37,214 +35,222 @@ albedo_color = Color(0.45, 0.32, 0.18, 1)
 [sub_resource type="StandardMaterial3D" id="Mat_barrel"]
 albedo_color = Color(0.38, 0.28, 0.15, 1)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_exit"]
-size = Vector3(3, 3, 1)
+[sub_resource type="Environment" id="Environment_level1"]
+ambient_light_source = 2
+ambient_light_color = Color(0.4509804, 0.41960785, 0.4, 1)
+ambient_light_energy = 0.5
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_questadvance"]
 size = Vector3(1, 3, 4)
 
-[node name="Level1" type="Node3D"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_exit"]
+size = Vector3(3, 3, 1)
+
+[node name="Level1" type="Node3D" unique_id=1648670872]
 script = ExtResource("1_script")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1325910861]
 transform = Transform3D(0.866, -0.25, 0.433, 0, 0.866, 0.5, -0.5, -0.433, 0.75, 0, 10, 0)
 
-[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_level1")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=435188948]
 navigation_mesh = SubResource("NavMesh_1")
 
-[node name="StartFloor" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="StartFloor" type="CSGBox3D" parent="NavigationRegion3D" unique_id=585649691]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
 use_collision = true
 size = Vector3(12, 0.2, 12)
 material = SubResource("Mat_floor")
 
-[node name="StartWallN" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="StartWallN" type="CSGBox3D" parent="NavigationRegion3D" unique_id=918273442]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -6.25)
 use_collision = true
 size = Vector3(12, 4, 0.5)
 material = SubResource("Mat_wall")
 
-[node name="StartWallS" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="StartWallS" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1292294584]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 6.25)
 use_collision = true
 size = Vector3(12, 4, 0.5)
 material = SubResource("Mat_wall")
 
-[node name="StartWallW" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="StartWallW" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1432518825]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.25, 2, 0)
 use_collision = true
 size = Vector3(0.5, 4, 12)
 material = SubResource("Mat_wall")
 
-[node name="StartWallEN" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="StartWallEN" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1825422792]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.25, 2, -4)
 use_collision = true
 size = Vector3(0.5, 4, 4)
 material = SubResource("Mat_wall")
 
-[node name="StartWallES" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="StartWallES" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1312351174]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.25, 2, 4)
 use_collision = true
 size = Vector3(0.5, 4, 4)
 material = SubResource("Mat_wall")
 
-[node name="CorridorAFloor" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="CorridorAFloor" type="CSGBox3D" parent="NavigationRegion3D" unique_id=426791667]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, -0.1, 0)
 use_collision = true
 size = Vector3(10, 0.2, 4)
 material = SubResource("Mat_floor")
 
-[node name="CorridorAWallN" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="CorridorAWallN" type="CSGBox3D" parent="NavigationRegion3D" unique_id=80854453]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 2, -2.25)
 use_collision = true
 size = Vector3(10, 4, 0.5)
 material = SubResource("Mat_wall")
 
-[node name="CorridorAWallS" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="CorridorAWallS" type="CSGBox3D" parent="NavigationRegion3D" unique_id=788700837]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 2, 2.25)
 use_collision = true
 size = Vector3(10, 4, 0.5)
 material = SubResource("Mat_wall")
 
-[node name="CentralFloor" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="CentralFloor" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1389426416]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, -0.1, 0)
 use_collision = true
 size = Vector3(16, 0.2, 16)
 material = SubResource("Mat_floor")
 
-[node name="CentralWallN" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="CentralWallN" type="CSGBox3D" parent="NavigationRegion3D" unique_id=715877941]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 2, -8.25)
 use_collision = true
 size = Vector3(16, 4, 0.5)
 material = SubResource("Mat_wall")
 
-[node name="CentralWallE" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="CentralWallE" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1210332488]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.25, 2, 0)
 use_collision = true
 size = Vector3(0.5, 4, 16)
 material = SubResource("Mat_wall")
 
-[node name="CentralWallWN" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="CentralWallWN" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1273428752]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.75, 2, -5)
 use_collision = true
 size = Vector3(0.5, 4, 6)
 material = SubResource("Mat_wall")
 
-[node name="CentralWallWS" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="CentralWallWS" type="CSGBox3D" parent="NavigationRegion3D" unique_id=2080449335]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.75, 2, 5)
 use_collision = true
 size = Vector3(0.5, 4, 6)
 material = SubResource("Mat_wall")
 
-[node name="CentralWallSW" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="CentralWallSW" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1263908837]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 2, 8.25)
 use_collision = true
 size = Vector3(6, 4, 0.5)
 material = SubResource("Mat_wall")
 
-[node name="CentralWallSE" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="CentralWallSE" type="CSGBox3D" parent="NavigationRegion3D" unique_id=48373780]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29, 2, 8.25)
 use_collision = true
 size = Vector3(6, 4, 0.5)
 material = SubResource("Mat_wall")
 
-[node name="Pillar1" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="Pillar1" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1024124094]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 1.5, -3)
 use_collision = true
 size = Vector3(1, 3, 1)
 material = SubResource("Mat_pillar")
 
-[node name="Pillar2" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="Pillar2" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1125154228]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 1.5, 3)
 use_collision = true
 size = Vector3(1, 3, 1)
 material = SubResource("Mat_pillar")
 
-[node name="Pillar3" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="Pillar3" type="CSGBox3D" parent="NavigationRegion3D" unique_id=943956751]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 1.5, 0)
 use_collision = true
 size = Vector3(1, 3, 1)
 material = SubResource("Mat_pillar")
 
-[node name="CorridorBFloor" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="CorridorBFloor" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1593641164]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, -0.1, 13)
 use_collision = true
 size = Vector3(4, 0.2, 10)
 material = SubResource("Mat_floor")
 
-[node name="CorridorBWallE" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="CorridorBWallE" type="CSGBox3D" parent="NavigationRegion3D" unique_id=482222197]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.25, 2, 13)
 use_collision = true
 size = Vector3(0.5, 4, 10)
 material = SubResource("Mat_wall")
 
-[node name="CorridorBWallW" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="CorridorBWallW" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1908301197]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.75, 2, 13)
 use_collision = true
 size = Vector3(0.5, 4, 10)
 material = SubResource("Mat_wall")
 
-[node name="ExitFloor" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="ExitFloor" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1692023233]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, -0.1, 24)
 use_collision = true
 size = Vector3(12, 0.2, 12)
 material = SubResource("Mat_floor")
 
-[node name="ExitWallNW" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="ExitWallNW" type="CSGBox3D" parent="NavigationRegion3D" unique_id=873803700]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 2, 17.75)
 use_collision = true
 size = Vector3(4, 4, 0.5)
 material = SubResource("Mat_wall")
 
-[node name="ExitWallNE" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="ExitWallNE" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1416311030]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 2, 17.75)
 use_collision = true
 size = Vector3(4, 4, 0.5)
 material = SubResource("Mat_wall")
 
-[node name="ExitWallS" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="ExitWallS" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1396598720]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 2, 30.25)
 use_collision = true
 size = Vector3(12, 4, 0.5)
 material = SubResource("Mat_wall")
 
-[node name="ExitWallE" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="ExitWallE" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1741066158]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.25, 2, 24)
 use_collision = true
 size = Vector3(0.5, 4, 12)
 material = SubResource("Mat_wall")
 
-[node name="ExitWallW" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="ExitWallW" type="CSGBox3D" parent="NavigationRegion3D" unique_id=988748033]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.75, 2, 24)
 use_collision = true
 size = Vector3(0.5, 4, 12)
 material = SubResource("Mat_wall")
 
-[node name="DoorframeL" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="DoorframeL" type="CSGBox3D" parent="NavigationRegion3D" unique_id=27352843]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.25, 2, 29.75)
 use_collision = true
 size = Vector3(0.5, 4, 0.5)
 material = SubResource("Mat_door")
 
-[node name="DoorframeR" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="DoorframeR" type="CSGBox3D" parent="NavigationRegion3D" unique_id=689756264]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.75, 2, 29.75)
 use_collision = true
 size = Vector3(0.5, 4, 0.5)
 material = SubResource("Mat_door")
 
-[node name="Crate1" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="Crate1" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1945533285]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.4, -4.5)
 use_collision = true
 size = Vector3(0.8, 0.8, 0.8)
 material = SubResource("Mat_crate")
 
-[node name="Crate2" type="CSGBox3D" parent="NavigationRegion3D"]
+[node name="Crate2" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1888330207]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.4, -4.5)
 use_collision = true
 size = Vector3(0.8, 0.8, 0.8)
 material = SubResource("Mat_crate")
 
-[node name="Barrel1" type="CSGCylinder3D" parent="NavigationRegion3D"]
+[node name="Barrel1" type="CSGCylinder3D" parent="NavigationRegion3D" unique_id=413674195]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0.45, -4)
 use_collision = true
 radius = 0.35
@@ -252,7 +258,7 @@ height = 0.9
 sides = 12
 material = SubResource("Mat_barrel")
 
-[node name="Barrel2" type="CSGCylinder3D" parent="NavigationRegion3D"]
+[node name="Barrel2" type="CSGCylinder3D" parent="NavigationRegion3D" unique_id=201938140]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0.45, 4)
 use_collision = true
 radius = 0.35
@@ -260,106 +266,112 @@ height = 0.9
 sides = 12
 material = SubResource("Mat_barrel")
 
-[node name="TorchLight1" type="OmniLight3D" parent="."]
+[node name="TorchLight1" type="OmniLight3D" parent="." unique_id=1601409006]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 2.5, 0)
-light_color = Color(1.0, 0.85, 0.6, 1)
+light_color = Color(1, 0.85, 0.6, 1)
 light_energy = 0.5
-omni_range = 5.0
 
-[node name="TorchLight2" type="OmniLight3D" parent="."]
+[node name="TorchLight2" type="OmniLight3D" parent="." unique_id=1529411890]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 2.5, -1.5)
-light_color = Color(1.0, 0.85, 0.6, 1)
+light_color = Color(1, 0.85, 0.6, 1)
 light_energy = 0.5
-omni_range = 5.0
 
-[node name="TorchLight3" type="OmniLight3D" parent="."]
+[node name="TorchLight3" type="OmniLight3D" parent="." unique_id=1762316648]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.5, 2.5, 0)
-light_color = Color(1.0, 0.85, 0.6, 1)
+light_color = Color(1, 0.85, 0.6, 1)
 light_energy = 0.5
-omni_range = 5.0
 
-[node name="TorchLight4" type="OmniLight3D" parent="."]
+[node name="TorchLight4" type="OmniLight3D" parent="." unique_id=1971544120]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 2.5, 18.3)
-light_color = Color(1.0, 0.85, 0.6, 1)
+light_color = Color(1, 0.85, 0.6, 1)
 light_energy = 0.5
-omni_range = 5.0
 
-[node name="Torch1" parent="." instance=ExtResource("10_torch")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -6.0, 2.0, 0)
+[node name="Torch1" parent="." unique_id=1743810043 instance=ExtResource("10_torch")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -6, 2, 0)
 
-[node name="Torch2" parent="." instance=ExtResource("10_torch")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 2.0, -2.0)
+[node name="Torch2" parent="." unique_id=825033135 instance=ExtResource("10_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 2, -2)
 
-[node name="Torch3" parent="." instance=ExtResource("10_torch")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 32.0, 2.0, 0)
+[node name="Torch3" parent="." unique_id=88274245 instance=ExtResource("10_torch")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 32, 2, 0)
 
-[node name="Torch4" parent="." instance=ExtResource("10_torch")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 24, 2.0, 18.0)
+[node name="Torch4" parent="." unique_id=570819788 instance=ExtResource("10_torch")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 24, 2, 18)
 
-[node name="WeaponRack" parent="." instance=ExtResource("11_weaponrack")]
+[node name="WeaponRack" parent="." unique_id=1843799104 instance=ExtResource("11_weaponrack")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, 24)
 
-[node name="Player" parent="." instance=ExtResource("2_player")]
+[node name="Player" parent="." unique_id=1126046969 instance=ExtResource("2_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
-[node name="VillageElder" parent="." instance=ExtResource("12_npc")]
+[node name="VillageElder" parent="." unique_id=1660913199 instance=ExtResource("12_npc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, 2)
-dialogue_id = "village_elder"
-npc_name = "Village Elder"
+npc_name = "Idrenna"
 completion_quest_id = "clear_eastern_road"
 completion_dialogue_id = "village_elder_complete"
+return_stage_id = "return_to_keeper"
 
-[node name="QuestAdvanceArea" type="Area3D" parent="."]
+[node name="QuestAdvanceArea" type="Area3D" parent="." unique_id=595818973]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 1.5, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="QuestAdvanceArea"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="QuestAdvanceArea" unique_id=1599772543]
 shape = SubResource("BoxShape3D_questadvance")
 
-[node name="EnemyCorridorA" parent="." instance=ExtResource("3_baseenemy")]
+[node name="EnemyCorridorA" parent="." unique_id=901347502 instance=ExtResource("3_baseenemy")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 1, 0)
 
-[node name="EnemyCentral1" parent="." instance=ExtResource("3_baseenemy")]
+[node name="EnemyCentral1" parent="." unique_id=629519474 instance=ExtResource("3_baseenemy")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 1, -2)
 
-[node name="EnemyCentral2" parent="." instance=ExtResource("3_baseenemy")]
+[node name="EnemyCentral2" parent="." unique_id=2039610038 instance=ExtResource("3_baseenemy")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 1, 2)
 
-[node name="ArcherCentral" parent="." instance=ExtResource("4_archer")]
+[node name="ArcherCentral" parent="." unique_id=357974950 instance=ExtResource("4_archer")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 1, 5)
 
-[node name="ArcherCorridorB" parent="." instance=ExtResource("4_archer")]
+[node name="ArcherCorridorB" parent="." unique_id=392966725 instance=ExtResource("4_archer")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 1, 15)
 
-[node name="EnemyExit1" parent="." instance=ExtResource("3_baseenemy")]
+[node name="EnemyExit1" parent="." unique_id=1644970253 instance=ExtResource("3_baseenemy")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 1, 24)
 
-[node name="EnemyExit2" parent="." instance=ExtResource("3_baseenemy")]
+[node name="EnemyExit2" parent="." unique_id=1239106936 instance=ExtResource("3_baseenemy")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 1, 26)
 
-[node name="ExitDoor" type="Area3D" parent="."]
+[node name="ExitDoor" type="Area3D" parent="." unique_id=1439184929]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 1.5, 29.5)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="ExitDoor"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExitDoor" unique_id=980708919]
 shape = SubResource("BoxShape3D_exit")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=232151769]
 
-[node name="HUD" parent="CanvasLayer" instance=ExtResource("5_hud")]
+[node name="HUD" parent="CanvasLayer" unique_id=1029487503 instance=ExtResource("5_hud")]
 layout_mode = 3
 anchors_preset = 15
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="InventoryUI" parent="CanvasLayer" instance=ExtResource("6_invui")]
+[node name="InventoryUI" parent="CanvasLayer" unique_id=521519435 instance=ExtResource("6_invui")]
 layout_mode = 3
 anchors_preset = 15
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="DialogueUI" parent="CanvasLayer" instance=ExtResource("7_dlgui")]
+[node name="DialogueUI" parent="CanvasLayer" unique_id=1334923624 instance=ExtResource("7_dlgui")]
 layout_mode = 3
 anchors_preset = 15
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="PauseMenu" parent="CanvasLayer" instance=ExtResource("8_pause")]
+[node name="PauseMenu" parent="CanvasLayer" unique_id=1074401238 instance=ExtResource("8_pause")]
 layout_mode = 3
 anchors_preset = 15
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="QuestLogUI" parent="CanvasLayer" instance=ExtResource("9_questlog")]
+[node name="QuestLogUI" parent="CanvasLayer" unique_id=855672300 instance=ExtResource("9_questlog")]
 layout_mode = 3
 anchors_preset = 15
+grow_horizontal = 2
+grow_vertical = 2

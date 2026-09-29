@@ -1,0 +1,50 @@
+{
+  "verdict": "revise",
+  "summary": "The concept matches the prompt and palette, but the forearms and shins are paired parallel bones with gaps, and the hands have separate fingers; the face_limit can't hold either, and one concept edit fixes both.",
+  "findings": [
+    {
+      "check": "malformed",
+      "severity": "major",
+      "observation": "Each shin is drawn as two separate parallel bones (tibia and fibula) with a visible gap between them, knee to ankle, on both legs. This is the paired-bone detail the face_limit of 5000 destroys.",
+      "evidence": "assets/manifests/judge_replays/levy_concept1_shins/judge/concept-1/01_concept.png (both lower legs)"
+    },
+    {
+      "check": "malformed",
+      "severity": "major",
+      "observation": "Each forearm is two thin parallel bones (radius and ulna) with a gap between them, elbow to wrist, on both arms.",
+      "evidence": "assets/manifests/judge_replays/levy_concept1_shins/judge/concept-1/01_concept.png (both forearms)"
+    },
+    {
+      "check": "malformed",
+      "severity": "major",
+      "observation": "The hands are splayed individual finger bones, thin and separated, on both hands.",
+      "evidence": "assets/manifests/judge_replays/levy_concept1_shins/judge/concept-1/01_concept.png (both hands)"
+    },
+    {
+      "check": "malformed",
+      "severity": "minor",
+      "observation": "The ribs are thin, separate curved strands with gaps between them. The prompt asks for a readable ribcage, so this is borderline, but the ribs could be thicker with narrower gaps.",
+      "evidence": "assets/manifests/judge_replays/levy_concept1_shins/judge/concept-1/01_concept.png (ribcage)"
+    },
+    {
+      "check": "concept_match",
+      "severity": "minor",
+      "observation": "The image is a front view only, so the straps crossing the back can't be checked. The chest X-straps and the belt are present.",
+      "evidence": "assets/manifests/judge_replays/levy_concept1_shins/judge/concept-1/01_concept.png"
+    }
+  ],
+  "revise": {
+    "action": "refine_concept",
+    "edit_prompt": "Keep everything exactly as it is except the limbs and hands: make each forearm and each shin one single thick solid bone, and make each hand a simple chunky mitten shape with the fingers joined into one block. Keep the pale yellowed beige bone, the peat-brown joints and the dark reddish-brown harness."
+  },
+  "questions_answered": [
+    "Present: humanoid skeleton in pale yellowed beige (Old Bone), peat-brown stains at the joints, readable skull, readable ribcage, dark reddish-brown leather belt at the waist, two straps crossing the chest, empty hands, T/A-pose. Straps crossing the back: can't be checked from a front-only view.",
+    "Yes. The shins and forearms are paired parallel bones with gaps, the hands have individual fingers, and the ribs are thin separate strands (borderline). No fused or duplicated limbs.",
+    "A-pose with the arms clear of the body, hands empty, full body in frame.",
+    "Yes. Plain uniform mid-grey background, even flat lighting, no cast shadows; only faint facet shading.",
+    "Both color assertions pass (Old Bone dE 5.0, Saddle Leather dE 11.7). No brief palette color is missing that the concept should have (Blackened Iron comes from props, and Signal Red is the Back-file texture only). No large area is in an off-brief color."
+  ],
+  "images_seen": [
+    "assets/manifests/judge_replays/levy_concept1_shins/judge/concept-1/01_concept.png"
+  ]
+}

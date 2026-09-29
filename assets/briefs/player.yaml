@@ -1,0 +1,27 @@
+# Carried from docs/art-bible.md, "Brief: Player — Line soldier".
+# The art bible is the only source for these numbers: change it there first, then copy here.
+asset_id: player
+type: character
+brief: |
+  The player, a Frontier Line soldier. The camera sits behind them, so the back and
+  shoulders read most. Identity marks: spiky dark hair, knee-length tunic flare,
+  harness straps crossing the back.
+prompt: |
+  A young frontier soldier in a knee-length wool tunic in Garrison Teal that flares at
+  the hem, a leather harness in Saddle Leather with two straps crossing the chest and
+  back, leather boots in Saddle Leather, spiky dark hair, empty hands, T-pose.
+face_limit: 5000
+tripo_model: P1-20260311
+triangle_budget: 5500
+texture_size: 256
+target_size_m: 1.8
+pivot: base
+palette: [Garrison Teal, Saddle Leather, Blackened Iron, Tarnished Gold]
+animations: [idle, run, dodge_roll, attack_light, attack_heavy, death]
+# Mouth line painted over the albedo at clean time (Tripo's delight pass flattened it into the skin).
+# Tied to the rig-1 UV layout by its sidecar's hash: regenerate it if the model or rig is regenerated.
+texture_overlays: [assets/overlays/player_mouth.png]
+# The knee-length tunic skirt: Hips at the waist grading to the thighs at the hem, no shin weight.
+skirt_reweight: true
+# Retarget: the GLB's import settings use this BoneMap (bones renamed to SkeletonProfileHumanoid names)
+bone_map: data/rigs/mixamorig_bone_map.tres

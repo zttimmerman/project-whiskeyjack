@@ -1,7 +1,7 @@
 # CLAUDE.md — 3D Low-Poly Action RPG (Godot 4)
 
 ## Project Overview
-This is a 3D action RPG built in Godot 4, inspired by early PS1/PS2 era games (think early Final Fantasy, Legend of Dragoon, early Zelda 3D). The aesthetic is intentionally low-poly and stylized — embrace chunky geometry, limited vertex counts, and bold colors over realism. Combat is real-time action in the style of Zelda / early Dark Souls.
+This is a 3D action RPG built in Godot 4, inspired by early PS1/PS2 era games (think early Final Fantasy, Legend of Dragoon, early Zelda 3D). The look is stylized low-poly with generous budgets: bold colors, readable silhouettes, and simple albedo-only textures over realism. Combat is real-time action in the style of Zelda / early Dark Souls.
 
 ---
 
@@ -20,15 +20,16 @@ This is a 3D action RPG built in Godot 4, inspired by early PS1/PS2 era games (t
 
 ## Visual Style Rules
 
-**Target fidelity: PS2 era (~2001–2004).** Think Final Fantasy X field models, Kingdom Hearts, Dark Cloud 2 — not PS1 blockiness, not modern HD. Characters should look like they belong on a PS2 loading screen.
+**Target: the look is stylized low-poly with generous budgets: bold colors, readable silhouettes, and simple albedo-only textures over realism.** PS1/PS2-era games are the reference for proportions and readability, not something to emulate authentically. Smooth limbs, recognizable faces and hands — not box people.
 
-- **Polygon budget:** ~2,000–5,000 vertices per character; ~500–2,000 for props/smaller objects. Smooth limbs with visible edge flow, recognizable faces and fingers — not box people
-- **Materials:** vertex colors or simple hand-painted textures (128x128 to 256x256). PBR textures from AI generators are acceptable if downscaled and simplified to match the aesthetic
-- No normal maps; keep lighting simple with a single directional light + ambient
-- Avoid bloom, SSAO, and screen-space reflections — these break the aesthetic
+- **Budgets are hard ceilings, and `docs/art-bible.md` is their only source.** Triangle budgets, texture sizes and Tripo face limits are set there and copied per asset into `assets/briefs/<asset-id>.yaml`; never write the numbers anywhere else. **The budget unit is triangles** (after triangulation, summed across the `.glb`); vertex counts shift with UV-seam splitting and are recorded as metrics only. Meshes are brought within budget at generation (the brief's `face_limit`); the pipeline fails anything over budget rather than decimating it, and a rigged mesh is never decimated. No exceptions for "it already looks fine"
+- **Textures are albedo (base color) only:** one texture per asset, at the size in the art bible, or vertex colors. No normal, roughness, metallic, occlusion, emissive, or specular maps. Materials are `StandardMaterial3D` with `albedo_texture` set and everything else at defaults, **except specular (`metallic_specular`) = 0**: Godot's default 0.5 gives stylized albedo-only assets a plastic sheen. The `addons/stylized_materials` glTF import extension sets it on every imported material (Godot 4.6 ignores glTF's own specular), so keep that plugin enabled and reimport GLBs imported before it
+- **Lighting:** one `DirectionalLight3D` + ambient per area; local `OmniLight3D`s are allowed only for visible light sources (torches, candelabras). **One exception:** the player's `CameraRig/FillLight`, a dim warm fill on the camera side of the player. It's culled to render layer 2, which only the player's meshes are on (set in `Player.gd`), so it never lights walls or enemies. It exists because the camera sits behind the player and his back otherwise renders near-black in dark interiors
+- Avoid bloom, SSAO, and screen-space reflections
 - **Silhouettes matter:** characters should read clearly from the gameplay camera distance. Exaggerated proportions (slightly large heads, stylized hair) are fine and encouraged
 - Camera: Third-person, behind the player, with optional lock-on targeting for combat
-- UI: Pixel-style fonts, chunky bordered panels, limited color palette
+- UI: chunky bordered panels, limited color palette, Godot's default font
+- **Post-MVP — do not implement unless explicitly asked:** palette quantization, vertex-snapping or affine-texture-warp shaders, pixel fonts
 
 ---
 
@@ -236,35 +237,36 @@ For consumables, use `stats_modifier = {"heal": 30}` — the `use()` method read
 
 ---
 
-## 3D Asset Workflow (Blender MCP)
+## 3D Asset Workflow
 
-This project uses the **Blender MCP** to create, generate, and edit 3D models directly from Claude Code. All meshes live in `assets/meshes/` as `.glb` files.
+All meshes live in `assets/meshes/` as `.glb` files. There are two tools:
+- **Tripo CLI** (`tripo`): AI generation of base meshes. Every generation goes through the **`tripo` project skill** (`.claude/skills/tripo/`), which owns the procedure, the manifests and spend tracking.
+- **Blender MCP:** inspection, cleanup and simple manual edits. It isn't used for generation.
 
 ### Setup
-- **MCP install:** `claude mcp add blender uvx blender-mcp` (user-level, one-time)
-- **Every session:** Blender must be open with the BlenderMCP addon active and server started (sidebar → BlenderMCP → "Start Server"). If the `mcp__blender__*` tools are missing, remind the user to:
+- **Tripo CLI:** `tripo-cli` is installed globally under Node 20. The nvm default is Node 16, so the wrapper `~/.local/bin/tripo` pins Node 20; always call plain `tripo`.
+- **Tripo auth:** `tripo login` (browser device flow) saves the API key to `~/.tripo/config.json`. Never paste keys into chat, code, docs or logs.
+- **Tripo credits:** buy API credits in the console at https://platform.tripo3d.ai (API credits are separate from studio.tripo3d.ai). `tripo topup` opens a stale page.
+- **Blender MCP install:** `claude mcp add blender uvx blender-mcp` (user-level, one-time)
+- **Every Blender session:** Blender must be open with the BlenderMCP addon active and the server started (sidebar → BlenderMCP → "Start Server"). If the `mcp__blender__*` tools are missing, remind the user to:
   1. Open Blender
   2. Enable the BlenderMCP addon (Edit → Preferences → Add-ons)
   3. Click "Start Server" in the BlenderMCP sidebar panel
   4. Restart the Claude Code session if the MCP was just installed
-- **AI generation integrations** must be enabled per-session in the BlenderMCP sidebar panel (checkboxes + API keys where needed), then reconnect
 
-### AI Model Generation (primary workflow for new assets)
+### AI Model Generation (Tripo CLI)
 
-Base meshes should be **AI-generated** whenever possible, then cleaned up and modified via MCP scripting. Do not hand-code complex geometry vertex-by-vertex — that's only appropriate for simple shapes (hair spikes, flat panels, accessories).
+Base meshes should be **AI-generated** whenever possible, then brought within the triangle budget and texture rules (see Visual Style Rules). Do not hand-code complex geometry vertex-by-vertex — that's only appropriate for simple shapes (hair spikes, flat panels, accessories).
 
-**Hyper3D Rodin Gen-2 via fal.ai (primary — $0.40/generation):**
-- Pay-per-use through fal.ai, no subscription required
-- The BlenderMCP addon has been **patched** to use Rodin v2 endpoints (`fal-ai/hyper3d/rodin/v2` for image-to-3D, `fal-ai/hyper3d/rodin/v2/text-to-3d` for text-to-3D). The addon file is at `~/Library/Application Support/Blender/5.0/scripts/addons/addon.py`
-- v2 request params: `quality_mesh_option: "50K Quad"`, `geometry_file_format: "glb"`, `material: "PBR"`, `TAPose: true` — these are hardcoded in the patched addon
-- **Important:** fal.ai queue URLs (poll/fetch) use the path `fal-ai/hyper3d/requests/{id}`, NOT the v2 submission path — the addon's poll/import URLs must stay as the original non-v2 format
-- Enable in BlenderMCP sidebar → "Use Hyper3D Rodin 3D model generation" → select **fal.ai** mode → enter fal.ai API key
-- Workflow: `generate_hyper3d_model_via_text` or `_via_images` → `poll_rodin_job_status` → `import_generated_asset`
-- Generated models come in at normalized size (~1 unit) — rescale after import to match the game world
-- **Prompt tips:** include "no weapons, empty hands" to avoid baked-in weapons; include "T-pose" or "A-pose" for rigging-ready output; AI may still generate unwanted items — regenerate rather than attempting mesh surgery
+- **Two skills, two layers:** the **asset-pipeline** skill (`scripts/pipeline.py <asset-id> --stage concept|multiview|model|rig|clean|validate|all`) orchestrates briefs, stages, Blender cleanup, Godot validation and manifests. The Tripo chain is text-to-image → image-to-multiview → multiview-to-3D, and the pipeline stops after the concept until the user approves it (`--approve-concept N`). Characters are rigged from the **raw** download before cleaning, because Tripo's rigger expects its own +X orientation. The **tripo** skill is the vendor adapter, and every paid `tripo` call goes through it (dry run → the user confirms the cost → paid run). `pipeline.py` only prints `tripo` commands; it never runs a paid one.
+- **Art-bible parameters:** `--param pbr=false --param texture=true --param face_limit=<from the brief>`, GLB output only. Never use the `--for` presets; they request PBR materials, 15K faces and 2048² FBX conversion.
+- **Manifest:** `assets/manifests/<asset-id>.json` (committed), written by `pipeline.py`. Each stage records its inputs and outputs (with hashes), the prompt, parameters, the actual credit cost, tool versions (tripo, Blender, Godot, Python) and a timestamp. The CLI is a moving dependency, so versions are always recorded.
+- **Output URLs expire ~5 minutes after a task succeeds:** download in the same run. Resuming is file-based (raw output in the gitignored `.tripo-out/`), never task-ID-based.
+- **Prompt tips:** include "no weapons, empty hands" to avoid baked-in weapons; include "T-pose" or "A-pose" so the model can be fitted to the shared humanoid skeleton; AI may still generate unwanted items — regenerate rather than attempting mesh surgery
+- **Don't use Blender MCP's generation tools** (`mcp__blender__generate_*`, including its Rodin, Hunyuan and Tripo integrations). They bypass the manifest and credit tracking.
 
 **Sketchfab (for sourcing pre-made assets):**
-- Search for CC0/free-license low-poly models when AI generation isn't the right fit
+- Search for CC0/free-license low-poly models when AI generation isn't the right fit; sourced models follow the same budget and albedo-only rules
 - Requires a free Sketchfab API key
 - Enable in BlenderMCP sidebar → "Use assets from Sketchfab" + enter API key
 - Workflow: `search_sketchfab_models` → `get_sketchfab_model_preview` → `download_sketchfab_model`
@@ -272,54 +274,63 @@ Base meshes should be **AI-generated** whenever possible, then cleaned up and mo
 ### API Spend Safeguards
 
 **Hard rules — Claude must follow these without exception:**
-- **$5 max per session** (~12 Rodin generations at $0.40 each)
-- **Always state the cost and get explicit user confirmation** before every generation call — no silent API spend
-- **Track a running total** of generations and estimated cost in the conversation; display it with each confirmation prompt
-- **Stop and warn** when approaching the cap (e.g., at $4.00 / 10 generations)
+- **500 credits max per session** (1 credit = $0.01; a textured text-to-3D model is ~20 credits)
+- **Always state the estimated cost and get explicit user confirmation** before every paid `tripo` command, with no silent spend. The CLI auto-confirms when run non-interactively, so the confirmation must come from the user in chat. `.claude/settings.json` also forces a permission prompt on paid `tripo` subcommands and on Blender MCP generation tools.
+- **Track a running total** of *actual* spend (the balance difference) in the conversation; display `used / 500` with each confirmation prompt
+- **Stop and warn** at 400 credits
 - **Refuse to generate** if the session cap would be exceeded, unless the user explicitly raises the limit for that session
-- If a generation fails or produces unusable results, it still counts toward the session total (the API was still called)
+- Failed or unusable generations still count, at whatever the balance difference shows
 
-### Post-Generation Cleanup (MCP scripting)
+### Post-Generation Cleanup (pipeline stage 3)
 
-AI-generated meshes will need adjustment before use in-game:
-- **Do NOT decimate or downscale textures** unless explicitly asked — Rodin v2 output already looks PS2-era appropriate at ~50K faces
-- **Rescale** to match the game world (e.g., character height ~1.8m). Move mesh vertices so feet sit at Z=0 in Blender (Y=0 in Godot)
-- **Rig with armature** — generated models don't have skeletons. Create a 21-bone humanoid armature via MCP scripting, parent with automatic weights. The T-pose output from v2 makes this straightforward
-- **Create animations** via keyframing pose bones in Blender. Required set: `idle`, `run`, `dodge_roll`, `attack_light`, `attack_heavy`, `death`. Arms in T-pose rest need ~55° Z rotation on UpperArm bones to hang at sides
-- **Do NOT attempt fine mesh surgery** (removing baked-in weapons, rebuilding hands, fixing faces) via MCP scripting — it burns tokens and damages the mesh. Regenerate with a better prompt instead, or fix manually in Blender's GUI
+Every generated or sourced mesh goes through `python3 scripts/pipeline.py <asset-id> --stage clean` (headless Blender, `scripts/blender_cleanup.py`) before it lands in `assets/meshes/`. The asset-pipeline skill describes what it does:
+1. **Scale, pivot, facing:** to the brief's target size, with the base or center at the origin, and characters facing −Y
+2. **Budget:** asserted, never fixed by decimation. Over budget fails loudly; regenerate at the brief's `face_limit`
+3. **Albedo only:** the material is rebuilt as base color (plus cutout alpha); normal, metallic/roughness, occlusion, emissive and specular maps are dropped; the texture is downscaled to the brief's size and its color corrected toward the approved concept (hue and saturation fully, lightness lifted only; the palette when there's no concept), since Tripo's delight pass desaturates and darkens
+4. **Flat shading:** imported smooth normals are cleared and every edge sharper than 30° is flat-shaded
+5. **Do NOT attempt fine mesh surgery** (removing baked-in weapons, rebuilding hands, fixing faces) via MCP scripting — it burns tokens and damages the mesh. Regenerate with a better prompt instead, or fix manually in Blender's GUI
+
+### Rigging & Animation
+
+- **Do not build armatures, paint weights, or keyframe animations via MCP scripting.** Animation comes from a shared animation library that is retargeted onto each character; it is not authored per model
+- **One exception: rigid rebinding.** For characters built from rigid, disconnected parts (brief `rigid_parts: true`, e.g. the Barrow-levy skeleton), the clean stage binds each part at weight 1.0 to its nearest weighted bone. That's a deterministic algorithm, not hand-painted weights; the rule above exists to prevent unreproducible hand-tuning, and this is the opposite. It never applies to continuous-skin characters such as the player
+- **Second exception: skirt reweighting.** For characters with a skirt (brief `skirt_reweight: true`, e.g. the player's tunic), the clean stage identifies the skirt as the region between knee and waist further than a trouser radius from both thigh bones, and grades it from Hips at the waist to the thighs at the hem, with zero shin weight. Auto-riggers bind skirts to the legs, so they stretch when walking. It's the same kind of deterministic algorithm on an identified region, not hand-painted weights. Separate skirt bones aren't used, because the Quaternius clips wouldn't drive them
+- **Animation library:** Quaternius UAL1 and UAL2 (CC0) in `assets/animations/quaternius/`, retargeted through `data/rigs/*_bone_map.tres` in the GLBs' import settings; per-character AnimationLibraries in `data/animations/`, built by `scripts/tools/build_animation_library.gd` (the mapping table is in the asset-pipeline skill). Retargeted bones use SkeletonProfileHumanoid names, so socket maps do too
+- **Bone geometry in scripts:** measure a bone as its joint span (head to its child's head), never head to tail; Blender's glTF importer invents display tails, and they differ between files
+- **Rig model follows body plan, not recency:** Tripo rig `v1.0-20240301` (server default) is the humanoid rigger and the pipeline default; `v2.5-20260210` is the creature rigger (quadruped, hexapod, octopod, serpentine, aquatic, avian), passed with `--rig-model` (e.g. for the Sett-boar)
+- Character models must use a humanoid skeleton that maps onto Godot's `SkeletonProfileHumanoid`, so the shared library can be retargeted through the `BoneMap` in the GLB's import settings. If a model has no such skeleton, stop and ask the user how it should be rigged
+- **Socket bones:** every new character needs its socket bones (`hand_r`, `hand_l`, …) mapped in a `SocketMap` resource at `data/rigs/<rig>_sockets.tres`, assigned to the scene's `socket_map` export. That file is the single place to update when a rig changes or is regenerated. Never write bone names in scripts, scenes or call sites; characters (enemies and the player) attach props via `held_props` (socket → PackedScene) through `scripts/combat/HeldProps.gd`, with alignment in a `scenes/props/Held*.tscn` wrapper
+- Game code plays animations by name, so retargeted clips must be exposed under these names — player: `idle`, `run`, `dodge_roll`, `attack_light`, `attack_heavy`, `death`; enemies: `idle`, `run`, `attack`, `stagger`, `death`
 
 ### Manual MCP Editing (for modifications, not base meshes)
 
 Use direct bmesh/Python scripting via MCP for:
 - Modifying existing geometry (hair restyling, adding accessories, patching gaps)
 - Simple procedural shapes (spikes, flat panels, gem shapes)
-- Vertex color adjustments and material fixes
-- Rigging weight assignments
+- Vertex color adjustments and albedo material fixes
 
-**Do NOT** hand-code complex organic meshes (characters, creatures, weapons with curves). Generate those via AI instead.
+**Do NOT** hand-code complex organic meshes (characters, creatures, weapons with curves). Generate those via AI instead. Make geometry edits **before** a mesh is skinned; don't edit geometry on a rigged mesh via MCP.
 
 Editing workflow:
 1. **Import:** clear the Blender scene, then `import_scene.gltf(filepath=...)` to load the existing `.glb`
 2. **Inspect first:** use `get_scene_info` and `get_viewport_screenshot` to understand the current model before making changes
-3. **Analyze mesh data** before modifying — check vertex groups, color attributes, material setup, and bounding boxes via bmesh so edits land in the right place
-4. **Preserve rigging:** when adding/removing geometry, always assign vertex group weights (via the `deform` layer) to the correct bone so the armature still works
-5. **Preserve vertex colors:** set the color attribute on every loop of every new face — missing colors will render black
-6. **Validate coverage:** for geometry meant to cover other geometry (hair over a skull, armor over a body), check the actual Z/position of the underlying mesh vertices — don't assume; the model may extend higher than expected
+3. **Analyze mesh data** before modifying — check color attributes, material setup, vertex count and bounding boxes via bmesh so edits land in the right place
+4. **Preserve vertex colors:** set the color attribute on every loop of every new face — missing colors will render black
+5. **Validate coverage:** for geometry meant to cover other geometry (hair over a skull, armor over a body), check the actual Z/position of the underlying mesh vertices — don't assume; the model may extend higher than expected
+6. **Stay within budget:** re-check the summed triangle count after edits
 7. **Screenshot from multiple angles** after changes — top-down, front, back, side — to catch gaps or artifacts before exporting
 8. **Export:** `export_scene.gltf(filepath=..., export_format='GLB', export_animations=True, export_skins=True, export_yup=True)` — note that `export_colors` is not a valid parameter in Blender 5.x; vertex colors export automatically
 
 ### Blender → Godot Integration Gotchas
 - **Facing direction:** Models face -Y in Blender. After GLB export with `export_yup=True`, this becomes +Z in Godot. Godot's forward is -Z, so the model appears to face backward. **Fix:** add a 180° Y rotation on the model node in the `.tscn`: `Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0)`
 - **Model grounding:** CharacterBody3D collision capsule (height 1.8) centers at the node origin, so the capsule bottom is at Y=-0.9. The model's feet (at local Y=0) must be offset to match: set model node Y translation to -0.9. Example: `Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, -0.9, 0)`
-- **Blender 5.x Action API:** Uses layered actions (`.layers`, `.slots`) instead of legacy `.fcurves`. Use `keyframe_insert()` on pose bones directly — don't try to access `action.fcurves`
-- **Axis conversion:** Blender Z-up → Godot Y-up. Blender (X, Y, Z) → Godot (X, -Z, Y) approximately. Bone positions, animations, and mesh data all get converted by the GLB exporter
-- **GLB >4 joint influences warning** is normal for dense meshes — the exporter auto-selects the top 4 weights per vertex
+- **Axis conversion:** Blender Z-up → Godot Y-up. Blender (X, Y, Z) → Godot (X, -Z, Y) approximately. Bone positions and mesh data both get converted by the GLB exporter
 
 ### Other MCP Gotchas
 - Hair/accessory geometry is typically disconnected from the body mesh (no shared vertices), making it safe to delete and rebuild independently
 - Always check both local and world coordinates — if `matrix_world` is identity, they're the same
 - `bmesh.ops.delete` with `context='FACES'` deletes faces but may leave orphan vertices; clean them up with a second pass
-- Rotating armatures without also rotating the child mesh vertices breaks skinning — avoid; use Godot-side `Transform3D` rotation on the model node instead
+- Don't rotate armatures in Blender to fix orientation — it breaks skinning; use Godot-side `Transform3D` rotation on the model node instead
 - `bpy.ops.ed.undo()` in MCP scripts can crash or disconnect the Blender session — avoid relying on undo; work non-destructively instead
 
 ---

@@ -1,0 +1,29 @@
+{
+  "verdict": "pass",
+  "summary": "The Front-file death clip keeps the Hips pinned at the origin and collapses into a clean supine pose with no broken joints or stretch; all three assertions pass, and the only issue is a reported-only foot slide the tolerances already accept for deaths.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "minor",
+      "observation": "The planted feet slide at p90 1.10 m/s (max 1.13) over the 16 contact frames at the start of the clip (0 to about 0.25 s), and both feet shuffle at about 0.9 m/s before they lift. The tolerances report this only for deaths, because the feet kick out while the body collapses onto pinned Hips, so it is not asserted. The largest foot speeds (3.2 to 3.6 m/s around 0.8 to 0.9 s) come after the feet leave the ground, as the legs swing up during the fall.",
+      "evidence": "assets/manifests/barrow_levy/judge/motion-death-1/03_plots.png (ground-relative speed and heights panels); metrics foot_slide_p90_mps, foot_slide_max_mps, contact_frames"
+    },
+    {
+      "check": "pose",
+      "severity": "minor",
+      "observation": "Because the Hips are pinned, the fall pivots around the origin: the legs swing forward and up (about 0.44 m foot height at 1.1 to 1.3 s) and the torso lands behind the origin. In the side onion skin, parts of the final red pose seem to reach slightly below the floor line. The final Hips height stays at about 0.07 m, so this is most likely projection or depth in the view, not real ground penetration. The evidence doesn't settle it, and it would only be visible up close.",
+      "evidence": "assets/manifests/barrow_levy/judge/motion-death-1/02_onion_skin.png (SIDE panel); assets/manifests/barrow_levy/judge/motion-death-1/03_plots.png (heights panel)"
+    }
+  ],
+  "questions_answered": [
+    "The body stays in place: the Hips path is a single point at the origin (travel max and final both 0.00 m) and the body collapses around it. There is no drift or fling; only the limbs spread out as it falls.",
+    "The root follows the 0 m/s gameplay speed exactly. The planted feet don't hold still: they slide at about 0.9 to 1.1 m/s in the first 0.25 s of contact. That is reported only for death clips (not asserted), and after about 1.5 s both feet rest at 0 m/s.",
+    "No broken pose. The strip shows a plausible stagger, crouch and backward fall into a supine pose with arms spread. No limbs pass through the body, there are no twisted joints, and skin stretch is 0 as expected for rigid parts.",
+    "All three assertions pass: root travel 0.0 (limit 0.15), bind deviation 1.285 m (limit 1.8, highest on RightHand where the arms fling out, consistent with the images), and edge stretch 0.0 (limit 1.0)."
+  ],
+  "images_seen": [
+    "assets/manifests/barrow_levy/judge/motion-death-1/01_frame_strip.png",
+    "assets/manifests/barrow_levy/judge/motion-death-1/02_onion_skin.png",
+    "assets/manifests/barrow_levy/judge/motion-death-1/03_plots.png"
+  ]
+}
