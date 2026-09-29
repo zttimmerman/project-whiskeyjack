@@ -211,7 +211,19 @@ def decide(tool, tool_input):
         args = {k: v for k, v in args.items() if k != "scene_file"}
         base = {"session_id": tool_input["session_id"]}
         updated = {**base, **args} if op is None else {**base, "op": op, "params": args}
-    return decision, f"godot-ai guard: {tool}{'.' + op if op else ''} -> {decision}", updated
+    reason = f"godot-ai guard: {tool}{'.' + op if op else ''} -> {decision}"
+    if decision == ASK:
+        reason += ASK_NOTE
+    return decision, reason, updated
+
+
+# Denials and asks explain themselves: a playtester couldn't tell a guardrail from a grant nobody
+# had answered, and retried or stalled.
+DENY_NOTE = (" This is a project rule enforced by .claude/hooks/godot_ai_guard.py, not a missing "
+             "permission: don't retry it. Rules: CLAUDE.md -> Godot MCP; per-op table: "
+             "docs/godot-ai-integration.md section 6.")
+ASK_NOTE = (" (asks the human. A headless session can't answer, so it's denied there, unless the op "
+            "is in the playtest profile, which the launcher enables with GODOT_AI_GUARD_PROFILE=playtest.)")
 
 
 def emit(decision, reason, updated=None):
@@ -230,9 +242,9 @@ def main():
             return
         emit(*decide(tool_name[len(PREFIX):], payload.get("tool_input") or {}))
     except Deny as exc:
-        emit(DENY, f"godot-ai guard: {exc}")
+        emit(DENY, f"godot-ai guard: {exc}.{DENY_NOTE}")
     except Exception as exc:  # fail closed
-        emit(DENY, f"godot-ai guard error (fail closed): {type(exc).__name__}: {exc}")
+        emit(DENY, f"godot-ai guard error (fail closed): {type(exc).__name__}: {exc}.{DENY_NOTE}")
 
 
 if __name__ == "__main__":
