@@ -33,3 +33,6 @@ assets/manifests/**/*.jpeg
 assets/manifests/**/*.webp
 # The subagent's reply as it arrived; judge.py record writes the validated verdict.json beside it
 assets/manifests/**/verdict.raw.json
+
+# godot-ai updater staging, lock and backups (the addon itself is tracked and pinned)
+addons/.godot_ai_update/
