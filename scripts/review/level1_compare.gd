@@ -23,6 +23,9 @@ const SHOTS := {
 
 
 func _ready() -> void:
+	# Vsync off: with another window in front (the human's editor), macOS throttles a covered
+	# window's buffer swaps and a vsynced capture crawls (one clip took minutes, not seconds)
+	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
 	var args := {}
 	var argv := OS.get_cmdline_user_args()
 	for i in range(0, argv.size() - 1, 2):
