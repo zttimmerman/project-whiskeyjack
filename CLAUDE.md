@@ -265,7 +265,7 @@ The `addons/godot_ai` editor plugin (pinned v4.2.3, signature-verified; research
 
 **One editor per worktree.** The agent works in its own worktree with its own Godot editor, so the human can keep building in theirs:
 - **One server, one session per editor.** Every editor connects to the same local server as a session (`<worktree-dir>@<hex>`). Pass the agent's `session_id` on every call. Never use `session_activate`, which moves the server-global default and can point calls at the human's editor.
-- **Launch the agent's editor** from its worktree: `GODOT_AI_DISABLE_TELEMETRY=true GODOT_AI_TELEMETRY_ENDPOINT=invalid /Applications/Godot.app/Contents/MacOS/Godot --path . -e &`.
+- **Launch the agent's editor** from its worktree: `GODOT_AI_DISABLE_TELEMETRY=true GODOT_AI_TELEMETRY_ENDPOINT=invalid WHISKEYJACK_SAVE_SLOT=agent /Applications/Godot.app/Contents/MacOS/Godot --path . -e &`. The save slot keeps its playtests off the human's `save.json`, which every checkout shares (`user://` is keyed by the project name). It takes effect once the save-slot fix lands.
 - **Keep the editor's hands off the setup.** Never press the plugin dock's Configure or Update, which rewrite client configs or the addon. Editor settings for 4.7 (shared by every 4.7 editor on the machine) keep telemetry off, the domain exclusions, and `save_before_running = false`.
 
 **The guard.** `.claude/settings.json` plus `.claude/hooks/godot_ai_guard.py` (fail-closed, with tests) enforce:
