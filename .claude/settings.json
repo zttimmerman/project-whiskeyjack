@@ -14,7 +14,6 @@
       "mcp__blender__generate_hyper3d_model_via_images",
       "mcp__blender__generate_tripo_model",
       "mcp__blender__generate_hunyuan3d_model",
-      "mcp__godot-ai__project_run",
       "mcp__godot-ai__test_run",
       "mcp__godot-ai__scene_open",
       "mcp__godot-ai__node_create",
