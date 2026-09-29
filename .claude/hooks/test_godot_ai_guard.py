@@ -11,17 +11,20 @@ USER = "project-whiskeyjack@0123456789abcdef"
 LEVEL = "res://scenes/world/Level1.tscn"
 
 
-def run_raw(stdin):
+def run_raw(stdin, profile=None):
+    env = {k: v for k, v in os.environ.items() if k != "GODOT_AI_GUARD_PROFILE"}
+    if profile:
+        env["GODOT_AI_GUARD_PROFILE"] = profile
     proc = subprocess.run([sys.executable, HOOK], input=stdin, capture_output=True,
-                          text=True, timeout=10)
+                          text=True, timeout=10, env=env)
     assert proc.returncode == 0, proc.stderr
     return proc.stdout
 
 
-def run(tool, tool_input):
+def run(tool, tool_input, profile=None):
     out = run_raw(json.dumps({"hook_event_name": "PreToolUse",
                               "tool_name": "mcp__godot-ai__" + tool,
-                              "tool_input": tool_input}))
+                              "tool_input": tool_input}), profile)
     return json.loads(out)["hookSpecificOutput"]
 
 
@@ -152,6 +155,29 @@ class GuardTest(unittest.TestCase):
     def test_saving_into_generated_path_denied(self):
         self.assertDecision("scene_manage", {"op": "save_as", "session_id": AGENT, "params": {
             "path": "res://scenes/props/HeldLevyBlade.tscn"}}, "deny", "protected")
+
+    # Playtest profile (headless playtest sessions)
+    def test_playtest_profile_allows_input(self):
+        out = run("game_manage", {"op": "input_key", "session_id": AGENT, "params": {"key": "J"}}, "playtest")
+        self.assertEqual(out["permissionDecision"], "allow")
+
+    def test_playtest_profile_allows_run_with_autosave_false(self):
+        out = run("project_run", {"session_id": AGENT, "autosave": False}, "playtest")
+        self.assertEqual(out["permissionDecision"], "allow")
+
+    def test_playtest_profile_still_requires_autosave_false(self):
+        out = run("project_run", {"session_id": AGENT}, "playtest")
+        self.assertEqual(out["permissionDecision"], "deny")
+
+    def test_playtest_profile_edits_still_ask(self):
+        out = run("node_set_property", {"session_id": AGENT, "path": "/Level1/Player", "property": "position",
+                                        "value": [0, 0, 0], "scene_file": LEVEL}, "playtest")
+        self.assertEqual(out["permissionDecision"], "ask")
+
+    def test_playtest_profile_still_session_gated(self):
+        out = run("game_manage", {"op": "input_key", "session_id": "project-whiskeyjack@0123456789abcdef",
+                                  "params": {"key": "J"}}, "playtest")
+        self.assertEqual(out["permissionDecision"], "deny")
 
     # Param normalization
     def test_stringified_params(self):

@@ -27,6 +27,15 @@ WORKTREE = "/Users/zach/Documents/repos/project-whiskeyjack-agent"
 SESSION_RE = re.compile(r"^project-whiskeyjack-agent@[0-9a-f]{16}$")
 ALLOW, ASK, DENY = "allow", "ask", "deny"
 
+# Playtest profile: a headless playtest session (claude -p, started by the agent with
+# GODOT_AI_GUARD_PROFILE=playtest in its environment) can't answer permission prompts, so
+# these ASK ops become ALLOW there. Only running, stopping, stepping and sending input to the
+# game; every edit still asks (so it's denied headless), and every other rule still applies.
+PLAYTEST_ALLOW = {("project_run", None), ("project_manage", "stop"),
+                  *(("game_manage", op) for op in ("suspend", "resume", "next_frame", "input_key",
+                                                   "input_mouse", "input_gamepad", "input_action",
+                                                   "input_sequence"))}
+
 NAMED = {
     **dict.fromkeys(["editor_state", "scene_get_hierarchy", "node_get_properties",
                      "node_find", "logs_read", "editor_screenshot"], ALLOW),
@@ -177,6 +186,8 @@ def decide(tool, tool_input):
         decision = ROLLUPS[tool][op]
     else:
         raise Deny(f"unknown godot-ai tool {tool!r}")
+    if decision == ASK and (tool, op) in PLAYTEST_ALLOW and os.environ.get("GODOT_AI_GUARD_PROFILE") == "playtest":
+        decision = ALLOW
     if decision == DENY:
         raise Deny(f"{tool}{'.' + op if op else ''} is denied by the godot-ai guard table")
 
