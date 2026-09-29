@@ -82,11 +82,15 @@ VER=$(sed -n 's/^config\/features=PackedStringArray("\([0-9][0-9.]*\)".*/\1/p' "
 if [ -n "${GODOT:-}" ]; then
   G=$GODOT
 else
-  case "$VER" in
-    4.7) G="$HOME/Applications/godot-4.7.2/Godot.app/Contents/MacOS/Godot" ;;
-    4.6) G="/Applications/Godot.app/Contents/MacOS/Godot" ;;
-    *)   die "no Godot mapping for project version '${VER:-?}'; set GODOT=/path/to/Godot" ;;
-  esac
+  # First installed Godot whose --version matches the project's major.minor, so the choice
+  # survives app moves (/Applications/Godot.app is whichever version is current).
+  [ -n "$VER" ] || die "can't read config/features from $REVIEW/project.godot; set GODOT=/path/to/Godot"
+  G=""
+  for cand in /Applications/Godot.app /Applications/Godot-"$VER"*.app "$HOME"/Applications/godot-"$VER"*/Godot.app; do
+    bin="$cand/Contents/MacOS/Godot"
+    if [ -x "$bin" ] && "$bin" --version 2>/dev/null | grep -q "^$VER\."; then G=$bin; break; fi
+  done
+  [ -n "$G" ] || die "no installed Godot $VER found (looked in /Applications and ~/Applications); set GODOT=/path/to/Godot"
 fi
 [ -x "$G" ] || die "Godot binary not found or not executable: $G"
 export GODOT_AI_DISABLE_TELEMETRY=true
