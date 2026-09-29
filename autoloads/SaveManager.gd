@@ -3,11 +3,38 @@ extends Node
 const SAVE_PATH := "user://save.json"
 ## Bump when the save layout changes; saves with another version are ignored, not half-applied
 const SAVE_FORMAT_VERSION := 2
+## Command-line user arg (after `--`) selecting a separate save file, e.g. `-- --save-slot=playtest`
+## writes user://save_playtest.json. Automated and review runs use it so they never touch the
+## player's real save, which every checkout of this project shares (user:// is keyed by project name).
+const SAVE_SLOT_ARG := "--save-slot="
+
+var _save_path: String = SAVE_PATH
 
 # Enemies killed in the current scene instance, as paths relative to the scene root.
 # Tied to the scene instance: a reload or scene change starts a fresh list.
 var _killed_enemies: Array[String] = []
 var _world_scene_id: int = 0
+
+
+func _ready() -> void:
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with(SAVE_SLOT_ARG):
+			set_save_slot(arg.trim_prefix(SAVE_SLOT_ARG))
+
+
+## Selects the save file: "" is the normal save, anything else user://save_<slot>.json
+func set_save_slot(slot: String) -> void:
+	if slot.is_empty():
+		_save_path = SAVE_PATH
+		return
+	if not slot.is_valid_filename() or slot.contains(" "):
+		push_error("SaveManager: invalid save slot '%s', keeping %s" % [slot, _save_path])
+		return
+	_save_path = "user://save_%s.json" % slot
+
+
+func get_save_path() -> String:
+	return _save_path
 
 
 func save_game() -> void:
@@ -29,7 +56,7 @@ func save_game() -> void:
 		"world": {"killed_enemies": _killed_enemies.duplicate()},
 	}
 
-	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	var file := FileAccess.open(_save_path, FileAccess.WRITE)
 	if not file:
 		push_error("SaveManager: could not open save file for writing")
 		return
@@ -53,7 +80,7 @@ func load_game() -> void:
 
 
 func save_exists() -> bool:
-	return FileAccess.file_exists(SAVE_PATH)
+	return FileAccess.file_exists(_save_path)
 
 
 ## True when a save exists and would be applied to the current scene by load_game()
@@ -80,9 +107,9 @@ func record_enemy_killed(enemy: Node) -> void:
 func _read_compatible_save(warn: bool) -> Dictionary:
 	if not save_exists():
 		if warn:
-			push_warning("SaveManager: no save file found at %s" % SAVE_PATH)
+			push_warning("SaveManager: no save file found at %s" % _save_path)
 		return {}
-	var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
+	var file := FileAccess.open(_save_path, FileAccess.READ)
 	if not file:
 		push_error("SaveManager: could not open save file for reading")
 		return {}
@@ -100,13 +127,13 @@ func _read_compatible_save(warn: bool) -> Dictionary:
 	var version := int(data.get("version", 1))
 	if version != SAVE_FORMAT_VERSION:
 		if warn:
-			push_warning("SaveManager: ignoring %s: format version %d, expected %d" % [SAVE_PATH, version, SAVE_FORMAT_VERSION])
+			push_warning("SaveManager: ignoring %s: format version %d, expected %d" % [_save_path, version, SAVE_FORMAT_VERSION])
 		return {}
 	var scene := get_tree().current_scene
 	var scene_path: String = scene.scene_file_path if scene else ""
 	if str(data.get("scene", "")) != scene_path:
 		if warn:
-			push_warning("SaveManager: ignoring %s: saved in %s, current scene is %s" % [SAVE_PATH, data.get("scene", "?"), scene_path])
+			push_warning("SaveManager: ignoring %s: saved in %s, current scene is %s" % [_save_path, data.get("scene", "?"), scene_path])
 		return {}
 	return data
 
