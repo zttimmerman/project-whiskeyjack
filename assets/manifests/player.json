@@ -1153,7 +1153,7 @@
     "sha256": "ee9664699c8771285f584c5351ad7868007de99a1ab2bf7385fca6d4ebcc849b"
   },
   "total_cost_credits": 100,
-  "updated_at": "2026-09-28T21:50:11+00:00",
+  "updated_at": "2026-09-29T20:38:50+00:00",
   "concept_approval": {
     "attempt": "concept-1",
     "image": {
@@ -1337,6 +1337,12 @@
       "escalation_reason": null,
       "summary": "The shipped player mesh matches the approved concept part for part. It is within budget at 4,893 of 5,500 triangles, keeps the concept colors after correction, has a clearly present face and follows the recorded vest and front-only X-strap design change. The only findings are minor.",
       "next": "proceed to the next stage"
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion:run",
+      "recorded_at": "2026-09-29T20:38:50+00:00",
+      "decision": "Accepted for POC (user, 2026-09-29): knee-crease stretch, slight tunic hem clipping and flesh-colored tunic seams are visible up close but not at gameplay distance; no further player refinement until MVP. The 1.0 stretch limit stays."
     }
   ]
 }

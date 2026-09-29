@@ -24,3 +24,12 @@ assets/animations/quaternius/Universal Animation Library*[[]Standard[]]/
 
 # Judge packets: scratch (preview cleans, renders before copying); the packet keeps the evidence it copied
 assets/manifests/**/judge/*/work/
+
+# Pipeline evidence images (review renders, judge packet copies, replays, animation sheets) stay local.
+# The JSON beside them is committed and records every image's SHA-256; finished assets live in assets/meshes/.
+assets/manifests/**/*.png
+assets/manifests/**/*.jpg
+assets/manifests/**/*.jpeg
+assets/manifests/**/*.webp
+# The subagent's reply as it arrived; judge.py record writes the validated verdict.json beside it
+assets/manifests/**/verdict.raw.json

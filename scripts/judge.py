@@ -15,7 +15,7 @@ Stages (what is judged):
   motion     one clip's motion review (scripts/review/motion_review.tscn): strip, onion skin, plots, metrics
 
 `packet` copies every image the judge will see into the packet directory (so the log keeps the
-exact render behind each verdict), computes metrics and the numeric assertions (tolerances come
+exact render behind each verdict; the images are gitignored and stay local, the JSON records their hashes), computes metrics and the numeric assertions (tolerances come
 from docs/art-bible.md -> Judge tolerances, the only source), and writes packet.json. The agent
 then spawns the `asset-judge` subagent (.claude/agents/asset-judge.md) on that packet and passes
 its JSON reply to `record`, which validates it, applies the refine budget (one auto-refine per

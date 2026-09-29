@@ -9,8 +9,8 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
   - Tripo image pipeline: concept (approval gate) → multiview → P1 3D → rig v1.0 → clean → validate.
   - Barrow-levy, player and Levy Bow generated; Quaternius animation retargeted onto all three characters.
   - **Asset judge** (`scripts/judge.py` + `.claude/agents/asset-judge.md`): a packet per stage, a fresh-context verdict, one auto-refine per stage, a verdict log. **Motion review** (`scripts/review/motion_review.tscn`): strips, onion skins, plots, metrics. Replays in `assets/manifests/judge_replays/`.
-- **Waiting on the user (escalated by the judge):**
-  1. **Player knee-crease stretch.** The skirt reweight now blends over 2.5 cm inside the trouser radius, which removed the hard seam at the tunic slit. Worst stretch per clip: run 7.7 → 4.6, dodge roll 18.8 → 3.9, idle 4.4 → 3.0. What's left (2.7–5.6×) sits at the knee creases and the inner knee under the tunic, and it isn't visible at strip scale. The 99th percentile didn't move (about 0.68 in the run). The judge still escalates the run on the 1.0 stretch limit, which can't tell a normal low-poly knee crease from a tear. Decide: accept the knee creases (and scope the stretch check to non-joint edges or raise its limit), or keep working the weights.
+- **Escalations (all resolved):**
+  1. *(Resolved 2026-09-29: accepted for POC. The knee creases, slight tunic hem clipping and flesh-colored tunic seams show up close but not at gameplay distance; no more player refinement before MVP. The 1.0 stretch limit stays, so the player's clips will keep escalating on it until the model is redone.)* **Player knee-crease stretch.** The skirt reweight now blends over 2.5 cm inside the trouser radius, which removed the hard seam at the tunic slit. Worst stretch per clip: run 7.7 → 4.6, dodge roll 18.8 → 3.9, idle 4.4 → 3.0. What's left (2.7–5.6×) sits at the knee creases and the inner knee under the tunic, and it isn't visible at strip scale. The 99th percentile didn't move (about 0.68 in the run). The judge still escalates the run on the 1.0 stretch limit, which can't tell a normal low-poly knee crease from a tear. Decide: accept the knee creases (and scope the stretch check to non-joint edges or raise its limit), or keep working the weights.
 - **Resolved this session:** the levy death. Keeping part of `Death01`'s travel can't meet both limits (keeping 30% still slid 0.80 m/s), so death clips are exempt from the foot-slide limit and the shipped fully pinned clip passes the judge.
 - **Next:**
   1. The escalations above.
@@ -87,7 +87,7 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 - **The judge can misdiagnose a cause** (it blamed an "opening lurch" and trimmed 0.15 s; the sweep stayed). One auto-refine, then escalation, is the right budget: the second verdict escalated with the correct diagnosis.
 - **Agent definitions load at session start;** a judge added mid-session runs as a general-purpose agent told to follow `.claude/agents/asset-judge.md` with Read only.
 - **The face question half-worked:** the judge now reports the player's raw mouth as "faint, a thin line", but it still didn't raise that as a finding, even though the question says it should. Treat mouths and eyes as a known blind spot; check faces yourself on new characters.
-- **Evidence size:** the replays commit 12 MB of packet images (scratch `work/` dirs are ignored). Motion strips are the largest; watch it as the log grows.
+- **Pipeline evidence images stay local** (decided 2026-09-29): renders, packet copies, replays and animation sheets under `assets/manifests/` are gitignored (they had reached 121 files, 24 MB). The JSON is committed and records each image's SHA-256, so a verdict's evidence can be checked against a local copy but not viewed from a fresh clone. Finished assets (`assets/meshes/`, `assets/overlays/`) are unaffected.
 
 ## Observed Tripo costs
 
