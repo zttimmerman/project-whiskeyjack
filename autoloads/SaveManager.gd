@@ -7,6 +7,10 @@ const SAVE_FORMAT_VERSION := 2
 ## writes user://save_playtest.json. Automated and review runs use it so they never touch the
 ## player's real save, which every checkout of this project shares (user:// is keyed by project name).
 const SAVE_SLOT_ARG := "--save-slot="
+## The same, from the environment: games an editor launches inherit its environment, and the
+## Godot MCP's project_run can't pass user args, so the agent's editor is started with this set.
+## The command-line arg wins when both are given.
+const SAVE_SLOT_ENV := "WHISKEYJACK_SAVE_SLOT"
 
 var _save_path: String = SAVE_PATH
 
@@ -17,6 +21,8 @@ var _world_scene_id: int = 0
 
 
 func _ready() -> void:
+	if OS.has_environment(SAVE_SLOT_ENV):
+		set_save_slot(OS.get_environment(SAVE_SLOT_ENV))
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with(SAVE_SLOT_ARG):
 			set_save_slot(arg.trim_prefix(SAVE_SLOT_ARG))
