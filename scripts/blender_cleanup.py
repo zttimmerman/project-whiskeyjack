@@ -22,6 +22,14 @@ Imports the GLB and then:
 - checks the triangle count against triangle_budget, failing loudly instead of decimating;
 - exports the GLB.
 
+Sourced kit pieces (brief source: download) import from glTF, OBJ or FBX, keep the kit's axes
+(orientation: source), origin (pivot: source) and uniform scale (source_scale), and swap their embedded
+atlas for the pack's shared, already-corrected atlas (params shared_atlas). The shared atlas itself is
+built once by the --atlas mode:
+
+    blender -b --factory-startup --python-exit-code 1 -P scripts/blender_cleanup.py -- --atlas \
+        --input atlas.png --output corrected.png --params params.json --report report.json
+
 Budget numbers come only from --params, which is built from the brief YAML. Every outcome
 goes to --report, and on any error nothing is exported.
 """
@@ -63,6 +71,7 @@ def parse_args():
     ap.add_argument("--output", required=True)
     ap.add_argument("--params", required=True)
     ap.add_argument("--report", required=True)
+    ap.add_argument("--atlas", action="store_true", help="build a shared kit atlas: downscale and palette-correct one image")
     return ap.parse_args(argv)
 
 
@@ -724,7 +733,64 @@ def composite_overlays(img, overlays, input_path, report):
     report["overlays"] = done
 
 
-def rebuild_materials(meshes, size, report, targets, reference=None, overlays=None, input_path=None):
+def pixels_sha256(img):
+    """SHA-256 of an image's stored 8-bit RGBA values and size: identifies an atlas across files (the
+    same PNG embedded in a GLB, next to an OBJ, or loose in the pack) whatever its encoding."""
+    import hashlib
+    w, h = img.size
+    px = np.array(img.pixels[:], dtype=np.float32).reshape(-1, img.channels)
+    if img.channels == 3:
+        px = np.concatenate([px, np.ones((len(px), 1), dtype=np.float32)], axis=1)
+    data = np.round(np.clip(px, 0, 1) * 255).astype(np.uint8)
+    return hashlib.sha256(f"{w}x{h}:".encode() + data.tobytes()).hexdigest()
+
+
+def apply_shared_atlas(img, shared, report):
+    """Replaces a kit piece's embedded atlas with the pack's corrected atlas (built once by --atlas), so
+    every piece of the pack ships identical pixels. Fails if the piece's texture isn't that atlas."""
+    side = json.load(open(shared["sidecar"]))
+    have = pixels_sha256(img)
+    if have != side["source_pixels_sha256"]:
+        raise RuntimeError(f"texture '{img.name}' isn't the pack's shared atlas ({side['atlas_source']}; pixel hash "
+                           f"{have[:12]} vs {side['source_pixels_sha256'][:12]}); give this piece its own atlas or none")
+    atlas = bpy.data.images.load(shared["image"])
+    w, h = atlas.size
+    px = np.array(atlas.pixels[:], dtype=np.float32).reshape(-1, atlas.channels)
+    bpy.data.images.remove(atlas)
+    if px.shape[1] == 3:
+        px = np.concatenate([px, np.ones((len(px), 1), dtype=np.float32)], axis=1)
+    img.scale(w, h)
+    if img.channels == 3:
+        px = px[:, :3]
+    img.pixels[:] = px.ravel().tolist()
+    img.update()
+    report["shared_atlas"] = {"image": shared["image"], "atlas_sha256": side["atlas_sha256"],
+                              "source": side["atlas_source"], "source_pixels_sha256": have,
+                              "note": "downscaled and palette-corrected once for the whole pack; not re-corrected per piece"}
+    # The correction that produced the atlas, so the judge sees the same color evidence as for any asset
+    for pc in side.get("palette_correction") or []:
+        report.setdefault("palette_correction", []).append({**pc, "image": img.name, "shared_atlas": shared["image"]})
+
+
+def run_atlas(args, params, report):
+    """--atlas mode: downscale one kit atlas to texture_size and palette-correct it (the same
+    palette_correct as every concept-less asset), then save it as PNG."""
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    img = bpy.data.images.load(args.input)
+    report["source_pixels_sha256"] = pixels_sha256(img)
+    size = params["texture_size"]
+    report["size_before"] = list(img.size)
+    longest = max(img.size)
+    if longest > size:
+        img.scale(max(1, round(img.size[0] * size / longest)), max(1, round(img.size[1] * size / longest)))
+    report["size_after"] = list(img.size)
+    palette_correct(img, params["palette_targets"], report)
+    img.filepath_raw = args.output
+    img.file_format = "PNG"
+    img.save()
+
+
+def rebuild_materials(meshes, size, report, targets, reference=None, overlays=None, input_path=None, shared_atlas=None):
     by_mat = {}
     for o in meshes:
         for slot in o.material_slots:
@@ -789,6 +855,11 @@ def rebuild_materials(meshes, size, report, targets, reference=None, overlays=No
                            "the art bible allows one per asset")
     for img in images:
         before = tuple(img.size)
+        if shared_atlas:
+            apply_shared_atlas(img, shared_atlas, report)
+            img.pack()
+            report["textures"].append({"name": img.name, "size_before": list(before), "size_after": list(img.size)})
+            continue
         longest = max(before)
         if longest > size:
             w, h = max(1, round(before[0] * size / longest)), max(1, round(before[1] * size / longest))
@@ -815,7 +886,7 @@ def main():
               "input": args.input, "output": args.output, "materials": [], "textures": [],
               "removed_objects": []}
     try:
-        run(args, params, report)
+        (run_atlas if args.atlas else run)(args, params, report)
     except Exception as e:  # report every failure; pipeline.py decides what to do with it
         report["errors"].append(f"{type(e).__name__}: {e}")
     if not report["errors"]:
@@ -824,9 +895,25 @@ def main():
         json.dump(report, f, indent=2)
 
 
+def import_source(path, report):
+    """glTF (generated and most kits), OBJ and FBX (downloaded kits). Blender's OBJ importer (forward -Z,
+    up Y) and glTF importer land a Y-up source in the same Z-up frame, so kit pieces agree whichever
+    format they came in; FBX uses Blender's bundled importer."""
+    ext = path.rsplit(".", 1)[-1].lower()
+    if ext in ("glb", "gltf"):
+        bpy.ops.import_scene.gltf(filepath=path)
+    elif ext == "obj":
+        bpy.ops.wm.obj_import(filepath=path)
+    elif ext == "fbx":
+        bpy.ops.import_scene.fbx(filepath=path)
+    else:
+        raise RuntimeError(f"can't import .{ext} (glb, gltf, obj or fbx)")
+    report["input_format"] = ext
+
+
 def run(args, params, report):
     bpy.ops.wm.read_factory_settings(use_empty=True)
-    bpy.ops.import_scene.gltf(filepath=args.input)
+    import_source(args.input, report)
 
     # Blender's glTF importer creates a mesh (e.g. "Icosphere") to draw bones. It isn't in the
     # source file, but it would be exported as real geometry, so drop it.
@@ -901,6 +988,10 @@ def run(args, params, report):
                       rotation_z_deg=(-snapped + 180) % 360 - 180)
             if snapped:
                 rot = Matrix.Rotation(math.radians(-snapped), 4, "Z")
+    elif params.get("orientation") == "source":
+        # Kit pieces are authored on the kit's grid with its own facing (Y-up glTF/OBJ front = -Y here);
+        # rotating a wall or stair to its principal axis would break the grid, so they keep their axes.
+        xf["orientation"] = "source (kept the kit's axes)"
     else:
         # Align the principal axis, not the bounding box: a bbox check misses diagonal props. The first
         # Levy Blade sat 46 degrees off Z and passed every check at 45% over its true length.
@@ -911,7 +1002,7 @@ def run(args, params, report):
             report["warnings"].append("prop has no clear long axis (top two spreads within 20%); alignment is arbitrary")
         rot = alignment_matrix(axes)
     apply_to_roots(rot)
-    if params["type"] == "prop":
+    if params["type"] == "prop" and params.get("orientation") != "source":
         residual = tilt_from_z(principal_axes(world_points(meshes))[0][2])
         xf["tilt_from_z_after_deg"] = round(residual, 3)
         if residual > PROP_AXIS_TOLERANCE_DEG:
@@ -942,11 +1033,16 @@ def run(args, params, report):
     # Scale, then pivot
     mn, mx = bbox(world_points(meshes))
     size_now = (mx.z - mn.z)
-    scale = params["target_size_m"] / size_now
+    # A kit's pieces share one grid, so they take the pack's uniform source_scale instead of each being fit to a size
+    scale = params["source_scale"] if params.get("source_scale") else params["target_size_m"] / size_now
     apply_to_roots(Matrix.Scale(scale, 4))
     mn, mx = bbox(world_points(meshes))
     center = (mn + mx) / 2
-    offset = Vector((-center.x, -center.y, -mn.z if params["pivot"] == "base" else -center.z))
+    if params["pivot"] == "source":
+        # The kit's origin is its snapping point (KayKit stairs start at their front edge), so it stays
+        offset = Vector((0, 0, 0))
+    else:
+        offset = Vector((-center.x, -center.y, -mn.z if params["pivot"] == "base" else -center.z))
     apply_to_roots(Matrix.Translation(offset))
     if not rigged:
         bake_transforms_into_meshes()
@@ -960,7 +1056,7 @@ def run(args, params, report):
     report["mesh_health"] = mesh_health(meshes)
 
     rebuild_materials(meshes, params["texture_size"], report, params.get("palette_targets"), params.get("reference_image"),
-                      params.get("texture_overlays"), args.input)
+                      params.get("texture_overlays"), args.input, params.get("shared_atlas"))
     # Weight steps first, so the weld below sees final weights (seam splits then match and merge)
     if params.get("rigid_parts"):
         if not rigged:
@@ -989,8 +1085,10 @@ def run(args, params, report):
     if tris > params["triangle_budget"]:
         why = ("it's rigged, and decimating a skinned mesh wrecks its weights" if rigged
                else "stage 3 doesn't decimate")
-        raise RuntimeError(f"OVER BUDGET: {tris} triangles > {params['triangle_budget']}. Not exporting; {why}. "
-                           f"Regenerate with the brief's face_limit ({params['face_limit']}) or reduce the source.")
+        fix = ("Pick a lighter piece from the kit, or propose a budget in docs/art-bible.md (the user's call)"
+               if params.get("source") == "download"
+               else f"Regenerate with the brief's face_limit ({params['face_limit']}) or reduce the source")
+        raise RuntimeError(f"OVER BUDGET: {tris} triangles > {params['triangle_budget']}. Not exporting; {why}. {fix}.")
 
     for a in arms:
         a.data.pose_position = "POSE"

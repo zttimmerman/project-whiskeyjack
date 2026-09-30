@@ -16,6 +16,10 @@ Stages:
              texture size, triangle budget, export GLB. Characters are cleaned from the rigged GLB.
   validate   Godot (headless): bone names, SkeletonProfileHumanoid mapping, triangle count, textures.
 
+Sourced assets (brief `source: download`, CC0 kit pieces; scripts/tools/import_pack.py writes their briefs)
+skip concept, multiview and rig; the model stage checks the downloaded file against assets/sources.json,
+and clean corrects toward the palette (no concept), through a shared atlas when the brief names one.
+
 This script never runs a paid Tripo command. When a stage's output is missing, it prints the
 exact `tripo` command; the agent runs that command through the tripo skill
 (.claude/skills/tripo/), which owns spend gating. Re-running the stage then ingests the
@@ -179,6 +183,19 @@ def compose_prompt(brief, kind, edit=None):
     return plain_colors(" ".join(parts))
 
 
+SOURCE_FORMATS = (".glb", ".gltf", ".obj", ".fbx")  # what the clean stage imports (FBX via Blender's bundled importer)
+
+
+def is_sourced(brief):
+    return brief.get("source") == "download"
+
+
+def orientation(brief):
+    """How the clean stage orients a prop: generated props align their principal axis to +Z; sourced
+    kit pieces keep the kit's axes (a wall or stair is authored on the kit's grid, facing -Y in Blender)."""
+    return brief.get("orientation") or ("source" if is_sourced(brief) else "principal_axis")
+
+
 def load_brief(asset_id):
     path = BRIEFS / f"{asset_id}.yaml"
     if not path.exists():
@@ -193,19 +210,53 @@ def load_brief(asset_id):
             errors.append(f"'{key}' must be {desc} (got {b[key]!r})")
 
     is_pos_int = lambda v: isinstance(v, int) and not isinstance(v, bool) and v > 0
+    is_pos_num = lambda v: isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0
+    sourced = is_sourced(b)
+    if "source" in b and b["source"] != "download":
+        errors.append(f"'source' must be download (or absent for generated assets); got {b['source']!r}")
     need("asset_id", lambda v: v == asset_id, f"'{asset_id}' (the file name)")
     need("type", lambda v: v in ("character", "prop"), "character or prop")
     need("brief", lambda v: isinstance(v, str) and v.strip(), "non-empty text")
     need("prompt", lambda v: isinstance(v, str) and v.strip(), "non-empty text")
-    need("face_limit", is_pos_int, "a positive integer")
-    need("triangle_budget", is_pos_int, "a positive integer (the art bible's face_limit + 10%)")
-    need("tripo_model", lambda v: isinstance(v, str) and re.fullmatch(r"[A-Za-z0-9.]+-\d{8}", v),
-         "a pinned Tripo wire version such as P1-20260311 (not an alias; don't rely on CLI auto-selection)")
+    need("triangle_budget", is_pos_int, "a positive integer (from docs/art-bible.md)")
     need("texture_size", lambda v: is_pos_int(v) and v & (v - 1) == 0, "a power of two")
-    need("target_size_m", lambda v: isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0, "a positive number")
-    need("pivot", lambda v: v in ("base", "center"), "base or center")
     need("palette", lambda v: isinstance(v, list) and v, "a non-empty list")
-    if b.get("type") == "prop":
+    if sourced:
+        # Downloaded kit pieces (the asset-pipeline skill -> Sourced assets): no Tripo fields; provenance
+        # instead. The licence itself is checked against assets/sources.json by source_errors().
+        need("pack", lambda v: isinstance(v, str) and re.fullmatch(r"[a-z0-9_]+", v), "a pack id (lowercase, underscores)")
+        need("source_url", lambda v: isinstance(v, str) and v.startswith("https://"), "an https URL")
+        need("author", lambda v: isinstance(v, str) and v.strip(), "non-empty text")
+        need("license", lambda v: isinstance(v, str) and v.strip(), "an SPDX licence id")
+        need("source_file", lambda v: isinstance(v, str) and v.startswith(".downloads/")
+             and Path(v).suffix.lower() in SOURCE_FORMATS,
+             f"a path under .downloads/<pack>/ ending in one of {sorted(SOURCE_FORMATS)}")
+        need("pivot", lambda v: v in ("base", "center", "source"), "base, center or source (keep the kit's origin)")
+        if b.get("type") == "character":
+            errors.append("sourced characters aren't supported: rigging a downloaded character is the user's call")
+        if ("target_size_m" in b) == ("source_scale" in b):
+            errors.append("give exactly one of 'target_size_m' (fit to a size) or 'source_scale' (a kit's uniform "
+                          "scale, which keeps its grid)")
+        for k in ("target_size_m", "source_scale"):
+            if k in b and not is_pos_num(b[k]):
+                errors.append(f"'{k}' must be a positive number (got {b[k]!r})")
+        if b.get("atlas") and not (isinstance(b["atlas"], str) and b.get("atlas_source")):
+            errors.append("'atlas' needs 'atlas_source' (the downloaded atlas image it's corrected from)")
+        for k in ("source_glb", "tripo_model", "face_limit"):
+            if k in b:
+                errors.append(f"'{k}' is for generated assets; a sourced asset has source_file instead")
+    else:
+        need("face_limit", is_pos_int, "a positive integer")
+        need("tripo_model", lambda v: isinstance(v, str) and re.fullmatch(r"[A-Za-z0-9.]+-\d{8}", v),
+             "a pinned Tripo wire version such as P1-20260311 (not an alias; don't rely on CLI auto-selection)")
+        need("target_size_m", is_pos_num, "a positive number")
+        need("pivot", lambda v: v in ("base", "center"), "base or center")
+        for k in ("orientation", "source_scale", "atlas", "atlas_source"):
+            if k in b:
+                errors.append(f"'{k}' applies to sourced assets (source: download) only")
+    if "orientation" in b and b["orientation"] not in ("source", "principal_axis"):
+        errors.append("'orientation' must be source (keep the kit's axes) or principal_axis")
+    if b.get("type") == "prop" and orientation(b) == "principal_axis":
         need("tip_end", lambda v: v in ("top", "bottom", "symmetric"),
              "top, bottom or symmetric (where the prop's thinner end sits after placement)")
     if isinstance(b.get("palette"), list):
@@ -223,6 +274,9 @@ def load_brief(asset_id):
     for ov in b.get("texture_overlays") or []:
         if not (ROOT / ov).exists() or not (ROOT / ov).with_suffix(".json").exists():
             errors.append(f"texture overlay {ov} (and its .json sidecar) must exist; make it with scripts/make_texture_overlay.py")
+    # source_file and atlas_source live in the gitignored .downloads/, so CI can't see them: the model and
+    # clean stages check them instead. The corrected atlas is built by the clean stage (ensure_atlas), and
+    # sources_manifest_errors checks it's committed.
     for opt in ("source_glb", "socket_map", "bone_map"):
         if b.get(opt) and not (ROOT / b[opt]).exists():
             errors.append(f"'{opt}' points at a missing file: {b[opt]}")
@@ -329,6 +383,82 @@ def record(m, stage, status, inputs, outputs, message, **extra):
         "actual_cost_credits": extra.pop("actual_cost_credits", 0),
         **extra,
     }
+
+
+# ── Sourced assets: assets/sources.json (provenance and licence) ─────────────
+
+SOURCES = ROOT / "assets" / "sources.json"
+# CC0 only (docs/plans/phase-a/a4-asset-import.md): widening this list is the user's decision, and any
+# other licence also needs attribution handling this pipeline doesn't have.
+ALLOWED_LICENSES = ("CC0-1.0",)
+SOURCE_ENTRY_KEYS = ("pack", "source_url", "author", "license", "pack_version", "source_file", "source_sha256")
+
+
+def load_sources(path=None):
+    p = Path(path) if path else SOURCES
+    if not p.exists():
+        return {"packs": {}, "assets": {}}
+    data = json.loads(p.read_text())
+    data.setdefault("packs", {})
+    data.setdefault("assets", {})
+    return data
+
+
+def save_sources(data, path=None):
+    p = Path(path) if path else SOURCES
+    data = {**data, "packs": dict(sorted(data["packs"].items())), "assets": dict(sorted(data["assets"].items()))}
+    p.write_text(json.dumps(data, indent=2) + "\n")
+
+
+def source_errors(brief, sources=None, check_files=True):
+    """Why a sourced asset may not ship: no sources.json entry, a licence outside ALLOWED_LICENSES (in the
+    entry, its pack or the brief), provenance that disagrees with the brief, or (when the download is on
+    disk) a source file whose SHA-256 differs from the recorded one. Empty for generated assets."""
+    if not is_sourced(brief):
+        return []
+    sources = sources if sources is not None else load_sources()
+    aid, errs = brief["asset_id"], []
+    entry = sources["assets"].get(aid)
+    if entry is None:
+        return [f"{aid}: no entry in assets/sources.json (every sourced asset needs one: URL, author, licence, "
+                "pack version and the source file's SHA-256)"]
+    missing = [k for k in SOURCE_ENTRY_KEYS if not entry.get(k)]
+    if missing:
+        errs.append(f"{aid}: assets/sources.json entry lacks {missing}")
+    for label, lic in (("sources.json entry", entry.get("license")), ("brief", brief.get("license")),
+                       ("pack", (sources["packs"].get(entry.get("pack")) or {}).get("license"))):
+        if lic not in ALLOWED_LICENSES:
+            errs.append(f"{aid}: {label} licence {lic!r} is not allowed (only {', '.join(ALLOWED_LICENSES)})")
+    if entry.get("pack") not in sources["packs"]:
+        errs.append(f"{aid}: pack {entry.get('pack')!r} has no entry under 'packs' in assets/sources.json")
+    for k in ("pack", "source_url", "author", "license", "source_file"):
+        if entry.get(k) != brief.get(k):
+            errs.append(f"{aid}: brief {k} {brief.get(k)!r} doesn't match assets/sources.json {entry.get(k)!r}")
+    if entry.get("source_sha256") and not re.fullmatch(r"[0-9a-f]{64}", entry["source_sha256"]):
+        errs.append(f"{aid}: source_sha256 isn't a SHA-256")
+    src = ROOT / brief["source_file"]
+    if check_files and src.exists() and entry.get("source_sha256") and sha256(src) != entry["source_sha256"]:
+        errs.append(f"{aid}: {brief['source_file']} doesn't match its recorded SHA-256 (the download changed; "
+                    "re-import the pack with scripts/tools/import_pack.py)")
+    return errs
+
+
+def sources_manifest_errors(sources=None, briefs=None):
+    """Whole-manifest check (CI): every sourced brief passes source_errors, and every entry has a brief."""
+    sources = sources if sources is not None else load_sources()
+    briefs = briefs if briefs is not None else [load_brief(p.stem) for p in sorted(BRIEFS.glob("*.yaml"))]
+    errs = []
+    for b in briefs:
+        errs += source_errors(b, sources, check_files=False)
+    for b in briefs:
+        if is_sourced(b) and b.get("atlas") and not (ROOT / b["atlas"]).exists():
+            errs.append(f"{b['asset_id']}: shared atlas {b['atlas']} isn't committed (the clean stage builds it)")
+    sourced_ids = {b["asset_id"] for b in briefs if is_sourced(b)}
+    errs += [f"{aid}: assets/sources.json entry has no sourced brief" for aid in sorted(set(sources["assets"]) - sourced_ids)]
+    for name, pack in sources["packs"].items():
+        if pack.get("license") not in ALLOWED_LICENSES:
+            errs.append(f"pack {name}: licence {pack.get('license')!r} is not allowed (only {', '.join(ALLOWED_LICENSES)})")
+    return errs
 
 
 # ── Tripo attempt files (written by the tripo skill; read-only here) ─────────
@@ -485,6 +615,8 @@ def model_on_disk(brief):
 
 def stage_concept(brief, m, args):
     """Stops the pipeline until the user approves a concept: iteration belongs at the image stage."""
+    if is_sourced(brief):
+        return stage_not_needed(brief, m, args, "concept")
     aid = brief["asset_id"]
     attempts = tripo_attempts(aid, "concept", IMAGE_PATTERNS)
     approved, why = approved_concept(brief, m)
@@ -557,7 +689,21 @@ def current_sheet(brief, m):
     return pick, views, attempts, None
 
 
+def stage_not_needed(brief, m, args, stage):
+    """Sourced assets skip the generation stages: nothing is generated, so there's nothing to spend on."""
+    msg = "not needed: sourced asset (source: download); no concept, colour correction uses the palette"
+    if m["stages"].get(stage, {}).get("message") != msg:
+        print(f"{stage}: {msg}")
+        if not args.dry_run:
+            record(m, stage, "ok", [], [], msg)
+    else:
+        print(f"{stage}: up to date")
+    return EXIT_OK
+
+
 def stage_multiview(brief, m, args):
+    if is_sourced(brief):
+        return stage_not_needed(brief, m, args, "multiview")
     aid = brief["asset_id"]
     approved, why = approved_concept(brief, m)
     pick, views, attempts, reason = current_sheet(brief, m)
@@ -596,6 +742,9 @@ def stage_multiview(brief, m, args):
 
 def resolve_model(brief):
     """Returns (model_path or None, attempts)."""
+    if is_sourced(brief):
+        src = ROOT / brief["source_file"]
+        return (src if src.exists() else None), []
     if brief.get("source_glb"):
         return ROOT / brief["source_glb"], []
     attempts = tripo_attempts(brief["asset_id"], "attempt", ["*.glb"])
@@ -603,7 +752,36 @@ def resolve_model(brief):
     return (pick["files"][0] if pick else None), attempts
 
 
+def stage_model_sourced(brief, m, args):
+    """Sourced assets: the model is the downloaded file. It must be on disk and match its SHA-256 in
+    assets/sources.json, under an allowed licence; nothing is generated or paid for."""
+    src = ROOT / brief["source_file"]
+    if not src.exists():
+        print(f"model: {brief['source_file']} isn't on disk. Download the pack (curl, official URL in "
+              f"assets/sources.json) and re-run scripts/tools/import_pack.py")
+        return EXIT_ERROR
+    errs = source_errors(brief)
+    inputs = [brief["_path"], SOURCES, src]
+    if errs:
+        msg = "; ".join(errs)
+        print(f"model: FAIL: {msg}")
+        if not args.dry_run:
+            record(m, "model", "failed", inputs, [], msg)
+        return EXIT_CHECK_FAILED
+    if not args.force and up_to_date(m["stages"].get("model"), inputs, [src]):
+        print("model: up to date")
+        return EXIT_OK
+    entry = load_sources()["assets"][brief["asset_id"]]
+    msg = f"sourced {rel(src)} ({entry['license']}, {entry['author']}, {entry['pack']} {entry['pack_version']})"
+    print(f"model: {msg}")
+    if not args.dry_run:
+        record(m, "model", "ok", inputs, [src], msg, prompt=None, params=None, source=entry)
+    return EXIT_OK
+
+
 def stage_model(brief, m, args):
+    if is_sourced(brief):
+        return stage_model_sourced(brief, m, args)
     aid = brief["asset_id"]
     model, attempts = resolve_model(brief)
     params = tripo_params(brief)
@@ -645,8 +823,9 @@ def stage_model(brief, m, args):
 
 def stage_params(brief):
     keys = ("asset_id", "type", "face_limit", "triangle_budget", "texture_size", "target_size_m", "pivot",
-            "palette", "socket_map", "bone_map", "animations", "exclude_objects", "tip_end", "rigid_parts", "skirt_reweight")
-    return {k: brief.get(k) for k in keys}
+            "palette", "socket_map", "bone_map", "animations", "exclude_objects", "tip_end", "rigid_parts", "skirt_reweight",
+            "source", "source_scale")
+    return {**{k: brief.get(k) for k in keys}, "orientation": orientation(brief)}
 
 
 def run_tool(cmd, report_path, dry_run, label):
@@ -677,7 +856,7 @@ def current_rig(brief, model):
 
 
 def needs_rig(brief):
-    return brief["type"] == "character" and not brief.get("source_glb")
+    return brief["type"] == "character" and not brief.get("source_glb") and not is_sourced(brief)
 
 
 def clean_input(brief):
@@ -692,7 +871,7 @@ def clean_input(brief):
 def stage_rig(brief, m, args):
     aid = brief["asset_id"]
     if not needs_rig(brief):
-        print(f"rig: not needed ({'existing source_glb' if brief.get('source_glb') else 'props have no skeleton'})")
+        print(f"rig: not needed ({'existing source_glb' if brief.get('source_glb') else 'sourced asset' if is_sourced(brief) else 'props have no skeleton'})")
         return EXIT_OK
     model, _ = resolve_model(brief)
     if model is None:
@@ -736,6 +915,54 @@ def source_forward(task_json):
     return {"axis": "+x", "source": f"Tripo API default ({rel(task_json)} sets no export_orientation)"}
 
 
+def atlas_sidecar(atlas):
+    return Path(atlas).with_suffix(".json")
+
+
+def atlas_expected(brief):
+    """What a shared atlas's sidecar must record for this brief to reuse the atlas."""
+    return {"atlas_source": brief["atlas_source"], "texture_size": brief["texture_size"],
+            "palette_targets": palette_targets(brief), "script_sha256": sha256(BLENDER_SCRIPT)}
+
+
+def ensure_atlas(brief, dry_run=False, force=False):
+    """Kits share one texture atlas across many pieces (KayKit Dungeon Remastered: one 1024 px swatch atlas
+    for ~200 pieces). The atlas is downscaled to texture_size and palette-corrected ONCE, into the committed
+    brief['atlas'] PNG plus a JSON sidecar; every piece's clean stage then swaps its embedded copy for those
+    exact pixels (after checking the piece really uses that atlas, by pixel hash), so all pieces carry an
+    identical corrected texture. Correction runs on the whole atlas, not on the texels one piece happens to
+    use, so it's deterministic per atlas: the same source, size and palette always give the same pixels.
+    Rebuilt only when the source, size, palette or the clean script change."""
+    atlas, side = ROOT / brief["atlas"], atlas_sidecar(ROOT / brief["atlas"])
+    src = ROOT / brief["atlas_source"]
+    want = atlas_expected(brief)
+    if not src.exists():
+        raise PipelineError(f"atlas source {brief['atlas_source']} isn't on disk; download the pack first")
+    want["atlas_source_sha256"] = sha256(src)
+    if atlas.exists() and side.exists() and not force:
+        have = json.loads(side.read_text())
+        if all(have.get(k) == v for k, v in want.items()) and have.get("atlas_sha256") == sha256(atlas):
+            return atlas
+    print(f"clean: building the shared atlas {brief['atlas']} from {brief['atlas_source']}")
+    if dry_run:
+        return atlas
+    wd = TRIPO_OUT / "_atlases" / atlas.stem
+    wd.mkdir(parents=True, exist_ok=True)
+    params_path, report_path = wd / "atlas-params.json", wd / "atlas-report.json"
+    params_path.write_text(json.dumps({"texture_size": brief["texture_size"], "palette_targets": want["palette_targets"]}, indent=2))
+    atlas.parent.mkdir(parents=True, exist_ok=True)
+    cmd = [BLENDER, "-b", "--factory-startup", "--python-exit-code", "1", "-P", BLENDER_SCRIPT, "--", "--atlas",
+           "--input", src, "--output", atlas, "--params", params_path, "--report", report_path]
+    report = run_tool(cmd, report_path, False, "clean (atlas)")
+    if report.get("status") != "pass":
+        raise PipelineError("atlas build failed: " + "; ".join(report.get("errors", [])))
+    side.write_text(json.dumps({**want, "atlas_sha256": sha256(atlas), "source_pixels_sha256": report["source_pixels_sha256"],
+                                "size_before": report["size_before"], "size_after": report["size_after"],
+                                "palette_correction": report.get("palette_correction"),
+                                "tool_versions": tool_versions(), "built_at": now()}, indent=2) + "\n")
+    return atlas
+
+
 def stage_clean(brief, m, args):
     dry_run, force = args.dry_run, args.force
     aid = brief["asset_id"]
@@ -747,12 +974,20 @@ def stage_clean(brief, m, args):
     out = MESHES / f"{aid}.glb"
     if out.resolve() == model.resolve():
         raise PipelineError(f"clean would overwrite its own input {rel(model)}; give the asset a different id")
+    errs = source_errors(brief)
+    if errs:
+        print("clean: FAIL: " + "; ".join(errs))
+        return EXIT_CHECK_FAILED
     task_json = model.parent / "task.json"
     # The approved concept is the color reference (art bible: the concept governs correction)
     reference, _ = approved_concept(brief, m)
     overlays = [ROOT / ov for ov in brief.get("texture_overlays") or []]
+    atlas = ensure_atlas(brief, dry_run) if brief.get("atlas") else None
+    # An OBJ's materials live in its .mtl beside it (the texture is the atlas, hashed via the sidecar)
+    mtl = model.with_suffix(".mtl") if model.suffix.lower() == ".obj" and model.with_suffix(".mtl").exists() else None
     inputs = ([brief["_path"], model, BLENDER_SCRIPT] + ([task_json] if task_json.exists() else []) + ([reference] if reference else [])
-              + overlays + [ov.with_suffix(".json") for ov in overlays])
+              + overlays + [ov.with_suffix(".json") for ov in overlays] + ([mtl] if mtl else [])
+              + ([atlas, atlas_sidecar(atlas)] if atlas else []))
     if not force and up_to_date(m["stages"].get("clean"), inputs, [out]):
         print("clean: up to date")
         return EXIT_OK
@@ -761,6 +996,8 @@ def stage_clean(brief, m, args):
     params = {**stage_params(brief), "source_forward": source_forward(task_json),
               "palette_targets": palette_targets(brief), "reference_image": str(reference) if reference else None,
               "texture_overlays": [str(ov) for ov in overlays]}
+    if atlas:
+        params["shared_atlas"] = {"image": str(atlas), "sidecar": str(atlas_sidecar(atlas))}
     if not dry_run:
         wd.mkdir(parents=True, exist_ok=True)
         params_path.write_text(json.dumps(params, indent=2))
@@ -796,7 +1033,7 @@ def stage_validate(brief, m, args):
         print(f"validate: {rel(glb)} doesn't exist; run the clean stage first")
         return EXIT_AWAITING
     inputs = ([brief["_path"], glb, GODOT_SCRIPT, VIEWS_SCRIPT] + ([ROOT / brief["socket_map"]] if brief.get("socket_map") else [])
-              + ([ROOT / brief["bone_map"]] if brief.get("bone_map") else []))
+              + ([ROOT / brief["bone_map"]] if brief.get("bone_map") else []) + ([SOURCES] if is_sourced(brief) else []))
     views_dir = MANIFESTS / aid
     view_pngs = [views_dir / f"{n}.png" for n in VIEW_NAMES]
     if not force and up_to_date(m["stages"].get("validate"), inputs, view_pngs):
@@ -818,6 +1055,11 @@ def stage_validate(brief, m, args):
     if report is None:
         return EXIT_OK
     report["views"] = views
+    # Sourced assets: provenance and licence are part of validity (CC0 only; a missing entry fails too)
+    src_errs = source_errors(brief)
+    if src_errs:
+        report["errors"] = report.get("errors", []) + src_errs
+        report["status"] = "fail"
     report["gross_flags"] = gross_flags(views, m)
     for flag in report["gross_flags"]:
         report["warnings"].append(f"gross check: {flag}")
@@ -860,7 +1102,8 @@ JUDGE_AFTER = {("concept", EXIT_AWAITING_APPROVAL): "concept", ("multiview", EXI
 
 def judge_hint(brief, stage, code, args):
     judge_stage = JUDGE_AFTER.get((stage, code))
-    if judge_stage and not args.dry_run and not (judge_stage in ("multiview", "model") and model_on_disk(brief) and brief.get("source_glb")):
+    shipped_base = brief.get("source_glb") or is_sourced(brief)  # nothing generated to judge before the mesh
+    if judge_stage and not args.dry_run and not (judge_stage in ("multiview", "model") and model_on_disk(brief) and shipped_base):
         print(f"judge: python3 scripts/judge.py packet {brief['asset_id']} --stage {judge_stage}")
 
 

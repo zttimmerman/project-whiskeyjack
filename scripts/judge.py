@@ -304,7 +304,7 @@ def mesh_metrics(packet, brief, clean, views, tol):
         "parts": [{"triangles": p["triangles"], "size_m": p["size_m"]} for p in (welded.get("parts") or [])[:40]],
         "holes_boundary_loops": welded.get("boundary_loops"), "non_manifold_edges": welded.get("non_manifold_edges"),
         "true_dims_m": dims, "true_length_m": (clean.get("transform") or {}).get("true_length_m"),
-        "target_size_m": brief["target_size_m"], "clean_warnings": clean.get("warnings"), "clean_errors": clean.get("errors"),
+        "target_size_m": brief.get("target_size_m"), "source_scale": brief.get("source_scale"), "clean_warnings": clean.get("warnings"), "clean_errors": clean.get("errors"),
         "view_coverage": {k: v["coverage"] for k, v in ((views or {}).get("views") or {}).items()},
     }
     assertion(packet, "holes (welded boundary loops)", (welded.get("boundary_loops") or 0) <= tol["mesh_max_holes"],
@@ -468,7 +468,8 @@ def cmd_packet(args):
         "asset_id": args.asset_id, "stage": stage_key, "created_at": P.now(), "replay": args.replay,
         "packet_dir": P.rel(pdir),
         "brief": {k: brief.get(k) for k in ("type", "brief", "prompt", "face_limit", "triangle_budget", "texture_size",
-                                            "target_size_m", "pivot", "tip_end", "rigid_parts", "skirt_reweight")},
+                                            "target_size_m", "pivot", "tip_end", "rigid_parts", "skirt_reweight",
+                                            "source", "source_scale", "orientation")},
         "brief_palette": {n: {"hex": pal[n], "plain": P.art_bible_palette().get(n)} for n in brief["palette"]},
         "art_bible": {"brief_section": brief_section(args.asset_id, args.no_design_notes), "form_block": P.prompt_blocks()["form"],
                       "concept_lighting_block": P.prompt_blocks()["concept_lighting"],
@@ -481,6 +482,11 @@ def cmd_packet(args):
         "refine_budget": {"per_stage": AUTO_REFINES_PER_STAGE, "used": refines_used(log, stage_key)},
         "tool_versions": P.tool_versions(),
     }
+    if P.is_sourced(brief):
+        # Downloaded kit pieces: nothing was generated, so there's no concept; the prompt describes the piece
+        packet["sourcing"] = {"note": "sourced, no concept: judge against the brief's prompt and palette",
+                              **{k: brief.get(k) for k in ("pack", "source_url", "author", "license", "source_file")},
+                              "orientation": P.orientation(brief), "pivot": brief.get("pivot"), "atlas": brief.get("atlas")}
     STAGE_PACKETS[args.stage](packet, pdir, brief, m, args, tol)
     failed = [a for a in packet["assertions"] if not a["passed"]]
     packet["assertions_failed"] = len(failed)
