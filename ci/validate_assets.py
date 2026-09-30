@@ -7,6 +7,9 @@ For each brief in assets/briefs/ whose GLB is in assets/meshes/, this makes the 
 `scripts/pipeline.py <id> --stage validate` (same params, built by pipeline.stage_params, and the
 clean stage's triangle count from the committed manifest), but skips the Blender review renders and
 never writes the manifest: CI checks the committed assets, it doesn't re-record them.
+Sourced assets (brief `source: download`) must also pass the sources check: an assets/sources.json entry
+with an allowed licence (CC0 only) and provenance matching the brief; with no ids given, the whole
+manifest is checked too (entries without a brief, pack licences, committed shared atlases).
 Exit code: 0 all pass, 2 any validate failure, 1 usage or tool error.
 """
 
@@ -40,7 +43,10 @@ def validate(asset_id, tmp):
         print(proc.stdout + proc.stderr)
         raise pipeline.PipelineError(f"{asset_id}: godot_validate.gd wrote no report (exit {proc.returncode})")
     report = json.loads(report_path.read_text())
-    passed = report.get("status") == "pass"
+    # Same rule as the pipeline's validate stage: a sourced asset needs a CC0 sources.json entry
+    src_errs = pipeline.source_errors(brief, check_files=False)
+    report.setdefault("errors", []).extend(src_errs)
+    passed = report.get("status") == "pass" and not src_errs
     for w in report.get("warnings", []):
         print(f"validate: {asset_id}: warning: {w}")
     for e in report.get("errors", []):
@@ -52,6 +58,18 @@ def validate(asset_id, tmp):
 
 def main():
     ids = sys.argv[1:] or sorted(p.stem for p in pipeline.BRIEFS.glob("*.yaml"))
+    manifest_errs = []
+    if not sys.argv[1:]:
+        try:
+            errs = pipeline.sources_manifest_errors()
+        except pipeline.PipelineError as e:
+            print(f"::error::{e}")
+            return 1
+        for e in errs:
+            print(f"::error::sources {e}")
+        print(f"sources: assets/sources.json {'FAIL' if errs else 'PASS'} "
+              f"({len(pipeline.load_sources()['assets'])} sourced assets, licences allowed: {', '.join(pipeline.ALLOWED_LICENSES)})")
+        manifest_errs = errs
     try:
         with tempfile.TemporaryDirectory() as d:
             results = {aid: validate(aid, Path(d)) for aid in ids}
@@ -60,7 +78,7 @@ def main():
         return 1
     failed = [a for a, ok in results.items() if not ok]
     print(f"validate: {len(results) - len(failed)}/{len(results)} passed" + (f"; failed: {', '.join(failed)}" if failed else ""))
-    return 2 if failed else 0
+    return 2 if failed or manifest_errs else 0
 
 
 if __name__ == "__main__":
