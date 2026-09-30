@@ -23,16 +23,13 @@ extends Node
 #
 # Measurements, sampled at FPS on the CPU-skinned mesh (the same linear blend skinning the GPU does):
 # - root travel: horizontal Hips offset from the first frame (death and in-place clips must stay put);
-# - foot slide: ground-relative horizontal speed of each foot's contact point (the lower of Foot and
-#   Toes) while it is planted (within CONTACT_HEIGHT of its lowest point in the clip, and moving
-#   vertically slower than CONTACT_VSPEED). The clip plays in
-#   place, so the ground moves at --ground-speed toward -Z (the model faces +Z);
+# - foot slide: ground-relative horizontal speed of each foot's planted contact point, at --ground-speed
+#   (scripts/review/foot_slide.gd, shared with the locomotion test);
 # - bind deviation: each vertex's displacement from its bind-pose position, both in the Hips frame;
 # - edge stretch: |length / bind length - 1| over the mesh's edges of at least MIN_EDGE.
 
+const FootSlide := preload("res://scripts/review/foot_slide.gd")
 const FPS := 30.0
-const CONTACT_HEIGHT := 0.03
-const CONTACT_VSPEED := 0.25  # m/s
 const STRETCH_EDGES := 12
 const MIN_EDGE := 0.01  # m: shorter edges (crotch and seam slivers) turn millimetre moves into huge ratios
 const CELL := Vector2i(170, 250)
@@ -206,11 +203,6 @@ func _edges(meshes: Array) -> PackedInt32Array:
 	return out
 
 
-func _bone_pos(sk: Skeleton3D, bone: String) -> Vector3:
-	var i := sk.find_bone(bone)
-	return (sk.global_transform * sk.get_bone_global_pose(i)).origin if i >= 0 else Vector3.ZERO
-
-
 func _percentile(values: Array, q: float) -> float:
 	if values.is_empty():
 		return 0.0
@@ -268,6 +260,7 @@ func _measure(lib: AnimationLibrary, clip: String, ground_speed: float) -> Dicti
 	var dev_worst := [0.0, ""]
 	var stretch_worst := [0.0, ""]
 	var stretch_worst_t := 0.0
+	var feet := []
 	for f in n:
 		var t: float = minf(f / FPS, length)
 		ap.seek(t, true)
@@ -300,35 +293,20 @@ func _measure(lib: AnimationLibrary, clip: String, ground_speed: float) -> Dicti
 				stretch_all.append(s)
 		series["t"].append(t)
 		series["hips"].append(hips.origin)
-		for side in ["left", "right"]:
-			var prefix := "Left" if side == "left" else "Right"
-			var foot := _bone_pos(sk, prefix + "Foot")
-			var toes := _bone_pos(sk, prefix + "Toes")
-			series[side + "_foot"].append(toes if toes.y < foot.y else foot)
+		feet.append(FootSlide.feet(sk))
 		series["bind_deviation_max"].append(fdev)
 		series["edge_stretch_max"].append(fst)
 	holder.queue_free()
 	# Contacts and ground-relative speeds
-	var ground := Vector3(0, 0, ground_speed)  # the model faces +Z; an in-place clip's ground moves toward -Z
-	var slides := []
-	var contact_frames := 0
-	var speeds := {"left": [], "right": [], "hips": []}
-	for side in ["left", "right"]:
-		var ys: Array = series[side + "_foot"].map(func(p): return p.y)
-		var floor_y: float = ys.min()
-		for f in n:
-			var v := _velocity(series[side + "_foot"], f, series["t"]) + ground
-			# Planted: near its lowest point and not lifting or striking (heel-strike and toe-off frames
-			# are close to the floor but still moving vertically)
-			var c: bool = ys[f] <= floor_y + CONTACT_HEIGHT and absf(v.y) < CONTACT_VSPEED
-			series[side + "_contact"].append(c)
-			var sp := Vector2(v.x, v.z).length()
-			speeds[side].append(sp)
-			if c:
-				contact_frames += 1
-				slides.append(sp)
+	var looping := lib.get_animation(clip).loop_mode != Animation.LOOP_NONE
+	var fs := FootSlide.measure(series["t"], feet, ground_speed, looping)
+	var speeds := {"left": fs["speeds"]["left"], "right": fs["speeds"]["right"], "hips": []}
+	for side in FootSlide.SIDES:
+		series[side + "_foot"] = fs["points"][side]
+		series[side + "_contact"] = fs["contact"][side]
+	var ground := Vector3(0, 0, ground_speed)
 	for f in n:
-		var v := _velocity(series["hips"], f, series["t"]) + ground
+		var v := FootSlide.velocity(series["hips"], f, series["t"], looping) + ground
 		speeds["hips"].append(Vector2(v.x, v.z).length())
 	var h0: Vector3 = series["hips"][0]
 	var travel := []
@@ -342,9 +320,9 @@ func _measure(lib: AnimationLibrary, clip: String, ground_speed: float) -> Dicti
 		"bounds": [lo, hi],
 		"root_travel_max_m": snappedf(travel.max(), 0.001),
 		"root_travel_final_m": snappedf(travel[-1], 0.001),
-		"contact_frames": contact_frames,
-		"foot_slide_p90_mps": snappedf(_percentile(slides, 0.9), 0.001),
-		"foot_slide_max_mps": snappedf(slides.max() if slides else 0.0, 0.001),
+		"contact_frames": fs["contact_frames"],
+		"foot_slide_p90_mps": fs["foot_slide_p90_mps"],
+		"foot_slide_max_mps": fs["foot_slide_max_mps"],
 		"bind_deviation_max_m": snappedf(dev_worst[0], 0.001),
 		"bind_deviation_p99_m": snappedf(_percentile(dev_all, 0.99), 0.001),
 		"bind_deviation_worst_bone": dev_worst[1],
@@ -355,14 +333,6 @@ func _measure(lib: AnimationLibrary, clip: String, ground_speed: float) -> Dicti
 		"vertices": rest.size(),
 		"edges": edges.size() / 2
 	}
-
-
-func _velocity(points: Array, f: int, ts: Array) -> Vector3:
-	var a := maxi(f - 1, 0)
-	var b := mini(f + 1, points.size() - 1)
-	if b == a:
-		return Vector3.ZERO
-	return (points[b] - points[a]) / (ts[b] - ts[a])
 
 
 # ── Rendering ─────────────────────────────────────────────────────────────────
@@ -837,7 +807,7 @@ func _review(clip: String, lib: AnimationLibrary, source: String) -> void:
 		"frames_sampled": m["n"],
 		"strip_times_s": times.map(func(x): return snappedf(x, 0.001)),
 		"ground_speed_mps": ground_speed,
-		"contact_height_m": CONTACT_HEIGHT,
+		"contact_height_m": FootSlide.CONTACT_HEIGHT,
 		"vertices": m["vertices"],
 		"edges": m["edges"]
 	}
