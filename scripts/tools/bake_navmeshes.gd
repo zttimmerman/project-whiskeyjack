@@ -8,10 +8,11 @@ extends SceneTree
 # rebakes and fails when the committed files differ (a stale bake).
 #
 # For each level it takes the NavigationRegion3D subtree out of the instanced scene (so the level
-# script never runs), bakes it synchronously from the collision faces of its CSG pieces (every
-# level piece has use_collision), and saves the NavigationMesh. Feeding collision faces rather than
-# letting Godot parse the CSG render meshes avoids the "parse RenderingServer meshes at runtime"
-# warning, which headless -s runs hit even at edit time. The first run also
+# script never runs), bakes it synchronously from the collision faces of its pieces (CSG shapes with
+# use_collision, and StaticBody3D pieces with box or cylinder shapes, such as the KayKit wrappers in
+# scenes/world/kit/), and saves the NavigationMesh. Feeding collision faces rather than letting Godot
+# parse render meshes avoids the "parse RenderingServer meshes at runtime" warning, which headless
+# -s runs hit even at edit time. The first run also
 # repoints the scene's region from its inline sub_resource to the saved file; later runs leave the
 # .tscn alone. Two runs give identical files.
 #
@@ -122,10 +123,11 @@ static func bake_region(tree: SceneTree, scene_path: String, settings: Dictionar
 	return navmesh
 
 
-# Godot's own parser reads a CSG shape through its render mesh, which warns about reading
-# RenderingServer meshes outside the editor. The collision faces are the same triangles, so each
-# collidable CSG shape adds those instead. Anything else that could carry geometry fails the bake,
-# so no floor or wall is silently left out of the navmesh.
+# Godot's own parser reads a CSG shape or a mesh through its render mesh, which warns about reading
+# RenderingServer meshes outside the editor. Collision faces are what the agent walks on, so each
+# collidable CSG shape adds its collision faces, and each StaticBody3D adds the faces of its box and
+# cylinder shapes. A mesh inside a StaticBody3D is that body's visual (its collision stands for it);
+# anything else that could carry geometry fails the bake, so no floor or wall is silently left out.
 static func _add_collision_faces(
 	region: Node3D, source: NavigationMeshSourceGeometryData3D, scene_path: String
 ) -> bool:
@@ -143,15 +145,72 @@ static func _add_collision_faces(
 				ok = false
 				continue
 			source.add_faces(shape.get_faces(), csg.global_transform)
+		elif node is CollisionShape3D and node.get_parent() is StaticBody3D:
+			var col := node as CollisionShape3D
+			if col.disabled:
+				continue
+			var faces := shape_faces(col.shape)
+			if faces.is_empty():
+				push_error(
+					(
+						"bake_navmeshes: %s: %s has a %s; teach shape_faces about it"
+						% [scene_path, region.get_path_to(col), col.shape.get_class() if col.shape else "null shape"]
+					)
+				)
+				ok = false
+				continue
+			source.add_faces(faces, col.global_transform)
+		elif node is StaticBody3D or _in_static_body(node, region):
+			continue  # the body's shapes carry it
 		elif node is GeometryInstance3D or node is CollisionObject3D or node is CollisionShape3D:
 			push_error(
 				(
-					"bake_navmeshes: %s: %s (%s) isn't a CSG shape; teach _add_collision_faces about it"
+					"bake_navmeshes: %s: %s (%s) isn't a CSG shape or in a StaticBody3D; teach _add_collision_faces about it"
 					% [scene_path, region.get_path_to(node), node.get_class()]
 				)
 			)
 			ok = false
 	return ok
+
+
+static func _in_static_body(node: Node, region: Node) -> bool:
+	var at := node.get_parent()
+	while at != null and at != region:
+		if at is StaticBody3D:
+			return true
+		at = at.get_parent()
+	return false
+
+
+# Triangles of a box or cylinder collision shape in its own space (empty for any other shape).
+static func shape_faces(shape: Shape3D) -> PackedVector3Array:
+	var faces := PackedVector3Array()
+	if shape is BoxShape3D:
+		var h: Vector3 = (shape as BoxShape3D).size / 2.0
+		var c := func(x: float, y: float, z: float) -> Vector3: return Vector3(x * h.x, y * h.y, z * h.z)
+		# Each face as two triangles; winding doesn't matter to the navmesh voxelizer.
+		for quad in [
+			[c.call(-1, -1, -1), c.call(1, -1, -1), c.call(1, -1, 1), c.call(-1, -1, 1)],
+			[c.call(-1, 1, -1), c.call(-1, 1, 1), c.call(1, 1, 1), c.call(1, 1, -1)],
+			[c.call(-1, -1, -1), c.call(-1, 1, -1), c.call(1, 1, -1), c.call(1, -1, -1)],
+			[c.call(-1, -1, 1), c.call(1, -1, 1), c.call(1, 1, 1), c.call(-1, 1, 1)],
+			[c.call(-1, -1, -1), c.call(-1, -1, 1), c.call(-1, 1, 1), c.call(-1, 1, -1)],
+			[c.call(1, -1, -1), c.call(1, 1, -1), c.call(1, 1, 1), c.call(1, -1, 1)],
+		]:
+			faces.append_array([quad[0], quad[1], quad[2], quad[0], quad[2], quad[3]])
+	elif shape is CylinderShape3D:
+		var r: float = (shape as CylinderShape3D).radius
+		var y: float = (shape as CylinderShape3D).height / 2.0
+		var sides := 16
+		for i in sides:
+			var a0 := TAU * i / sides
+			var a1 := TAU * (i + 1) / sides
+			var p0 := Vector3(cos(a0) * r, 0.0, sin(a0) * r)
+			var p1 := Vector3(cos(a1) * r, 0.0, sin(a1) * r)
+			var up := Vector3(0.0, y, 0.0)
+			faces.append_array([p0 - up, p1 - up, p1 + up, p0 - up, p1 + up, p0 + up])
+			faces.append_array([up, p1 + up, p0 + up, -up, p0 - up, p1 - up])
+	return faces
 
 
 static func _file_uid(path: String) -> int:
