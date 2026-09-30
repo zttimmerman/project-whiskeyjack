@@ -1,0 +1,3 @@
+# Known text-limit violations (ci/data_lint.py) to fix; new ones fail CI,
+# and a fixed one must be deleted here.
+data/dialogues/village_elder_complete.json: node 'grateful': 3 sentences (limit 2)

@@ -1,0 +1,25 @@
+# Known Godot warnings on main, to burn down (ci/check_log.py). New warnings fail CI;
+# a fixed warning must be deleted here. Regenerate with --update only to remove lines.
+Integer division. Decimal part will be discarded. (res://scenes/player/Player.gd)
+Integer division. Decimal part will be discarded. (res://scripts/godot_validate.gd)
+Integer division. Decimal part will be discarded. (res://scripts/review/motion_review.gd)
+The function parameter "sign" has the same name as a built-in function. (res://scripts/inventory/Inventory.gd)
+The local function parameter "root" is shadowing an already-declared property in the base class "SceneTree". (res://scripts/godot_validate.gd)
+The local variable "root" is shadowing an already-declared property in the base class "SceneTree". (res://scripts/godot_validate.gd)
+The local variable "root" is shadowing an already-declared property in the base class "SceneTree". (res://scripts/tools/make_held_props.gd)
+The signal "game_over" is declared but never explicitly used in the class. (res://autoloads/GameManager.gd)
+Values of the ternary operator are not mutually compatible. (res://scripts/review/motion_review.gd)
+res://scenes/enemies/ArcherEnemy.tscn - ext_resource, invalid UID: uid://archerenemy_gd - using text path instead: res://scenes/enemies/ArcherEnemy.gd
+res://scenes/enemies/ArcherEnemy.tscn - ext_resource, invalid UID: uid://bcharstats0001 - using text path instead: res://scripts/stats/CharacterStats.gd
+res://scenes/enemies/ArcherEnemy.tscn - ext_resource, invalid UID: uid://hitboxcmp001 - using text path instead: res://scripts/combat/HitboxComponent.gd
+res://scenes/enemies/BaseEnemy.tscn - ext_resource, invalid UID: uid://bcharstats0001 - using text path instead: res://scripts/stats/CharacterStats.gd
+res://scenes/enemies/BaseEnemy.tscn - ext_resource, invalid UID: uid://dbaseenemy01gd - using text path instead: res://scenes/enemies/BaseEnemy.gd
+res://scenes/enemies/BaseEnemy.tscn - ext_resource, invalid UID: uid://hitboxcmp001 - using text path instead: res://scripts/combat/HitboxComponent.gd
+res://scenes/enemies/Projectile.tscn - ext_resource, invalid UID: uid://hitboxcmp001 - using text path instead: res://scripts/combat/HitboxComponent.gd
+res://scenes/enemies/Projectile.tscn - ext_resource, invalid UID: uid://projectile_gd1 - using text path instead: res://scenes/enemies/Projectile.gd
+res://scenes/player/Player.tscn - ext_resource, invalid UID: uid://bcharstats0001 - using text path instead: res://scripts/stats/CharacterStats.gd
+res://scenes/player/Player.tscn - ext_resource, invalid UID: uid://hitboxcmp001 - using text path instead: res://scripts/combat/HitboxComponent.gd
+res://scenes/ui/HUD.tscn - ext_resource, invalid UID: uid://bhudscript001 - using text path instead: res://scenes/ui/HUD.gd
+res://scenes/ui/InventoryUI.tscn - ext_resource, invalid UID: uid://invuiscript001 - using text path instead: res://scenes/ui/InventoryUI.gd
+res://scenes/ui/PauseMenu.tscn - ext_resource, invalid UID: uid://pmenu0gd0001 - using text path instead: res://scenes/ui/PauseMenu.gd
+res://scenes/ui/QuestLogUI.tscn - ext_resource, invalid UID: uid://questloguiscript1 - using text path instead: res://scenes/ui/QuestLogUI.gd
