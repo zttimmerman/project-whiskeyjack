@@ -93,8 +93,10 @@ func test_event_log_label_names_nodes_stably() -> void:
 	assert_str(log_node.label(named)).is_equal("EnemyCorridorA")
 	# A node added without a name gets an engine name like @Area3D@123, which changes run to run;
 	# the label falls back to its scene file's name
-	var spawned := auto_free(Area3D.new()) as Area3D
-	spawned.name = "@Area3D@42"
+	var parent := auto_free(Node3D.new()) as Node3D
+	var spawned := Area3D.new()
 	spawned.scene_file_path = "res://scenes/enemies/Projectile.tscn"
+	parent.add_child(spawned)  # no name given, so the engine makes one
+	assert_str(String(spawned.name)).starts_with("@")
 	assert_str(log_node.label(spawned)).is_equal("Projectile")
 	assert_str(log_node.label(null)).is_equal("")
