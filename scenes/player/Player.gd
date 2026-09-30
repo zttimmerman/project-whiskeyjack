@@ -250,6 +250,22 @@ func _update_camera(delta: float) -> void:
 		spring_arm.rotation.x += randf_range(-_shake_intensity, _shake_intensity) * t * 0.5
 
 
+# Body facing and camera heading (world-space yaw, pitch) for SaveManager
+func get_view_state() -> Dictionary:
+	return {"facing": rotation.y, "camera_yaw": _cam_yaw, "camera_pitch": _cam_pitch}
+
+
+func apply_view_state(view: Dictionary) -> void:
+	rotation.y = float(view.get("facing", rotation.y))
+	_cam_yaw = wrapf(float(view.get("camera_yaw", _cam_yaw)), -PI, PI)
+	_cam_pitch = clampf(float(view.get("camera_pitch", _cam_pitch)), camera_pitch_min, camera_pitch_max)
+	_release_lock_on()
+	_shake_timer = 0.0
+	# Apply now rather than next physics frame, so input this frame already uses the restored view
+	camera_rig.rotation.y = _cam_yaw - rotation.y
+	spring_arm.rotation.x = _cam_pitch
+
+
 # ── Lock-on ───────────────────────────────────────────────────────────────────
 
 func _toggle_lock_on() -> void:

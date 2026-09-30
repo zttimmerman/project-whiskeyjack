@@ -1,9 +1,7 @@
 extends Node3D
 
 const QUEST_ID := "clear_eastern_road"
-const TOTAL_ENEMIES := 7
 
-var _enemies_killed: int = 0
 var _quest_advanced: bool = false
 var _sealed_label: Label = null
 
@@ -26,9 +24,11 @@ func _wire_enemy_deaths() -> void:
 
 
 func _on_enemy_died() -> void:
-	_enemies_killed += 1
-	if _enemies_killed < TOTAL_ENEMIES:
-		return
+	# Count the enemies still standing rather than kills this life: a loaded save removes the
+	# enemies killed before it without a died signal, so a kill counter would never reach the total.
+	for child in get_children():
+		if child.is_in_group("enemy") and child.has_method("is_dead") and not child.is_dead():
+			return
 	# Road is clear: move to the report-back stage. The Keeper completes the quest
 	# on interact. Loops so a kill finishing before the reach trigger still lands
 	# on return_to_keeper.

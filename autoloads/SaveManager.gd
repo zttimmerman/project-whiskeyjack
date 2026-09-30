@@ -1,6 +1,46 @@
 extends Node
 
 const SAVE_PATH := "user://save.json"
+## Bump when the save layout changes; saves with another version are ignored, not half-applied
+const SAVE_FORMAT_VERSION := 2
+## Command-line user arg (after `--`) selecting a separate save file, e.g. `-- --save-slot=playtest`
+## writes user://save_playtest.json. Automated and review runs use it so they never touch the
+## player's real save, which every checkout of this project shares (user:// is keyed by project name).
+const SAVE_SLOT_ARG := "--save-slot="
+## The same, from the environment: games an editor launches inherit its environment, and the
+## Godot MCP's project_run can't pass user args, so the agent's editor is started with this set.
+## The command-line arg wins when both are given.
+const SAVE_SLOT_ENV := "WHISKEYJACK_SAVE_SLOT"
+
+var _save_path: String = SAVE_PATH
+
+# Enemies killed in the current scene instance, as paths relative to the scene root.
+# Tied to the scene instance: a reload or scene change starts a fresh list.
+var _killed_enemies: Array[String] = []
+var _world_scene_id: int = 0
+
+
+func _ready() -> void:
+	if OS.has_environment(SAVE_SLOT_ENV):
+		set_save_slot(OS.get_environment(SAVE_SLOT_ENV))
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with(SAVE_SLOT_ARG):
+			set_save_slot(arg.trim_prefix(SAVE_SLOT_ARG))
+
+
+## Selects the save file: "" is the normal save, anything else user://save_<slot>.json
+func set_save_slot(slot: String) -> void:
+	if slot.is_empty():
+		_save_path = SAVE_PATH
+		return
+	if not slot.is_valid_filename() or slot.contains(" "):
+		push_error("SaveManager: invalid save slot '%s', keeping %s" % [slot, _save_path])
+		return
+	_save_path = "user://save_%s.json" % slot
+
+
+func get_save_path() -> String:
+	return _save_path
 
 
 func save_game() -> void:
@@ -8,13 +48,21 @@ func save_game() -> void:
 	if not player:
 		push_warning("SaveManager: no player found, aborting save")
 		return
+	var scene := get_tree().current_scene
+	if not scene:
+		push_warning("SaveManager: no current scene, aborting save")
+		return
+	_sync_world_scene()
 
 	var data := {
+		"version": SAVE_FORMAT_VERSION,
+		"scene": scene.scene_file_path,
 		"player": _serialize_player(player),
 		"quests": _serialize_quests(),
+		"world": {"killed_enemies": _killed_enemies.duplicate()},
 	}
 
-	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	var file := FileAccess.open(_save_path, FileAccess.WRITE)
 	if not file:
 		push_error("SaveManager: could not open save file for writing")
 		return
@@ -23,27 +71,14 @@ func save_game() -> void:
 
 
 func load_game() -> void:
-	if not save_exists():
-		push_warning("SaveManager: no save file found")
-		return
-
-	var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
-	if not file:
-		push_error("SaveManager: could not open save file for reading")
-		return
-	var text := file.get_as_text()
-	file.close()
-
-	var json := JSON.new()
-	if json.parse(text) != OK:
-		push_error("SaveManager: failed to parse save file")
-		return
-	var data = json.get_data()
-	if not data is Dictionary:
+	var data := _read_compatible_save(true)
+	if data.is_empty():
 		return
 
 	if data.has("quests"):
 		_deserialize_quests(data["quests"])
+
+	_deserialize_world(data.get("world", {}))
 
 	var player := _get_player()
 	if player and data.has("player"):
@@ -51,10 +86,72 @@ func load_game() -> void:
 
 
 func save_exists() -> bool:
-	return FileAccess.file_exists(SAVE_PATH)
+	return FileAccess.file_exists(_save_path)
+
+
+## True when a save exists and would be applied to the current scene by load_game()
+func is_save_compatible() -> bool:
+	return not _read_compatible_save(false).is_empty()
+
+
+## Called by BaseEnemy.die(). Only enemies placed in the scene file are persisted; ones spawned at
+## runtime have no stable path, so they aren't recorded.
+func record_enemy_killed(enemy: Node) -> void:
+	var scene := get_tree().current_scene
+	if not scene or enemy.owner != scene:
+		return
+	_sync_world_scene()
+	var key := str(scene.get_path_to(enemy))
+	if key not in _killed_enemies:
+		_killed_enemies.append(key)
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
+
+# Reads the save and returns it only if its format version and scene match the current scene;
+# otherwise returns {} (with a warning when `warn`), so a stale or foreign save is never applied.
+func _read_compatible_save(warn: bool) -> Dictionary:
+	if not save_exists():
+		if warn:
+			push_warning("SaveManager: no save file found at %s" % _save_path)
+		return {}
+	var file := FileAccess.open(_save_path, FileAccess.READ)
+	if not file:
+		push_error("SaveManager: could not open save file for reading")
+		return {}
+	var text := file.get_as_text()
+	file.close()
+
+	var json := JSON.new()
+	if json.parse(text) != OK:
+		push_error("SaveManager: failed to parse save file")
+		return {}
+	var data = json.get_data()
+	if not data is Dictionary:
+		return {}
+
+	var version := int(data.get("version", 1))
+	if version != SAVE_FORMAT_VERSION:
+		if warn:
+			push_warning("SaveManager: ignoring %s: format version %d, expected %d" % [_save_path, version, SAVE_FORMAT_VERSION])
+		return {}
+	var scene := get_tree().current_scene
+	var scene_path: String = scene.scene_file_path if scene else ""
+	if str(data.get("scene", "")) != scene_path:
+		if warn:
+			push_warning("SaveManager: ignoring %s: saved in %s, current scene is %s" % [_save_path, data.get("scene", "?"), scene_path])
+		return {}
+	return data
+
+
+# Starts a fresh kill list whenever the current scene instance changes (reload or new level)
+func _sync_world_scene() -> void:
+	var scene := get_tree().current_scene
+	var id := scene.get_instance_id() if scene else 0
+	if id != _world_scene_id:
+		_world_scene_id = id
+		_killed_enemies.clear()
+
 
 func _get_player() -> Node:
 	if GameManager.player:
@@ -69,6 +166,8 @@ func _serialize_player(player: Node) -> Dictionary:
 	var result: Dictionary = {
 		"position": [pos.x, pos.y, pos.z],
 	}
+	if player.has_method("get_view_state"):
+		result["view"] = player.get_view_state()
 
 	var stats: CharacterStats = player.get("stats")
 	if stats:
@@ -114,12 +213,34 @@ func _serialize_quests() -> Dictionary:
 
 # ── Deserialization ───────────────────────────────────────────────────────────
 
+# Removes the enemies the save lists as killed (quietly: no died signal, no XP) and makes the
+# save's list the current kill list, so the next save still includes them.
+func _deserialize_world(data: Dictionary) -> void:
+	_sync_world_scene()
+	_killed_enemies.clear()
+	var scene := get_tree().current_scene
+	for raw_key in data.get("killed_enemies", []):
+		var key := str(raw_key)
+		_killed_enemies.append(key)
+		var enemy := scene.get_node_or_null(NodePath(key))
+		if enemy and enemy.is_in_group("enemy"):
+			# Leave the group now so lock-on and level kill counts skip it before the free lands
+			enemy.remove_from_group("enemy")
+			enemy.queue_free()
+
+
 func _deserialize_player(player: Node, data: Dictionary) -> void:
 	# Position
 	if data.has("position"):
 		var arr: Array = data["position"]
 		if arr.size() == 3:
 			player.global_position = Vector3(float(arr[0]), float(arr[1]), float(arr[2]))
+	if player is CharacterBody3D:
+		(player as CharacterBody3D).velocity = Vector3.ZERO
+
+	# Facing and camera heading, so the same input moves the same way relative to the view
+	if data.has("view") and player.has_method("apply_view_state"):
+		player.apply_view_state(data["view"])
 
 	# Stats — restore directly; saved values already include any equipment modifiers.
 	# Equipment modifiers are NOT re-applied here; the saved numbers are authoritative.

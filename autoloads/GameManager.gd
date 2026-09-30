@@ -67,7 +67,14 @@ func on_player_died() -> void:
 	#   DEATH_FADE_DURATION (0.6 s) + label fade (0.35 s) + DEATH_SHOW_DURATION (2.0 s) ≈ 3 s
 	# We wait slightly longer so the overlay is fully visible before we reload.
 	await get_tree().create_timer(3.2).timeout
+	# Respawn always at full HP regardless of what HP value was saved
+	await reload_from_save(true)
 
+
+# Reloads the current scene fresh, then applies the save if it belongs to this scene
+# (SaveManager ignores saves for other scenes or formats). Reloading first is what brings back
+# enemies killed since the save; the save then removes the ones it lists as killed.
+func reload_from_save(full_hp: bool = false) -> void:
 	player = null  # clear stale ref; _try_connect_player will re-populate after reload
 	get_tree().reload_current_scene()
 
@@ -80,7 +87,8 @@ func on_player_died() -> void:
 	if SaveManager.save_exists():
 		SaveManager.load_game()
 
-	# Respawn always at full HP regardless of what HP value was saved
+	if not full_hp:
+		return
 	var p := get_tree().get_first_node_in_group("player") as CharacterBody3D
 	if p:
 		var s := p.get("stats") as CharacterStats
