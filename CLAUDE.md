@@ -285,8 +285,8 @@ GODOT_AI_GUARD_PROFILE=playtest claude -p "$(cat <brief>)" --mcp-config .mcp.jso
 ```
 - **The profile** allows running, stopping, stepping and input; edits stay blocked.
 - **Briefs and reports** go in `docs/playtests/`.
-- **Play combat in lockstep**: `suspend`, send input, `next_frame` N, observe, repeat. Real-time play through tool calls lets 8–20 s of game time pass per call.
-- **Input:** movement goes through frame-timed `input_sequence` (actions). Combat keys (J, K, Space, Tab, F) are read in `Player._input`, which synthetic actions never reach, so they need `input_key` and can't be frame-timed yet.
+- **No lockstep in godot-ai 4.2.3.** `input_sequence` blocks until the sequence ends, and input sent to a suspended game is silently dropped. So time inputs inside one `input_sequence`, and read the outcome afterwards; don't try to observe mid-sequence. Real-time play through tool calls lets 8–20 s of game time pass per call. An in-game event log with physics frames (planned) is how outcomes get checked.
+- **Input:** every gameplay input is an Input Map action polled in the physics step (`move_*`, `attack_light`, `attack_heavy`, `dodge`, `lock_on`, `interact`), so frame-timed `input_sequence` drives movement and combat alike. Only UI keys (inventory, pause, mouse look) are read in `_input`.
 - **Screenshots** reach the playtester only (there's no save-to-disk), so the report must describe them.
 
 **The human playtesting the agent's work:** use the `playtest-branch` skill. It opens a disposable review copy, and the human's checkout is never touched.

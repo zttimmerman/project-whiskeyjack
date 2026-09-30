@@ -101,26 +101,32 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
-	if event.is_action_pressed("lock_on"):
-		_toggle_lock_on()
-
-	if event.is_action_pressed("dodge") and not _is_dodging:
-		_dodge()
-
-	if event.is_action_pressed("interact"):
-		interact()
-
 	if event.is_action_pressed("open_inventory"):
 		_toggle_inventory()
 
-	if event.is_action_pressed("attack_light") and not _is_dodging and _attack_timer <= 0.0:
+
+# Gameplay actions are polled in the physics step rather than read in _input: synthetic action
+# input (the Godot MCP's frame-timed input_sequence, used by automated playtests) only reaches
+# Input polling, never _input, and polling also lands each press on a known physics frame.
+func _poll_gameplay_actions() -> void:
+	if Input.is_action_just_pressed("lock_on"):
+		_toggle_lock_on()
+
+	if Input.is_action_just_pressed("dodge") and not _is_dodging:
+		_dodge()
+
+	if Input.is_action_just_pressed("interact"):
+		interact()
+
+	if Input.is_action_just_pressed("attack_light") and not _is_dodging and _attack_timer <= 0.0:
 		_attack_light()
 
-	if event.is_action_pressed("attack_heavy") and not _is_dodging and _attack_timer <= 0.0:
+	if Input.is_action_just_pressed("attack_heavy") and not _is_dodging and _attack_timer <= 0.0:
 		_attack_heavy()
 
 
 func _physics_process(delta: float) -> void:
+	_poll_gameplay_actions()
 	_validate_lock_on()
 	_apply_gravity(delta)
 
