@@ -1,0 +1,94 @@
+# CI for every PR and every push to main (docs/plans/phase-a/a1-ci.md; design bible §8).
+# Checks that don't need a Mac or Blender. Each job is independent: to add one (gdUnit4, the navmesh
+# bake, the asset import path, replays), append a job below; a job that needs Godot copies the
+# container block (same image and digest) and the "Install Python" and import steps from `import`.
+# The image is barichello/godot-ci 4.7.2 pinned by digest (the env context isn't available in
+# `container:`, so the digest is repeated per job); bump the tag and digest with the editor.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash # -eo pipefail, so a failing command before `| tee` fails its step
+
+env:
+  # Playtest and test runs never share the human's user://save.json.
+  WHISKEYJACK_SAVE_SLOT: ci
+
+jobs:
+  import:
+    name: import (errors and warnings baseline)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container:
+      image: barichello/godot-ci:4.7.2@sha256:cdcca31e9194fd59a68a63f4b1b9c3981716819c520cd6f7966c5d72ca7246bd
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install Python
+        run: command -v python3 || (apt-get update -qq && apt-get install -y -qq --no-install-recommends python3)
+      - name: Restore the import cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .godot
+          key: godot-import-4.7.2-${{ hashFiles('project.godot', '**/*.import') }}
+          restore-keys: godot-import-4.7.2-
+      - name: Import, first run (a fresh checkout reports missing UID-cache errors; not checked)
+        run: godot --headless --path . --import < /dev/null 2>&1 | tee import-1.log
+      - name: Import, second run (checked)
+        run: godot --headless --path . --import < /dev/null 2>&1 | tee import-2.log
+      - name: Load every script and scene, with GDScript warnings on (-d)
+        # -d prints GDScript warnings; stdin is /dev/null so the debugger never waits at a debug> prompt.
+        run: godot --headless --path . -d -s ci/load_all.gd < /dev/null 2>&1 | tee load-all.log
+      - name: Check the logs (no errors; warnings match ci/warnings-baseline.txt)
+        if: ${{ !cancelled() }}
+        run: python3 ci/check_log.py --baseline ci/warnings-baseline.txt import-2.log load-all.log
+      - name: Keep the logs
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: godot-logs
+          path: "*.log"
+          retention-days: 14
+
+  validate:
+    name: validate (committed assets)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container:
+      image: barichello/godot-ci:4.7.2@sha256:cdcca31e9194fd59a68a63f4b1b9c3981716819c520cd6f7966c5d72ca7246bd
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install Python
+        run: command -v python3 || (apt-get update -qq && apt-get install -y -qq --no-install-recommends python3)
+      - name: Run scripts/godot_validate.gd on every asset with a brief (no Blender renders)
+        run: python3 ci/validate_assets.py
+
+  data-lint:
+    name: data-lint (dialogues and quests)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Lint data/dialogues and data/quests (baseline ci/data-lint-baseline.txt)
+        run: python3 ci/data_lint.py
+
+  hooks:
+    name: hooks (Godot MCP guard tests)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Test .claude/hooks/godot_ai_guard.py
+        run: python3 .claude/hooks/test_godot_ai_guard.py

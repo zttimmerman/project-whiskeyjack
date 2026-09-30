@@ -1,5 +1,7 @@
 # Project Whiskeyjack
 
+[![CI](https://github.com/zttimmerman/project-whiskeyjack/actions/workflows/ci.yml/badge.svg)](https://github.com/zttimmerman/project-whiskeyjack/actions/workflows/ci.yml)
+
 A 3D low-poly action RPG built in Godot 4, inspired by early PS1/PS2 era titles — think early Final Fantasy, Legend of Dragoon, and Zelda 3D. The look is stylized low-poly with generous budgets: bold colors, readable silhouettes, and simple albedo-only textures over realism. Combat is real-time in the style of early Zelda / Dark Souls.
 
 ---
