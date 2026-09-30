@@ -21,7 +21,7 @@ collision_layer = 16
 collision_mask = 1
 script = ExtResource("2_hitbox")
 metadata/_custom_type_script = "uid://hitboxcmp001"
-damage = 6
+damage = 14
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="HitboxComponent"]
 shape = SubResource("SphereShape3D_hitbox")
