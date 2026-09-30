@@ -11,33 +11,25 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
   - **Godot 4.7.2** (a regression set identical to 4.6.1) and the **Godot MCP** (`addons/godot_ai`, pinned 4.2.3, guarded; CLAUDE.md → Godot MCP).
   - **First headless playtest** of Level 1: `docs/playtests/2026-09-29-level1-first-look.md`.
   - `playtest-branch` skill so the human can play any branch.
-- **In flight:**
-  - `fix/respawn-save-state`: death reloads a stale save, killed enemies don't persist, and every worktree shares one `user://save.json`.
-  - Then `feature/`: poll combat input in the physics step so the MCP can frame-time attacks (approved).
-- **Backlog from the playtest** (fix against the design bible, not ad hoc):
-  1. **Melee occlusion:** the player model hides the enemy at melee range.
-  2. **Lock-on:** it shows no reticle, the camera doesn't turn, and it may stick.
-  3. **No hit feedback:** no visible particle, flash or stagger in stills, and no enemy HP.
-  4. **Encounters are harsh:** about 40% HP per skeleton; the central room is a 3-on-1 with an off-screen archer.
-  5. **Camera jams:** it pushes into walls and corners.
-  6. **Crates snag the player** at the corridor mouth.
-  7. **The level reads unfinished:** no ceilings, flat floors, near-black walls, no landmarks or direction, and a white-capsule Elder at the spawn.
-  8. **Log warnings:**
-     - invalid hand-written UIDs in 9 scenes;
-     - a runtime navmesh bake from RenderingServer meshes (slow) with ceiled agent sizes;
-     - `Inventory.gd:82` shadows `sign`;
-     - `GameManager.game_over` is unused;
-     - `Player.gd:361` uses integer division.
-- **Next (proposed):**
-  1. The design bible (level readability, lighting, pacing, combat-feel targets, with numbers).
-  2. A playtest skill: lockstep play, scripted scenarios as regression tests, and a fresh-context playtest critic.
-  3. A level-building skill: blockout → dressing → lighting → playtest after each pass.
-  4. Then the backlog above, measured against the bible.
+- **Direction (2026-09-29):**
+  - Gameplay: Elder Scrolls / Fallout / Witcher, with Witcher-style combat, hub and spokes, and approachable difficulty with level bands.
+  - Look: the PS1/PS2-era style is unchanged.
+  - `docs/design-bible.md` governs how the game plays. Its first decisions are settled: damage ratio, dodge timing, attack commitment, an over-the-shoulder camera built as modes, enemy damage, no stamina.
+- **Backlog, as design-bible targets:**
+  - `cam_melee_occlusion`, `cam_player_in_frame`, `cam_wall_fill` and `cam_lock_both_in_frame`: the camera rework and a lock-on reticle.
+  - `enemy_melee_telegraph`, `enemy_ranged_telegraph` and `enemy_attackers_max`, plus line-of-sight detection and arrows hitting walls.
+  - `atk_hitbox_sync` and attack commitment; the damage formula and `ttk_*`.
+  - The `lvl_*` targets (ceilings, verticality, landmarks, dressing, light spacing, path clearance) and `read_*`.
+  - Stability: edit-time navmesh bakes, the 9 hand-written UIDs, the E key's double binding, and 3 GDScript warnings.
+- **Next:**
+  1. A review of production tools (the user's request), before producing more content.
+  2. The playtest skill: an in-game event log, scripted scenarios as regression tests, and a fresh-context critic that uses the design bible as its rubric.
+  3. Then the backlog above, measured against the targets.
 - **Open questions:**
   - Is `OverhandThrow` acceptable as the Back-file's bow attack, or buy the UAL2 tier with `Bow_*`?
   - Is the player's sword a new asset, or keep reusing the Levy Blade?
   - The levy jog slides at 0.80 m/s and the Back-file walk at 0.64 (the player's run: 0.35).
-  - Renderer: `config/features` says Forward Plus, while CLAUDE.md prefers Mobile or Compatibility. Unverified which is active.
+  - Renderer: *(Answered: `rendering_method="gl_compatibility"` is what's active; the Forward Plus feature tag is only the editor's default label.)*
 - **Before any Tripo spend:** read the tripo skill. The cap is 500 per session, starting at 0. The balance is 590. Costs: concept 15, multiview 10, model 50, rig 25.
 - **Tools:**
   - `scripts/pipeline.py <id> --stage all` and `scripts/judge.py packet|record|resolve|log`;
