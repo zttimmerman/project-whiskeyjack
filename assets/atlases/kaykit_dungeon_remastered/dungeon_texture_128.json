@@ -18,14 +18,39 @@
       "sha256": "9fae6a79056241baf253fe9272dc7a7ddb174e1caf153eb5013c58a596722148"
     },
     {
+      "asset_id": "kaykit_dungeon_barrel_small",
+      "source_file": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/barrel_small.gltf.glb",
+      "sha256": "f46d0c421e46080aff079286ce9459a22da25e1b4f3489a04243f17617175212"
+    },
+    {
+      "asset_id": "kaykit_dungeon_barrel_small_stack",
+      "source_file": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/barrel_small_stack.gltf.glb",
+      "sha256": "c23dc73a11c5a57ed33cb8a9df99f2b2793517341c5d62c6e50b0150652e8e99"
+    },
+    {
       "asset_id": "kaykit_dungeon_box_large",
       "source_file": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/obj/box_large.obj",
       "sha256": "e53679a735f9288f358f16cbcf7a7863ce4e836658d6d5b16534d30889ef1ad6"
     },
     {
+      "asset_id": "kaykit_dungeon_box_small",
+      "source_file": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/box_small.gltf.glb",
+      "sha256": "3052015d7cd670c170742317fd9c728e5643221450857abbae9eefe6dbc66092"
+    },
+    {
       "asset_id": "kaykit_dungeon_floor_tile_large",
       "source_file": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/floor_tile_large.gltf.glb",
       "sha256": "5b6bbbc683f6729d094732056f157a928435de97ec3cf94c341c7465907fe17b"
+    },
+    {
+      "asset_id": "kaykit_dungeon_floor_tile_small",
+      "source_file": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/floor_tile_small.gltf.glb",
+      "sha256": "645f02c82d1fa15e3e1daa7892b70c8a9d44f44d0e520d76ae6afd08633c5b34"
+    },
+    {
+      "asset_id": "kaykit_dungeon_pillar",
+      "source_file": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/pillar.gltf.glb",
+      "sha256": "e31da496461921475384c62ce761cd23924892bd6f32aeea68bd913545caee33"
     },
     {
       "asset_id": "kaykit_dungeon_stairs",
@@ -41,10 +66,15 @@
       "asset_id": "kaykit_dungeon_wall_doorway",
       "source_file": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/wall_doorway.glb",
       "sha256": "2be5369a2d1d1d8795150b2156d8343b3e37620d78de256cb03276c54ea70c97"
+    },
+    {
+      "asset_id": "kaykit_dungeon_wall_half",
+      "source_file": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/wall_half.gltf.glb",
+      "sha256": "9e65c438f55d96cbcd554489bf2dec236feb575a8192c709d3bf6886599339a8"
     }
   ],
   "atlas_source_sha256": "f9ae182518f908bd09461a56a430b9ca7369812ac10890224cc6f32e7da3e1ee",
-  "atlas_sha256": "dfe78eac04ef808ba61821a4f0dd20477aa6e08f32e74591aa9b5a371c58aafe",
+  "atlas_sha256": "78439b151606e21a5cfa9b422f9b8af82db9ec5b035c342c1afd5eea3b0c032b",
   "source_pixels_sha256": "ff7a2f8ec0452c70e60d0b8ad7b4e2f19fe04471f8caa2431a61073c5825981a",
   "size_before": [
     1024,
@@ -60,12 +90,32 @@
       "texels": 339
     },
     {
+      "asset_id": "kaykit_dungeon_barrel_small",
+      "texels": 284
+    },
+    {
+      "asset_id": "kaykit_dungeon_barrel_small_stack",
+      "texels": 435
+    },
+    {
       "asset_id": "kaykit_dungeon_box_large",
+      "texels": 377
+    },
+    {
+      "asset_id": "kaykit_dungeon_box_small",
       "texels": 377
     },
     {
       "asset_id": "kaykit_dungeon_floor_tile_large",
       "texels": 109
+    },
+    {
+      "asset_id": "kaykit_dungeon_floor_tile_small",
+      "texels": 107
+    },
+    {
+      "asset_id": "kaykit_dungeon_pillar",
+      "texels": 29
     },
     {
       "asset_id": "kaykit_dungeon_stairs",
@@ -78,6 +128,10 @@
     {
       "asset_id": "kaykit_dungeon_wall_doorway",
       "texels": 446
+    },
+    {
+      "asset_id": "kaykit_dungeon_wall_half",
+      "texels": 142
     }
   ],
   "palette_correction": [
@@ -89,27 +143,27 @@
       ],
       "lightness": "lifted or lowered (sourced asset)",
       "measured_over": {
-        "texels": 740,
+        "texels": 792,
         "of": 16384,
-        "mask": "union of the UV footprints of 6 pieces"
+        "mask": "union of the UV footprints of 12 pieces"
       },
       "groups": [
         {
           "color": "Wet Slate",
           "target": "#736B66",
-          "share": 0.5378,
-          "median_before": "#818A8F",
-          "delta_e_before": 14.2,
+          "share": 0.5227,
+          "median_before": "#808A8F",
+          "delta_e_before": 14.3,
           "applied": true,
-          "median_after": "#726B66",
+          "median_after": "#736B66",
           "delta_e_after": 0.4
         },
         {
           "color": "Rain Stone",
           "target": "#4D4740",
-          "share": 0.0311,
-          "median_before": "#4B5256",
-          "delta_e_before": 9.7,
+          "share": 0.0366,
+          "median_before": "#4C5256",
+          "delta_e_before": 9.6,
           "applied": true,
           "median_after": "#4D4740",
           "delta_e_after": 0.0
@@ -124,7 +178,7 @@
         {
           "color": "Barrow Oak",
           "target": "#8C5933",
-          "share": 0.4311,
+          "share": 0.4407,
           "median_before": "#9C5B45",
           "delta_e_before": 10.1,
           "applied": true,
@@ -154,5 +208,5 @@
     "godot": "4.7.2.stable.official.ed1daf0bf",
     "tripo": "0.5.1"
   },
-  "built_at": "2026-09-30T04:48:18+00:00"
+  "built_at": "2026-09-30T06:26:47+00:00"
 }

@@ -31,7 +31,7 @@
     },
     "model": {
       "status": "ok",
-      "timestamp": "2026-09-30T04:48:23+00:00",
+      "timestamp": "2026-09-30T06:26:59+00:00",
       "inputs": [
         {
           "path": "assets/briefs/kaykit_dungeon_floor_tile_large.yaml",
@@ -39,7 +39,7 @@
         },
         {
           "path": "assets/sources.json",
-          "sha256": "de64c9399767c59dfa99e6d7dc1b96b06d35113761b16d2632c17d02920e0214"
+          "sha256": "c51ec4f2a13d81af1c0bb9bfb10167e1facc00839cf8222354b13edde5131217"
         },
         {
           "path": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/floor_tile_large.gltf.glb",
@@ -74,7 +74,7 @@
     },
     "clean": {
       "status": "ok",
-      "timestamp": "2026-09-30T04:48:24+00:00",
+      "timestamp": "2026-09-30T06:27:00+00:00",
       "inputs": [
         {
           "path": "assets/briefs/kaykit_dungeon_floor_tile_large.yaml",
@@ -90,17 +90,17 @@
         },
         {
           "path": "assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png",
-          "sha256": "dfe78eac04ef808ba61821a4f0dd20477aa6e08f32e74591aa9b5a371c58aafe"
+          "sha256": "78439b151606e21a5cfa9b422f9b8af82db9ec5b035c342c1afd5eea3b0c032b"
         },
         {
           "path": "assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.json",
-          "sha256": "ca346b74a1b1b87df77ed675e18ebc8a60236b82af7ee16799e5ade5405402a1"
+          "sha256": "a6db4eb89d38126667bf150bad7ca27888aff8db9b5e8b7347ffa5fd49556b9f"
         }
       ],
       "outputs": [
         {
           "path": "assets/meshes/kaykit_dungeon_floor_tile_large.glb",
-          "sha256": "127bfe2c22320a2f3126fe4a4e2fdaae0f9c0fe60c9679fdeb9cceb31bccc59a"
+          "sha256": "3d19db4d9c2bc071102da85b07e2ee4b8dad70579fa58b7a4ef51fb30117fa37"
         }
       ],
       "tool_versions": {
@@ -149,8 +149,8 @@
         "reference_image": null,
         "texture_overlays": [],
         "shared_atlas": {
-          "image": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png",
-          "sidecar": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.json"
+          "image": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png",
+          "sidecar": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.json"
         }
       },
       "report": {
@@ -158,8 +158,8 @@
         "errors": [],
         "warnings": [],
         "blender_version": "5.0.1",
-        "input": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/.downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/floor_tile_large.gltf.glb",
-        "output": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/meshes/kaykit_dungeon_floor_tile_large.glb",
+        "input": "/Users/zach/Documents/repos/project-whiskeyjack-g4/.downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/floor_tile_large.gltf.glb",
+        "output": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/meshes/kaykit_dungeon_floor_tile_large.glb",
         "materials": [
           {
             "name": "texture",
@@ -317,8 +317,8 @@
           "note": "baseline only; nothing fails on these yet"
         },
         "shared_atlas": {
-          "image": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png",
-          "atlas_sha256": "dfe78eac04ef808ba61821a4f0dd20477aa6e08f32e74591aa9b5a371c58aafe",
+          "image": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png",
+          "atlas_sha256": "78439b151606e21a5cfa9b422f9b8af82db9ec5b035c342c1afd5eea3b0c032b",
           "source": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/texture/dungeon_texture.png",
           "source_pixels_sha256": "ff7a2f8ec0452c70e60d0b8ad7b4e2f19fe04471f8caa2431a61073c5825981a",
           "note": "downscaled and palette-corrected once for the whole pack; not re-corrected per piece"
@@ -330,7 +330,7 @@
               128,
               128
             ],
-            "shared_atlas": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png",
+            "shared_atlas": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png",
             "lightness": "lifted or lowered (sourced asset)",
             "measured_over": {
               "texels": 109,
@@ -346,7 +346,7 @@
                 "delta_e_before": 9.3,
                 "applied": true,
                 "median_after": "#7C6554",
-                "delta_e_after": 10.2
+                "delta_e_after": 10.1
               },
               {
                 "color": "Rain Stone",
@@ -386,27 +386,27 @@
             ],
             "atlas_correction": {
               "measured_over": {
-                "texels": 740,
+                "texels": 792,
                 "of": 16384,
-                "mask": "union of the UV footprints of 6 pieces"
+                "mask": "union of the UV footprints of 12 pieces"
               },
               "groups": [
                 {
                   "color": "Wet Slate",
                   "target": "#736B66",
-                  "share": 0.5378,
-                  "median_before": "#818A8F",
-                  "delta_e_before": 14.2,
+                  "share": 0.5227,
+                  "median_before": "#808A8F",
+                  "delta_e_before": 14.3,
                   "applied": true,
-                  "median_after": "#726B66",
+                  "median_after": "#736B66",
                   "delta_e_after": 0.4
                 },
                 {
                   "color": "Rain Stone",
                   "target": "#4D4740",
-                  "share": 0.0311,
-                  "median_before": "#4B5256",
-                  "delta_e_before": 9.7,
+                  "share": 0.0366,
+                  "median_before": "#4C5256",
+                  "delta_e_before": 9.6,
                   "applied": true,
                   "median_after": "#4D4740",
                   "delta_e_after": 0.0
@@ -421,7 +421,7 @@
                 {
                   "color": "Barrow Oak",
                   "target": "#8C5933",
-                  "share": 0.4311,
+                  "share": 0.4407,
                   "median_before": "#9C5B45",
                   "delta_e_before": 10.1,
                   "applied": true,
@@ -478,7 +478,7 @@
     },
     "validate": {
       "status": "ok",
-      "timestamp": "2026-09-30T04:48:25+00:00",
+      "timestamp": "2026-09-30T06:27:01+00:00",
       "inputs": [
         {
           "path": "assets/briefs/kaykit_dungeon_floor_tile_large.yaml",
@@ -486,11 +486,11 @@
         },
         {
           "path": "assets/meshes/kaykit_dungeon_floor_tile_large.glb",
-          "sha256": "127bfe2c22320a2f3126fe4a4e2fdaae0f9c0fe60c9679fdeb9cceb31bccc59a"
+          "sha256": "3d19db4d9c2bc071102da85b07e2ee4b8dad70579fa58b7a4ef51fb30117fa37"
         },
         {
           "path": "scripts/godot_validate.gd",
-          "sha256": "b6e15053c4219818c4d819d9d64720b11aa7cddbef876e106eee74cbca31e554"
+          "sha256": "7990d0b422dad7def4ba5cbef89d9632cd29cc3edddc28143757e982988985c9"
         },
         {
           "path": "scripts/blender_views.py",
@@ -498,33 +498,33 @@
         },
         {
           "path": "assets/sources.json",
-          "sha256": "de64c9399767c59dfa99e6d7dc1b96b06d35113761b16d2632c17d02920e0214"
+          "sha256": "c51ec4f2a13d81af1c0bb9bfb10167e1facc00839cf8222354b13edde5131217"
         }
       ],
       "outputs": [
         {
           "path": "assets/manifests/kaykit_dungeon_floor_tile_large/front.png",
-          "sha256": "d055dc4be18cf251c5f80b48c748f9d2998f15667ed9451d0a6698432768dcb2"
+          "sha256": "0ca529b426e88d05c923b9d9cff12155912226a961a8bdf1f4781920e3951bda"
         },
         {
           "path": "assets/manifests/kaykit_dungeon_floor_tile_large/right.png",
-          "sha256": "19e8443b262eb8438d2192d6b6a631998be1d0cbe272502653aefd7a58944d1c"
+          "sha256": "2021014b8cf30877c39953f0612df0ecaea34f53edc41164f2eb759cda9b3e7e"
         },
         {
           "path": "assets/manifests/kaykit_dungeon_floor_tile_large/back.png",
-          "sha256": "129f12c33a5c74248adfb3bf630e41c10136d72239ad142020c168d71cbbafc6"
+          "sha256": "4f11576429e69d509f50904712630514d3ff87f94e9072c8710066a59f50532f"
         },
         {
           "path": "assets/manifests/kaykit_dungeon_floor_tile_large/top.png",
-          "sha256": "57897c68dd1ecac726690a9ea49fd968792578015b41e68ea65e4e772f8e2b73"
+          "sha256": "d588ce68eadedc463547431dc452e88ea08f1c8541629f139d85f7f0f613cbbd"
         },
         {
           "path": "assets/manifests/kaykit_dungeon_floor_tile_large/clay_front.png",
-          "sha256": "3cfc6dab67d4e28a3b02ca10cfffdfbcd0b064a4c41b6a6204b615edd6593f54"
+          "sha256": "f48965c1e87392f7bc18b82fa6eb15de7755fc2d766600b93617585e57e8ad68"
         },
         {
           "path": "assets/manifests/kaykit_dungeon_floor_tile_large/wireframe_front.png",
-          "sha256": "6e9597289afb6892b6e503169b1909b789bf0d49e30e630c50898b0c3afe9c39"
+          "sha256": "2e65506785ab9facdb7aa0ab53104d33ee97e2393c872036cc5af4af6a2aa532"
         }
       ],
       "tool_versions": {
@@ -619,27 +619,27 @@
           "status": "ok",
           "views": {
             "front": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/manifests/kaykit_dungeon_floor_tile_large/front.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/manifests/kaykit_dungeon_floor_tile_large/front.png",
               "coverage": 0.032
             },
             "right": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/manifests/kaykit_dungeon_floor_tile_large/right.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/manifests/kaykit_dungeon_floor_tile_large/right.png",
               "coverage": 0.032
             },
             "back": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/manifests/kaykit_dungeon_floor_tile_large/back.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/manifests/kaykit_dungeon_floor_tile_large/back.png",
               "coverage": 0.032
             },
             "top": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/manifests/kaykit_dungeon_floor_tile_large/top.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/manifests/kaykit_dungeon_floor_tile_large/top.png",
               "coverage": 0.8284
             },
             "clay_front": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/manifests/kaykit_dungeon_floor_tile_large/clay_front.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/manifests/kaykit_dungeon_floor_tile_large/clay_front.png",
               "coverage": 0.032
             },
             "wireframe_front": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/manifests/kaykit_dungeon_floor_tile_large/wireframe_front.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/manifests/kaykit_dungeon_floor_tile_large/wireframe_front.png",
               "coverage": 0.011
             }
           },
@@ -658,7 +658,7 @@
     "sha256": "41a64032b8b34fba1ab31bad38b3dce27deb295af58fbd729110f8e0e9209aea"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-09-30T04:55:06+00:00",
+  "updated_at": "2026-09-30T06:27:01+00:00",
   "judgments": [
     {
       "kind": "verdict",

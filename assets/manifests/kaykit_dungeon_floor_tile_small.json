@@ -1,0 +1,662 @@
+{
+  "asset_id": "kaykit_dungeon_floor_tile_small",
+  "stages": {
+    "concept": {
+      "status": "ok",
+      "timestamp": "2026-09-30T06:24:53+00:00",
+      "inputs": [],
+      "outputs": [],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "not needed: sourced asset (source: download); no concept, colour correction uses the palette",
+      "actual_cost_credits": 0
+    },
+    "multiview": {
+      "status": "ok",
+      "timestamp": "2026-09-30T06:24:53+00:00",
+      "inputs": [],
+      "outputs": [],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "not needed: sourced asset (source: download); no concept, colour correction uses the palette",
+      "actual_cost_credits": 0
+    },
+    "model": {
+      "status": "ok",
+      "timestamp": "2026-09-30T06:27:01+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/kaykit_dungeon_floor_tile_small.yaml",
+          "sha256": "ea7ffeb282aa00613ca0e2388467792f126f8f45e693cd0da7802e482aad9557"
+        },
+        {
+          "path": "assets/sources.json",
+          "sha256": "c51ec4f2a13d81af1c0bb9bfb10167e1facc00839cf8222354b13edde5131217"
+        },
+        {
+          "path": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/floor_tile_small.gltf.glb",
+          "sha256": "645f02c82d1fa15e3e1daa7892b70c8a9d44f44d0e520d76ae6afd08633c5b34"
+        }
+      ],
+      "outputs": [
+        {
+          "path": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/floor_tile_small.gltf.glb",
+          "sha256": "645f02c82d1fa15e3e1daa7892b70c8a9d44f44d0e520d76ae6afd08633c5b34"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "sourced .downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/floor_tile_small.gltf.glb (CC0-1.0, Kay Lousberg, kaykit_dungeon_remastered 1.0 (git b0ca9bd))",
+      "actual_cost_credits": 0,
+      "prompt": null,
+      "params": null,
+      "source": {
+        "pack": "kaykit_dungeon_remastered",
+        "source_url": "https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0/archive/b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07.zip",
+        "author": "Kay Lousberg",
+        "license": "CC0-1.0",
+        "pack_version": "1.0 (git b0ca9bd)",
+        "source_file": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/floor_tile_small.gltf.glb",
+        "source_sha256": "645f02c82d1fa15e3e1daa7892b70c8a9d44f44d0e520d76ae6afd08633c5b34"
+      }
+    },
+    "clean": {
+      "status": "ok",
+      "timestamp": "2026-09-30T06:27:02+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/kaykit_dungeon_floor_tile_small.yaml",
+          "sha256": "ea7ffeb282aa00613ca0e2388467792f126f8f45e693cd0da7802e482aad9557"
+        },
+        {
+          "path": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/floor_tile_small.gltf.glb",
+          "sha256": "645f02c82d1fa15e3e1daa7892b70c8a9d44f44d0e520d76ae6afd08633c5b34"
+        },
+        {
+          "path": "scripts/blender_cleanup.py",
+          "sha256": "fa591dd4d73a1111ea58dc2f6ec79545950cebf381a927cb366f7b2e231ea336"
+        },
+        {
+          "path": "assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png",
+          "sha256": "78439b151606e21a5cfa9b422f9b8af82db9ec5b035c342c1afd5eea3b0c032b"
+        },
+        {
+          "path": "assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.json",
+          "sha256": "a6db4eb89d38126667bf150bad7ca27888aff8db9b5e8b7347ffa5fd49556b9f"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "assets/meshes/kaykit_dungeon_floor_tile_small.glb",
+          "sha256": "00eec0aa54a81089a1555bf739efafe9a93df551e2ba2c43b53fd5744bd645c0"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "exported assets/meshes/kaykit_dungeon_floor_tile_small.glb",
+      "actual_cost_credits": 0,
+      "params": {
+        "asset_id": "kaykit_dungeon_floor_tile_small",
+        "type": "prop",
+        "face_limit": null,
+        "triangle_budget": 1320,
+        "texture_size": 128,
+        "target_size_m": null,
+        "pivot": "source",
+        "palette": [
+          "Wet Slate",
+          "Rain Stone",
+          "Peat Black",
+          "Barrow Oak",
+          "Saddle Leather",
+          "Blackened Iron"
+        ],
+        "socket_map": null,
+        "bone_map": null,
+        "animations": null,
+        "exclude_objects": null,
+        "tip_end": null,
+        "rigid_parts": null,
+        "skirt_reweight": null,
+        "source": "download",
+        "source_scale": 1.0,
+        "orientation": "source",
+        "source_forward": null,
+        "palette_targets": {
+          "Wet Slate": "#736B66",
+          "Rain Stone": "#4D4740",
+          "Peat Black": "#2E2926",
+          "Barrow Oak": "#8C5933",
+          "Saddle Leather": "#4A2A10",
+          "Blackened Iron": "#242424"
+        },
+        "reference_image": null,
+        "texture_overlays": [],
+        "shared_atlas": {
+          "image": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png",
+          "sidecar": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.json"
+        }
+      },
+      "report": {
+        "status": "pass",
+        "errors": [],
+        "warnings": [],
+        "blender_version": "5.0.1",
+        "input": "/Users/zach/Documents/repos/project-whiskeyjack-g4/.downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/floor_tile_small.gltf.glb",
+        "output": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/meshes/kaykit_dungeon_floor_tile_small.glb",
+        "materials": [
+          {
+            "name": "texture",
+            "stripped": "normal, roughness, metallic, specular, emission and occlusion inputs are not carried over",
+            "converted_from": "principled",
+            "texture": "dungeon_texture",
+            "alpha": false
+          }
+        ],
+        "textures": [
+          {
+            "name": "dungeon_texture",
+            "size_before": [
+              1024,
+              1024
+            ],
+            "size_after": [
+              128,
+              128
+            ]
+          }
+        ],
+        "removed_objects": [],
+        "input_format": "glb",
+        "rigged": false,
+        "transform": {
+          "pivot": "source",
+          "size_before_m": [
+            2.0,
+            2.0,
+            0.15
+          ],
+          "orientation": "source (kept the kit's axes)",
+          "scale_factor": 1.0,
+          "size_after_m": [
+            2.0,
+            2.0,
+            0.15
+          ],
+          "true_dims_m": {
+            "x": 2.0,
+            "y": 2.0,
+            "z": 0.15
+          },
+          "true_length_m": 0.15,
+          "min_after": [
+            -1.0,
+            -1.0,
+            -0.1
+          ]
+        },
+        "mesh_health": {
+          "totals": {
+            "as_imported": {
+              "vertices": 104,
+              "edges": 151,
+              "faces": 66,
+              "triangles": 66,
+              "quads": 0,
+              "ngons": 0,
+              "non_manifold_edges": 0,
+              "boundary_edges": 104,
+              "boundary_loops": 19,
+              "wire_edges": 0,
+              "loose_vertices": 0,
+              "degenerate_faces": 0,
+              "zero_length_edges": 0,
+              "quad_ratio": 0.0,
+              "triangle_ratio": 1.0
+            },
+            "welded": {
+              "vertices": 36,
+              "edges": 101,
+              "faces": 66,
+              "triangles": 66,
+              "quads": 0,
+              "ngons": 0,
+              "non_manifold_edges": 0,
+              "boundary_edges": 4,
+              "boundary_loops": 1,
+              "wire_edges": 0,
+              "loose_vertices": 0,
+              "degenerate_faces": 0,
+              "zero_length_edges": 0,
+              "part_count": 1,
+              "parts": [
+                {
+                  "triangles": 66,
+                  "vertices": 36,
+                  "size_m": [
+                    2.0,
+                    2.0,
+                    0.15
+                  ],
+                  "boundary_loops": 1
+                }
+              ],
+              "quad_ratio": 0.0,
+              "triangle_ratio": 1.0
+            }
+          },
+          "per_mesh": [
+            {
+              "mesh": "floor_tile_small",
+              "as_imported": {
+                "vertices": 104,
+                "edges": 151,
+                "faces": 66,
+                "triangles": 66,
+                "quads": 0,
+                "ngons": 0,
+                "quad_ratio": 0.0,
+                "triangle_ratio": 1.0,
+                "non_manifold_edges": 0,
+                "boundary_edges": 104,
+                "boundary_loops": 19,
+                "wire_edges": 0,
+                "loose_vertices": 0,
+                "degenerate_faces": 0,
+                "zero_length_edges": 0
+              },
+              "welded": {
+                "vertices": 36,
+                "edges": 101,
+                "faces": 66,
+                "triangles": 66,
+                "quads": 0,
+                "ngons": 0,
+                "quad_ratio": 0.0,
+                "triangle_ratio": 1.0,
+                "non_manifold_edges": 0,
+                "boundary_edges": 4,
+                "boundary_loops": 1,
+                "wire_edges": 0,
+                "loose_vertices": 0,
+                "degenerate_faces": 0,
+                "zero_length_edges": 0,
+                "parts": [
+                  {
+                    "triangles": 66,
+                    "vertices": 36,
+                    "size_m": [
+                      2.0,
+                      2.0,
+                      0.15
+                    ],
+                    "boundary_loops": 1
+                  }
+                ],
+                "part_count": 1
+              }
+            }
+          ],
+          "weld_distance_m": 1e-05,
+          "note": "baseline only; nothing fails on these yet"
+        },
+        "shared_atlas": {
+          "image": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png",
+          "atlas_sha256": "78439b151606e21a5cfa9b422f9b8af82db9ec5b035c342c1afd5eea3b0c032b",
+          "source": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/texture/dungeon_texture.png",
+          "source_pixels_sha256": "ff7a2f8ec0452c70e60d0b8ad7b4e2f19fe04471f8caa2431a61073c5825981a",
+          "note": "downscaled and palette-corrected once for the whole pack; not re-corrected per piece"
+        },
+        "palette_correction": [
+          {
+            "image": "dungeon_texture",
+            "size": [
+              128,
+              128
+            ],
+            "shared_atlas": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png",
+            "lightness": "lifted or lowered (sourced asset)",
+            "measured_over": {
+              "texels": 107,
+              "of": 16384,
+              "mask": "this piece's UV footprint on the shared atlas"
+            },
+            "groups": [
+              {
+                "color": "Wet Slate",
+                "target": "#736B66",
+                "share": 1.0,
+                "median_before": "#8C827B",
+                "delta_e_before": 9.3,
+                "applied": true,
+                "median_after": "#7C6554",
+                "delta_e_after": 10.1
+              },
+              {
+                "color": "Rain Stone",
+                "target": "#4D4740",
+                "share": 0.0,
+                "applied": false,
+                "reason": "covers 0.0% (< 3%); not really present"
+              },
+              {
+                "color": "Peat Black",
+                "target": "#2E2926",
+                "share": 0.0,
+                "applied": false,
+                "reason": "covers 0.0% (< 3%); not really present"
+              },
+              {
+                "color": "Barrow Oak",
+                "target": "#8C5933",
+                "share": 0.0,
+                "applied": false,
+                "reason": "covers 0.0% (< 3%); not really present"
+              },
+              {
+                "color": "Saddle Leather",
+                "target": "#4A2A10",
+                "share": 0.0,
+                "applied": false,
+                "reason": "covers 0.0% (< 3%); not really present"
+              },
+              {
+                "color": "Blackened Iron",
+                "target": "#242424",
+                "share": 0.0,
+                "applied": false,
+                "reason": "covers 0.0% (< 3%); not really present"
+              }
+            ],
+            "atlas_correction": {
+              "measured_over": {
+                "texels": 792,
+                "of": 16384,
+                "mask": "union of the UV footprints of 12 pieces"
+              },
+              "groups": [
+                {
+                  "color": "Wet Slate",
+                  "target": "#736B66",
+                  "share": 0.5227,
+                  "median_before": "#808A8F",
+                  "delta_e_before": 14.3,
+                  "applied": true,
+                  "median_after": "#736B66",
+                  "delta_e_after": 0.4
+                },
+                {
+                  "color": "Rain Stone",
+                  "target": "#4D4740",
+                  "share": 0.0366,
+                  "median_before": "#4C5256",
+                  "delta_e_before": 9.6,
+                  "applied": true,
+                  "median_after": "#4D4740",
+                  "delta_e_after": 0.0
+                },
+                {
+                  "color": "Peat Black",
+                  "target": "#2E2926",
+                  "share": 0.0,
+                  "applied": false,
+                  "reason": "covers 0.0% (< 3%); not really present"
+                },
+                {
+                  "color": "Barrow Oak",
+                  "target": "#8C5933",
+                  "share": 0.4407,
+                  "median_before": "#9C5B45",
+                  "delta_e_before": 10.1,
+                  "applied": true,
+                  "median_after": "#8C5933",
+                  "delta_e_after": 0.0
+                },
+                {
+                  "color": "Saddle Leather",
+                  "target": "#4A2A10",
+                  "share": 0.0,
+                  "applied": false,
+                  "reason": "covers 0.0% (< 3%); not really present"
+                },
+                {
+                  "color": "Blackened Iron",
+                  "target": "#242424",
+                  "share": 0.0,
+                  "applied": false,
+                  "reason": "covers 0.0% (< 3%); not really present"
+                }
+              ]
+            }
+          }
+        ],
+        "shading": {
+          "angle_deg": 30.0,
+          "welded_vertices_removed": 68,
+          "custom_normals_cleared": [
+            "floor_tile_small"
+          ],
+          "welded": "all"
+        },
+        "triangle_count": 66,
+        "triangle_budget": 1320,
+        "vertex_metrics": {
+          "split_at_seams": 36,
+          "welded": 36,
+          "note": "metrics only; the budget is in triangles"
+        },
+        "animations": [],
+        "exported": {
+          "images": 1,
+          "materials": [
+            {
+              "name": "texture",
+              "alphaMode": "OPAQUE",
+              "base_color_texture": true
+            }
+          ],
+          "animations": 0,
+          "skins": 0
+        }
+      }
+    },
+    "validate": {
+      "status": "ok",
+      "timestamp": "2026-09-30T06:27:04+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/kaykit_dungeon_floor_tile_small.yaml",
+          "sha256": "ea7ffeb282aa00613ca0e2388467792f126f8f45e693cd0da7802e482aad9557"
+        },
+        {
+          "path": "assets/meshes/kaykit_dungeon_floor_tile_small.glb",
+          "sha256": "00eec0aa54a81089a1555bf739efafe9a93df551e2ba2c43b53fd5744bd645c0"
+        },
+        {
+          "path": "scripts/godot_validate.gd",
+          "sha256": "7990d0b422dad7def4ba5cbef89d9632cd29cc3edddc28143757e982988985c9"
+        },
+        {
+          "path": "scripts/blender_views.py",
+          "sha256": "9ca1b243e3bb4d5ab1247b718cd1a0e1648e89e2683dacf2a71d3eede55a6388"
+        },
+        {
+          "path": "assets/sources.json",
+          "sha256": "c51ec4f2a13d81af1c0bb9bfb10167e1facc00839cf8222354b13edde5131217"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_small/front.png",
+          "sha256": "0b858852ee83376c53618d2c0fbf5285b475598a7688d56742976a3f937a42f6"
+        },
+        {
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_small/right.png",
+          "sha256": "8ae43fc72c28a51e6caf8d597d2ceceec6746e21fce81f44483c8fcefb69c1fb"
+        },
+        {
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_small/back.png",
+          "sha256": "2776f612346035b09d8cfd2ef89d8c9518e6b522aad5df2a45ea11cb1eadc41f"
+        },
+        {
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_small/top.png",
+          "sha256": "5ae4f75996b146ad4221188f13e4fd52e003688a717e7ca8627f5437f5da834e"
+        },
+        {
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_small/clay_front.png",
+          "sha256": "2943a416b460e63718de6781ecfd3af526a607b1448cfcefba36d1802bc4cac6"
+        },
+        {
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_small/wireframe_front.png",
+          "sha256": "a20393743f7c17f95fa2efaa89430f879a35c081916f9b1fea642e18139197a0"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "all checks passed",
+      "actual_cost_credits": 0,
+      "params": {
+        "asset_id": "kaykit_dungeon_floor_tile_small",
+        "type": "prop",
+        "face_limit": null,
+        "triangle_budget": 1320,
+        "texture_size": 128,
+        "target_size_m": null,
+        "pivot": "source",
+        "palette": [
+          "Wet Slate",
+          "Rain Stone",
+          "Peat Black",
+          "Barrow Oak",
+          "Saddle Leather",
+          "Blackened Iron"
+        ],
+        "socket_map": null,
+        "bone_map": null,
+        "animations": null,
+        "exclude_objects": null,
+        "tip_end": null,
+        "rigid_parts": null,
+        "skirt_reweight": null,
+        "source": "download",
+        "source_scale": 1.0,
+        "orientation": "source",
+        "blender_triangle_count": 66
+      },
+      "report": {
+        "animations": {
+          "expected": [],
+          "missing": [],
+          "present": []
+        },
+        "errors": [],
+        "godot_version": "4.7.2-stable (official)",
+        "import_method": "GLTFDocument (runtime); editor import settings such as a BoneMap don't apply",
+        "materials": [
+          {
+            "albedo_texture": [
+              128,
+              128
+            ],
+            "extra_maps": [],
+            "mesh": "floor_tile_small",
+            "metallic": 0.0,
+            "metallic_specular": 0.0,
+            "roughness": 1.0,
+            "specular_mode": "schlick_ggx",
+            "surface": 0,
+            "transparency": "disabled",
+            "unshaded": false
+          }
+        ],
+        "rig": {
+          "skeleton": false
+        },
+        "status": "pass",
+        "textures": {
+          "count": 1,
+          "max_allowed": 128,
+          "sizes": [
+            [
+              128,
+              128
+            ]
+          ]
+        },
+        "triangles": {
+          "blender_count": 66.0,
+          "budget": 1320,
+          "count": 66
+        },
+        "vertex_metrics": {
+          "gpu_count": 108,
+          "note": "metrics only; the budget is in triangles"
+        },
+        "warnings": [
+          "gross check: holes: 1 open boundary loops after welding"
+        ],
+        "views": {
+          "status": "ok",
+          "views": {
+            "front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/manifests/kaykit_dungeon_floor_tile_small/front.png",
+              "coverage": 0.0604
+            },
+            "right": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/manifests/kaykit_dungeon_floor_tile_small/right.png",
+              "coverage": 0.0604
+            },
+            "back": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/manifests/kaykit_dungeon_floor_tile_small/back.png",
+              "coverage": 0.0604
+            },
+            "top": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/manifests/kaykit_dungeon_floor_tile_small/top.png",
+              "coverage": 0.8284
+            },
+            "clay_front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/manifests/kaykit_dungeon_floor_tile_small/clay_front.png",
+              "coverage": 0.0604
+            },
+            "wireframe_front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-g4/assets/manifests/kaykit_dungeon_floor_tile_small/wireframe_front.png",
+              "coverage": 0.0112
+            }
+          },
+          "errors": [],
+          "triangles": 66,
+          "pieces_welded": 1
+        },
+        "gross_flags": [
+          "holes: 1 open boundary loops after welding"
+        ]
+      }
+    }
+  },
+  "brief": {
+    "path": "assets/briefs/kaykit_dungeon_floor_tile_small.yaml",
+    "sha256": "ea7ffeb282aa00613ca0e2388467792f126f8f45e693cd0da7802e482aad9557"
+  },
+  "total_cost_credits": 0,
+  "updated_at": "2026-09-30T06:27:04+00:00"
+}
