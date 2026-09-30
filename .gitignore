@@ -39,3 +39,5 @@ addons/.godot_ai_update/
 
 # gdUnit4 test reports (tests/run.sh; CI uploads them as an artifact)
 /reports/
+# Downloaded CC0 packs: original zips and extracted files (assets/sources.json records their SHA-256)
+.downloads/

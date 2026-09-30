@@ -43,6 +43,9 @@ python3 scripts/pipeline.py <asset-id> --approve-concept N
 | `assets/meshes/<asset-id>.glb` | the cleaned output of stage 3 | yes |
 | `assets/manifests/<asset-id>/` and `judge_replays/` | review renders, judge packets (`packet.json`, `verdict.json`) and their image copies, animation sheets | JSON yes, **images no** (local only; every image's SHA-256 is in the committed JSON) |
 | `.tripo-out/<asset-id>/` | Tripo downloads, spend records, and `work/` (stage parameters, reports, logs) | no |
+| `assets/sources.json` | sourced assets only: one entry per asset (pack, URL, author, licence, pack version, source file and its SHA-256) plus one per pack (archive and licence-file hashes, import settings) | yes |
+| `assets/atlases/<pack>/` | a kit's shared atlas, downscaled and palette-corrected once, with a JSON sidecar | yes |
+| `.downloads/<pack>/` | the original zip and its extracted files | no |
 
 The brief YAML uses a strict subset: top-level keys, scalars, `[inline lists]`, `- item` lists, and `|` blocks. No PyYAML is needed.
 
@@ -184,7 +187,41 @@ Every stage records the SHA-256 of its inputs (brief, source GLB, spend records,
 5. Run `--stage all` until it exits 0. Read the manifest's `clean.report` and `validate.report`.
 6. Wire the asset in. Characters need a `SocketMap` (`data/rigs/<rig>_sockets.tres`) and a BoneMap in the GLB's import settings; props go into `held_props`.
 
+### Sourced assets (downloaded CC0 kits)
+
+**Generate what carries identity; download the rest** (art bible → Sourcing). Kit pieces (KayKit, Quaternius, Kenney) go through the same clean and validate stages as generated assets. There's no spend and no concept.
+
+1. **Download** the pack with `curl` from its official URL (the author's own site or GitHub organisation) into `.downloads/<pack>/`, keep the zip, and extract it beside the zip. Never use the Blender MCP download tools. If a download needs a browser login, stop and ask the user.
+2. **Import** the pieces with the pack helper. The first import of a pack records its provenance and settings in `assets/sources.json`; later runs read them back:
+   ```
+   python3 scripts/tools/import_pack.py .downloads/<pack>/<extracted> --pack <pack> --pieces wall floor_tile_large box_large:obj ...
+       [--glob 'wall_*'] [--describe NAME=TEXT]
+       # first import only:
+       --title T --homepage URL --url <archive URL> --author A --license CC0-1.0 --version V --archive <zip> --license-file <path in pack>
+       --palette "Wet Slate,Rain Stone,..." --budget "<art-bible heading>" --source-scale 1.0 --prefix <prefix>_ [--atlas-source <path in pack>]
+   ```
+   For each piece it writes `assets/briefs/<prefix><piece>.yaml` and the piece's `sources.json` entry, runs `pipeline.py <id> --stage all`, and prints the triangle count against the budget. It's idempotent. `--budget` names the art-bible section whose `**Budget:**` line supplies the triangle budget and texture size, so no number is written anywhere else. `--describe` gives the prompt the judge checks the piece against, so describe what the piece actually is.
+3. **Judge** each piece at the mesh stage (`judge.py packet <id> --stage mesh`); the packet's `sourcing` block tells the judge there's no concept.
+
+**The brief** has `source: download` plus `pack`, `source_url`, `author`, `license` and `source_file` (under `.downloads/`), and no Tripo fields (`face_limit`, `tripo_model`). It also has:
+- **Orientation:** `orientation: source` (the default for sourced assets) keeps the kit's axes, since a wall or stair lives on the kit's grid. `principal_axis` (with `tip_end`) aligns a downloaded held prop the way generated props are aligned.
+- **Pivot:** `pivot: source` keeps the kit's origin, which is its snap point (KayKit stairs start at their front edge). `base` and `center` recentre as usual.
+- **Scale:** `source_scale` is the pack's uniform scale into metres, which keeps every piece on one grid. `target_size_m` instead fits the piece to a size.
+- **Atlas:** `atlas` and `atlas_source` are for kits that share one texture atlas.
+
+**Stages:**
+- concept, multiview and rig report "not needed".
+- **model** checks that `source_file` is on disk, that its SHA-256 matches `sources.json`, and that the licence is allowed.
+- **clean** imports glTF, OBJ or FBX. It then keeps or sets orientation, pivot and scale as above, and applies the usual albedo rebuild, flat shading and triangle budget (it fails over budget and never decimates). Colour correction uses the palette fallback, since there's no concept.
+- **validate** runs as usual, and also fails when the asset has no `sources.json` entry, when its licence isn't CC0 (`ALLOWED_LICENSES` in `pipeline.py`), or when its provenance disagrees with the brief. CI runs the same check (`ci/validate_assets.py`, `ci/test_sources.py`).
+
+**Shared atlases.** Kits usually put every piece on one texture atlas. The clean stage builds `assets/atlases/<pack>/<atlas>_<texture_size>.png` **once**: `blender_cleanup.py --atlas` downscales the atlas to `texture_size` and runs `palette_correct` over the whole atlas. The JSON sidecar records the source hash, the palette, the clean script's hash and the correction report, and the atlas is rebuilt only when one of those changes. Each piece's clean stage checks, by pixel hash, that its embedded texture is that atlas (it fails otherwise), then swaps in the corrected pixels without re-correcting them. So every piece ships byte-identical texture pixels. Correction is deterministic per atlas: it depends on the atlas, the size and the palette, not on which texels a piece happens to use.
+
+**Licences:** CC0 only. Any other licence fails validation, and allowing one is the user's decision, because it brings attribution duties this pipeline doesn't track.
+
 ## Tools
+
+`scripts/tools/import_pack.py` imports sourced kit pieces (above).
 
 `BLENDER` and `GODOT` environment variables override the defaults: `blender` / `godot` on PATH, then `/Applications/Blender.app/Contents/MacOS/Blender` and `/Applications/Godot.app/Contents/MacOS/Godot`.
 
