@@ -1,5 +1,5 @@
 # Written by scripts/tools/import_pack.py (pack kaykit_dungeon_remastered; provenance in assets/sources.json).
-# Budget from docs/art-bible.md, "Brief: Levy Bow": the art bible is the only source for these numbers.
+# Budget from docs/art-bible.md, "Sourced props (kit dressing)": the art bible is the only source for these numbers.
 asset_id: kaykit_dungeon_floor_tile_large
 type: prop
 source: download
