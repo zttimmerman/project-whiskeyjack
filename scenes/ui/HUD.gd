@@ -163,6 +163,3 @@ func _flash_damage() -> void:
 	_flash_tween.tween_callback(func() -> void:
 		_apply_bar_style(hp_bar, Color(0.78, 0.12, 0.08), Color(0.15, 0.04, 0.04))
 	)
-
-func ci_throwaway_broken(:
-	pass
