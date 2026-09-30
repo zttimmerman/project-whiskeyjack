@@ -26,7 +26,12 @@ _mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/stylized_materials/plugin.cfg", "res://addons/godot_ai/plugin.cfg")
+enabled=PackedStringArray("res://addons/stylized_materials/plugin.cfg", "res://addons/godot_ai/plugin.cfg", "res://addons/gdUnit4/plugin.cfg")
+
+[gdunit4]
+
+settings/common/update_notification_enabled=false
+settings/test/test_lookup_folder="tests"
 
 [input]
 
