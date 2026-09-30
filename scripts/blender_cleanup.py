@@ -440,8 +440,22 @@ def _parts(bm):
         verts = {v for fc in faces for v in fc.verts}
         co = [v.co for v in verts]
         dims = [max(c[i] for c in co) - min(c[i] for c in co) for i in range(3)]
+        # Open boundary loops on this part alone (the sourced-kit holes rule is per part)
+        parent = {}
+
+        def find(v):
+            while parent.setdefault(v, v) != v:
+                parent[v] = parent[parent[v]]
+                v = parent[v]
+            return v
+        boundary = {e for fc in faces for e in fc.edges if e.is_boundary}
+        for e in boundary:
+            a, b = find(e.verts[0].index), find(e.verts[1].index)
+            if a != b:
+                parent[a] = b
         parts.append({"triangles": sum(len(fc.verts) - 2 for fc in faces), "vertices": len(verts),
-                      "size_m": [round(d, 4) for d in dims]})
+                      "size_m": [round(d, 4) for d in dims],
+                      "boundary_loops": len({find(e.verts[0].index) for e in boundary})})
     return sorted(parts, key=lambda p: -p["triangles"])
 
 

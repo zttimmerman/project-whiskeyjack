@@ -301,14 +301,28 @@ def mesh_metrics(packet, brief, clean, views, tol):
     packet["metrics"]["mesh"] = {
         "triangles": tri, "triangle_budget": budget, "texture_sizes": [t["size_after"] for t in tex],
         "part_count": welded.get("part_count"),
-        "parts": [{"triangles": p["triangles"], "size_m": p["size_m"]} for p in (welded.get("parts") or [])[:40]],
+        "parts": [{"triangles": p["triangles"], "size_m": p["size_m"], "boundary_loops": p.get("boundary_loops")}
+                  for p in (welded.get("parts") or [])[:40]],
         "holes_boundary_loops": welded.get("boundary_loops"), "non_manifold_edges": welded.get("non_manifold_edges"),
         "true_dims_m": dims, "true_length_m": (clean.get("transform") or {}).get("true_length_m"),
         "target_size_m": brief.get("target_size_m"), "source_scale": brief.get("source_scale"), "clean_warnings": clean.get("warnings"), "clean_errors": clean.get("errors"),
         "view_coverage": {k: v["coverage"] for k, v in ((views or {}).get("views") or {}).items()},
     }
-    assertion(packet, "holes (welded boundary loops)", (welded.get("boundary_loops") or 0) <= tol["mesh_max_holes"],
-              welded.get("boundary_loops"), tol["mesh_max_holes"], "open boundary loops after welding at 0.01 mm")
+    if P.is_sourced(brief):
+        # Sourced kits (art bible -> Judge tolerances): kit parts are open-backed shells (a wall body plus
+        # raised blocks flush on its face), so the rule is per part; whether a loop shows is the judge's call.
+        parts = welded.get("parts") or []
+        per_part = [p.get("boundary_loops") for p in parts]
+        worst = max((n for n in per_part if n is not None), default=0)
+        limit = tol["mesh_kit_max_loops_per_part"]
+        assertion(packet, "holes per part (sourced kit: open boundary loops on any one part)",
+                  None not in per_part and worst <= limit, worst, limit,
+                  f"{welded.get('boundary_loops')} loops over {len(parts)} parts after welding at 0.01 mm; "
+                  f"parts over the limit: {sum(1 for n in per_part if n is not None and n > limit)}; "
+                  "no loop may be visible in the views (judge)")
+    else:
+        assertion(packet, "holes (welded boundary loops)", (welded.get("boundary_loops") or 0) <= tol["mesh_max_holes"],
+                  welded.get("boundary_loops"), tol["mesh_max_holes"], "open boundary loops after welding at 0.01 mm")
     # Color: the concept governs correction; the palette is the fallback for concept-less assets
     for cc in clean.get("color_correction") or []:
         rows = []
@@ -329,6 +343,9 @@ def mesh_metrics(packet, brief, clean, views, tol):
         packet["metrics"].setdefault("color_vs_concept", []).append(rows)
     for pc in clean.get("palette_correction") or []:
         packet["metrics"].setdefault("color_vs_palette", []).append(pc["groups"])
+        if pc.get("measured_over") or pc.get("lightness"):
+            packet["metrics"].setdefault("color_vs_palette_basis", []).append(
+                {k: pc.get(k) for k in ("measured_over", "lightness", "shared_atlas")})
         for g in pc["groups"]:
             if g.get("share", 0) >= tol["color_min_share"] and not g.get("applied"):
                 assertion(packet, f"palette color {g['color']} matched", False, g.get("delta_e_before"), "applied", g.get("reason", ""))
@@ -485,6 +502,10 @@ def cmd_packet(args):
     if P.is_sourced(brief):
         # Downloaded kit pieces: nothing was generated, so there's no concept; the prompt describes the piece
         packet["sourcing"] = {"note": "sourced, no concept: judge against the brief's prompt and palette",
+                              "colors": "palette metrics cover only the texels this piece's UVs sample (on a shared "
+                                        "atlas, not the whole atlas); correction may darken as well as lift",
+                              "holes": "open boundary loops are allowed per part up to mesh_kit_max_loops_per_part, "
+                                       "only where none is visible in the views: check the views for any gap",
                               **{k: brief.get(k) for k in ("pack", "source_url", "author", "license", "source_file")},
                               "orientation": P.orientation(brief), "pivot": brief.get("pivot"), "atlas": brief.get("atlas")}
     STAGE_PACKETS[args.stage](packet, pdir, brief, m, args, tol)
