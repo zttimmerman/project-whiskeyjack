@@ -57,7 +57,7 @@ func test_damage_ratio_formula() -> void:
 	var cases := [
 		[10, 0, 10],
 		[20, 5, 13],  # 13.3
-		[8, 5, 5],  # 5.3: the levy's hit on the starting player
+		[8, 5, 5],  # 5.3: the pre-retune levy hit on the starting player
 		[15, 2, 13],  # 12.5 rounds away from zero
 		[100, 10, 50],
 		[1, 50, 1],  # rounds to 0; the minimum is 1, so armour never zeroes damage
