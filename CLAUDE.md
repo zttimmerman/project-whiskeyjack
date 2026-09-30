@@ -232,11 +232,13 @@ For consumables, use `stats_modifier = {"heal": 30}` — the `use()` method read
 
 ### Branches and pull requests
 - **Never commit directly to `main`.** Start each feature or session on a short-lived branch off an up-to-date `main`, with a prefix and a name for the work: `feature/` (gameplay and systems code), `fix/` (bug fixes), `asset/` (a pipeline run for one asset, e.g. `asset/sett-boar`), `docs/` (docs and CLAUDE.md), `chore/` (tooling, config, cleanup).
-- **Merge through a pull request** (`gh pr create`, then `gh pr merge --merge --delete-branch`). Use a merge commit so the atomic commit history survives; don't squash. Merge only when the user says to; GitHub doesn't allow approving your own PR, so "approve" means the user's OK in chat.
+- **Merge through a pull request** (`gh pr create`, then `gh pr merge --merge --delete-branch`). Use a merge commit so the atomic commit history survives; don't squash. **Claude merges its own PRs once they're validated** (tests, checks and the PR's own acceptance criteria pass), unless the user asks to review first. Open questions or design decisions in a PR go to the user before merging.
+- **`gh pr merge --delete-branch` also deletes the local branch and the worktree it's checked out in.** Run it only after that worktree's work is committed, and never assume the worktree still exists afterwards.
 - **Merge often.** GLBs, textures and hand-edited `.tscn` files don't merge well, so two long-lived branches touching the same asset or scene means one side gets redone by hand.
 - **Delete branches once merged.** GitHub deletes head branches automatically; locally, `git fetch --prune` and the `clean_gone` command. Mark milestones with tags (`poc-slice`, `mvp`), not kept branches.
 - **Name the branch right before opening its PR.** Renaming a PR's head branch on GitHub closes the PR (PR #2 was lost that way and replaced by #3).
 - **Parallel agents** each get their own worktree and branch; clean both up when done.
+- **Worktree commands never depend on a `cd`.** Use `git -C <absolute path>` and absolute paths, and fail closed if the directory is missing (`test -d <dir> || exit 1`). A failed `cd` in a chained command once ran the rest in the human's checkout and switched its branch.
 - **Refresh the session handoff** in `docs/decisions.md` before opening a PR.
 
 ### Commits
