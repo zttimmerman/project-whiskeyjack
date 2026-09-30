@@ -995,5 +995,100 @@
     "sha256": "faeaa0f24143595ac37d0b0aa02d37a8f533debf0291923c7e088a74f0bf8fa5"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-09-30T03:52:59+00:00"
+  "updated_at": "2026-09-30T03:59:22+00:00",
+  "judgments": [
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-09-30T03:59:22+00:00",
+      "packet": "assets/manifests/kaykit_dungeon_wall/judge/mesh-1/packet.json",
+      "packet_sha256": "06af01693aa8f2828f2a3f920cbb32e1ab9486b7adc757d59b7efb2090f1819b",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/kaykit_dungeon_wall.glb",
+        "sha256": "f5289009877a6f6b77a81fa4d148e557231516593b9f7c5c92a7a09838c78b47",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-1/01_front.png",
+          "sha256": "6663c75a1613952ae120d34c66415a025ad8fab222642f59eba9fec4c6569347",
+          "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-1/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-1/02_right.png",
+          "sha256": "39f0dd2269e17136ada45ccc6182e76004064d4eb621b2d4ab90704258ddb93c",
+          "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-1/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-1/03_back.png",
+          "sha256": "f4bed3c55423800cfb488396dd55367a60b2d94923e628648ce382fc201a7a4c",
+          "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-1/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-1/04_top.png",
+          "sha256": "f4e397f1ff87998c3b1d882ce22cef9aa2d4c8a1f65684e17ad05f46674d7afe",
+          "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-1/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-1/05_clay_front.png",
+          "sha256": "e88010ae432de09297b346eebe2f56db2b97d1e4a25b3f3cd5a08fc940fdbfd0",
+          "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-1/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-1/06_wireframe_front.png",
+          "sha256": "152c7fb84aa7778ae2dfb3002b9f881ec5c351fdba8002d1969cfaa454a2c305",
+          "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-1/work/views/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/kaykit_dungeon_wall/judge/mesh-1/01_front.png",
+        "assets/manifests/kaykit_dungeon_wall/judge/mesh-1/02_right.png",
+        "assets/manifests/kaykit_dungeon_wall/judge/mesh-1/03_back.png",
+        "assets/manifests/kaykit_dungeon_wall/judge/mesh-1/04_top.png",
+        "assets/manifests/kaykit_dungeon_wall/judge/mesh-1/05_clay_front.png",
+        "assets/manifests/kaykit_dungeon_wall/judge/mesh-1/06_wireframe_front.png"
+      ],
+      "assertions_failed": [
+        "holes (welded boundary loops)",
+        "palette color Wet Slate within tolerance after correction",
+        "palette color Barrow Oak close before correction",
+        "palette color Barrow Oak within tolerance after correction"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "malformed",
+          "severity": "minor",
+          "observation": "23 open boundary loops (limit 10), no visible gap in any view; one per part (body plus 22 raised blocks), consistent with open-backed blocks flush on the face.",
+          "evidence": "assertion 'holes (welded boundary loops)'; non_manifold_edges 0"
+        },
+        {
+          "check": "color",
+          "severity": "major",
+          "observation": "Wet Slate fails after correction (17.7 > 12): #999999 -> #9A9996 against #736B66. The atlas grey is lighter and more neutral than the palette, and the lift-only correction can't darken it; the stone renders neutral rather than warm grey.",
+          "evidence": "assertion 'palette color Wet Slate within tolerance after correction'"
+        },
+        {
+          "check": "color",
+          "severity": "major",
+          "observation": "Barrow Oak fails before (22.3 > 20) and after (21.5 > 12) correction; median #D3875E over 35% of the texture. The texture is the shared kit atlas, so the share likely includes atlas regions this piece doesn't sample.",
+          "evidence": "assertions 'palette color Barrow Oak close before correction', '... within tolerance after correction'; sourcing.atlas"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "Sourced CC0 kit piece on a shared atlas: nothing to refine or reroll. The colour assertions measure the whole shared atlas and the lift-only correction can't darken the kit's lighter greys; the user decides between measuring colour over UV-covered texels, allowing darkening for sourced kits, recolouring the atlas, or accepting kit colours. Geometry needs no change.",
+      "summary": "The wall matches the prompt (4 x 1 x 4 m, raised blocks, darker cap and plinth) and is within budget (494/1320), but fails the holes limit and three palette assertions.",
+      "next": "surface to the user: the escalation reason and findings"
+    }
+  ]
 }

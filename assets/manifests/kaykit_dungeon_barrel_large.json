@@ -653,5 +653,99 @@
     "sha256": "7a3b06c978711b7da221b1679c310e5e778a785f70c4e44388212067eb58b6d7"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-09-30T03:52:52+00:00"
+  "updated_at": "2026-09-30T03:59:22+00:00",
+  "judgments": [
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-09-30T03:59:22+00:00",
+      "packet": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-1/packet.json",
+      "packet_sha256": "7cce2747092ef18714d59bdfbc92764c21c83fd0080dfc656762473b0c92a24f",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/kaykit_dungeon_barrel_large.glb",
+        "sha256": "ebb58c532c3b077a956b63eea6cc83737a389f31dccca581c30729d084d9277a",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-1/01_front.png",
+          "sha256": "c1b31028712685098070c6c5292de2ebb6cce718c3d25a2fc91e9a341250badc",
+          "source": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-1/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-1/02_right.png",
+          "sha256": "625083d07fab45a392601e359fad7aea2fd2d5ff861ee1f91b7cef0fa5dd6d91",
+          "source": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-1/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-1/03_back.png",
+          "sha256": "9ca955ac59d3b5fb6ffb905468d7e045a0a134cc407c041602fd821186cfe76e",
+          "source": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-1/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-1/04_top.png",
+          "sha256": "4b4c219c1e2b7f544816a10a237585a247c7d675346396ae03014b2f91b5f6f8",
+          "source": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-1/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-1/05_clay_front.png",
+          "sha256": "d0f2e55e89d83bf49f5c0bf44d1689f006eda4ee7ee6ec676cc30392b3aa8a87",
+          "source": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-1/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-1/06_wireframe_front.png",
+          "sha256": "20508f6f97724d4aa671274110cc6746776205aaa2368887ce81d2963e4a64e5",
+          "source": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-1/work/views/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-1/01_front.png",
+        "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-1/02_right.png",
+        "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-1/03_back.png",
+        "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-1/04_top.png",
+        "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-1/05_clay_front.png",
+        "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-1/06_wireframe_front.png"
+      ],
+      "assertions_failed": [
+        "palette color Wet Slate within tolerance after correction",
+        "palette color Barrow Oak close before correction",
+        "palette color Barrow Oak within tolerance after correction"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "color",
+          "severity": "major",
+          "observation": "Wet Slate fails after correction (17.7 > 12): #999999 -> #9A9996 against #736B66. The atlas grey is lighter and more neutral than the palette, and the lift-only correction can't darken it; the stone renders neutral rather than warm grey.",
+          "evidence": "assertion 'palette color Wet Slate within tolerance after correction'"
+        },
+        {
+          "check": "color",
+          "severity": "major",
+          "observation": "Barrow Oak fails before (22.3 > 20) and after (21.5 > 12) correction; median #D3875E over 35% of the texture. The texture is the shared kit atlas, so the share likely includes atlas regions this piece doesn't sample.",
+          "evidence": "assertions 'palette color Barrow Oak close before correction', '... within tolerance after correction'; sourcing.atlas"
+        },
+        {
+          "check": "other",
+          "severity": "minor",
+          "observation": "Front, right, back and clay renders are framed tightly; the rim touches the image edges. Not a defect.",
+          "evidence": "01_front.png, 05_clay_front.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "Sourced CC0 kit piece on a shared atlas: nothing to refine or reroll. The colour assertions measure the whole shared atlas and the lift-only correction can't darken the kit's lighter greys; the user decides between measuring colour over UV-covered texels, allowing darkening for sourced kits, recolouring the atlas, or accepting kit colours. Geometry needs no change.",
+      "summary": "The barrel matches the prompt part for part (reddish-brown staves, two iron hoops, bulge) and is within budget (561/1320), but three palette assertions fail over the shared atlas.",
+      "next": "surface to the user: the escalation reason and findings"
+    }
+  ]
 }

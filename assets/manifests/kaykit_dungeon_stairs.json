@@ -851,5 +851,106 @@
     "sha256": "70af75ae0a779bf4509539bf9bb447482a5c42e804a24e1880697907fd409b0f"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-09-30T03:52:52+00:00"
+  "updated_at": "2026-09-30T03:59:22+00:00",
+  "judgments": [
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-09-30T03:59:22+00:00",
+      "packet": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-1/packet.json",
+      "packet_sha256": "f94d34462fc9210bd9143ae4cef45a74e61d36452d0474b9d543e412fc2f290e",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/kaykit_dungeon_stairs.glb",
+        "sha256": "00f3f866235f316cbdcd8a360fa69323e8134f1435c7f96a9528f563acb46732",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-1/01_front.png",
+          "sha256": "6711ea841435e10f3f368b8f8deaaf512e98fcf195840d814f816572a169070e",
+          "source": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-1/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-1/02_right.png",
+          "sha256": "fe69ee1bdc37bb1cbd9c3ad9d1383ff52b77aac6ff578fef1e8851f84e447842",
+          "source": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-1/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-1/03_back.png",
+          "sha256": "8d9fc1dee6c51c818994376c4e095488b67f296fcbed43d3ffa54776436bed41",
+          "source": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-1/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-1/04_top.png",
+          "sha256": "8fd8d6665854f600f8a1a483b479cc787ed3ae14b22d5448d905b69ff1b3882a",
+          "source": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-1/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-1/05_clay_front.png",
+          "sha256": "8caae86b99f95fc41701cdf626cf1592292285defcf5f3ed807113b961f90fef",
+          "source": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-1/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-1/06_wireframe_front.png",
+          "sha256": "34f9d90341f76f7df86ff08bb892c308c57180d01e74645500d431cfa375f7e6",
+          "source": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-1/work/views/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/kaykit_dungeon_stairs/judge/mesh-1/01_front.png",
+        "assets/manifests/kaykit_dungeon_stairs/judge/mesh-1/02_right.png",
+        "assets/manifests/kaykit_dungeon_stairs/judge/mesh-1/03_back.png",
+        "assets/manifests/kaykit_dungeon_stairs/judge/mesh-1/04_top.png",
+        "assets/manifests/kaykit_dungeon_stairs/judge/mesh-1/05_clay_front.png",
+        "assets/manifests/kaykit_dungeon_stairs/judge/mesh-1/06_wireframe_front.png"
+      ],
+      "assertions_failed": [
+        "holes (welded boundary loops)",
+        "palette color Wet Slate within tolerance after correction",
+        "palette color Barrow Oak close before correction",
+        "palette color Barrow Oak within tolerance after correction"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "color",
+          "severity": "major",
+          "observation": "Barrow Oak fails before (22.3 > 20) and after (21.5 > 12) correction; median #D3875E over 35% of the texture. The texture is the shared kit atlas, so the share likely includes atlas regions this piece doesn't sample.",
+          "evidence": "assertions 'palette color Barrow Oak close before correction', '... within tolerance after correction'; sourcing.atlas"
+        },
+        {
+          "check": "color",
+          "severity": "major",
+          "observation": "Wet Slate fails after correction (17.7 > 12): #999999 -> #9A9996 against #736B66. The atlas grey is lighter and more neutral than the palette, and the lift-only correction can't darken it; the stone renders neutral rather than warm grey.",
+          "evidence": "assertion 'palette color Wet Slate within tolerance after correction'"
+        },
+        {
+          "check": "malformed",
+          "severity": "minor",
+          "observation": "15 open boundary loops (limit 10), no visible gap in any view; one per part: the body plus 14 open-backed brick insets on the side walls.",
+          "evidence": "assertion 'holes (welded boundary loops)'; non_manifold_edges 0"
+        },
+        {
+          "check": "concept_match",
+          "severity": "minor",
+          "observation": "Measured 5.0 x 4.0 x 5.1 m (kit scale, source_scale 1.0) against the prompt's 4 m deep, 4 m rise; the 'square posts' are the tall top ends of the side walls.",
+          "evidence": "metrics.mesh.true_dims_m; 02_right.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "Sourced CC0 kit piece on a shared atlas: nothing to refine or reroll. The colour assertions measure the whole shared atlas and the lift-only correction can't darken the kit's lighter greys; the user decides between measuring colour over UV-covered texels, allowing darkening for sourced kits, recolouring the atlas, or accepting kit colours. Geometry needs no change.",
+      "summary": "The stairs match the prompt and are within budget (358/1320); the holes and palette failures look like artifacts of a sourced kit piece on a shared atlas. At kit scale they measure 5.0 x 4.0 x 5.1 m against the prompt's 4 m deep, 4 m rise.",
+      "next": "surface to the user: the escalation reason and findings"
+    }
+  ]
 }

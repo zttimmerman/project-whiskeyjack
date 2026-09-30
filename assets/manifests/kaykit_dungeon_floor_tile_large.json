@@ -599,5 +599,99 @@
     "sha256": "44fe75861b3f4dc9ec07ba5cf487536e1e151db123cc021056379fca1b231048"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-09-30T03:52:52+00:00"
+  "updated_at": "2026-09-30T03:59:22+00:00",
+  "judgments": [
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-09-30T03:59:22+00:00",
+      "packet": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-1/packet.json",
+      "packet_sha256": "1d151ff580b721f0723512f79d24c1a782d0c185954080e48aebfc4b74ad85da",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/kaykit_dungeon_floor_tile_large.glb",
+        "sha256": "b582b78941a5135a70cb0b92e296cf877b1588b1afb49553f9c4b3bb84e92c36",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-1/01_front.png",
+          "sha256": "3f5668ff3282226c3c66797ebeead03d18a73f47942abfb9e781f5b6d84713fb",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-1/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-1/02_right.png",
+          "sha256": "d351268cdc9acdb3bf233beb2bde9902092b525103fc7ed3f346846971ba2c87",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-1/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-1/03_back.png",
+          "sha256": "f27688ecb35f534d58c8c21388ce07fa8a7f8f30e63bc0ad52c8b5fd6bbc858a",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-1/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-1/04_top.png",
+          "sha256": "9e8260563c7b60e3692e5bcc7981e27f30c6505c738fa3f7f9a33af18111b913",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-1/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-1/05_clay_front.png",
+          "sha256": "db5483447a980debb78fc9abc20148833629242b6676504bf0ae376911453f27",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-1/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-1/06_wireframe_front.png",
+          "sha256": "ba86f544050669e68ec1626e25b84ba0a2895eb039bfff93b1953307546317bb",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-1/work/views/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-1/01_front.png",
+        "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-1/02_right.png",
+        "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-1/03_back.png",
+        "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-1/04_top.png",
+        "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-1/05_clay_front.png",
+        "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-1/06_wireframe_front.png"
+      ],
+      "assertions_failed": [
+        "palette color Wet Slate within tolerance after correction",
+        "palette color Barrow Oak close before correction",
+        "palette color Barrow Oak within tolerance after correction"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "color",
+          "severity": "major",
+          "observation": "Barrow Oak fails before correction (22.3 > 20) and after correction (21.5 > 12). The group's median is orange-tan #D3875E and it covers 35% of the texture. No orange, tan or brown surface appears anywhere on the tile in any view. The texture is the shared pack atlas, so this 35% share is almost certainly atlas area used by other kit pieces; the assertion is misleading for this asset.",
+          "evidence": "assertions 'palette color Barrow Oak close before correction', 'palette color Barrow Oak within tolerance after correction'; metrics.color_vs_palette; 04_top.png, 01_front.png"
+        },
+        {
+          "check": "color",
+          "severity": "major",
+          "observation": "Wet Slate fails after correction (17.7 > 12). The group's median is neutral light grey #999999 -> #9A9996, covering 49% of the texture. The tile never renders that light grey; its visible color is a darker brownish grey close to Rain Stone. This share looks like unused atlas area.",
+          "evidence": "assertion 'palette color Wet Slate within tolerance after correction'; metrics.dominant_palette_group; 04_top.png"
+        },
+        {
+          "check": "malformed",
+          "severity": "minor",
+          "observation": "1 open boundary loop, within the limit of 10; most likely an open underside, normal for a kit floor tile. No bottom view to confirm.",
+          "evidence": "assertion 'holes (welded boundary loops)'; metrics.mesh.holes_boundary_loops; 01_front.png, 02_right.png, 06_wireframe_front.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "Three color assertions fail (Wet Slate after correction; Barrow Oak before and after). The palette groups seem to come from the whole shared KayKit atlas, and neither color appears on the rendered tile. The user decides whether to accept the tile despite the atlas-level measurement, or to have the color check run on the tile's own UV region first. No edit to the asset is indicated.",
+      "summary": "The tile's geometry, scale and budget match the brief and the rendered stone reads dark brownish grey, but three palette assertions fail. They appear to measure the whole shared KayKit atlas, not the part of it this tile uses, so the user has to decide whether to accept them.",
+      "next": "surface to the user: the escalation reason and findings"
+    }
+  ]
 }
