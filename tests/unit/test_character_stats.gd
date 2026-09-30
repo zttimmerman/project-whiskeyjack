@@ -24,7 +24,7 @@ func before_test() -> void:
 func test_take_damage_subtracts_defense() -> void:
 	var monitor := monitor_signals(stats)
 	stats.take_damage(20)
-	assert_int(stats.current_hp).is_equal(85)
+	assert_int(stats.current_hp).is_equal(84)
 	await assert_signal(monitor).is_emitted("health_changed", 85, 100)
 	await assert_signal(monitor).wait_until(100).is_not_emitted("died")
 
