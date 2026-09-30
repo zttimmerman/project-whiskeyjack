@@ -87,6 +87,19 @@ jobs:
       - name: Lint data/dialogues and data/quests (baseline ci/data-lint-baseline.txt)
         run: python3 ci/data_lint.py
 
+  lint:
+    name: lint (gdformat and gdlint, as .githooks/pre-commit)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install gdtoolkit (pinned)
+        run: pipx install gdtoolkit==4.5.0
+      - name: gdformat --check and gdlint on every script outside addons/ (config in gdlintrc)
+        run: |
+          git ls-files -z '*.gd' ':!addons/**' | xargs -0 gdformat --check --line-length=120
+          git ls-files -z '*.gd' ':!addons/**' | xargs -0 gdlint
+
   hooks:
     name: hooks (Godot MCP guard tests)
     runs-on: ubuntu-24.04

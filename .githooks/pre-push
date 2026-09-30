@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Slower checks before anything leaves the machine (under a minute with a warm import cache):
+# Godot's own errors and warnings against ci/warnings-baseline.txt, then the gdUnit4 suites.
+# Enable once per clone: git config core.hooksPath .githooks. Skip with git push --no-verify;
+# CI runs the same checks (jobs import and gdunit4).
+set -uo pipefail
+ROOT="$(git rev-parse --show-toplevel)" || exit 2
+cd "$ROOT" || exit 2
+
+# Pushes that only delete branches have nothing to check (git passes one "<ref> <sha> <ref> <sha>" line per ref)
+pushing=0
+while read -r _ local_sha _ _; do
+	[[ "$local_sha" =~ ^0+$ ]] || pushing=1
+done
+[ $pushing -eq 1 ] || exit 0
+
+GODOT="${GODOT_BIN:-}"
+if [ -z "$GODOT" ]; then
+	if command -v godot > /dev/null; then GODOT="$(command -v godot)"; else GODOT=/Applications/Godot.app/Contents/MacOS/Godot; fi
+fi
+test -x "$GODOT" || { echo "pre-push: Godot not found at $GODOT (set GODOT_BIN)" >&2; exit 1; }
+
+LOGS="$(mktemp -d)" || exit 2
+trap 'rm -rf "$LOGS"' EXIT
+
+echo "pre-push: import and compile every script (ci/load_all.gd)"
+# A fresh checkout's first import reports missing UID-cache errors, so it gets an extra run
+[ -d .godot ] || "$GODOT" --headless --path . --import < /dev/null > /dev/null 2>&1
+"$GODOT" --headless --path . --import < /dev/null > "$LOGS/import.log" 2>&1
+"$GODOT" --headless --path . -s res://ci/load_all.gd -d < /dev/null > "$LOGS/load-all.log" 2>&1
+python3 ci/check_log.py --baseline ci/warnings-baseline.txt "$LOGS/import.log" "$LOGS/load-all.log" || exit 1
+
+echo "pre-push: gdUnit4 suites (tests/run.sh)"
+GODOT_BIN="$GODOT" tests/run.sh > "$LOGS/gdunit4.log" 2>&1
+status=$?
+if [ $status -ne 0 ]; then
+	tail -40 "$LOGS/gdunit4.log" >&2
+	echo "pre-push: tests/run.sh exited $status" >&2
+	exit 1
+fi
