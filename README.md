@@ -8,7 +8,7 @@ A 3D low-poly action RPG built in Godot 4, inspired by early PS1/PS2 era titles 
 
 ## Requirements
 
-- **Godot 4.6** — download the standard (non-Mono) build from [godotengine.org](https://godotengine.org/download)
+- **Godot 4.7** — download the standard (non-Mono) build from [godotengine.org](https://godotengine.org/download)
 - No additional plugins or dependencies
 
 ---
@@ -19,7 +19,7 @@ A 3D low-poly action RPG built in Godot 4, inspired by early PS1/PS2 era titles 
 git clone https://github.com/zttimmerman/project-whiskeyjack.git
 ```
 
-1. Open Godot 4.6 and choose **Import**
+1. Open Godot 4.7 and choose **Import**
 2. Navigate to the cloned folder and select `project.godot`
 3. Press **F5** (or the Play button) to run from the default scene (`TestWorld`)
 
