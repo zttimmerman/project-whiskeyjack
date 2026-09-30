@@ -36,8 +36,9 @@ jobs:
       image: barichello/godot-ci:4.7.2@sha256:cdcca31e9194fd59a68a63f4b1b9c3981716819c520cd6f7966c5d72ca7246bd
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - name: Install Python
-        run: command -v python3 || (apt-get update -qq && apt-get install -y -qq --no-install-recommends python3)
+      - name: Install Python and fontconfig
+        # Without libfontconfig Godot logs "Unable to load fontconfig" as an ERROR on every run.
+        run: apt-get update -qq && apt-get install -y -qq --no-install-recommends python3 libfontconfig1
       - name: Restore the import cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
