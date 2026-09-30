@@ -13,12 +13,26 @@ extends Node
 const CHARACTER_LAYER := 2  # render layer the fill light is limited to; only the player sits on it
 
 const SHOTS := {
-	# Player's back to the camera at gameplay framing; the levy 5 m ahead, facing the player.
-	"gameplay": {"player": [Vector3(9.0, 0.0, 0.0), 90.0], "levy": [Vector3(14.0, 0.0, 0.6), -90.0],
-			"pivot": Vector3(9.0, 1.5, 0.0), "yaw": -90.0, "pitch": -0.2, "arm": 4.0},
-	# Face-off: both side by side facing the camera, 5 m away, the torch beside them.
-	"faceoff": {"player": [Vector3(12.0, 0.0, -0.7), -90.0], "levy": [Vector3(12.0, 0.0, 0.7), -90.0],
-			"pivot": Vector3(12.0, 1.1, 0.0), "yaw": -90.0, "pitch": -0.12, "arm": 5.0},
+	"gameplay":
+	{
+		# Player's back to the camera at gameplay framing; the levy 5 m ahead, facing the player.
+		"player": [Vector3(9.0, 0.0, 0.0), 90.0],
+		"levy": [Vector3(14.0, 0.0, 0.6), -90.0],
+		"pivot": Vector3(9.0, 1.5, 0.0),
+		"yaw": -90.0,
+		"pitch": -0.2,
+		"arm": 4.0
+	},
+	"faceoff":
+	{
+		# Face-off: both side by side facing the camera, 5 m away, the torch beside them.
+		"player": [Vector3(12.0, 0.0, -0.7), -90.0],
+		"levy": [Vector3(12.0, 0.0, 0.7), -90.0],
+		"pivot": Vector3(12.0, 1.1, 0.0),
+		"yaw": -90.0,
+		"pitch": -0.12,
+		"arm": 5.0
+	},
 }
 
 
@@ -76,7 +90,9 @@ func _ready() -> void:
 		var rig := Transform3D(Basis(Vector3.UP, deg_to_rad(s["yaw"])) * Basis(Vector3.RIGHT, s["pitch"]), s["pivot"])
 		cam.global_transform = rig * Transform3D(Basis(), Vector3(0, 0, s["arm"]))
 		if fill:
-			fill.global_position = Transform3D(Basis(Vector3.UP, deg_to_rad(s["yaw"])), s["pivot"]) * fill.get_meta("offset")
+			fill.global_position = (
+				Transform3D(Basis(Vector3.UP, deg_to_rad(s["yaw"])), s["pivot"]) * fill.get_meta("offset")
+			)
 		for i in 6:
 			await get_tree().process_frame
 		await RenderingServer.frame_post_draw

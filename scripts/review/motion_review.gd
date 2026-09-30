@@ -17,7 +17,8 @@ extends Node
 #       [--raw <PACK>:<Clip>=<name>[,...]]                   a clip straight from a Quaternius pack, before the
 #                                                           build tool's options (in_place, trim, speed)
 #       [--ground-speed <clip>=<m/s>[,...]]                  gameplay speed for locomotion clips (in-place loops)
-#       [--kind <clip>=death|in_place|action[,...]]          default: death* death; idle, run, walk in_place; else action
+#       [--kind <clip>=death|in_place|action[,...]]
+#           default: death* death; idle, run, walk in_place; else action
 #       [--frames <n>]                                       strip frames (default 14)
 #
 # Measurements, sampled at FPS on the CPU-skinned mesh (the same linear blend skinning the GPU does):
@@ -56,7 +57,11 @@ func _ready() -> void:
 		args[argv[i].trim_prefix("--")] = argv[i + 1]
 	get_window().size = Vector2i(320, 240)
 	model_scene = load(args["model"])
-	out_dir = ProjectSettings.globalize_path(args["out"]) if String(args["out"]).begins_with("res://") else String(args["out"])
+	out_dir = (
+		ProjectSettings.globalize_path(args["out"])
+		if String(args["out"]).begins_with("res://")
+		else String(args["out"])
+	)
 	DirAccess.make_dir_recursive_absolute(out_dir)
 	var lib := AnimationLibrary.new()
 	var sources := {}
@@ -101,6 +106,7 @@ func _default_kind(clip: String) -> String:
 
 # ── Character instances ───────────────────────────────────────────────────────
 
+
 func _spawn(parent: Node, lib: AnimationLibrary, clip: String, t: float) -> Dictionary:
 	var root: Node3D = model_scene.instantiate()
 	parent.add_child(root)
@@ -133,8 +139,17 @@ func _mesh_data(sk: Skeleton3D, root: Node3D) -> Array:
 			var bones: PackedInt32Array = arr[Mesh.ARRAY_BONES]
 			var weights: PackedFloat32Array = arr[Mesh.ARRAY_WEIGHTS]
 			var idx: PackedInt32Array = arr[Mesh.ARRAY_INDEX] if arr[Mesh.ARRAY_INDEX] != null else PackedInt32Array()
-			out.append({"verts": verts, "bones": bones, "weights": weights, "stride": bones.size() / maxi(verts.size(), 1),
-				"index": idx, "bind_bones": bind_bones, "bind_poses": bind_poses})
+			out.append(
+				{
+					"verts": verts,
+					"bones": bones,
+					"weights": weights,
+					"stride": bones.size() / maxi(verts.size(), 1),
+					"index": idx,
+					"bind_bones": bind_bones,
+					"bind_poses": bind_poses
+				}
+			)
 	return out
 
 
@@ -206,6 +221,7 @@ func _percentile(values: Array, q: float) -> float:
 
 # ── Measurement ───────────────────────────────────────────────────────────────
 
+
 func _measure(lib: AnimationLibrary, clip: String, ground_speed: float) -> Dictionary:
 	var holder := Node3D.new()
 	add_child(holder)
@@ -235,8 +251,16 @@ func _measure(lib: AnimationLibrary, clip: String, ground_speed: float) -> Dicti
 	ap.play(clip)
 	var length := lib.get_animation(clip).length
 	var n := int(ceil(length * FPS)) + 1
-	var series := {"t": [], "hips": [], "left_foot": [], "right_foot": [], "left_contact": [], "right_contact": [],
-		"bind_deviation_max": [], "edge_stretch_max": []}
+	var series := {
+		"t": [],
+		"hips": [],
+		"left_foot": [],
+		"right_foot": [],
+		"left_contact": [],
+		"right_contact": [],
+		"bind_deviation_max": [],
+		"edge_stretch_max": []
+	}
 	var lo := Vector3(INF, INF, INF)
 	var hi := -lo
 	var dev_all := []
@@ -310,14 +334,27 @@ func _measure(lib: AnimationLibrary, clip: String, ground_speed: float) -> Dicti
 	var travel := []
 	for p: Vector3 in series["hips"]:
 		travel.append(Vector2(p.x - h0.x, p.z - h0.z).length())
-	return {"n": n, "length": length, "series": series, "speeds": speeds, "bounds": [lo, hi],
-		"root_travel_max_m": snappedf(travel.max(), 0.001), "root_travel_final_m": snappedf(travel[-1], 0.001),
-		"contact_frames": contact_frames, "foot_slide_p90_mps": snappedf(_percentile(slides, 0.9), 0.001),
+	return {
+		"n": n,
+		"length": length,
+		"series": series,
+		"speeds": speeds,
+		"bounds": [lo, hi],
+		"root_travel_max_m": snappedf(travel.max(), 0.001),
+		"root_travel_final_m": snappedf(travel[-1], 0.001),
+		"contact_frames": contact_frames,
+		"foot_slide_p90_mps": snappedf(_percentile(slides, 0.9), 0.001),
 		"foot_slide_max_mps": snappedf(slides.max() if slides else 0.0, 0.001),
-		"bind_deviation_max_m": snappedf(dev_worst[0], 0.001), "bind_deviation_p99_m": snappedf(_percentile(dev_all, 0.99), 0.001),
+		"bind_deviation_max_m": snappedf(dev_worst[0], 0.001),
+		"bind_deviation_p99_m": snappedf(_percentile(dev_all, 0.99), 0.001),
 		"bind_deviation_worst_bone": dev_worst[1],
-		"edge_stretch_max": snappedf(stretch_worst[0], 0.001), "edge_stretch_p99": snappedf(_percentile(stretch_all, 0.99), 0.001),
-		"edge_stretch_worst_bone": stretch_worst[1], "edge_stretch_worst_t": stretch_worst_t, "vertices": rest.size(), "edges": edges.size() / 2}
+		"edge_stretch_max": snappedf(stretch_worst[0], 0.001),
+		"edge_stretch_p99": snappedf(_percentile(stretch_all, 0.99), 0.001),
+		"edge_stretch_worst_bone": stretch_worst[1],
+		"edge_stretch_worst_t": stretch_worst_t,
+		"vertices": rest.size(),
+		"edges": edges.size() / 2
+	}
 
 
 func _velocity(points: Array, f: int, ts: Array) -> Vector3:
@@ -329,6 +366,7 @@ func _velocity(points: Array, f: int, ts: Array) -> Vector3:
 
 
 # ── Rendering ─────────────────────────────────────────────────────────────────
+
 
 func _viewport(size: Vector2i, transparent: bool) -> SubViewport:
 	var vp := SubViewport.new()
@@ -415,10 +453,24 @@ func _strip(lib: AnimationLibrary, clip: String, m: Dictionary, times: Array) ->
 			root.transform = Transform3D(Basis(Vector3.UP, yaw), Vector3(x0, y0 - lo.y - chh / 2 + 0.2, 0))
 			if r == 0:
 				root.position.x -= cz  # centre the clip's forward range in the cell
-				_box(vp, Vector3(0.01 * mpp * 100 * 0.2, chh * 0.9, 0.01), Vector3(x0 - cz, y0, -2), Color(0.85, 0.1, 0.1))
-			_box(vp, Vector3(cw * 0.96, 0.012 * mpp * 100 * 0.3, 0.3), Vector3(x0, root.position.y, -2.5), Color(0.2, 0.2, 0.2))
+				_box(
+					vp,
+					Vector3(0.01 * mpp * 100 * 0.2, chh * 0.9, 0.01),
+					Vector3(x0 - cz, y0, -2),
+					Color(0.85, 0.1, 0.1)
+				)
+			_box(
+				vp,
+				Vector3(cw * 0.96, 0.012 * mpp * 100 * 0.3, 0.3),
+				Vector3(x0, root.position.y, -2.5),
+				Color(0.2, 0.2, 0.2)
+			)
 			var label := Label3D.new()
-			label.text = "%s  t=%.2fs  %d/%d" % [("side" if r == 0 else "3/4"), times[c], c + 1, cols] if c == 0 else "t=%.2fs  %d/%d" % [times[c], c + 1, cols]
+			label.text = (
+				"%s  t=%.2fs  %d/%d" % ["side" if r == 0 else "3/4", times[c], c + 1, cols]
+				if c == 0
+				else "t=%.2fs  %d/%d" % [times[c], c + 1, cols]
+			)
 			label.pixel_size = mpp * 0.55
 			label.font_size = 24
 			label.modulate = Color.BLACK
@@ -466,7 +518,9 @@ func _stretch_detail(lib: AnimationLibrary, clip: String, m: Dictionary) -> Imag
 		bm.material = mat
 		mi.mesh = bm
 		vp.add_child(mi)
-		mi.look_at_from_position((a + b) / 2, b if not (b - a).cross(Vector3.UP).is_zero_approx() else b + Vector3(0.001, 0, 0), Vector3.UP)
+		mi.look_at_from_position(
+			(a + b) / 2, b if not (b - a).cross(Vector3.UP).is_zero_approx() else b + Vector3(0.001, 0, 0), Vector3.UP
+		)
 	# Two cameras can't share one viewport, so render front and back as two captures
 	var cam := Camera3D.new()
 	cam.projection = Camera3D.PROJECTION_ORTHOGONAL
@@ -482,13 +536,36 @@ func _stretch_detail(lib: AnimationLibrary, clip: String, m: Dictionary) -> Imag
 	var ft := ImageTexture.create_from_image(front)
 	var bt := ImageTexture.create_from_image(back)
 	var header := 60
-	return await _canvas(Vector2i(ONION_SIZE.x * 2 + 30, ONION_SIZE.y + header + 10), func(ctl: Control):
-		_text(ctl, Vector2(10, 26), "%s  most skin stretch at t=%.2f s: the %d worst edges in red (drawn through the mesh), 0.7 m across" % [clip, m["edge_stretch_worst_t"], worst.size()], 20)
-		_text(ctl, Vector2(10, 50), "Worst edge %.2fx its bind length on %s; ratios of the red edges: %s" % [1.0 + m["edge_stretch_max"], m["edge_stretch_worst_bone"], ", ".join(worst.map(func(w): return "%.1f" % (1.0 + w[0])))], 15)
-		ctl.draw_texture(ft, Vector2(10, header))
-		ctl.draw_texture(bt, Vector2(ONION_SIZE.x + 20, header))
-		_text(ctl, Vector2(18, header + 22), "FRONT", 16, Color.WHITE)
-		_text(ctl, Vector2(ONION_SIZE.x + 28, header + 22), "BACK", 16, Color.WHITE))
+	return await _canvas(
+		Vector2i(ONION_SIZE.x * 2 + 30, ONION_SIZE.y + header + 10),
+		func(ctl: Control):
+			_text(
+				ctl,
+				Vector2(10, 26),
+				(
+					"%s  most skin stretch at t=%.2f s: the %d worst edges in red (drawn through the mesh), 0.7 m across"
+					% [clip, m["edge_stretch_worst_t"], worst.size()]
+				),
+				20
+			)
+			_text(
+				ctl,
+				Vector2(10, 50),
+				(
+					"Worst edge %.2fx its bind length on %s; ratios of the red edges: %s"
+					% [
+						1.0 + m["edge_stretch_max"],
+						m["edge_stretch_worst_bone"],
+						", ".join(worst.map(func(w): return "%.1f" % (1.0 + w[0])))
+					]
+				),
+				15
+			)
+			ctl.draw_texture(ft, Vector2(10, header))
+			ctl.draw_texture(bt, Vector2(ONION_SIZE.x + 20, header))
+			_text(ctl, Vector2(18, header + 22), "FRONT", 16, Color.WHITE)
+			_text(ctl, Vector2(ONION_SIZE.x + 28, header + 22), "BACK", 16, Color.WHITE)
+	)
 
 
 func _onion_view(lib: AnimationLibrary, clip: String, m: Dictionary, times: Array, top: bool) -> Image:
@@ -557,13 +634,35 @@ func _onion(lib: AnimationLibrary, clip: String, m: Dictionary, times: Array, so
 	var side_tex := ImageTexture.create_from_image(side_img)
 	var top_tex := ImageTexture.create_from_image(top_img)
 	var header := 70
-	return await _canvas(Vector2i(ONION_SIZE.x * 2 + 30, ONION_SIZE.y + header + 10), func(ctl: Control):
-		_text(ctl, Vector2(10, 26), "%s  (%s)  onion skin: %d frames over %.2f s, blue = first, red = last" % [clip, source, times.size(), m["length"]], 20)
-		_text(ctl, Vector2(10, 52), "Red cross and post = the character's origin; floor grid 0.25 m (bold every 1 m); dots = Hips path. Hips travel max %.2f m, final %.2f m." % [m["root_travel_max_m"], m["root_travel_final_m"]], 15)
-		ctl.draw_texture(side_tex, Vector2(10, header))
-		ctl.draw_texture(top_tex, Vector2(ONION_SIZE.x + 20, header))
-		_text(ctl, Vector2(18, header + 22), "SIDE (forward = +Z, to the left)", 16, Color.WHITE)
-		_text(ctl, Vector2(ONION_SIZE.x + 28, header + 22), "TOP (forward = +Z, down)", 16, Color.WHITE))
+	return await _canvas(
+		Vector2i(ONION_SIZE.x * 2 + 30, ONION_SIZE.y + header + 10),
+		func(ctl: Control):
+			_text(
+				ctl,
+				Vector2(10, 26),
+				(
+					"%s  (%s)  onion skin: %d frames over %.2f s, blue = first, red = last"
+					% [clip, source, times.size(), m["length"]]
+				),
+				20
+			)
+			_text(
+				ctl,
+				Vector2(10, 52),
+				(
+					(
+						"Red cross and post = the character's origin; floor grid 0.25 m (bold every 1 m); dots = Hips path."
+						+ " Hips travel max %.2f m, final %.2f m."
+					)
+					% [m["root_travel_max_m"], m["root_travel_final_m"]]
+				),
+				15
+			)
+			ctl.draw_texture(side_tex, Vector2(10, header))
+			ctl.draw_texture(top_tex, Vector2(ONION_SIZE.x + 20, header))
+			_text(ctl, Vector2(18, header + 22), "SIDE (forward = +Z, to the left)", 16, Color.WHITE)
+			_text(ctl, Vector2(ONION_SIZE.x + 28, header + 22), "TOP (forward = +Z, down)", 16, Color.WHITE)
+	)
 
 
 func _plot_panel(ctl: Control, rect: Rect2, title: String, t: Array, lines: Array, bands := []) -> void:
@@ -633,20 +732,81 @@ func _plots(clip: String, m: Dictionary, ground_speed: float, source: String) ->
 	var bands := [["left foot planted", s["left_contact"], lc], ["right foot planted", s["right_contact"], rc]]
 	var w := (PLOT_SIZE.x - 200) / 2.0
 	var h := (PLOT_SIZE.y - 190) / 2.0
-	return await _canvas(PLOT_SIZE, func(ctl: Control):
-		_text(ctl, Vector2(20, 28), "%s  (%s)  %.2f s at %d fps, ground speed %.2f m/s" % [clip, source, m["length"], FPS, ground_speed], 20)
-		_text(ctl, Vector2(20, 52), "Hips travel max %.3f m / final %.3f m.  Foot slide p90 %.3f m/s (max %.3f) over %d planted frames.  Bind deviation max %.3f m.  Skin stretch max %.3f." % [
-			m["root_travel_max_m"], m["root_travel_final_m"], m["foot_slide_p90_mps"], m["foot_slide_max_mps"], m["contact_frames"],
-			m["bind_deviation_max_m"], m["edge_stretch_max"]], 15)
-		_plot_panel(ctl, Rect2(80, 100, w, h), "Root (Hips) horizontal offset from frame 1 (m)", t,
-			[["x", dx, Color(0.2, 0.6, 0.2)], ["z (forward)", dz, Color(0.1, 0.3, 0.8)], ["|xz|", dxz, Color(0.8, 0.1, 0.1)]])
-		_plot_panel(ctl, Rect2(180 + w, 100, w, h), "Heights (m): Hips and each foot's contact point", t,
-			[["hips", hy, Color(0.3, 0.3, 0.3)], ["left foot", ly, Color(0.1, 0.45, 0.85)], ["right foot", ry, Color(0.85, 0.35, 0.1)]], bands)
-		_plot_panel(ctl, Rect2(80, 170 + h, w, h), "Ground-relative horizontal speed (m/s): feet vs root", t,
-			[["root (hips)", m["speeds"]["hips"], Color(0.3, 0.3, 0.3)], ["left foot", m["speeds"]["left"], Color(0.1, 0.45, 0.85)],
-			["right foot", m["speeds"]["right"], Color(0.85, 0.35, 0.1)]], bands)
-		_plot_panel(ctl, Rect2(180 + w, 170 + h, w, h), "Per frame: max vertex deviation from bind pose (m, Hips frame) and max skin stretch", t,
-			[["bind deviation (m)", s["bind_deviation_max"], Color(0.5, 0.2, 0.6)], ["edge stretch (ratio)", s["edge_stretch_max"], Color(0.1, 0.55, 0.5)]]))
+	return await _canvas(
+		PLOT_SIZE,
+		func(ctl: Control):
+			_text(
+				ctl,
+				Vector2(20, 28),
+				"%s  (%s)  %.2f s at %d fps, ground speed %.2f m/s" % [clip, source, m["length"], FPS, ground_speed],
+				20
+			)
+			_text(
+				ctl,
+				Vector2(20, 52),
+				(
+					(
+						"Hips travel max %.3f m / final %.3f m.  Foot slide p90 %.3f m/s (max %.3f) over %d planted frames."
+						+ "  Bind deviation max %.3f m.  Skin stretch max %.3f."
+					)
+					% [
+						m["root_travel_max_m"],
+						m["root_travel_final_m"],
+						m["foot_slide_p90_mps"],
+						m["foot_slide_max_mps"],
+						m["contact_frames"],
+						m["bind_deviation_max_m"],
+						m["edge_stretch_max"]
+					]
+				),
+				15
+			)
+			_plot_panel(
+				ctl,
+				Rect2(80, 100, w, h),
+				"Root (Hips) horizontal offset from frame 1 (m)",
+				t,
+				[
+					["x", dx, Color(0.2, 0.6, 0.2)],
+					["z (forward)", dz, Color(0.1, 0.3, 0.8)],
+					["|xz|", dxz, Color(0.8, 0.1, 0.1)]
+				]
+			)
+			_plot_panel(
+				ctl,
+				Rect2(180 + w, 100, w, h),
+				"Heights (m): Hips and each foot's contact point",
+				t,
+				[
+					["hips", hy, Color(0.3, 0.3, 0.3)],
+					["left foot", ly, Color(0.1, 0.45, 0.85)],
+					["right foot", ry, Color(0.85, 0.35, 0.1)]
+				],
+				bands
+			)
+			_plot_panel(
+				ctl,
+				Rect2(80, 170 + h, w, h),
+				"Ground-relative horizontal speed (m/s): feet vs root",
+				t,
+				[
+					["root (hips)", m["speeds"]["hips"], Color(0.3, 0.3, 0.3)],
+					["left foot", m["speeds"]["left"], Color(0.1, 0.45, 0.85)],
+					["right foot", m["speeds"]["right"], Color(0.85, 0.35, 0.1)]
+				],
+				bands
+			)
+			_plot_panel(
+				ctl,
+				Rect2(180 + w, 170 + h, w, h),
+				"Per frame: max vertex deviation from bind pose (m, Hips frame) and max skin stretch",
+				t,
+				[
+					["bind deviation (m)", s["bind_deviation_max"], Color(0.5, 0.2, 0.6)],
+					["edge stretch (ratio)", s["edge_stretch_max"], Color(0.1, 0.55, 0.5)]
+				]
+			)
+	)
 
 
 func _review(clip: String, lib: AnimationLibrary, source: String) -> void:
@@ -667,15 +827,51 @@ func _review(clip: String, lib: AnimationLibrary, source: String) -> void:
 		var detail: Image = await _stretch_detail(lib, clip, m)
 		detail.save_png(out_dir.path_join(clip + "_stretch.png"))
 	var s: Dictionary = m["series"]
-	var out := {"clip": clip, "source": source, "model": args["model"], "kind": kind, "length_s": snappedf(m["length"], 0.001),
-		"fps": FPS, "frames_sampled": m["n"], "strip_times_s": times.map(func(x): return snappedf(x, 0.001)),
-		"ground_speed_mps": ground_speed, "contact_height_m": CONTACT_HEIGHT, "vertices": m["vertices"], "edges": m["edges"]}
-	for k in ["root_travel_max_m", "root_travel_final_m", "contact_frames", "foot_slide_p90_mps", "foot_slide_max_mps",
-			"bind_deviation_max_m", "bind_deviation_p99_m", "bind_deviation_worst_bone", "edge_stretch_max", "edge_stretch_p99", "edge_stretch_worst_bone"]:
+	var out := {
+		"clip": clip,
+		"source": source,
+		"model": args["model"],
+		"kind": kind,
+		"length_s": snappedf(m["length"], 0.001),
+		"fps": FPS,
+		"frames_sampled": m["n"],
+		"strip_times_s": times.map(func(x): return snappedf(x, 0.001)),
+		"ground_speed_mps": ground_speed,
+		"contact_height_m": CONTACT_HEIGHT,
+		"vertices": m["vertices"],
+		"edges": m["edges"]
+	}
+	for k in [
+		"root_travel_max_m",
+		"root_travel_final_m",
+		"contact_frames",
+		"foot_slide_p90_mps",
+		"foot_slide_max_mps",
+		"bind_deviation_max_m",
+		"bind_deviation_p99_m",
+		"bind_deviation_worst_bone",
+		"edge_stretch_max",
+		"edge_stretch_p99",
+		"edge_stretch_worst_bone"
+	]:
 		out[k] = m[k]
-	out["series"] = {"t": s["t"], "hips": s["hips"].map(func(p): return [snappedf(p.x, 0.001), snappedf(p.y, 0.001), snappedf(p.z, 0.001)])}
+	out["series"] = {
+		"t": s["t"],
+		"hips": s["hips"].map(func(p): return [snappedf(p.x, 0.001), snappedf(p.y, 0.001), snappedf(p.z, 0.001)])
+	}
 	var f := FileAccess.open(out_dir.path_join(clip + "_metrics.json"), FileAccess.WRITE)
 	f.store_string(JSON.stringify(out, "  "))
 	f.close()
-	print("MOTION %s kind=%s travel=%.3f slide_p90=%.3f dev=%.3f stretch=%.3f" % [clip, kind, m["root_travel_max_m"],
-		m["foot_slide_p90_mps"], m["bind_deviation_max_m"], m["edge_stretch_max"]])
+	print(
+		(
+			"MOTION %s kind=%s travel=%.3f slide_p90=%.3f dev=%.3f stretch=%.3f"
+			% [
+				clip,
+				kind,
+				m["root_travel_max_m"],
+				m["foot_slide_p90_mps"],
+				m["bind_deviation_max_m"],
+				m["edge_stretch_max"]
+			]
+		)
+	)

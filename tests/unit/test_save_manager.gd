@@ -71,8 +71,10 @@ func test_slot_never_points_at_the_real_save() -> void:
 
 
 func test_invalid_slot_keeps_the_current_path() -> void:
-	await assert_error(func() -> void: saves.set_save_slot("../escape")) \
-		.is_push_error("SaveManager: invalid save slot '../escape', keeping user://save_gdunit.json")
+	await (
+		assert_error(func() -> void: saves.set_save_slot("../escape"))
+		. is_push_error("SaveManager: invalid save slot '../escape', keeping user://save_gdunit.json")
+	)
 	assert_str(saves.get_save_path()).is_equal("user://save_gdunit.json")
 
 

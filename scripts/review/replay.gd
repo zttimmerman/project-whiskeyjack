@@ -109,8 +109,16 @@ func _physics_process(_delta: float) -> void:
 		# A warm-up frame: frame 0 is the next one
 		_started = true
 		EventLog.frame_origin = Engine.get_physics_frames() + 1
-		EventLog.log_event_at(0, "scenario_start", {"scenario": String(_scenario.get("name", "")), "seed": int(_scenario.get("seed", 0)),
-				"process_frame": Engine.get_process_frames() + 1, "duration_frames": _duration})
+		EventLog.log_event_at(
+			0,
+			"scenario_start",
+			{
+				"scenario": String(_scenario.get("name", "")),
+				"seed": int(_scenario.get("seed", 0)),
+				"process_frame": Engine.get_process_frames() + 1,
+				"duration_frames": _duration
+			}
+		)
 	_frame = Engine.get_physics_frames() - EventLog.frame_origin
 	if _frame >= _duration or (_end_frame >= 0 and _frame >= _end_frame):
 		_finish()
@@ -147,8 +155,15 @@ func _finish() -> void:
 	alive.sort()
 	var stats: CharacterStats = _player.get("stats")
 	var pos := _player.global_position
-	EventLog.log_event("scenario_end", {"player_hp": stats.current_hp if stats else -1, "player_max_hp": stats.max_hp if stats else -1,
-			"player_position": [EventLog.round3(pos.x), EventLog.round3(pos.y), EventLog.round3(pos.z)], "enemies_alive": alive})
+	EventLog.log_event(
+		"scenario_end",
+		{
+			"player_hp": stats.current_hp if stats else -1,
+			"player_max_hp": stats.max_hp if stats else -1,
+			"player_position": [EventLog.round3(pos.x), EventLog.round3(pos.y), EventLog.round3(pos.z)],
+			"enemies_alive": alive
+		}
+	)
 	EventLog.close()
 	print("replay: %s finished at frame %d" % [_scenario.get("name", ""), _frame])
 	get_tree().quit(0)

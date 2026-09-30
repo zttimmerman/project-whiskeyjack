@@ -21,8 +21,11 @@ func _ready() -> void:
 
 func interact() -> void:
 	var active_dialogue := dialogue_id
-	if not return_stage_id.is_empty() and not completion_quest_id.is_empty() \
-			and QuestManager.get_quest_stage(completion_quest_id) == return_stage_id:
+	if (
+		not return_stage_id.is_empty()
+		and not completion_quest_id.is_empty()
+		and QuestManager.get_quest_stage(completion_quest_id) == return_stage_id
+	):
 		QuestManager.complete_quest(completion_quest_id)
 	if not completion_quest_id.is_empty() and QuestManager.is_quest_complete(completion_quest_id):
 		if not completion_dialogue_id.is_empty():

@@ -122,7 +122,8 @@ func line_of_sight(from: Node3D, to: Node3D) -> bool:
 	if not is_instance_valid(from) or not is_instance_valid(to) or not from.is_inside_tree():
 		return false
 	var query := PhysicsRayQueryParameters3D.create(
-		from.global_position + Vector3.UP * EYE_HEIGHT, to.global_position + Vector3.UP * EYE_HEIGHT, WORLD_MASK)
+		from.global_position + Vector3.UP * EYE_HEIGHT, to.global_position + Vector3.UP * EYE_HEIGHT, WORLD_MASK
+	)
 	var exclude: Array[RID] = []
 	for body in [from, to]:
 		if body is CollisionObject3D:

@@ -13,8 +13,13 @@ const SCRIPT := "res://tests/test_respawn_save.gd"
 
 func test_respawn_restores_the_save(timeout := 120000) -> void:
 	var args := [
-		"--headless", "--path", ProjectSettings.globalize_path("res://"),
-		"-s", SCRIPT, "--", "--save-slot=respawn_test",
+		"--headless",
+		"--path",
+		ProjectSettings.globalize_path("res://"),
+		"-s",
+		SCRIPT,
+		"--",
+		"--save-slot=respawn_test",
 	]
 	var output := []
 	var code := OS.execute(OS.get_executable_path(), args, output, true)

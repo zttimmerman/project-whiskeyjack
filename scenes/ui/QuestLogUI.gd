@@ -46,6 +46,7 @@ func _apply_style() -> void:
 
 # ── Toggle ────────────────────────────────────────────────────────────────────
 
+
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("open_quest_log"):
 		if visible:
@@ -73,6 +74,7 @@ func _close() -> void:
 
 
 # ── Quest list ────────────────────────────────────────────────────────────────
+
 
 func _on_quests_changed() -> void:
 	if visible:

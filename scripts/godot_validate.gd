@@ -17,18 +17,37 @@ const EXTRA_MAPS := {
 
 # Normalized bone-name core -> profile bone base name (side prefix added separately)
 const CORE_TO_PROFILE := {
-	"hips": "Hips", "hip": "Hips", "pelvis": "Hips",
-	"spine": "Spine", "spine0": "Spine", "spine1": "Chest", "chest": "Chest",
-	"spine2": "UpperChest", "upperchest": "UpperChest",
-	"neck": "Neck", "head": "Head", "jaw": "Jaw",
-	"shoulder": "Shoulder", "clavicle": "Shoulder", "collar": "Shoulder",
-	"upperarm": "UpperArm", "arm": "UpperArm",
-	"forearm": "LowerArm", "lowerarm": "LowerArm",
+	"hips": "Hips",
+	"hip": "Hips",
+	"pelvis": "Hips",
+	"spine": "Spine",
+	"spine0": "Spine",
+	"spine1": "Chest",
+	"chest": "Chest",
+	"spine2": "UpperChest",
+	"upperchest": "UpperChest",
+	"neck": "Neck",
+	"head": "Head",
+	"jaw": "Jaw",
+	"shoulder": "Shoulder",
+	"clavicle": "Shoulder",
+	"collar": "Shoulder",
+	"upperarm": "UpperArm",
+	"arm": "UpperArm",
+	"forearm": "LowerArm",
+	"lowerarm": "LowerArm",
 	"hand": "Hand",
-	"thigh": "UpperLeg", "upleg": "UpperLeg", "upperleg": "UpperLeg",
-	"shin": "LowerLeg", "calf": "LowerLeg", "leg": "LowerLeg", "lowerleg": "LowerLeg",
+	"thigh": "UpperLeg",
+	"upleg": "UpperLeg",
+	"upperleg": "UpperLeg",
+	"shin": "LowerLeg",
+	"calf": "LowerLeg",
+	"leg": "LowerLeg",
+	"lowerleg": "LowerLeg",
 	"foot": "Foot",
-	"toe": "Toes", "toes": "Toes", "toebase": "Toes",
+	"toe": "Toes",
+	"toes": "Toes",
+	"toebase": "Toes",
 }
 const SIDED := ["Shoulder", "UpperArm", "LowerArm", "Hand", "UpperLeg", "LowerLeg", "Foot", "Toes"]
 
@@ -36,7 +55,9 @@ const SIDED := ["Shoulder", "UpperArm", "LowerArm", "Hand", "UpperLeg", "LowerLe
 func _initialize() -> void:
 	var args := _parse_args(OS.get_cmdline_user_args())
 	var report := {
-		"status": "fail", "errors": [], "warnings": [],
+		"status": "fail",
+		"errors": [],
+		"warnings": [],
 		"godot_version": Engine.get_version_info()["string"],
 		"import_method": "GLTFDocument (runtime); editor import settings such as a BoneMap don't apply",
 	}
@@ -90,6 +111,7 @@ func _validate(args: Dictionary, report: Dictionary) -> void:
 
 # ── Rig ──────────────────────────────────────────────────────────────────────
 
+
 func _check_rig(root: Node, params: Dictionary, report: Dictionary) -> void:
 	var skeletons := root.find_children("*", "Skeleton3D", true, false)
 	var is_character: bool = params.get("type") == "character"
@@ -142,7 +164,9 @@ func _check_rig(root: Node, params: Dictionary, report: Dictionary) -> void:
 		"mapping_method": "name heuristic; confirm in the editor's BoneMap before retargeting",
 	}
 	if is_character and not missing_required.is_empty():
-		report["errors"].append("rig doesn't map onto SkeletonProfileHumanoid; missing required: %s" % [missing_required])
+		report["errors"].append(
+			"rig doesn't map onto SkeletonProfileHumanoid; missing required: %s" % [missing_required]
+		)
 
 	var socket_path = params.get("socket_map")
 	if socket_path:
@@ -163,7 +187,9 @@ func _check_rig(root: Node, params: Dictionary, report: Dictionary) -> void:
 				var found := skel.find_bone(raw) != -1
 				sockets[socket] = {"bone": bone, "skeleton_bone": raw, "found": found}
 				if not found:
-					report["errors"].append("socket '%s' maps to bone '%s', which this rig doesn't have" % [socket, bone])
+					report["errors"].append(
+						"socket '%s' maps to bone '%s', which this rig doesn't have" % [socket, bone]
+					)
 		report["rig"]["sockets"] = sockets
 
 
@@ -200,6 +226,7 @@ func _guess_profile_name(bone: String) -> String:
 
 # ── Meshes and materials ─────────────────────────────────────────────────────
 
+
 func _check_meshes(root: Node, params: Dictionary, report: Dictionary) -> void:
 	var gpu_verts := 0
 	var triangles := 0
@@ -219,7 +246,9 @@ func _check_meshes(root: Node, params: Dictionary, report: Dictionary) -> void:
 			var entry := {"mesh": str(mi.name), "surface": s}
 			if mat is BaseMaterial3D:
 				var bm := mat as BaseMaterial3D
-				entry["transparency"] = ["disabled", "alpha", "alpha_scissor", "alpha_hash", "depth_pre_pass"][bm.transparency]
+				entry["transparency"] = ["disabled", "alpha", "alpha_scissor", "alpha_hash", "depth_pre_pass"][
+					bm.transparency
+				]
 				entry["unshaded"] = bm.shading_mode == BaseMaterial3D.SHADING_MODE_UNSHADED
 				# What the importer made of the surface response; a highlight reads as plastic.
 				entry["roughness"] = snappedf(bm.roughness, 0.001)
@@ -227,17 +256,26 @@ func _check_meshes(root: Node, params: Dictionary, report: Dictionary) -> void:
 				entry["metallic_specular"] = snappedf(bm.metallic_specular, 0.001)
 				entry["specular_mode"] = ["schlick_ggx", "toon", "disabled"][bm.specular_mode]
 				if bm.metallic_specular > 0.0 and bm.specular_mode != BaseMaterial3D.SPECULAR_DISABLED:
-					report["warnings"].append("surface %d of '%s' imports with specular %.2f (a highlight)" % [s, mi.name, bm.metallic_specular])
+					report["warnings"].append(
+						(
+							"surface %d of '%s' imports with specular %.2f (a highlight)"
+							% [s, mi.name, bm.metallic_specular]
+						)
+					)
 				if bm.albedo_texture:
 					var t := bm.albedo_texture
 					textures[t.get_rid()] = [t.get_width(), t.get_height()]
 					entry["albedo_texture"] = [t.get_width(), t.get_height()]
 				else:
 					# Art bible: one albedo texture or vertex colors. Neither means a dropped texture.
-					var has_colors: bool = arrays[Mesh.ARRAY_COLOR] != null and (arrays[Mesh.ARRAY_COLOR] as PackedColorArray).size() > 0
+					var has_colors: bool = (
+						arrays[Mesh.ARRAY_COLOR] != null and (arrays[Mesh.ARRAY_COLOR] as PackedColorArray).size() > 0
+					)
 					entry["vertex_colors"] = has_colors
 					if not has_colors:
-						report["errors"].append("surface %d of '%s' has no albedo texture and no vertex colors" % [s, mi.name])
+						report["errors"].append(
+							"surface %d of '%s' has no albedo texture and no vertex colors" % [s, mi.name]
+						)
 				var extras: Array = []
 				for map_name in EXTRA_MAPS:
 					if bm.get_texture(EXTRA_MAPS[map_name]) != null:

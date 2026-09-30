@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Fast checks on what's being committed (about a second). Enable once per clone:
+#   git config core.hooksPath .githooks
+# Needs gdtoolkit 4.x: pipx install gdtoolkit==4.5.0. Skip in an emergency with git commit --no-verify;
+# CI (.github/workflows/ci.yml, job lint) runs the same checks on every PR.
+# Checks the working-tree copy of each staged file, so stage the whole file you mean to commit.
+set -uo pipefail
+ROOT="$(git rev-parse --show-toplevel)" || exit 2
+cd "$ROOT" || exit 2
+
+fail=0
+gd_files=()
+while IFS= read -r f; do gd_files+=("$f"); done < <(git diff --cached --name-only --diff-filter=ACMR -- '*.gd' ':!addons/**')
+
+if [ ${#gd_files[@]} -gt 0 ]; then
+	if ! command -v gdformat > /dev/null || ! command -v gdlint > /dev/null; then
+		echo 'pre-commit: gdtoolkit is missing. Install it with: pipx install gdtoolkit==4.5.0' >&2
+		exit 1
+	fi
+	if ! gdformat --check --line-length=120 "${gd_files[@]}"; then
+		echo 'pre-commit: run  gdformat --line-length=120 <files>  and restage' >&2
+		fail=1
+	fi
+	gdlint "${gd_files[@]}" || fail=1
+fi
+
+if git diff --cached --name-only --diff-filter=ACMR -- 'data/dialogues/*.json' 'data/quests/*.json' | grep -q .; then
+	python3 ci/data_lint.py || fail=1
+fi
+
+exit $fail

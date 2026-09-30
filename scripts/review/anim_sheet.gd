@@ -6,7 +6,7 @@ extends Node
 #       [--held <Bone>=<res:// prop scene>[,<Bone>=<scene>]]   props on bones, as held_props would attach them
 #       [--yaw <degrees>] [--columns <n>]   view angle (-25 three-quarter, 90 side) and points per clip
 
-var FRACTIONS := [0.2, 0.5, 0.8]
+var fractions := [0.2, 0.5, 0.8]
 const SPACING := Vector2(1.6, 2.1)  # metres between columns, rows
 
 
@@ -20,9 +20,9 @@ func _ready() -> void:
 		args[argv[i].trim_prefix("--")] = argv[i + 1]
 	if args.has("columns"):
 		var n := int(args["columns"])
-		FRACTIONS = range(n).map(func(i): return (i + 0.5) / n)
+		fractions = range(n).map(func(i): return (i + 0.5) / n)
 	var yaw := float(args.get("yaw", -25))
-	get_window().size = Vector2i(400 * FRACTIONS.size(), 1600)
+	get_window().size = Vector2i(400 * fractions.size(), 1600)
 	var lib: AnimationLibrary = load(args["library"])
 	var names: Array = lib.get_animation_list()
 	names.sort()
@@ -37,7 +37,7 @@ func _ready() -> void:
 	sun.rotation_degrees = Vector3(-40, 30, 0)
 	add_child(sun)
 	for r in names.size():
-		for c in FRACTIONS.size():
+		for c in fractions.size():
 			var model: Node3D = (load(args["model"]) as PackedScene).instantiate()
 			add_child(model)
 			# Models face +Z in Godot; turn them three-quarters toward the camera
@@ -55,7 +55,7 @@ func _ready() -> void:
 			ap.root_node = NodePath("..")
 			ap.add_animation_library("", lib)
 			ap.play(names[r])
-			ap.seek(lib.get_animation(names[r]).length * FRACTIONS[c], true)
+			ap.seek(lib.get_animation(names[r]).length * fractions[c], true)
 			ap.pause()
 		var label := Label3D.new()
 		label.text = "%s (%.2f s)" % [names[r], lib.get_animation(names[r]).length]
@@ -66,7 +66,7 @@ func _ready() -> void:
 	var cam := Camera3D.new()
 	cam.projection = Camera3D.PROJECTION_ORTHOGONAL
 	cam.size = names.size() * SPACING.y + 0.4
-	cam.position = Vector3((FRACTIONS.size() - 1) * SPACING.x / 2 - 0.5, -(names.size() - 1) * SPACING.y / 2 + 0.9, 10)
+	cam.position = Vector3((fractions.size() - 1) * SPACING.x / 2 - 0.5, -(names.size() - 1) * SPACING.y / 2 + 0.9, 10)
 	add_child(cam)
 	cam.current = true
 	for i in 6:
