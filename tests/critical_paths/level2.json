@@ -1,0 +1,14 @@
+{
+  "scene": "res://scenes/world/Level2.tscn",
+  "note": "Critical path waypoints on the floor (y = 0), read by scripts/tools/check_path_clearance.gd. The vault waypoint is north of the burial platform; end is the EndTrigger's near edge.",
+  "waypoints": [
+    {"name": "spawn", "position": [0, 0, -4]},
+    {"name": "corridor_a", "position": [0, 0, 10]},
+    {"name": "tomb_hall", "position": [0, 0, 22]},
+    {"name": "corridor_b", "position": [0, 0, 34]},
+    {"name": "burial_vault", "position": [0, 0, 40]},
+    {"name": "corridor_c", "position": [0, 0, 56]},
+    {"name": "sanctum", "position": [0, 0, 67]},
+    {"name": "end", "position": [0, 0, 72.5]}
+  ]
+}
