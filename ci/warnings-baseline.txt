@@ -1,6 +1,5 @@
 # Known Godot warnings on main, to burn down (ci/check_log.py). New warnings fail CI;
 # a fixed warning must be deleted here. Regenerate with --update only to remove lines.
-Case mismatch opening requested file '<project>/scenes/player/player.gd', stored as '<project>/scenes/player/Player.gd' in the filesystem. This file will not open when exported to other case-sensitive platforms.
 Integer division. Decimal part will be discarded. (res://scenes/player/Player.gd)
 Integer division. Decimal part will be discarded. (res://scripts/godot_validate.gd)
 Integer division. Decimal part will be discarded. (res://scripts/review/motion_review.gd)
