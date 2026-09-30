@@ -5,6 +5,8 @@ description: Orchestrates 3D asset production for this project with scripts/pipe
 
 # Asset pipeline (orchestrator)
 
+**Execution:** fully scripted and headless (`pipeline.py`, headless Blender and Godot, `judge.py`, the motion review). Never the Godot MCP: every stage must reproduce exactly without an open editor.
+
 **Layering:** this skill orchestrates; the **tripo** skill (`.claude/skills/tripo/`) is the vendor adapter. Any paid `tripo` call, including concept images and models, follows the tripo skill: its confirmation flow, credit cap, balance checks and URL-expiry rules. None of those are repeated here. `pipeline.py` never runs a paid `tripo` command; it prints the command, and the agent runs it through the tripo skill.
 
 **Budgets:** `docs/art-bible.md` is the only source of budget numbers (`face_limit`, triangle budget, texture size, target size, pivot, palette). Each asset carries them in its brief YAML. To change a number, change the art bible first, then copy it into the brief. Never write a number into this skill, the tripo skill, or a script.

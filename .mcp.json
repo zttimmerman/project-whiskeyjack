@@ -1,0 +1,43 @@
+{
+  "mcpServers": {
+    "godot-ai": {
+      "type": "stdio",
+      "command": "/opt/homebrew/bin/uvx",
+      "args": [
+        "--isolated",
+        "--no-config",
+        "--no-env-file",
+        "--no-sources",
+        "--no-build",
+        "--index-strategy",
+        "first-index",
+        "--keyring-provider",
+        "disabled",
+        "--index",
+        "https://pypi.org/simple",
+        "--default-index",
+        "https://pypi.org/simple",
+        "--find-links",
+        "https://pypi.org/simple/godot-ai/",
+        "--link-mode",
+        "copy",
+        "--from",
+        "godot-ai==4.2.3",
+        "godot-ai",
+        "attach",
+        "--port",
+        "8000",
+        "--ws-port",
+        "9500",
+        "--exclude-domains",
+        "animation,audio,autoload,batch,camera,client,csg,custom,filesystem,gridmap,input_map,material,navigation,particle,theme,tilemap,tileset,ui",
+        "--disable-telemetry"
+      ],
+      "env": {
+        "GODOT_AI_DISABLE_TELEMETRY": "true",
+        "DISABLE_TELEMETRY": "true",
+        "GODOT_AI_TELEMETRY_ENDPOINT": "invalid"
+      }
+    }
+  }
+}

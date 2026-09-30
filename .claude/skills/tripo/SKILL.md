@@ -5,6 +5,8 @@ description: Vendor adapter for the Tripo CLI. Owns command construction, spend 
 
 # Tripo CLI adapter
 
+**Execution:** the `tripo` CLI through Bash, one paid command per call, after the user's confirmation. No Godot or Blender MCP.
+
 **Layering:** this skill is the vendor adapter. The **asset-pipeline** skill (`scripts/pipeline.py`) is the orchestrator: it owns briefs, stage order, cleanup, validation and the manifest. Its concept and model stages print the exact `tripo` command to run. That command runs **here**, under these rules, and `pipeline.py` then ingests the files this skill leaves on disk. `pipeline.py` never runs a paid `tripo` command itself, because a subprocess would bypass the permission gate.
 
 **Budgets aren't set here.** `face_limit` and every other budget number come from the asset's brief YAML (`assets/briefs/<asset-id>.yaml`), which is copied from `docs/art-bible.md`. Use the value `pipeline.py` prints; never choose or adjust one.

@@ -4,30 +4,46 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 
 ## Session handoff (update at the end of every session)
 
-- **Branch** `world-bible-slice`; main is at `1467dbf`. Last session ended 2026-09-28 (autonomous asset validation).
+- **Main** moves to Godot 4.7.2 with the `chore/godot-ai-trial` merge. Last session ended 2026-09-29 (Godot MCP trial).
 - **Done:**
-  - Tripo image pipeline: concept (approval gate) → multiview → P1 3D → rig v1.0 → clean → validate.
-  - Barrow-levy, player and Levy Bow generated; Quaternius animation retargeted onto all three characters.
-  - **Asset judge** (`scripts/judge.py` + `.claude/agents/asset-judge.md`): a packet per stage, a fresh-context verdict, one auto-refine per stage, a verdict log. **Motion review** (`scripts/review/motion_review.tscn`): strips, onion skins, plots, metrics. Replays in `assets/manifests/judge_replays/`.
-- **Escalations (all resolved):**
-  1. *(Resolved 2026-09-29: accepted for POC. The knee creases, slight tunic hem clipping and flesh-colored tunic seams show up close but not at gameplay distance; no more player refinement before MVP. The 1.0 stretch limit stays, so the player's clips will keep escalating on it until the model is redone.)* **Player knee-crease stretch.** The skirt reweight now blends over 2.5 cm inside the trouser radius, which removed the hard seam at the tunic slit. Worst stretch per clip: run 7.7 → 4.6, dodge roll 18.8 → 3.9, idle 4.4 → 3.0. What's left (2.7–5.6×) sits at the knee creases and the inner knee under the tunic, and it isn't visible at strip scale. The 99th percentile didn't move (about 0.68 in the run). The judge still escalates the run on the 1.0 stretch limit, which can't tell a normal low-poly knee crease from a tear. Decide: accept the knee creases (and scope the stretch check to non-joint edges or raise its limit), or keep working the weights.
-- **Resolved this session:** the levy death. Keeping part of `Death01`'s travel can't meet both limits (keeping 30% still slid 0.80 m/s), so death clips are exempt from the foot-slide limit and the shipped fully pinned clip passes the judge.
-- **Next:**
-  1. The escalations above.
-  2. Playtest the slice in motion.
-  3. The CC0 import path for downloaded props.
-  4. Per-hit combo names (`Sword_Regular_A/B/C`) in `Player.gd`.
-  5. Enemy spacing.
+  - Tripo image pipeline; Barrow-levy, player and Levy Bow; Quaternius animation on all three characters.
+  - Asset judge and motion review (`scripts/judge.py`, `scripts/review/motion_review.tscn`).
+  - **Godot 4.7.2** (a regression set identical to 4.6.1) and the **Godot MCP** (`addons/godot_ai`, pinned 4.2.3, guarded; CLAUDE.md → Godot MCP).
+  - **First headless playtest** of Level 1: `docs/playtests/2026-09-29-level1-first-look.md`.
+  - `playtest-branch` skill so the human can play any branch.
+- **In flight:**
+  - `fix/respawn-save-state`: death reloads a stale save, killed enemies don't persist, and every worktree shares one `user://save.json`.
+  - Then `feature/`: poll combat input in the physics step so the MCP can frame-time attacks (approved).
+- **Backlog from the playtest** (fix against the design bible, not ad hoc):
+  1. **Melee occlusion:** the player model hides the enemy at melee range.
+  2. **Lock-on:** it shows no reticle, the camera doesn't turn, and it may stick.
+  3. **No hit feedback:** no visible particle, flash or stagger in stills, and no enemy HP.
+  4. **Encounters are harsh:** about 40% HP per skeleton; the central room is a 3-on-1 with an off-screen archer.
+  5. **Camera jams:** it pushes into walls and corners.
+  6. **Crates snag the player** at the corridor mouth.
+  7. **The level reads unfinished:** no ceilings, flat floors, near-black walls, no landmarks or direction, and a white-capsule Elder at the spawn.
+  8. **Log warnings:**
+     - invalid hand-written UIDs in 9 scenes;
+     - a runtime navmesh bake from RenderingServer meshes (slow) with ceiled agent sizes;
+     - `Inventory.gd:82` shadows `sign`;
+     - `GameManager.game_over` is unused;
+     - `Player.gd:361` uses integer division.
+- **Next (proposed):**
+  1. The design bible (level readability, lighting, pacing, combat-feel targets, with numbers).
+  2. A playtest skill: lockstep play, scripted scenarios as regression tests, and a fresh-context playtest critic.
+  3. A level-building skill: blockout → dressing → lighting → playtest after each pass.
+  4. Then the backlog above, measured against the bible.
 - **Open questions:**
   - Is `OverhandThrow` acceptable as the Back-file's bow attack, or buy the UAL2 tier with `Bow_*`?
   - Is the player's sword a new asset, or keep reusing the Levy Blade?
-  - The levy's jog slides at 0.80 m/s p90 at 4.0 m/s and the Back-file walk at 0.64 (the player's run: 0.35). Probably shorter legs than the mannequin; not asserted, since run clips are `in_place` only for Hips travel. Worth a look with the playtest.
-- **Before any Tripo spend:** read the tripo skill. The cap is 500 per session, and each session starts at 0 used. Balance is 590 (no spend this session). Costs: concept 15, multiview 10, model 50, rig 25.
+  - The levy jog slides at 0.80 m/s and the Back-file walk at 0.64 (the player's run: 0.35).
+  - Renderer: `config/features` says Forward Plus, while CLAUDE.md prefers Mobile or Compatibility. Unverified which is active.
+- **Before any Tripo spend:** read the tripo skill. The cap is 500 per session, starting at 0. The balance is 590. Costs: concept 15, multiview 10, model 50, rig 25.
 - **Tools:**
-  - `scripts/pipeline.py <id> --stage all` (it prints the `judge:` command after each stage);
-  - `scripts/judge.py packet|record|resolve|log`;
-  - `scripts/tools/build_animation_library.gd`, `make_bone_maps.gd` and `make_held_props.gd`;
-  - review scenes in `scripts/review/`: `motion_review`, `anim_sheet`, `level1_play_capture` and `level1_compare`.
+  - `scripts/pipeline.py <id> --stage all` and `scripts/judge.py packet|record|resolve|log`;
+  - `scripts/tools/build_animation_library.gd`, `make_bone_maps.gd`, `make_held_props.gd` and `playtest-branch.sh`;
+  - review scenes in `scripts/review/`: `motion_review`, `anim_sheet`, `level1_play_capture` and `level1_compare`. They turn vsync off themselves, so they stay fast behind other windows;
+  - the Godot MCP (CLAUDE.md → Godot MCP), and headless playtests with briefs in `docs/playtests/`.
 
 ## Settled
 
@@ -89,6 +105,16 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 - **The packs have only one death clip (`Death01`)** (2026-09-29, fix-ladder step 3). `Hit_Knockback` (a thrown-back knockdown, 0.09 m of hip travel with no pinning) was tried as the levies' death and rejected, because it reads worse than a crumple for undead levies. `LayToIdle` reversed reads as a lie-down, not a death. The levies keep `Death01` with `in_place` and the foot-slide exemption.
 - **The face question half-worked:** the judge now reports the player's raw mouth as "faint, a thin line", but it still didn't raise that as a finding, even though the question says it should. Treat mouths and eyes as a known blind spot; check faces yourself on new characters.
 - **Pipeline evidence images stay local** (decided 2026-09-29): renders, packet copies, replays and animation sheets under `assets/manifests/` are gitignored (they had reached 121 files, 24 MB). The JSON is committed and records each image's SHA-256, so a verdict's evidence can be checked against a local copy but not viewed from a fresh clone. Finished assets (`assets/meshes/`, `assets/overlays/`) are unaffected.
+
+## Learned 2026-09-29 (Godot MCP trial)
+
+- **The Godot 4.6.1 → 4.7.2 upgrade changed nothing measurable.** Import errors, the library build, validate on four assets, the 16 motion clips and Level 1 movement all matched. Only the animation clips were re-saved in 4.7's format.
+- **A vsynced window behind another app crawls on macOS.** A motion review went from minutes per clip to 3.7 s once the review scenes turned vsync off. The metrics were identical.
+- **godot-ai's active session is server-global.** The first editor to connect gets it, and any client's `session_activate` moves it. The guard therefore requires the agent's `session_id` on every call and denies `session_activate`.
+- **A `settings.json` "ask" rule beats a hook's "allow".** The headless playtester's `project_run` was denied until the tool was taken out of the ask list and the hook alone decided.
+- **Synthetic input actions never reach `_input`.** They only affect `Input` polling, so combat read in `_input` needs `input_key`, which the sequencer can't frame-time. `input_sequence` steps need `at_frame`; `frame` is silently treated as 0.
+- **The playtester saw what the human sees:** ceiling-less boxes, occluded melee, invisible lock-on, and a broken respawn. It needs lockstep play to judge combat, since real time lags 8–20 s of game time per call.
+- **`user://` is keyed by the project name,** so every worktree and review copy shares `save.json`. A playtest can load, or overwrite, the human's save.
 
 ## Observed Tripo costs
 
