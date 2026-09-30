@@ -23,5 +23,6 @@ These are the agreed first step from `docs/tools-review-2026-09.md`: tooling tha
 - **Commits** are atomic, with an imperative subject and body bullets, and end with the `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>` line. Scan for tokens before pushing.
 - **Push and open a PR** (`gh pr create`); **don't merge.** The PR body lists what changed, how it was verified (with commands and output), and open questions.
 - **Report back** in 30 lines or fewer: the PR link, the verification evidence, the design-bible target IDs served, proposed doc text, and follow-ups.
+- **Test-first** (CLAUDE.md → Testing): new gameplay rules start with a failing test, and play-measured behaviour starts with a failing scenario. A2a's tests for existing systems are characterization tests, the exception.
 - **Determinism first:** seed RNGs; assert tolerance ranges, not exact floats; generated files come only from their generators.
 - Anything that costs money, or is a design decision, goes back to the orchestrator; don't decide it.
