@@ -658,7 +658,7 @@
     "sha256": "41a64032b8b34fba1ab31bad38b3dce27deb295af58fbd729110f8e0e9209aea"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-09-30T04:48:25+00:00",
+  "updated_at": "2026-09-30T04:55:06+00:00",
   "judgments": [
     {
       "kind": "verdict",
@@ -751,6 +751,88 @@
       "escalation_reason": "Three color assertions fail (Wet Slate after correction; Barrow Oak before and after). The palette groups seem to come from the whole shared KayKit atlas, and neither color appears on the rendered tile. The user decides whether to accept the tile despite the atlas-level measurement, or to have the color check run on the tile's own UV region first. No edit to the asset is indicated.",
       "summary": "The tile's geometry, scale and budget match the brief and the rendered stone reads dark brownish grey, but three palette assertions fail. They appear to measure the whole shared KayKit atlas, not the part of it this tile uses, so the user has to decide whether to accept them.",
       "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-09-30T04:55:06+00:00",
+      "packet": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-2/packet.json",
+      "packet_sha256": "2e4e021bba84ba31a29dac8f1bfdd697614324dfd0966a419b76c138db9ed9c5",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/kaykit_dungeon_floor_tile_large.glb",
+        "sha256": "127bfe2c22320a2f3126fe4a4e2fdaae0f9c0fe60c9679fdeb9cceb31bccc59a",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-2/01_front.png",
+          "sha256": "3746fe7adf55a7c939e901e48a5305d27393ec97b7ab6cb93591113efb83ff87",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-2/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-2/02_right.png",
+          "sha256": "b053b13608922a3f77183d79782756f0744edd8fc64a45049ca3138f0bee2695",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-2/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-2/03_back.png",
+          "sha256": "c876f5dec30ff79b1faf0b37c23c037c6eccfca161a081c3a4b4d4fa15e43e93",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-2/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-2/04_top.png",
+          "sha256": "0bb5f68825d9b5a729be3995d36204eecdaf7ba38e28ba11688df8b7a29cbf51",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-2/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-2/05_clay_front.png",
+          "sha256": "404c138a9a8a53882786ec7c310e2aa3c9583d3da26fb63a39be1a28ae9506a2",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-2/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-2/06_wireframe_front.png",
+          "sha256": "e3d54d64e4b63e7bd7950f18b0a36e00be56386b84577cb36ba24c9610bc786f",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-2/work/views/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-2/01_front.png",
+        "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-2/02_right.png",
+        "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-2/03_back.png",
+        "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-2/04_top.png",
+        "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-2/05_clay_front.png",
+        "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-2/06_wireframe_front.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "color",
+          "severity": "minor",
+          "observation": "Correction moved the median from #8C827B (9.3 dE from Wet Slate) to #7C6554 (10.2 dE), warmer and browner; still within 12, and the top view reads as the dark brownish-grey stone the prompt asks for.",
+          "evidence": "palette color Wet Slate within tolerance after correction; 04_top.png"
+        },
+        {
+          "check": "other",
+          "severity": "minor",
+          "observation": "The single open loop is not visible; two tiny notches where grout grooves meet the rim are kit grid seams.",
+          "evidence": "holes per part (1 loop, limit 2); 01_front.png, 02_right.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The KayKit large floor tile matches the brief: a 4 x 4 x 0.15 m slab of octagon flags with diamond flags between them, 188 of 1320 triangles, one 128 px albedo texture, and every assertion passes.",
+      "next": "proceed to the next stage"
     }
   ]
 }

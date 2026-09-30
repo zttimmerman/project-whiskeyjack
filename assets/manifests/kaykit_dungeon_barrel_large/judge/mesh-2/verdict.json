@@ -1,0 +1,27 @@
+{
+  "verdict": "pass",
+  "summary": "The KayKit large barrel matches the brief: bulging reddish-brown staves, two dark iron hoops, a lid with a bung. It is well within budget, every assertion passes, and none of its open loops shows in any view.",
+  "findings": [
+    {
+      "check": "color",
+      "severity": "minor",
+      "observation": "The hoops are mid-to-dark grey (corrected median #6B6560, grouped under Wet Slate), not near-black Blackened Iron; they still read as dark iron against the staves.",
+      "evidence": "01_front.png, 02_right.png, 03_back.png; color_vs_palette Wet Slate median_after #6B6560"
+    }
+  ],
+  "questions_answered": [
+    "All prompt elements present, plus a lid bung that fits a barrel.",
+    "4 parts; 5 open loops (hoop band edges, bung underside), none visible; no spikes or fragments.",
+    "Yes: 561/1320, 128 px, 1.8 x 1.8 x 2.0 m.",
+    "Yes: Barrow Oak 10.2 -> 0.8, Wet Slate 12.3 -> 2.7; hoops read grey rather than near-black (minor).",
+    "Not applicable."
+  ],
+  "images_seen": [
+    "01_front.png",
+    "02_right.png",
+    "03_back.png",
+    "04_top.png",
+    "05_clay_front.png",
+    "06_wireframe_front.png"
+  ]
+}

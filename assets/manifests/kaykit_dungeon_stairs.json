@@ -941,7 +941,7 @@
     "sha256": "48735cb35af7ba2d256b1a8ddcc44f00e6a6946d558379a12c45d1cb42b4030b"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-09-30T04:48:28+00:00",
+  "updated_at": "2026-09-30T04:55:07+00:00",
   "judgments": [
     {
       "kind": "verdict",
@@ -1041,6 +1041,88 @@
       "escalation_reason": "Sourced CC0 kit piece on a shared atlas: nothing to refine or reroll. The colour assertions measure the whole shared atlas and the lift-only correction can't darken the kit's lighter greys; the user decides between measuring colour over UV-covered texels, allowing darkening for sourced kits, recolouring the atlas, or accepting kit colours. Geometry needs no change.",
       "summary": "The stairs match the prompt and are within budget (358/1320); the holes and palette failures look like artifacts of a sourced kit piece on a shared atlas. At kit scale they measure 5.0 x 4.0 x 5.1 m against the prompt's 4 m deep, 4 m rise.",
       "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-09-30T04:55:07+00:00",
+      "packet": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-2/packet.json",
+      "packet_sha256": "b3f79d2a61156e32d710dc9df4e638fb3df5eecc7728a25cd67fb20e1106469b",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/kaykit_dungeon_stairs.glb",
+        "sha256": "57a0512e58dbe5e597bf1d4f331a4cf4a6ba58d2e56799fb9ec433918d4c62f2",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-2/01_front.png",
+          "sha256": "673a1d8a9159d3fcd08a07b71eb30e8d1d50a45ece45e59df833e769fc74be53",
+          "source": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-2/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-2/02_right.png",
+          "sha256": "25b2b23a5d42a57dd1e9071f7da40fa3cffb3ebdb2b0e6921f94aa081a047289",
+          "source": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-2/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-2/03_back.png",
+          "sha256": "bf78e2de82aaed66d64aa83bce63943465850e0c405038380731db2a694f34a9",
+          "source": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-2/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-2/04_top.png",
+          "sha256": "cf180642abff5102b11e13bb23545fd4ff8f08806dde848503aeb53835fa4d9f",
+          "source": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-2/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-2/05_clay_front.png",
+          "sha256": "2fa13cb5179abc30a8c20a0411bb67676c97313c06eeba76848f670f1f3b76f8",
+          "source": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-2/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-2/06_wireframe_front.png",
+          "sha256": "55297146a811bcf23e59594dfe81bff668d00338b09934d0855897709d7dbb1f",
+          "source": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-2/work/views/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/kaykit_dungeon_stairs/judge/mesh-2/01_front.png",
+        "assets/manifests/kaykit_dungeon_stairs/judge/mesh-2/02_right.png",
+        "assets/manifests/kaykit_dungeon_stairs/judge/mesh-2/03_back.png",
+        "assets/manifests/kaykit_dungeon_stairs/judge/mesh-2/04_top.png",
+        "assets/manifests/kaykit_dungeon_stairs/judge/mesh-2/05_clay_front.png",
+        "assets/manifests/kaykit_dungeon_stairs/judge/mesh-2/06_wireframe_front.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "concept_match",
+          "severity": "minor",
+          "observation": "The side walls are solid sloped walls ending in square-cut ends about 0.85 m above the top step rather than separate square posts; close enough to the prompt.",
+          "evidence": "02_right.png, 01_front.png, 05_clay_front.png"
+        },
+        {
+          "check": "malformed",
+          "severity": "minor",
+          "observation": "A small dark speck on one raised side-wall brick, likely atlas texture detail.",
+          "evidence": "02_right.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The KayKit stairs piece matches the brief's straight stone staircase with side walls. It is well under budget, every assertion passes, and there are no visible holes or loose fragments.",
+      "next": "proceed to the next stage"
     }
   ]
 }

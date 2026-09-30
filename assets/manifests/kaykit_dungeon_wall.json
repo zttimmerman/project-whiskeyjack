@@ -1101,7 +1101,7 @@
     "sha256": "ac51d3ee007623e2749957d92227e6fb8fffa688bd3fa5c14bcc11d574253348"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-09-30T04:48:30+00:00",
+  "updated_at": "2026-09-30T04:55:06+00:00",
   "judgments": [
     {
       "kind": "verdict",
@@ -1195,6 +1195,88 @@
       "escalation_reason": "Sourced CC0 kit piece on a shared atlas: nothing to refine or reroll. The colour assertions measure the whole shared atlas and the lift-only correction can't darken the kit's lighter greys; the user decides between measuring colour over UV-covered texels, allowing darkening for sourced kits, recolouring the atlas, or accepting kit colours. Geometry needs no change.",
       "summary": "The wall matches the prompt (4 x 1 x 4 m, raised blocks, darker cap and plinth) and is within budget (494/1320), but fails the holes limit and three palette assertions.",
       "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-09-30T04:55:06+00:00",
+      "packet": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/packet.json",
+      "packet_sha256": "64799309b722a7284a0451d9d69eb935593cd212f6f0eeb3ed82cc0086c19b00",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/kaykit_dungeon_wall.glb",
+        "sha256": "b0b8d67adc440061d73fff3ebdd4addbb3c915d98d0bcc97034bf7fd89a1723a",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/01_front.png",
+          "sha256": "06e46a54e61a25fefc1e8dfc0356136cfe90ad964a9ccd27e29a9f0b45388235",
+          "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/02_right.png",
+          "sha256": "4e2a7cf72d840de186f3b8d8c80ab1728168c206cca85229e13f40b77906fb54",
+          "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/03_back.png",
+          "sha256": "be617488fc5b3363e0e53bf78457cdeb56293c37ddefe10c79e588739ef76418",
+          "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/04_top.png",
+          "sha256": "84890e8a5e9ecad4ccf1d49524b09335127cbf2849f9db24773eee30f0c0c7d5",
+          "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/05_clay_front.png",
+          "sha256": "a20190e74fe4052928dd64403cd109b123657c1ffb27b89c13f7591782625bef",
+          "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/06_wireframe_front.png",
+          "sha256": "9da53a6dfdbf6f5f130e7a5f4b2c0909f4bdd81a207666ffe1b178b11b1d8d57",
+          "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/work/views/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/01_front.png",
+        "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/02_right.png",
+        "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/03_back.png",
+        "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/04_top.png",
+        "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/05_clay_front.png",
+        "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/06_wireframe_front.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "malformed",
+          "severity": "minor",
+          "observation": "Two raised blocks show a small triangular notch in one corner where they overlap the next block (upper-right and lower-left clusters); visible only up close, same on front and back.",
+          "evidence": "01_front.png, 03_back.png, 05_clay_front.png"
+        },
+        {
+          "check": "other",
+          "severity": "minor",
+          "observation": "The back mirrors the front rather than having its own layout; meets the brief.",
+          "evidence": "01_front.png, 03_back.png, 06_wireframe_front.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The KayKit wall matches the brief's prompt (4 x 4 x 1 m grey stone wall with raised blocks on both faces and a darker band along top and base), uses 494 of its 1320 triangles, passes every colour assertion, and no open loop shows in any view.",
+      "next": "proceed to the next stage"
     }
   ]
 }
