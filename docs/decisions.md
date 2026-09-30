@@ -21,10 +21,15 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
   - `atk_hitbox_sync` and attack commitment; the damage formula and `ttk_*`.
   - The `lvl_*` targets (ceilings, verticality, landmarks, dressing, light spacing, path clearance) and `read_*`.
   - Stability: edit-time navmesh bakes, the 9 hand-written UIDs, the E key's double binding, and 3 GDScript warnings.
-- **Next:**
-  1. A review of production tools (the user's request), before producing more content.
-  2. The playtest skill: an in-game event log, scripted scenarios as regression tests, and a fresh-context critic that uses the design bible as its rubric.
-  3. Then the backlog above, measured against the targets.
+- **Next (the order agreed in `docs/tools-review-2026-09.md`):**
+  - **Phase A, foundations:**
+    1. CI (godot-ci 4.7.2);
+    2. gdUnit4, the fixed-fps replay harness and the event log (the playtest skill's backbone);
+    3. the edit-time navmesh bake and clearance check;
+    4. the downloaded-asset import path.
+  - **Phase B, trials:** Phantom Camera against our own rig; func_godot `.map` crypts; Material Maker textures; Dialogue Manager.
+  - **Phase C, content:** CC0 kits (KayKit, Quaternius, Kenney), plus UAL2 Source ($14.99; the user buys it).
+  - **Then** the backlog above, measured against the design-bible targets.
 - **Open questions:**
   - Is `OverhandThrow` acceptable as the Back-file's bow attack, or buy the UAL2 tier with `Bow_*`?
   - Is the player's sword a new asset, or keep reusing the Levy Blade?
