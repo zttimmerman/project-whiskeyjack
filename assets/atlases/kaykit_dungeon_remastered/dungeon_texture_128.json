@@ -1,0 +1,96 @@
+{
+  "atlas_source": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/texture/dungeon_texture.png",
+  "texture_size": 128,
+  "palette_targets": {
+    "Wet Slate": "#736B66",
+    "Rain Stone": "#4D4740",
+    "Peat Black": "#2E2926",
+    "Barrow Oak": "#8C5933",
+    "Saddle Leather": "#4A2A10",
+    "Blackened Iron": "#242424"
+  },
+  "script_sha256": "11ffc69675698b1454b74ff9bbf772f6340aeed0ccea808acf97c47ade2b2ddb",
+  "atlas_source_sha256": "f9ae182518f908bd09461a56a430b9ca7369812ac10890224cc6f32e7da3e1ee",
+  "atlas_sha256": "aafa7471709862536638becc60997c8f466300c3382e0261cc2be9a9120e64f1",
+  "source_pixels_sha256": "ff7a2f8ec0452c70e60d0b8ad7b4e2f19fe04471f8caa2431a61073c5825981a",
+  "size_before": [
+    1024,
+    1024
+  ],
+  "size_after": [
+    128,
+    128
+  ],
+  "palette_correction": [
+    {
+      "image": "dungeon_texture.png",
+      "size": [
+        128,
+        128
+      ],
+      "groups": [
+        {
+          "color": "Wet Slate",
+          "target": "#736B66",
+          "share": 0.4946,
+          "median_before": "#999999",
+          "delta_e_before": 18.0,
+          "applied": true,
+          "median_after": "#9A9996",
+          "delta_e_after": 17.7
+        },
+        {
+          "color": "Rain Stone",
+          "target": "#4D4740",
+          "share": 0.0659,
+          "median_before": "#4B4B4A",
+          "delta_e_before": 5.0,
+          "applied": true,
+          "median_after": "#504A43",
+          "delta_e_after": 1.3
+        },
+        {
+          "color": "Peat Black",
+          "target": "#2E2926",
+          "share": 0.0146,
+          "applied": false,
+          "reason": "covers 1.5% (< 3%); not really present"
+        },
+        {
+          "color": "Barrow Oak",
+          "target": "#8C5933",
+          "share": 0.3535,
+          "median_before": "#D3875E",
+          "delta_e_before": 22.3,
+          "applied": true,
+          "median_after": "#CF8962",
+          "delta_e_after": 21.5
+        },
+        {
+          "color": "Saddle Leather",
+          "target": "#4A2A10",
+          "share": 0.0098,
+          "applied": false,
+          "reason": "covers 1.0% (< 3%); not really present"
+        },
+        {
+          "color": "Blackened Iron",
+          "target": "#242424",
+          "share": 0.0615,
+          "median_before": "#222528",
+          "delta_e_before": 2.4,
+          "applied": true,
+          "median_after": "#252524",
+          "delta_e_after": 0.2
+        }
+      ]
+    }
+  ],
+  "tool_versions": {
+    "python": "3.14.7",
+    "blender": "Blender 5.0.1",
+    "godot": "4.7.2.stable.official.ed1daf0bf",
+    "tripo": "0.5.1"
+  },
+  "built_at": "2026-09-30T03:49:22+00:00"
+}

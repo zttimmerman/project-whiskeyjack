@@ -1,0 +1,40 @@
+{
+  "verdict": "escalate",
+  "summary": "The tile's geometry, scale and budget match the brief and the rendered stone reads dark brownish grey, but three palette assertions fail. They appear to measure the whole shared KayKit atlas, not the part of it this tile uses, so the user has to decide whether to accept them.",
+  "findings": [
+    {
+      "check": "color",
+      "severity": "major",
+      "observation": "Barrow Oak fails before correction (22.3 > 20) and after correction (21.5 > 12). The group's median is orange-tan #D3875E and it covers 35% of the texture. No orange, tan or brown surface appears anywhere on the tile in any view. The texture is the shared pack atlas, so this 35% share is almost certainly atlas area used by other kit pieces; the assertion is misleading for this asset.",
+      "evidence": "assertions 'palette color Barrow Oak close before correction', 'palette color Barrow Oak within tolerance after correction'; metrics.color_vs_palette; 04_top.png, 01_front.png"
+    },
+    {
+      "check": "color",
+      "severity": "major",
+      "observation": "Wet Slate fails after correction (17.7 > 12). The group's median is neutral light grey #999999 -> #9A9996, covering 49% of the texture. The tile never renders that light grey; its visible color is a darker brownish grey close to Rain Stone. This share looks like unused atlas area.",
+      "evidence": "assertion 'palette color Wet Slate within tolerance after correction'; metrics.dominant_palette_group; 04_top.png"
+    },
+    {
+      "check": "malformed",
+      "severity": "minor",
+      "observation": "1 open boundary loop, within the limit of 10; most likely an open underside, normal for a kit floor tile. No bottom view to confirm.",
+      "evidence": "assertion 'holes (welded boundary loops)'; metrics.mesh.holes_boundary_loops; 01_front.png, 02_right.png, 06_wireframe_front.png"
+    }
+  ],
+  "escalation_reason": "Three color assertions fail (Wet Slate after correction; Barrow Oak before and after). The palette groups seem to come from the whole shared KayKit atlas, and neither color appears on the rendered tile. The user decides whether to accept the tile despite the atlas-level measurement, or to have the color check run on the tile's own UV region first. No edit to the asset is indicated.",
+  "questions_answered": [
+    "No concept; judged against the brief's prompt. Square 4 m tile, 0.15 m thick, octagon flags with diamond flags between, dark brownish-grey stone: all present.",
+    "Nothing malformed; 1 open boundary loop within limit, probably the underside.",
+    "All pass: 188 triangles against 1320, one 128x128 albedo texture, 4.0 x 4.0 x 0.15 m.",
+    "Rain Stone and Blackened Iron pass; Wet Slate after (17.7), Barrow Oak before (22.3) and after (21.5) fail, from atlas regions this tile doesn't use.",
+    "Not applicable: static prop."
+  ],
+  "images_seen": [
+    "01_front.png",
+    "02_right.png",
+    "03_back.png",
+    "04_top.png",
+    "05_clay_front.png",
+    "06_wireframe_front.png"
+  ]
+}
