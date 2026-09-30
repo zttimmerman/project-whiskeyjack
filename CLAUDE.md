@@ -44,7 +44,8 @@ res://
 │   └── AudioManager.gd      # Audio buses, music, SFX helpers
 ├── addons/
 │   ├── stylized_materials/  # glTF import extension: specular 0 on every imported material
-│   └── godot_ai/            # Godot MCP editor plugin, pinned v4.2.3 (see Godot MCP); never updated in place
+│   ├── godot_ai/            # Godot MCP editor plugin, pinned v4.2.3 (see Godot MCP); never updated in place
+│   └── gdUnit4/             # test framework, pinned v6.2.1; never updated in place
 ├── scenes/
 │   ├── player/              # Player.tscn / Player.gd
 │   ├── enemies/             # BaseEnemy, ArcherEnemy, Projectile
@@ -57,6 +58,7 @@ res://
 │   ├── inventory/           # Inventory.gd, Item.gd
 │   ├── dialogue/            # DialogueRunner.gd (autoload)
 │   ├── stats/               # CharacterStats.gd
+│   ├── debug/               # EventLog.gd (autoload, off unless enabled)
 │   ├── pipeline.py          # asset pipeline orchestrator (asset-pipeline skill)
 │   ├── blender_cleanup.py   # pipeline clean stage (headless Blender)
 │   ├── blender_views.py     # review renders
@@ -78,13 +80,15 @@ res://
     ├── briefs/              # per-asset brief YAML (copied from the art bible)
     ├── manifests/           # per-asset pipeline manifests and judge logs (JSON committed, images local)
     ├── meshes/              # cleaned, shipped .glb files
+    ├── atlases/             # shared kit atlases, corrected once per pack
     ├── overlays/            # texture overlays composited at clean time
     ├── animations/          # Quaternius packs (CC0)
     ├── textures/
     ├── audio/
-    └── fonts/
+    ├── fonts/
+    └── sources.json         # provenance of every downloaded asset (CC0 only)
 ```
-Outside `res://`: `.claude/skills/` (asset-pipeline, tripo, playtest-branch), `.claude/agents/` (asset-judge), `.claude/hooks/` (the Godot MCP guard), `.mcp.json` (the Godot MCP server), and the gitignored `.tripo-out/` (raw Tripo downloads, spend records, scratch work).
+Outside `res://`: `.claude/skills/` (asset-pipeline, tripo, playtest-branch), `.claude/agents/` (asset-judge), `.claude/hooks/` (the Godot MCP guard), `.mcp.json` (the Godot MCP server), `.github/workflows/ci.yml` and `ci/` (CI and its baselines), `.githooks/` (pre-commit and pre-push), `tests/` (gdUnit4 suites, replay scenarios, critical paths), and the gitignored `.tripo-out/` (raw Tripo downloads, spend records, scratch work), `.downloads/` (CC0 packs) and `.replay-out/` and `reports/` (replay and test output).
 
 ---
 
@@ -249,7 +253,7 @@ For consumables, use `stats_modifier = {"heal": 30}` — the `use()` method read
 - **Commit `.uid` files:** Godot 4 generates them alongside scripts, and they should be tracked.
 
 ### What stays out of git
-- **Never commit** `.godot/` (editor and shader cache), `.DS_Store`, or `.tripo-out/` (raw downloads and scratch). All are gitignored.
+- **Never commit** `.godot/` (editor and shader cache), `.DS_Store`, `.tripo-out/` (raw downloads and scratch), `.downloads/` (CC0 packs; `assets/sources.json` records their SHA-256), or `.replay-out/` and `reports/` (replay captures and test reports). All are gitignored.
 - **Commit finished assets, not their working artifacts.** `assets/meshes/`, `assets/overlays/`, briefs and manifest JSON are committed. Pipeline evidence images under `assets/manifests/` (review renders, judge packet copies, replays, animation sheets) stay local and gitignored; the committed JSON records each image's SHA-256.
 - **Secrets never go in the repo or the remote URL.** GitHub access goes through `gh` (`gh auth login`, `gh auth setup-git`), and `origin` is the bare `https://github.com/...` URL. Check new commits for tokens before a first push.
 - **Never rewrite pushed history.** To drop files, make a removal commit (`git rm --cached` plus a `.gitignore` rule), not a rewrite.
@@ -263,7 +267,7 @@ The `addons/godot_ai` editor plugin (pinned v4.2.3, signature-verified; research
 **Which route for which work (every skill states its own Execution):**
 - **Scripted and headless, never the MCP:** anything that must reproduce exactly: the asset pipeline, the judge, the motion review, the animation library build, validation and imports. These run without an open editor.
 - **The Godot MCP:** live work in the editor or game: playtests (input, screenshots, the live scene tree, logs), diagnosing a running editor or game, and hand-authored scene, UI-layout and signal edits.
-- **Generated files are changed only by their generators**, whatever the tool (`data/animations/`, `data/rigs/`, `assets/meshes/`, `scenes/props/Held*.tscn`).
+- **Generated files are changed only by their generators**, whatever the tool (`data/animations/`, `data/rigs/`, `assets/meshes/`, `scenes/props/Held*.tscn`, and `scenes/world/*_navmesh.tres`, written only by `scripts/tools/bake_navmeshes.gd`: rerun it after changing level geometry and commit the result; CI fails a stale bake).
 
 **One editor per worktree.** The agent works in its own worktree with its own Godot editor, so the human can keep building in theirs:
 - **One server, one session per editor.** Every editor connects to the same local server as a session (`<worktree-dir>@<hex>`). Pass the agent's `session_id` on every call. Never use `session_activate`, which moves the server-global default and can point calls at the human's editor.
@@ -285,7 +289,7 @@ GODOT_AI_GUARD_PROFILE=playtest claude -p "$(cat <brief>)" --mcp-config .mcp.jso
 ```
 - **The profile** allows running, stopping, stepping and input; edits stay blocked.
 - **Briefs and reports** go in `docs/playtests/`.
-- **No lockstep in godot-ai 4.2.3.** `input_sequence` blocks until the sequence ends, and input sent to a suspended game is silently dropped. So time inputs inside one `input_sequence`, and read the outcome afterwards; don't try to observe mid-sequence. Real-time play through tool calls lets 8–20 s of game time pass per call. An in-game event log with physics frames (planned) is how outcomes get checked.
+- **No lockstep in godot-ai 4.2.3.** `input_sequence` blocks until the sequence ends, and input sent to a suspended game is silently dropped. So time inputs inside one `input_sequence`, and read the outcome afterwards; don't try to observe mid-sequence. Real-time play through tool calls lets 8–20 s of game time pass per call. The event log is how outcomes get checked: launch the agent's editor with `WHISKEYJACK_EVENT_LOG=<path>` and the game writes frame-stamped JSONL. For exact numbers, use a replay scenario instead (Testing). An input pressed during physics frame N reads as just-pressed on N+1.
 - **Input:** every gameplay input is an Input Map action polled in the physics step (`move_*`, `attack_light`, `attack_heavy`, `dodge`, `lock_on`, `interact`), so frame-timed `input_sequence` drives movement and combat alike. Only UI keys (inventory, pause, mouse look) are read in `_input`.
 - **Screenshots** reach the playtester only (there's no save-to-disk), so the report must describe them.
 
@@ -332,6 +336,8 @@ Base meshes should be **AI-generated** whenever possible, then brought within th
 - **Output URLs expire ~5 minutes after a task succeeds:** download in the same run. Resuming is file-based (raw output in the gitignored `.tripo-out/`), never task-ID-based.
 - **Prompt tips:** include "no weapons, empty hands" to avoid baked-in weapons; include "T-pose" or "A-pose" so the model can be fitted to the shared humanoid skeleton; AI may still generate unwanted items — regenerate rather than attempting mesh surgery
 - **Don't use Blender MCP's generation tools** (`mcp__blender__generate_*`, including its Rodin, Hunyuan and Tripo integrations). They bypass the manifest and credit tracking.
+
+**Sourced CC0 kits (KayKit, Quaternius, Kenney):** download with curl into the gitignored `.downloads/<pack>/`, then import with `scripts/tools/import_pack.py` (asset-pipeline skill → Sourced assets). They skip generation and run clean and validate like any asset; `assets/sources.json` is committed, and only CC0 passes validate.
 
 **Sketchfab (for sourcing pre-made assets):**
 - Search for CC0/free-license low-poly models when AI generation isn't the right fit; sourced models follow the same budget and albedo-only rules
@@ -409,7 +415,10 @@ Editing workflow:
 - **Behaviour measured in play is scenario-first.** Camera framing, encounter pacing, level metrics. Write the replay scenario (`tests/scenarios/`) and its target check first, confirm it fails at today's value, then iterate. Feel is still judged by playtests and the user.
 - **Existing code gets characterization tests before a refactor,** written after the fact, so behaviour is pinned before it changes.
 - **Commit the test before the implementation,** so the order shows in review. Throwaway spikes on scratch branches are fine, but the real branch starts with the failing test.
-- **CI requires tests to pass;** it doesn't police the order.
+- **CI requires tests to pass;** it doesn't police the order. CI (`.github/workflows/ci.yml`) must be green before merging.
+- **Running them:** `tests/run.sh` runs every gdUnit4 suite (`tests/unit/test_*.gd`; scene-reloading tests run as their own process from `tests/integration/`). A pending design target is a test with `do_skip := true, skip_reason := "pending: …"`; the implementing PR deletes the skip. Replay scenarios are `tests/scenarios/*.json`, run with `scripts/review/run_scenario.sh <scenario>` (two headless runs, compared, then metrics); each check carries a target, `pending` and a `baseline`, and the implementing PR updates the baseline and drops `pending`. `scripts/review/capture_evidence.sh <scenario>` renders an MP4, event frames and a contact sheet for review.
+- **Warnings only go down:** a new warning is fixed, never added to `ci/warnings-baseline.txt`; a fixed one's line is deleted.
+- **Git hooks** (`git config core.hooksPath .githooks`, with `pipx install gdtoolkit==4.5.0`): pre-commit runs gdformat and gdlint (config in `gdlintrc`, 120 columns) and the data lint; pre-push runs the warnings check and the tests. Format with `gdformat --line-length=120`.
 
 ---
 

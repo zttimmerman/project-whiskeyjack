@@ -4,46 +4,45 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 
 ## Session handoff (update at the end of every session)
 
-- **Main** is on Godot 4.7.2. The last session ended 2026-09-29. It covered the Godot MCP trial, the respawn fix, combat input polling, the MCP update check, the design bible and the tools review (PRs #5–#11).
-- **Start the next session with Phase A:** say *"Run Phase A per docs/plans/phase-a"*.
-  - The session orchestrates: it spawns one subagent per package, each in its own worktree with that package's brief, then reviews each PR's evidence and merges.
-  - Order: A1 alone; then A2a, A3 and A4 in parallel; then A2b after A2a.
-  - Subagents don't edit this file or CLAUDE.md. The orchestrator folds their proposed notes in at merge.
-- **Done:**
-  - Tripo image pipeline; Barrow-levy, player and Levy Bow; Quaternius animation on all three characters.
-  - Asset judge and motion review (`scripts/judge.py`, `scripts/review/motion_review.tscn`).
-  - **Godot 4.7.2** (a regression set identical to 4.6.1) and the **Godot MCP** (`addons/godot_ai`, pinned 4.2.3, guarded; CLAUDE.md → Godot MCP).
-  - **First headless playtest** of Level 1: `docs/playtests/2026-09-29-level1-first-look.md`.
-  - `playtest-branch` skill so the human can play any branch.
-- **Direction (2026-09-29):**
-  - Gameplay: Elder Scrolls / Fallout / Witcher, with Witcher-style combat, hub and spokes, and approachable difficulty with level bands.
-  - Look: the PS1/PS2-era style is unchanged.
-  - `docs/design-bible.md` governs how the game plays. Its first decisions are settled: damage ratio, dodge timing, attack commitment, an over-the-shoulder camera built as modes, enemy damage, no stamina.
+- **Main** is on Godot 4.7.2. The last session ended 2026-09-30. It ran **Phase A** (PRs #14–#21), and every package is merged.
+- **Start the next session with Phase B** (trials, below), or with the backlog items the new tooling now measures.
+- **Phase A, done:**
+  - **CI** (#14): `.github/workflows/ci.yml` runs import, validate, data-lint, lint, hooks, gdunit4, navmesh and replays on every PR. `ci/warnings-baseline.txt` (23 lines) and `ci/data-lint-baseline.txt` (1) are burn-down lists: new warnings fail, and a fixed warning's line is deleted.
+  - **gdUnit4** (#17): v6.2.1 (commit 08ffc7c), pinned. `tests/run.sh` runs every suite (about 5 s). Characterization tests cover stats, inventory, quests and saves. Pending tests (the damage ratio, enemy damage share, `ttk_levy_player`, level bands) flip on in the PRs that implement them.
+  - **Navmeshes bake at edit time** (#18): `scripts/tools/bake_navmeshes.gd` (collision faces, whole-cell agent 2.0/0.5 m); levels no longer bake at runtime. `check_path_clearance.gd` reports `lvl_path_clearance_min` from `tests/critical_paths/*.json`. Every segment passes; the narrowest is Level 2 vault → corridor C at 1.5 m.
+  - **Downloaded-asset import** (#16, #19): CC0 kits go through `scripts/tools/import_pack.py` into the gitignored `.downloads/`, with provenance in `assets/sources.json` (CC0 only, checked by validate). Six KayKit Dungeon Remastered pieces pass the judge. For sourced kits, colour is measured over each piece's UV footprint and may be darkened, the shared atlas is corrected once from the pack's combined footprints (adding a piece re-cleans the pack), and holes use `mesh_kit_max_loops_per_part` (2).
+  - **Replay harness** (#20): the `EventLog` autoload (off by default; `WHISKEYJACK_EVENT_LOG` or `--event-log`), `scripts/review/replay.tscn`, `replay_metrics.py`, and the scenarios `levy_1v1_sensible` and `central_room_pull`. Runs are deterministic; same-frame event order may vary (Jolt), which `--compare` accepts. Baselines match the design bible §9 Current column: `ttk_player_frontfile` 4, `ttk_levy_player` 34, telegraph 0 s, first-fight HP cost 6%, first-area group 4. The Corridor B archer spots the player through the central room's south wall (`detect_through_walls` = 1).
+  - **Git hooks** (#21): `.githooks/` (enable with `git config core.hooksPath .githooks`; needs `pipx install gdtoolkit==4.5.0`). pre-commit runs gdformat/gdlint/data-lint, pre-push runs the warnings check and the tests. All scripts are gdformatted at 120 columns.
+  - Also: `Player.tscn`'s script path case (#15).
+- **Decided this session (2026-09-30):**
+  - Tool-script warnings count against §8: fix the 10 GDScript warnings in the baseline in a `chore/` PR.
+  - Level scaling is a static `CharacterStats.level_scale(level)`; scaled integer stats round to nearest.
+  - Enemy attack stats get raised to meet the 8–10% enemy-damage target; the target stays.
+  - The clearance check goes `--strict` once the level fixes land.
+  - Sourced props budget: 1,320 triangles, 128 px from the kit's shared atlas (art bible). Kit scale stays 1.0 until pieces are first placed; any rescale is one factor per pack.
+  - The per-footprint colour measurement stays for sourced assets only. The floor tile's slight brown drift is accepted.
 - **Backlog, as design-bible targets:**
   - `cam_melee_occlusion`, `cam_player_in_frame`, `cam_wall_fill` and `cam_lock_both_in_frame`: the camera rework and a lock-on reticle.
-  - `enemy_melee_telegraph`, `enemy_ranged_telegraph` and `enemy_attackers_max`, plus line-of-sight detection and arrows hitting walls.
-  - `atk_hitbox_sync` and attack commitment; the damage formula and `ttk_*`.
-  - The `lvl_*` targets (ceilings, verticality, landmarks, dressing, light spacing, path clearance) and `read_*`.
-  - Stability: edit-time navmesh bakes, the 9 hand-written UIDs, the E key's double binding, and 3 GDScript warnings.
-- **Next (the order agreed in `docs/tools-review-2026-09.md`):**
-  - **Phase A, foundations:**
-    1. CI (godot-ci 4.7.2);
-    2. gdUnit4, the fixed-fps replay harness and the event log (the playtest skill's backbone);
-    3. the edit-time navmesh bake and clearance check;
-    4. the downloaded-asset import path.
+  - `enemy_melee_telegraph`, `enemy_ranged_telegraph` and `enemy_attackers_max`, plus line-of-sight detection (the replay's `detect_through_walls` is the check) and arrows hitting walls.
+  - `atk_hitbox_sync` (needs contact frames marked on clips) and attack commitment; the damage formula and `ttk_*`.
+  - The `lvl_*` targets and `read_*`. The start-room crate snag is off-path player movement, so a replay or capsule check catches it, not the navmesh.
+  - Stability: the 13 invalid hand-written UIDs, the 10 GDScript warnings, and the E key's double binding.
+  - Found in play: a levy's hit still lands on the frame it dies (hitbox deactivation is deferred).
+- **Next:**
   - **Phase B, trials:** Phantom Camera against our own rig; func_godot `.map` crypts; Material Maker textures; Dialogue Manager.
-  - **Phase C, content:** CC0 kits (KayKit, Quaternius, Kenney), plus UAL2 Source ($14.99; the user buys it).
-  - **Then** the backlog above, measured against the design-bible targets.
+  - **Phase C, content:** CC0 kits (KayKit, Quaternius, Kenney) through the import path, plus UAL2 Source ($14.99; the user buys it).
+  - **Replay follow-ups:** a two-fight route scenario for `enc_spacing_s`; camera and luminance checks in capture mode.
 - **Open questions:**
   - Is `OverhandThrow` acceptable as the Back-file's bow attack, or buy the UAL2 tier with `Bow_*`?
   - Is the player's sword a new asset, or keep reusing the Levy Blade?
   - The levy jog slides at 0.80 m/s and the Back-file walk at 0.64 (the player's run: 0.35).
-  - Renderer: *(Answered: `rendering_method="gl_compatibility"` is what's active; the Forward Plus feature tag is only the editor's default label.)*
+  - Is Level 2's 0.5 m burial platform meant to be walkable? It's above the 0.25 m climb limit, so enemies path around it.
 - **Before any Tripo spend:** read the tripo skill. The cap is 500 per session, starting at 0. The balance is 590. Costs: concept 15, multiview 10, model 50, rig 25.
 - **Tools:**
-  - `scripts/pipeline.py <id> --stage all` and `scripts/judge.py packet|record|resolve|log`;
-  - `scripts/tools/build_animation_library.gd`, `make_bone_maps.gd`, `make_held_props.gd` and `playtest-branch.sh`;
-  - review scenes in `scripts/review/`: `motion_review`, `anim_sheet`, `level1_play_capture` and `level1_compare`. They turn vsync off themselves, so they stay fast behind other windows;
+  - `scripts/pipeline.py <id> --stage all`, `scripts/judge.py packet|record|resolve|log`, and `scripts/tools/import_pack.py` for kits;
+  - `scripts/tools/build_animation_library.gd`, `make_bone_maps.gd`, `make_held_props.gd`, `bake_navmeshes.gd`, `check_path_clearance.gd` and `playtest-branch.sh`;
+  - `tests/run.sh` (gdUnit4), `scripts/review/run_scenario.sh <scenario>` (replay twice, compare, metrics) and `scripts/review/capture_evidence.sh <scenario>` (MP4, event frames, contact sheet);
+  - review scenes in `scripts/review/`: `motion_review`, `anim_sheet`, `level1_play_capture`, `level1_compare`, `replay`;
   - the Godot MCP (CLAUDE.md → Godot MCP), and headless playtests with briefs in `docs/playtests/`.
 
 ## Settled
