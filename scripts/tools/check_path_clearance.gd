@@ -91,17 +91,32 @@ func _check_level(spec: Dictionary) -> Dictionary:
 			else:
 				break
 		var seg := {
-			"from": names[i], "to": names[i + 1], "status": status,
-			"length_m": snappedf(got, 0.01), "reference_length_m": snappedf(ref, 0.01),
+			"from": names[i],
+			"to": names[i + 1],
+			"status": status,
+			"length_m": snappedf(got, 0.01),
+			"reference_length_m": snappedf(ref, 0.01),
 			"detour": snappedf(got / ref, 0.01) if got > 0.0 and ref > 0.0 else -1.0,  # -1: no path
 			"widest_clearance_m": widest,
 		}
 		level.segments.append(seg)
-		print("  %-30s %-7s %9s %9s %7s %9s" % [
-			"%s -> %s" % [names[i], names[i + 1]], status,
-			"%.2f m" % got if got >= 0.0 else "-", "%.2f m" % ref if ref >= 0.0 else "-",
-			"%.2f" % (got / ref) if got > 0.0 and ref > 0.0 else "-",
-			(">= %.1f m" if widest == (SWEEP_RADII[-1] * 2.0) else "%.1f m") % widest if widest > 0.0 else "< %.1f m" % CLEARANCE_M])
+		print(
+			(
+				"  %-30s %-7s %9s %9s %7s %9s"
+				% [
+					"%s -> %s" % [names[i], names[i + 1]],
+					status,
+					"%.2f m" % got if got >= 0.0 else "-",
+					"%.2f m" % ref if ref >= 0.0 else "-",
+					"%.2f" % (got / ref) if got > 0.0 and ref > 0.0 else "-",
+					(
+						(">= %.1f m" if widest == (SWEEP_RADII[-1] * 2.0) else "%.1f m") % widest
+						if widest > 0.0
+						else "< %.1f m" % CLEARANCE_M
+					)
+				]
+			)
+		)
 	return level
 
 
@@ -128,8 +143,10 @@ func _segment_lengths(navmesh: NavigationMesh, points: Array[Vector3]) -> Array[
 	var synced := false
 	for _i in 120:
 		await physics_frame
-		if NavigationServer3D.map_get_iteration_id(map) > 0 \
-				and NavigationServer3D.map_get_closest_point_owner(map, points[0]).is_valid():
+		if (
+			NavigationServer3D.map_get_iteration_id(map) > 0
+			and NavigationServer3D.map_get_closest_point_owner(map, points[0]).is_valid()
+		):
 			synced = true
 			break
 	var out: Array[float] = []
@@ -141,8 +158,11 @@ func _segment_lengths(navmesh: NavigationMesh, points: Array[Vector3]) -> Array[
 		if out.size() == points.size() - 1:
 			break
 		var path := NavigationServer3D.map_get_path(map, points[i], points[i + 1], true)
-		if path.is_empty() or _flat_distance(path[0], points[i]) > REACH_TOLERANCE \
-				or _flat_distance(path[-1], points[i + 1]) > REACH_TOLERANCE:
+		if (
+			path.is_empty()
+			or _flat_distance(path[0], points[i]) > REACH_TOLERANCE
+			or _flat_distance(path[-1], points[i + 1]) > REACH_TOLERANCE
+		):
 			out.append(-1.0)
 			continue
 		var length := 0.0

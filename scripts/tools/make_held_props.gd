@@ -10,12 +10,14 @@ extends SceneTree
 # the blade's pommel is at its origin, the bow's grip at its origin.
 
 const PROPS := {
-	"res://scenes/props/HeldLevyBlade.tscn": {
+	"res://scenes/props/HeldLevyBlade.tscn":
+	{
 		"glb": "res://assets/meshes/prop_levy_blade.glb",
 		"rotation_deg": Vector3(0, 0, -90),  # blade (+Y) along the thumb (+X)
 		"offset": Vector3(-0.075, 0.08, 0.02),  # grip centre (7.5 cm from the pommel) in the fist
 	},
-	"res://scenes/props/HeldLevyBow.tscn": {
+	"res://scenes/props/HeldLevyBow.tscn":
+	{
 		"glb": "res://assets/meshes/prop_levy_bow.glb",
 		# Left hand: the thumb side is local -X. Limbs (+Y) along the thumb, so the bow stands upright
 		# in a fist; the string (+X, 10 cm off the limbs) faces back along the arm (-Y), toward the archer.

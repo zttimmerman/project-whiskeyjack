@@ -27,6 +27,22 @@ The input map is already configured in `project.godot` — no manual setup neede
 
 ---
 
+## Development checks
+
+Enable the git hooks once per clone:
+
+```bash
+pipx install gdtoolkit==4.5.0
+git config core.hooksPath .githooks
+```
+
+- **pre-commit** (about a second): `gdformat --check` and `gdlint` on staged scripts (config in `gdlintrc`), and `ci/data_lint.py` when dialogues or quests change. Fix formatting with `gdformat --line-length=120 <files>`.
+- **pre-push** (under a minute): Godot's errors and warnings against `ci/warnings-baseline.txt`, then the gdUnit4 suites (`tests/run.sh`).
+
+CI runs the same checks on every PR; `--no-verify` skips the hooks, never CI.
+
+---
+
 ## Controls
 
 ### Movement

@@ -99,6 +99,7 @@ func _connect_player() -> void:
 
 # ── Signal handlers ───────────────────────────────────────────────────────────
 
+
 func _on_health_changed(current_hp: int, max_hp: int) -> void:
 	var is_damage := (_prev_hp >= 0) and (current_hp < _prev_hp)
 	_prev_hp = current_hp
@@ -139,6 +140,7 @@ func _on_quest_completed(_quest_id: String) -> void:
 
 # ── Display helpers ───────────────────────────────────────────────────────────
 
+
 func _update_hp(current_hp: int, max_hp: int) -> void:
 	hp_bar.max_value = max_hp
 	hp_bar.value = current_hp
@@ -160,6 +162,6 @@ func _flash_damage() -> void:
 	# Briefly bright-red, then restore normal HP bar color
 	_apply_bar_style(hp_bar, Color(1.0, 0.25, 0.2), Color(0.15, 0.04, 0.04))
 	_flash_tween.tween_interval(FLASH_DURATION)
-	_flash_tween.tween_callback(func() -> void:
-		_apply_bar_style(hp_bar, Color(0.78, 0.12, 0.08), Color(0.15, 0.04, 0.04))
+	_flash_tween.tween_callback(
+		func() -> void: _apply_bar_style(hp_bar, Color(0.78, 0.12, 0.08), Color(0.15, 0.04, 0.04))
 	)

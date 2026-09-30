@@ -51,7 +51,12 @@ func _run() -> void:
 	_save_manager.save_game()
 	var saved: Dictionary = _read_json(path)
 	var saved_pos := Vector3(saved.player.position[0], saved.player.position[1], saved.player.position[2])
-	print("saved: scene=%s version=%s killed=%s pos=%s view=%s" % [saved.scene, saved.version, saved.world.killed_enemies, saved_pos, saved.player.view])
+	print(
+		(
+			"saved: scene=%s version=%s killed=%s pos=%s view=%s"
+			% [saved.scene, saved.version, saved.world.killed_enemies, saved_pos, saved.player.view]
+		)
+	)
 	_check(saved.scene == LEVEL, "save records the scene")
 	_check(Array(saved.world.killed_enemies) == KILLED_BEFORE_SAVE, "save lists the pre-save kills")
 
@@ -68,13 +73,28 @@ func _run() -> void:
 	_check(back != null and not back.is_dead(), "%s (killed after the save) is back" % KILLED_AFTER_SAVE)
 	_check(level.get_node_or_null("EnemyExit1") != null, "untouched enemy is present")
 	var d := player.global_position - saved_pos
-	print("respawned: pos=%s (delta %s) view=%s rig_yaw=%.4f hp=%d/%d" % [player.global_position, d, player.get_view_state(), player.camera_rig.global_rotation.y, player.stats.current_hp, player.stats.max_hp])
+	print(
+		(
+			"respawned: pos=%s (delta %s) view=%s rig_yaw=%.4f hp=%d/%d"
+			% [
+				player.global_position,
+				d,
+				player.get_view_state(),
+				player.camera_rig.global_rotation.y,
+				player.stats.current_hp,
+				player.stats.max_hp
+			]
+		)
+	)
 	_check(Vector2(d.x, d.z).length() < 0.05 and absf(d.y) < 0.1, "player is back at the saved position")
 	var view: Dictionary = player.get_view_state()
 	_check(is_equal_approx(view.facing, VIEW.facing), "player facing restored")
 	_check(is_equal_approx(view.camera_yaw, VIEW.camera_yaw), "camera yaw restored")
 	_check(is_equal_approx(view.camera_pitch, VIEW.camera_pitch), "camera pitch restored")
-	_check(absf(angle_difference(player.camera_rig.global_rotation.y, VIEW.camera_yaw)) < 0.001, "camera rig world heading matches the save")
+	_check(
+		absf(angle_difference(player.camera_rig.global_rotation.y, VIEW.camera_yaw)) < 0.001,
+		"camera rig world heading matches the save"
+	)
 	_check(player.stats.current_hp == player.stats.max_hp, "respawn at full HP")
 
 	# A later save still carries the kills the loaded save listed
@@ -102,7 +122,10 @@ func _run() -> void:
 	var fresh: Node = (load(LEVEL) as PackedScene).instantiate()
 	var spawn: Vector3 = fresh.get_node("Player").position
 	fresh.free()
-	_check(Vector2(player.global_position.x - spawn.x, player.global_position.z - spawn.z).length() < 0.05, "player at the scene's spawn, not the foreign save's position")
+	_check(
+		Vector2(player.global_position.x - spawn.x, player.global_position.z - spawn.z).length() < 0.05,
+		"player at the scene's spawn, not the foreign save's position"
+	)
 
 	# ── Clean up; the real save must be untouched ──
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))

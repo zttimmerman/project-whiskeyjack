@@ -44,13 +44,17 @@ func test_event_log_off_by_default_writes_nothing() -> void:
 func test_event_log_path_from_user_arg() -> void:
 	assert_str(log_node.resolve_path(PackedStringArray(["--event-log=%s" % LOG_PATH]), "")).is_equal(LOG_PATH)
 	# The replay command line passes it as two args
-	assert_str(log_node.resolve_path(PackedStringArray(["--scenario", "x.json", "--event-log", LOG_PATH]), "")).is_equal(LOG_PATH)
+	(
+		assert_str(log_node.resolve_path(PackedStringArray(["--scenario", "x.json", "--event-log", LOG_PATH]), ""))
+		. is_equal(LOG_PATH)
+	)
 
 
 func test_event_log_path_from_env_and_arg_wins() -> void:
 	assert_str(log_node.resolve_path(PackedStringArray(), LOG_PATH)).is_equal(LOG_PATH)
-	assert_str(log_node.resolve_path(PackedStringArray(["--event-log=user://from_arg.jsonl"]), LOG_PATH)) \
-		.is_equal("user://from_arg.jsonl")
+	assert_str(log_node.resolve_path(PackedStringArray(["--event-log=user://from_arg.jsonl"]), LOG_PATH)).is_equal(
+		"user://from_arg.jsonl"
+	)
 
 
 func test_event_log_writes_jsonl_stamped_with_physics_frames() -> void:

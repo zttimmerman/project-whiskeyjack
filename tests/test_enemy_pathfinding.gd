@@ -47,14 +47,14 @@ func _open(path: String) -> Node:
 	var probe: Node = load(path).instantiate()
 	var navmesh: NavigationMesh = probe.get_node("NavigationRegion3D").navigation_mesh
 	var expected := path.get_basename() + "_navmesh.tres"
-	_check(navmesh != null and navmesh.resource_path == expected,
-		"%s region uses %s" % [path.get_file(), expected])
-	_check(navmesh != null and navmesh.get_polygon_count() > 0,
-		"%s navmesh has polygons" % path.get_file())
+	_check(navmesh != null and navmesh.resource_path == expected, "%s region uses %s" % [path.get_file(), expected])
+	_check(navmesh != null and navmesh.get_polygon_count() > 0, "%s navmesh has polygons" % path.get_file())
 	var script_path: String = probe.get_script().resource_path
 	probe.free()
-	_check(not FileAccess.get_file_as_string(script_path).contains("bake_navigation_mesh"),
-		"%s doesn't bake its navmesh at runtime" % script_path.get_file())
+	_check(
+		not FileAccess.get_file_as_string(script_path).contains("bake_navigation_mesh"),
+		"%s doesn't bake its navmesh at runtime" % script_path.get_file()
+	)
 	change_scene_to_file(path)
 	for _i in 30:
 		await process_frame
@@ -94,15 +94,22 @@ func _check_chase(level: Node) -> void:
 			break
 	_check(bent_path, "the chaser's navigation path bends around the pillar")
 	_check(max_offset > 0.5, "the chaser walked around the pillar (max |dz| %.2f m)" % max_offset)
-	_check(reached, "the chaser reached attack range of the player within %.0f s (at %.2f m)" % [
-		CHASE_TIMEOUT_S, _flat(enemy.global_position).distance_to(_flat(player.global_position))])
+	_check(
+		reached,
+		(
+			"the chaser reached attack range of the player within %.0f s (at %.2f m)"
+			% [CHASE_TIMEOUT_S, _flat(enemy.global_position).distance_to(_flat(player.global_position))]
+		)
+	)
 
 
 func _check_level2_path(level: Node) -> void:
 	var region: NavigationRegion3D = level.get_node("NavigationRegion3D")
 	var path := NavigationServer3D.map_get_path(region.get_navigation_map(), LEVEL2_SPAWN, LEVEL2_END, true)
-	_check(not path.is_empty() and _flat(path[-1]).distance_to(_flat(LEVEL2_END)) < 0.5,
-		"Level2 has a path from the spawn to the end trigger")
+	_check(
+		not path.is_empty() and _flat(path[-1]).distance_to(_flat(LEVEL2_END)) < 0.5,
+		"Level2 has a path from the spawn to the end trigger"
+	)
 
 
 func _physics_frames(count: int) -> void:

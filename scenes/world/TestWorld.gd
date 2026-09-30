@@ -62,6 +62,7 @@ func _input(event: InputEvent) -> void:
 
 # ── Signal handlers ───────────────────────────────────────────────────────────
 
+
 func _on_health_changed(current_hp: int, max_hp: int) -> void:
 	print("  health_changed  →  %d / %d" % [current_hp, max_hp])
 
@@ -85,10 +86,19 @@ func _on_leveled_up(new_level: int) -> void:
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
+
 func _print_stats() -> void:
-	print("  HP %d/%d  ATK %d  DEF %d  LVL %d  XP %d/%d" % [
-		_stats.current_hp, _stats.max_hp,
-		_stats.attack, _stats.defense,
-		_stats.level,
-		_stats.experience, _stats.experience_to_next_level
-	])
+	print(
+		(
+			"  HP %d/%d  ATK %d  DEF %d  LVL %d  XP %d/%d"
+			% [
+				_stats.current_hp,
+				_stats.max_hp,
+				_stats.attack,
+				_stats.defense,
+				_stats.level,
+				_stats.experience,
+				_stats.experience_to_next_level
+			]
+		)
+	)

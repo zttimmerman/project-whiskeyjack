@@ -1,5 +1,6 @@
 extends RefCounted
 
+
 ## Attaches held props (socket name -> PackedScene) to a character model's skeleton. Each prop goes
 ## on a BoneAttachment3D for the bone its socket maps to in the rig's SocketMap, so bone names live
 ## only in the SocketMap. Prop alignment lives in the prop scene (a wrapper with a child Transform3D).
