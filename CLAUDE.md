@@ -1,7 +1,7 @@
 # CLAUDE.md — 3D Low-Poly Action RPG (Godot 4)
 
 ## Project Overview
-This is a 3D action RPG built in Godot 4, inspired by early PS1/PS2 era games (think early Final Fantasy, Legend of Dragoon, early Zelda 3D). The look is stylized low-poly with generous budgets: bold colors, readable silhouettes, and simple albedo-only textures over realism. Combat is real-time action in the style of Zelda / early Dark Souls.
+This is a 3D open-world RPG built in Godot 4. **Gameplay** follows the Elder Scrolls, Fallout (gameplay, not setting) and The Witcher: exploration, quests with choices, character growth, hub-and-spoke areas built to open up later. **Combat** is Witcher-style third-person action: lock-on, dodge, light and heavy attacks, RPG stats underneath. **The look** draws on early PS1/PS2-era games (early Final Fantasy, Legend of Dragoon, early Zelda 3D): stylized low-poly with generous budgets, bold colors, readable silhouettes, and simple albedo-only textures over realism. **`docs/design-bible.md` governs how it plays** (camera, combat, encounters, levels, RPG systems, with measurable targets). `docs/art-bible.md` governs how it looks, and `docs/world/` governs what it's about.
 
 ---
 
@@ -72,7 +72,7 @@ res://
 │   ├── quests/              # JSON quest definitions
 │   ├── rigs/                # BoneMaps and per-rig SocketMaps
 │   └── animations/          # per-character AnimationLibraries and shared clips (built, don't hand-edit)
-├── docs/                    # art-bible.md (budgets, palette, briefs, judge tolerances), decisions.md (handoff), world/,
+├── docs/                    # design-bible.md (gameplay targets), art-bible.md (budgets, palette, briefs, judge tolerances), decisions.md (handoff), world/,
 │                            # playtests/ (briefs and reports), godot-ai-integration.md (MCP research and permission table)
 └── assets/
     ├── briefs/              # per-asset brief YAML (copied from the art bible)
