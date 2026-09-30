@@ -82,8 +82,12 @@ func _ready() -> void:
 		_fail("the scene has no player")
 		return
 	_place_player()
-	# Mouse look and UI keys are read in _input; a render run ignores the real mouse and keyboard there
-	# (gameplay actions are polled, so a keypress on the window still reaches them: hands off)
+	# The replay owns every action: with the Input Map's keys, buttons and pad axes erased, a real
+	# device can't reach the game (a rendered run once got a dodge from a modifier key's state as the
+	# window opened); Input.action_press() still drives the actions. Mouse look reads raw motion in
+	# the player's _input, so that is off too.
+	for action in InputMap.get_actions():
+		InputMap.action_erase_events(action)
 	_player.set_process_input(false)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	_player.died.connect(_on_player_died)
