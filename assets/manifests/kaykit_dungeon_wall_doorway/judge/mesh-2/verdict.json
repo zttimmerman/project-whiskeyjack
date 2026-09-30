@@ -1,0 +1,33 @@
+{
+  "verdict": "pass",
+  "summary": "The KayKit wall_doorway matches the brief's prompt: a 4 m grey stone wall with an arched doorway and a separate plank door with two battens and an iron ring. It is in budget, its colors are in tolerance, no open loop is visible in any view, and every assertion passes.",
+  "findings": [
+    {
+      "check": "concept_match",
+      "severity": "minor",
+      "observation": "The arch is a flattened segmental arch with rounded shoulders, not a true semicircle; it still reads as an arched doorway.",
+      "evidence": "01_front.png, 05_clay_front.png"
+    },
+    {
+      "check": "other",
+      "severity": "minor",
+      "observation": "Door, battens and ring are mirrored on the back face, so the door looks the same from both sides; this is the kit's construction.",
+      "evidence": "01_front.png vs 03_back.png"
+    }
+  ],
+  "questions_answered": [
+    "All prompt elements present; arch shape changed slightly.",
+    "15 open loops across 19 parts, at most 2 on any part; none visible.",
+    "Yes: 1068/1320, 128 px, 4 m.",
+    "Yes: Wet Slate 16.1 -> 2.2, Rain Stone 0.9 after, Barrow Oak 10.2 -> 1.2.",
+    "Not applicable."
+  ],
+  "images_seen": [
+    "01_front.png",
+    "02_right.png",
+    "03_back.png",
+    "04_top.png",
+    "05_clay_front.png",
+    "06_wireframe_front.png"
+  ]
+}

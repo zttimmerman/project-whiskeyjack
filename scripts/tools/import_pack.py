@@ -13,8 +13,8 @@
 the piece's assets/sources.json entry (URL, author, licence, pack version, SHA-256 of the source file), then
 runs `scripts/pipeline.py <id> --stage all`, and reports the triangle count and any budget failure per piece.
 
-Numbers come only from docs/art-bible.md: --budget names the art-bible section whose **Budget:** line
-gives the triangle budget and texture size. Idempotent: the same inputs write the same briefs and entries,
+Numbers come only from docs/art-bible.md: --budget names the art-bible budget line (**<label>:**) or the
+section whose **Budget:** line gives the triangle budget and texture size. Idempotent: the same inputs write the same briefs and entries,
 and the pipeline skips stages whose inputs haven't changed. Exit 0 all pieces passed, 2 any failed, 1 error.
 Downloads are never made here: fetch the pack with curl from its official URL first.
 """
@@ -55,16 +55,19 @@ def find_piece(pack_dir, name, fmt):
 
 
 def budget_from_art_bible(heading):
-    """(triangle_budget, texture_size) from the **Budget:** line of the art-bible section whose heading
-    contains `heading` (for example "Brief: Levy Bow"). The art bible is the only source of these numbers."""
+    """(triangle_budget, texture_size) from the art bible: the budget line labelled **<heading>:** (for
+    example "Sourced props (kit dressing)" under Budgets), or else the **Budget:** line of the section whose
+    heading contains `heading` (for example "Brief: Levy Bow"). The art bible is the only source of these numbers."""
     text = P.ART_BIBLE.read_text()
-    m = re.search(rf"^(#+) [^\n]*{re.escape(heading)}[^\n]*$", text, re.M)
-    if not m:
-        raise ImportError_(f"docs/art-bible.md has no heading containing {heading!r}")
-    rest = text[m.end():]
-    end = re.search(rf"^#{{1,{len(m.group(1))}}} ", rest, re.M)
-    section = rest[:end.start() if end else len(rest)]
-    line = next((l for l in section.splitlines() if "**Budget:**" in l), None)
+    line = next((l for l in text.splitlines() if f"**{heading}:**" in l), None)
+    if line is None:
+        m = re.search(rf"^(#+) [^\n]*{re.escape(heading)}[^\n]*$", text, re.M)
+        if not m:
+            raise ImportError_(f"docs/art-bible.md has no budget line **{heading}:** and no heading containing {heading!r}")
+        rest = text[m.end():]
+        end = re.search(rf"^#{{1,{len(m.group(1))}}} ", rest, re.M)
+        section = rest[:end.start() if end else len(rest)]
+        line = next((l for l in section.splitlines() if "**Budget:**" in l), None)
     tris = re.search(r"≤\s*([\d,]+)\s*triangles", line or "")
     tex = re.search(r"(\d+)\s*[×x]\s*\1", line or "")
     if not (tris and tex):
@@ -116,7 +119,7 @@ def main():
     for k in ("title", "homepage", "url", "author", "license", "version", "archive", "license_file"):
         ap.add_argument(f"--{k.replace('_', '-')}")
     ap.add_argument("--palette", help="comma-separated art-bible palette names for the whole pack")
-    ap.add_argument("--budget", help="art-bible heading whose **Budget:** line applies, e.g. 'Brief: Levy Bow'")
+    ap.add_argument("--budget", help="art-bible budget label or heading, e.g. 'Sourced props (kit dressing)'")
     ap.add_argument("--source-scale", type=float, help="the kit's uniform scale into metres (keeps its grid)")
     ap.add_argument("--prefix", help="asset-id prefix, e.g. kaykit_dungeon_")
     ap.add_argument("--format", choices=sorted(FORMATS), help="default source format")

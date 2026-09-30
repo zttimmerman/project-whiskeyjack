@@ -1,0 +1,555 @@
+{
+  "asset_id": "kaykit_dungeon_wall",
+  "stage": "mesh",
+  "created_at": "2026-09-30T04:49:32+00:00",
+  "replay": null,
+  "packet_dir": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2",
+  "brief": {
+    "type": "prop",
+    "brief": "Level dressing from KayKit Dungeon Remastered (CC0-1.0), piece 'wall'. Keeps the kit's axes, origin and grid.",
+    "prompt": "A straight dungeon wall segment, 4 m wide, 4 m tall and 1 m thick, of grey dressed stone with a few raised blocks on each face and a darker stone band along the top and the base.",
+    "face_limit": null,
+    "triangle_budget": 1320,
+    "texture_size": 128,
+    "target_size_m": null,
+    "pivot": "source",
+    "tip_end": null,
+    "rigid_parts": null,
+    "skirt_reweight": null,
+    "source": "download",
+    "source_scale": 1.0,
+    "orientation": "source"
+  },
+  "brief_palette": {
+    "Wet Slate": {
+      "hex": "#736B66",
+      "plain": "mid warm grey"
+    },
+    "Rain Stone": {
+      "hex": "#4D4740",
+      "plain": "dark brownish grey"
+    },
+    "Peat Black": {
+      "hex": "#2E2926",
+      "plain": "very dark brown-black"
+    },
+    "Barrow Oak": {
+      "hex": "#8C5933",
+      "plain": "warm mid-brown"
+    },
+    "Saddle Leather": {
+      "hex": "#4A2A10",
+      "plain": "dark reddish-brown"
+    },
+    "Blackened Iron": {
+      "hex": "#242424",
+      "plain": "near-black charcoal"
+    }
+  },
+  "art_bible": {
+    "brief_section": null,
+    "form_block": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art.",
+    "concept_lighting_block": "Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights.",
+    "tolerances": "## Judge tolerances\n\nThe numeric assertions the asset judge checks (`scripts/judge.py`, which reads this table; nothing else holds these numbers). \u0394E is CIE76 in Lab. Each value is set on principle and checked against the replays in `assets/manifests/judge_replays/`: the known-bad inputs fail, and where a shipped asset or clip fails too, it's a real finding recorded in `docs/decisions.md`, not a reason to loosen the limit.\n\n| Check | Limit | Applies to | Why |\n|---|---|---|---|\n| `concept_palette_de` | 25 | concept | A brief palette color counts as present when one of the concept's main colors (\u2265 3% of the figure) sits within this distance. Loose on purpose: the player's approved \"deep dark teal\" rendered as navy #14313F. |\n| `color_min_share` | 0.05 | model, mesh | Colors covering less of the concept (or texture) than this are details, not checked. |\n| `color_kept_ratio` | 0.33 | model, mesh | A concept color must keep at least this fraction of its concept share in the texture, or the model lost it. |\n| `color_dab_after` | 5 | model, mesh | Hue/saturation distance (Lab a, b) between a corrected texture cluster and its concept color. |\n| `palette_de_before` | 20 | model, mesh | Concept-less assets (sourced ones measured over their UV footprint): distance before correction for a palette group covering at least `color_min_share`. Correction can repaint a wrong color: blade attempt 1's olive-green blade grouped under Old Bone (27.5 \u0394E) and came out bone-colored. |\n| `palette_de_after` | 12 | model, mesh | Concept-less assets: distance between a corrected palette group's median and its palette color. |\n| `mesh_max_holes` | 10 | model, mesh (generated) | Open boundary loops after welding. Fewer are reported for the judge to weigh (the blade's 4 grip slits are recorded and accepted). |\n| `mesh_kit_max_loops_per_part` | 2 | mesh (**sourced kits**, the rule for them instead of `mesh_max_holes`) | Open boundary loops on any one welded part. Kit pieces are open-backed shells: a KayKit wall is a body plus 22 raised blocks set flush on its face, each open at the back (23 loops), and a barrel hoop is an open band (2). Allowed only where no loop is visible from the judge's views, which is the judge's call. |\n| `motion_root_travel_m` | 0.15 | death, in-place clips | Horizontal Hips travel from the first frame. The pre-fix `Death01` travelled 0.45\u20130.51 m; shipped idles and runs stay under 0.07. |\n| `motion_foot_slide_mps` | 0.5 | in-place clips | 90th-percentile ground-relative speed of a planted foot (near its lowest point and not moving vertically), at the clip's gameplay speed: 10% of the player's run. Reported only for action clips (attacks and rolls pivot on planted feet on purpose) and deaths (the feet kick out as the body collapses onto its pinned Hips; `Death01` can't meet both this and the travel limit, since keeping 30% of its travel still slid 0.80 m/s). |\n| `motion_bind_deviation_m` | 1.8 | every clip | Largest vertex displacement from the bind pose in the Hips frame; a character's height, because no attached vertex gets that far from the hips. Normal clips reach 0.5\u20131.6 (arms swinging from the T-pose). |\n| `motion_edge_stretch` | 1.0 | every clip | Largest relative length change of any mesh edge of at least 1 cm from the bind pose: an edge has doubled. Rigid-part characters read 0. |"
+  },
+  "design_notes": [],
+  "images": [
+    {
+      "role": "front",
+      "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/01_front.png",
+      "sha256": "06e46a54e61a25fefc1e8dfc0356136cfe90ad964a9ccd27e29a9f0b45388235",
+      "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/work/views/front.png",
+      "source_sha256": "06e46a54e61a25fefc1e8dfc0356136cfe90ad964a9ccd27e29a9f0b45388235",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "right",
+      "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/02_right.png",
+      "sha256": "4e2a7cf72d840de186f3b8d8c80ab1728168c206cca85229e13f40b77906fb54",
+      "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/work/views/right.png",
+      "source_sha256": "4e2a7cf72d840de186f3b8d8c80ab1728168c206cca85229e13f40b77906fb54",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "back",
+      "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/03_back.png",
+      "sha256": "be617488fc5b3363e0e53bf78457cdeb56293c37ddefe10c79e588739ef76418",
+      "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/work/views/back.png",
+      "source_sha256": "be617488fc5b3363e0e53bf78457cdeb56293c37ddefe10c79e588739ef76418",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "top",
+      "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/04_top.png",
+      "sha256": "84890e8a5e9ecad4ccf1d49524b09335127cbf2849f9db24773eee30f0c0c7d5",
+      "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/work/views/top.png",
+      "source_sha256": "84890e8a5e9ecad4ccf1d49524b09335127cbf2849f9db24773eee30f0c0c7d5",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "clay_front",
+      "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/05_clay_front.png",
+      "sha256": "a20190e74fe4052928dd64403cd109b123657c1ffb27b89c13f7591782625bef",
+      "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/work/views/clay_front.png",
+      "source_sha256": "a20190e74fe4052928dd64403cd109b123657c1ffb27b89c13f7591782625bef",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "wireframe_front",
+      "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/06_wireframe_front.png",
+      "sha256": "9da53a6dfdbf6f5f130e7a5f4b2c0909f4bdd81a207666ffe1b178b11b1d8d57",
+      "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-2/work/views/wireframe_front.png",
+      "source_sha256": "9da53a6dfdbf6f5f130e7a5f4b2c0909f4bdd81a207666ffe1b178b11b1d8d57",
+      "size": [
+        512,
+        512
+      ]
+    }
+  ],
+  "metrics": {
+    "mesh": {
+      "triangles": 494,
+      "triangle_budget": 1320,
+      "texture_sizes": [
+        [
+          128,
+          128
+        ]
+      ],
+      "part_count": 23,
+      "parts": [
+        {
+          "triangles": 150,
+          "size_m": [
+            4.0,
+            1.0,
+            4.0
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 23,
+          "size_m": [
+            0.5829,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 23,
+          "size_m": [
+            0.5829,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 23,
+          "size_m": [
+            0.5829,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 23,
+          "size_m": [
+            0.5829,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 14,
+          "size_m": [
+            0.5829,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 14,
+          "size_m": [
+            0.5829,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 14,
+          "size_m": [
+            0.5829,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 14,
+          "size_m": [
+            0.5829,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 14,
+          "size_m": [
+            0.4463,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 14,
+          "size_m": [
+            0.5829,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 14,
+          "size_m": [
+            0.5829,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 14,
+          "size_m": [
+            0.5829,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 14,
+          "size_m": [
+            0.5829,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 14,
+          "size_m": [
+            0.5829,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 14,
+          "size_m": [
+            0.5829,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 14,
+          "size_m": [
+            0.5829,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 14,
+          "size_m": [
+            0.5829,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 14,
+          "size_m": [
+            0.4463,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 14,
+          "size_m": [
+            0.5829,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 14,
+          "size_m": [
+            0.5829,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 14,
+          "size_m": [
+            0.5829,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 14,
+          "size_m": [
+            0.5829,
+            0.091,
+            0.3046
+          ],
+          "boundary_loops": 1
+        }
+      ],
+      "holes_boundary_loops": 23,
+      "non_manifold_edges": 0,
+      "true_dims_m": {
+        "x": 4.0,
+        "y": 1.0,
+        "z": 4.0
+      },
+      "true_length_m": 4.0,
+      "target_size_m": null,
+      "source_scale": 1.0,
+      "clean_warnings": [],
+      "clean_errors": [],
+      "view_coverage": {
+        "front": 0.8284,
+        "right": 0.1444,
+        "back": 0.8284,
+        "top": 0.2048,
+        "clay_front": 0.8284,
+        "wireframe_front": 0.0837
+      }
+    },
+    "color_vs_palette": [
+      [
+        {
+          "color": "Wet Slate",
+          "target": "#736B66",
+          "share": 0.9067,
+          "median_before": "#798388",
+          "delta_e_before": 12.4,
+          "applied": true,
+          "median_after": "#6C6560",
+          "delta_e_after": 2.6
+        },
+        {
+          "color": "Rain Stone",
+          "target": "#4D4740",
+          "share": 0.0933,
+          "median_before": "#494F53",
+          "delta_e_before": 9.2,
+          "applied": true,
+          "median_after": "#4B443D",
+          "delta_e_after": 1.3
+        },
+        {
+          "color": "Peat Black",
+          "target": "#2E2926",
+          "share": 0.0,
+          "applied": false,
+          "reason": "covers 0.0% (< 3%); not really present"
+        },
+        {
+          "color": "Barrow Oak",
+          "target": "#8C5933",
+          "share": 0.0,
+          "applied": false,
+          "reason": "covers 0.0% (< 3%); not really present"
+        },
+        {
+          "color": "Saddle Leather",
+          "target": "#4A2A10",
+          "share": 0.0,
+          "applied": false,
+          "reason": "covers 0.0% (< 3%); not really present"
+        },
+        {
+          "color": "Blackened Iron",
+          "target": "#242424",
+          "share": 0.0,
+          "applied": false,
+          "reason": "covers 0.0% (< 3%); not really present"
+        }
+      ]
+    ],
+    "color_vs_palette_basis": [
+      {
+        "measured_over": {
+          "texels": 150,
+          "of": 16384,
+          "mask": "this piece's UV footprint on the shared atlas"
+        },
+        "lightness": "lifted or lowered (sourced asset)",
+        "shared_atlas": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png"
+      }
+    ],
+    "dominant_palette_group": {
+      "color": "Wet Slate",
+      "target": "#736B66",
+      "share": 0.9067,
+      "median_before": "#798388",
+      "delta_e_before": 12.4,
+      "applied": true,
+      "median_after": "#6C6560",
+      "delta_e_after": 2.6
+    },
+    "validate": {
+      "status": "pass",
+      "errors": [],
+      "warnings": [
+        "gross check: holes: 23 open boundary loops after welding"
+      ],
+      "humanoid_mappable": null,
+      "missing_required": null,
+      "sockets": null
+    }
+  },
+  "assertions": [
+    {
+      "name": "triangles within budget",
+      "passed": true,
+      "value": 494,
+      "limit": 1320,
+      "detail": "art bible: triangles after triangulation, summed across the GLB"
+    },
+    {
+      "name": "one albedo texture at the brief's size",
+      "passed": true,
+      "value": [
+        [
+          128,
+          128
+        ]
+      ],
+      "limit": 128,
+      "detail": ""
+    },
+    {
+      "name": "holes per part (sourced kit: open boundary loops on any one part)",
+      "passed": true,
+      "value": 1,
+      "limit": 2.0,
+      "detail": "23 loops over 23 parts after welding at 0.01 mm; parts over the limit: 0; no loop may be visible in the views (judge)"
+    },
+    {
+      "name": "palette color Wet Slate close before correction",
+      "passed": true,
+      "value": 12.4,
+      "limit": 20.0,
+      "detail": "median #798388 covers 91% of the texture, target #736B66"
+    },
+    {
+      "name": "palette color Wet Slate within tolerance after correction",
+      "passed": true,
+      "value": 2.6,
+      "limit": 12.0,
+      "detail": "median #798388 -> #6C6560, target #736B66"
+    },
+    {
+      "name": "palette color Rain Stone close before correction",
+      "passed": true,
+      "value": 9.2,
+      "limit": 20.0,
+      "detail": "median #494F53 covers 9% of the texture, target #4D4740"
+    },
+    {
+      "name": "palette color Rain Stone within tolerance after correction",
+      "passed": true,
+      "value": 1.3,
+      "limit": 12.0,
+      "detail": "median #494F53 -> #4B443D, target #4D4740"
+    },
+    {
+      "name": "validate stage passed",
+      "passed": true,
+      "value": "pass",
+      "limit": "pass",
+      "detail": ""
+    }
+  ],
+  "questions": [
+    "Does the mesh match the approved concept (or, with no concept, the brief's prompt) part for part? List each named element as present, absent or changed.",
+    "Is anything missing or malformed: holes, fused limbs or parts that should be separate, separate pieces that should be one (see the part list), spikes, floating fragments, extra props?",
+    "Budget and scale: do the triangle, texture and size assertions pass?",
+    "Colors: do the color assertions pass? Name any concept or palette color the texture lost, or a large area in a color the brief doesn't ask for.",
+    "Rigged characters: does the validate report map every required humanoid bone, and do the sockets resolve?"
+  ],
+  "escalate_rules": [
+    "Open style or taste questions (is it appealing, is the silhouette strong enough, is this the right design) are not yours: escalate them.",
+    "A deliberate, recorded design change (see design_notes) is not a defect: don't flag it again, but say so if the asset contradicts the note.",
+    "When the evidence can't settle a question (the view that would show it is missing), escalate rather than guess.",
+    "Revise only when one concrete edit would fix every blocker and major finding. Otherwise escalate."
+  ],
+  "refine_budget": {
+    "per_stage": 1,
+    "used": 0
+  },
+  "tool_versions": {
+    "python": "3.14.7",
+    "blender": "Blender 5.0.1",
+    "godot": "4.7.2.stable.official.ed1daf0bf",
+    "tripo": "0.5.1"
+  },
+  "sourcing": {
+    "note": "sourced, no concept: judge against the brief's prompt and palette",
+    "colors": "palette metrics cover only the texels this piece's UVs sample (on a shared atlas, not the whole atlas); correction may darken as well as lift",
+    "holes": "open boundary loops are allowed per part up to mesh_kit_max_loops_per_part, only where none is visible in the views: check the views for any gap",
+    "pack": "kaykit_dungeon_remastered",
+    "source_url": "https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0/archive/b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07.zip",
+    "author": "Kay Lousberg",
+    "license": "CC0-1.0",
+    "source_file": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/wall.gltf.glb",
+    "orientation": "source",
+    "pivot": "source",
+    "atlas": "assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png"
+  },
+  "subject": {
+    "kind": "shipped mesh",
+    "path": "assets/meshes/kaykit_dungeon_wall.glb",
+    "sha256": "b0b8d67adc440061d73fff3ebdd4addbb3c915d98d0bcc97034bf7fd89a1723a",
+    "concept": null
+  },
+  "assertions_failed": 0
+}

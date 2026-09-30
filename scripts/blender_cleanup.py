@@ -11,7 +11,8 @@ Imports the GLB and then:
 - rebuilds every material as albedo-only (base color, plus alpha if used), stripping
   normal/roughness/metallic/emission maps and baking non-image albedo; roughness 1, specular 0;
 - downscales the albedo to texture_size, then shifts it back toward the approved concept's colors
-  (concept_correct), or toward the brief's palette when the asset has no concept (palette_correct),
+  (concept_correct), or toward the brief's palette when the asset has no concept (palette_correct;
+  sourced assets are measured over their UV footprint and may be darkened as well as lifted),
   then composites the brief's texture_overlays (e.g. a mouth line) over it;
 - replaces imported smooth normals with flat shading above SMOOTH_ANGLE_DEG (welding UV-seam
   splits first on unrigged meshes, so the angle test sees real edges);
@@ -24,8 +25,9 @@ Imports the GLB and then:
 
 Sourced kit pieces (brief source: download) import from glTF, OBJ or FBX, keep the kit's axes
 (orientation: source), origin (pivot: source) and uniform scale (source_scale), and swap their embedded
-atlas for the pack's shared, already-corrected atlas (params shared_atlas). The shared atlas itself is
-built once by the --atlas mode:
+atlas for the pack's shared, already-corrected atlas (params shared_atlas), and report its colors over
+their own UV footprint. The shared atlas itself is built once by the --atlas mode, corrected from the
+union of the pack's pieces' UV footprints (params footprint_pieces, allow_darken):
 
     blender -b --factory-startup --python-exit-code 1 -P scripts/blender_cleanup.py -- --atlas \
         --input atlas.png --output corrected.png --params params.json --report report.json
@@ -438,8 +440,22 @@ def _parts(bm):
         verts = {v for fc in faces for v in fc.verts}
         co = [v.co for v in verts]
         dims = [max(c[i] for c in co) - min(c[i] for c in co) for i in range(3)]
+        # Open boundary loops on this part alone (the sourced-kit holes rule is per part)
+        parent = {}
+
+        def find(v):
+            while parent.setdefault(v, v) != v:
+                parent[v] = parent[parent[v]]
+                v = parent[v]
+            return v
+        boundary = {e for fc in faces for e in fc.edges if e.is_boundary}
+        for e in boundary:
+            a, b = find(e.verts[0].index), find(e.verts[1].index)
+            if a != b:
+                parent[a] = b
         parts.append({"triangles": sum(len(fc.verts) - 2 for fc in faces), "vertices": len(verts),
-                      "size_m": [round(d, 4) for d in dims]})
+                      "size_m": [round(d, 4) for d in dims],
+                      "boundary_loops": len({find(e.verts[0].index) for e in boundary})})
     return sorted(parts, key=lambda p: -p["triangles"])
 
 
@@ -549,7 +565,81 @@ def _hex(rgb):
     return "#%02X%02X%02X" % tuple(int(round(c * 255)) for c in rgb)
 
 
-def palette_correct(img, targets, report):
+def _palette_lab(targets):
+    names = list(targets)
+    return names, _srgb_to_lab(np.array([[int(targets[n][i:i + 2], 16) / 255 for i in (1, 3, 5)] for n in names]))
+
+
+def uv_footprint(meshes, w, h):
+    """The texels a mesh's UVs sample on a w x h texture, as a boolean mask in Blender's pixel order
+    (row 0 at the bottom, matching image.pixels): every texel whose center lies inside a UV triangle,
+    plus the texel under each UV vertex and triangle centroid, so a sliver or a triangle collapsed onto
+    one swatch (common on kit atlases) still counts. UVs outside 0-1 are clipped, not wrapped."""
+    mask = np.zeros((h, w), dtype=bool)
+    size = np.array([w, h], dtype=np.float64)
+    for o in meshes:
+        me = o.data
+        if not me.uv_layers.active or not me.polygons:
+            continue
+        uv = np.empty(len(me.loops) * 2)
+        me.uv_layers.active.data.foreach_get("uv", uv)
+        uv = uv.reshape(-1, 2) * size
+        me.calc_loop_triangles()
+        tri = np.empty(len(me.loop_triangles) * 3, dtype=np.int64)
+        me.loop_triangles.foreach_get("loops", tri)
+        for a, b, c in uv[tri.reshape(-1, 3)]:
+            for q in (a, b, c, (a + b + c) / 3):
+                x, y = np.clip(np.floor(q).astype(int), 0, [w - 1, h - 1])
+                mask[y, x] = True
+            lo = np.clip(np.floor(np.minimum(np.minimum(a, b), c)).astype(int), 0, [w - 1, h - 1])
+            hi = np.clip(np.floor(np.maximum(np.maximum(a, b), c)).astype(int), 0, [w - 1, h - 1])
+            xs, ys = np.meshgrid(np.arange(lo[0], hi[0] + 1) + 0.5, np.arange(lo[1], hi[1] + 1) + 0.5)
+            area = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+            if abs(area) < 1e-12:
+                continue
+            e = [((q2[0] - q1[0]) * (ys - q1[1]) - (q2[1] - q1[1]) * (xs - q1[0])) * np.sign(area)
+                 for q1, q2 in ((a, b), (b, c), (c, a))]
+            inside = (e[0] >= -1e-9) & (e[1] >= -1e-9) & (e[2] >= -1e-9)
+            mask[lo[1]:hi[1] + 1, lo[0]:hi[0] + 1] |= inside
+    return mask.ravel()
+
+
+def palette_groups(lab_before, lab_after, targets, mask, applied=None):
+    """Palette groups measured over the masked texels only: each texel joins its nearest palette color,
+    and each group reports its share of the masked texels and its median before and after correction.
+    `applied` (name -> (bool, reason)) is the correction's own decision, for measuring a texture that was
+    corrected elsewhere (a piece on a shared atlas); without it a group counts as applied when it's
+    present (PALETTE_MIN_SHARE) and within PALETTE_MAX_DRIFT."""
+    names, tgt = _palette_lab(targets)
+    lb, la = lab_before[mask], lab_after[mask]
+    nearest = np.linalg.norm(lb[:, None, :] - tgt[None, :, :], axis=2).argmin(axis=1) if len(lb) else np.zeros(0, int)
+    groups = []
+    for k, name in enumerate(names):
+        sel = nearest == k
+        share = float(sel.sum()) / max(1, len(lb))
+        entry = {"color": name, "target": targets[name], "share": round(share, 4)}
+        if share < PALETTE_MIN_SHARE:
+            entry.update(applied=False, reason=f"covers {share:.1%} (< {PALETTE_MIN_SHARE:.0%}); not really present")
+            groups.append(entry)
+            continue
+        mb, ma = np.median(lb[sel], axis=0), np.median(la[sel], axis=0)
+        drift = float(np.linalg.norm(tgt[k] - mb))
+        entry.update(median_before=_hex(_lab_to_srgb(mb[None])[0]), delta_e_before=round(drift, 1))
+        if applied is not None:
+            ok, why = applied.get(name, (False, "not in the correction's palette"))
+        else:
+            ok = drift <= PALETTE_MAX_DRIFT
+            why = f"median is {drift:.0f} dE from the target (> {PALETTE_MAX_DRIFT:.0f}); a different material"
+        entry["applied"] = ok
+        if ok:
+            entry.update(median_after=_hex(_lab_to_srgb(ma[None])[0]), delta_e_after=round(float(np.linalg.norm(tgt[k] - ma)), 1))
+        else:
+            entry["reason"] = why
+        groups.append(entry)
+    return groups
+
+
+def palette_correct(img, targets, report, mask=None, allow_darken=False, mask_note=None):
     """Shifts the albedo toward the brief's palette (docs/art-bible.md hex values). Tripo's texture
     pass desaturates: the Barrow-levy's bone came back #A89C86 against Old Bone #CCB484.
 
@@ -559,43 +649,43 @@ def palette_correct(img, targets, report):
     different material such as peat staining). Each corrected group moves by target minus its median,
     which keeps its internal variation (stains, wear). Texels blend the offsets by inverse distance
     to each group's source median, so there are no seams at group borders, and the shift fades to zero
-    for texels more than PALETTE_MAX_DRIFT from every corrected group (colors not in the palette)."""
+    for texels more than PALETTE_MAX_DRIFT from every corrected group (colors not in the palette).
+
+    `mask` (a boolean per texel, e.g. uv_footprint) limits the groups' shares and medians, before and
+    after, to the texels the asset's UVs sample: a kit's shared atlas is mostly swatches a given piece
+    never uses. The shift itself is still applied to every texel, so it stays one deterministic function
+    of color. Lightness is only lifted for generated assets (their texture comes out darker than the
+    design); `allow_darken` (sourced assets only) lets it come down too, since a kit's colors are the
+    kit author's, not a darkened copy of ours."""
     w, h = img.size
     ch = img.channels
     px = np.array(img.pixels[:], dtype=np.float64).reshape(-1, ch)
     lab = _srgb_to_lab(px[:, :3])
-    names = list(targets)
-    tgt = _srgb_to_lab(np.array([[int(targets[n][i:i + 2], 16) / 255 for i in (1, 3, 5)] for n in names]))
-    dist = np.linalg.norm(lab[:, None, :] - tgt[None, :, :], axis=2)
-    nearest = dist.argmin(axis=1)
+    if mask is None:
+        mask = np.ones(len(lab), dtype=bool)
+    names, tgt = _palette_lab(targets)
+    groups = palette_groups(lab, lab, targets, mask)
     offsets = np.zeros_like(tgt)
     medians = {}
-    groups = []
-    for k, name in enumerate(names):
-        members = lab[nearest == k]
-        share = len(members) / len(lab)
-        entry = {"color": name, "target": targets[name], "share": round(share, 4)}
-        if share < PALETTE_MIN_SHARE:
-            entry["applied"] = False
-            entry["reason"] = f"covers {share:.1%} (< {PALETTE_MIN_SHARE:.0%}); not really present"
-        else:
-            median = np.median(members, axis=0)
-            drift = float(np.linalg.norm(tgt[k] - median))
-            entry.update(median_before=_hex(_lab_to_srgb(median[None])[0]), delta_e_before=round(drift, 1))
-            if drift > PALETTE_MAX_DRIFT:
-                entry["applied"] = False
-                entry["reason"] = f"median is {drift:.0f} dE from the target (> {PALETTE_MAX_DRIFT:.0f}); a different material"
-            else:
-                offsets[k] = tgt[k] - median
+    for k, entry in enumerate(groups):
+        for key in ("median_after", "delta_e_after"):
+            entry.pop(key, None)
+        if entry["applied"]:
+            sel = mask & (np.linalg.norm(lab[:, None, :] - tgt[None, :, :], axis=2).argmin(axis=1) == k)
+            median = np.median(lab[sel], axis=0)
+            offsets[k] = tgt[k] - median
+            if not allow_darken:
                 # Same policy as concept_correct: hue and saturation fully, lightness only lifted
                 offsets[k][0] = max(offsets[k][0], 0.0)
-                medians[k] = median
-                entry["applied"] = True
-        groups.append(entry)
+            medians[k] = median
+    entry = {"image": img.name, "size": [w, h],
+             "lightness": "lifted or lowered (sourced asset)" if allow_darken else "lifted only, never lowered"}
+    if not mask.all():
+        entry["measured_over"] = {"texels": int(mask.sum()), "of": int(len(mask)), "mask": mask_note or "UV footprint"}
     applied = sorted(medians)
     if not applied:
-        report.setdefault("palette_correction", []).append({"image": img.name, "size": [w, h], "groups": groups})
-        return
+        report.setdefault("palette_correction", []).append({**entry, "groups": groups})
+        return {g["color"]: (g["applied"], g.get("reason", "")) for g in groups}
     # Distances to each corrected group's SOURCE median decide how much a texel moves: full within half
     # of PALETTE_MAX_DRIFT, fading to nothing at PALETTE_MAX_DRIFT. Colors outside the brief's palette
     # (skin, hair, trousers) sit far from every group and stay put instead of inheriting a blend of shifts.
@@ -607,13 +697,9 @@ def palette_correct(img, targets, report):
     px[:, :3] = _lab_to_srgb(lab_out)
     img.pixels[:] = px.ravel().tolist()
     img.update()
-    after = _srgb_to_lab(px[:, :3])
-    for k, entry in enumerate(groups):
-        if entry.get("applied"):
-            median = np.median(after[nearest == k], axis=0)
-            entry.update(median_after=_hex(_lab_to_srgb(median[None])[0]),
-                         delta_e_after=round(float(np.linalg.norm(tgt[k] - median)), 1))
-    report.setdefault("palette_correction", []).append({"image": img.name, "size": [w, h], "groups": groups})
+    groups = palette_groups(lab, _srgb_to_lab(px[:, :3]), targets, mask)
+    report.setdefault("palette_correction", []).append({**entry, "groups": groups})
+    return {g["color"]: (g["applied"], g.get("reason", "")) for g in groups}
 
 
 def _kmeans(lab, init, iters=CONCEPT_KMEANS_ITERS):
@@ -745,9 +831,11 @@ def pixels_sha256(img):
     return hashlib.sha256(f"{w}x{h}:".encode() + data.tobytes()).hexdigest()
 
 
-def apply_shared_atlas(img, shared, report):
+def apply_shared_atlas(img, shared, report, users, targets):
     """Replaces a kit piece's embedded atlas with the pack's corrected atlas (built once by --atlas), so
-    every piece of the pack ships identical pixels. Fails if the piece's texture isn't that atlas."""
+    every piece of the pack ships identical pixels. Fails if the piece's texture isn't that atlas.
+    The piece's color evidence is measured over its own UV footprint on the atlas: the embedded atlas
+    downscaled exactly as --atlas does (before) against the corrected pixels (after)."""
     side = json.load(open(shared["sidecar"]))
     have = pixels_sha256(img)
     if have != side["source_pixels_sha256"]:
@@ -760,6 +848,7 @@ def apply_shared_atlas(img, shared, report):
     if px.shape[1] == 3:
         px = np.concatenate([px, np.ones((len(px), 1), dtype=np.float32)], axis=1)
     img.scale(w, h)
+    before = np.array(img.pixels[:], dtype=np.float64).reshape(-1, img.channels)[:, :3]
     if img.channels == 3:
         px = px[:, :3]
     img.pixels[:] = px.ravel().tolist()
@@ -767,31 +856,66 @@ def apply_shared_atlas(img, shared, report):
     report["shared_atlas"] = {"image": shared["image"], "atlas_sha256": side["atlas_sha256"],
                               "source": side["atlas_source"], "source_pixels_sha256": have,
                               "note": "downscaled and palette-corrected once for the whole pack; not re-corrected per piece"}
-    # The correction that produced the atlas, so the judge sees the same color evidence as for any asset
-    for pc in side.get("palette_correction") or []:
-        report.setdefault("palette_correction", []).append({**pc, "image": img.name, "shared_atlas": shared["image"]})
+    pcs = side.get("palette_correction") or []
+    if not (targets and pcs):
+        return
+    # Which groups the atlas correction moved, over the union of the pack's footprints (the same decision
+    # for every piece); this piece's shares and medians come from its own footprint.
+    applied = {g["color"]: (bool(g.get("applied")), "not corrected on the atlas: " + g.get("reason", ""))
+               for g in pcs[0]["groups"]}
+    mask = uv_footprint(users, w, h)
+    groups = palette_groups(_srgb_to_lab(before), _srgb_to_lab(px[:, :3].astype(np.float64)), targets, mask, applied)
+    report.setdefault("palette_correction", []).append({
+        "image": img.name, "size": [w, h], "shared_atlas": shared["image"], "lightness": pcs[0].get("lightness"),
+        "measured_over": {"texels": int(mask.sum()), "of": int(len(mask)), "mask": "this piece's UV footprint on the shared atlas"},
+        "groups": groups, "atlas_correction": {k: pcs[0].get(k) for k in ("measured_over", "groups")}})
 
 
 def run_atlas(args, params, report):
     """--atlas mode: downscale one kit atlas to texture_size and palette-correct it (the same
-    palette_correct as every concept-less asset), then save it as PNG."""
+    palette_correct as every concept-less asset), then save it as PNG. The correction is driven by the
+    texels the pack's imported pieces sample (params footprint_pieces: the union of their UV footprints),
+    and may lower lightness as well as lift it (params allow_darken, set for sourced kits)."""
     bpy.ops.wm.read_factory_settings(use_empty=True)
     img = bpy.data.images.load(args.input)
-    report["source_pixels_sha256"] = pixels_sha256(img)
+    source_hash = pixels_sha256(img)
     size = params["texture_size"]
-    report["size_before"] = list(img.size)
     longest = max(img.size)
+    before = list(img.size)
+    after = [max(1, round(img.size[0] * size / longest)), max(1, round(img.size[1] * size / longest))] if longest > size else before
+    bpy.data.images.remove(img)
+    union = np.zeros(after[0] * after[1], dtype=bool)
+    report["footprint"] = []
+    for piece in params.get("footprint_pieces") or []:
+        bpy.ops.wm.read_factory_settings(use_empty=True)
+        import_source(piece, {})
+        meshes = [o for o in scene_objects() if o.type == "MESH"]
+        imgs = {n.image for o in meshes for s in o.material_slots if s.material and s.material.use_nodes
+                for n in s.material.node_tree.nodes if n.type == "TEX_IMAGE" and n.image}
+        if not imgs or any(pixels_sha256(i) != source_hash for i in imgs):
+            raise RuntimeError(f"footprint piece {piece} doesn't use this atlas; drop it from the atlas's pieces")
+        m = uv_footprint(meshes, *after)
+        union |= m
+        report["footprint"].append({"piece": piece, "texels": int(m.sum())})
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    img = bpy.data.images.load(args.input)
+    report["source_pixels_sha256"] = source_hash
+    report["size_before"] = before
     if longest > size:
-        img.scale(max(1, round(img.size[0] * size / longest)), max(1, round(img.size[1] * size / longest)))
+        img.scale(*after)
     report["size_after"] = list(img.size)
-    palette_correct(img, params["palette_targets"], report)
+    mask = union if union.any() else None
+    palette_correct(img, params["palette_targets"], report, mask=mask, allow_darken=bool(params.get("allow_darken")),
+                    mask_note=f"union of the UV footprints of {len(report['footprint'])} pieces")
     img.filepath_raw = args.output
     img.file_format = "PNG"
     img.save()
 
 
-def rebuild_materials(meshes, size, report, targets, reference=None, overlays=None, input_path=None, shared_atlas=None):
+def rebuild_materials(meshes, size, report, targets, reference=None, overlays=None, input_path=None, shared_atlas=None,
+                      sourced=False):
     by_mat = {}
+    img_users = {}
     for o in meshes:
         for slot in o.material_slots:
             if slot.material:
@@ -844,6 +968,7 @@ def rebuild_materials(meshes, size, report, targets, reference=None, overlays=No
                 nt.links.new(tex.outputs["Alpha"], cut.inputs[0])
                 nt.links.new(cut.outputs["Value"], bsdf.inputs["Alpha"])
             images.add(img)
+            img_users.setdefault(img, set()).update(users)
             entry["texture"] = img.name
         else:
             bsdf.inputs["Base Color"].default_value = const
@@ -856,7 +981,7 @@ def rebuild_materials(meshes, size, report, targets, reference=None, overlays=No
     for img in images:
         before = tuple(img.size)
         if shared_atlas:
-            apply_shared_atlas(img, shared_atlas, report)
+            apply_shared_atlas(img, shared_atlas, report, sorted(img_users[img], key=lambda o: o.name), targets)
             img.pack()
             report["textures"].append({"name": img.name, "size_before": list(before), "size_after": list(img.size)})
             continue
@@ -868,6 +993,11 @@ def rebuild_materials(meshes, size, report, targets, reference=None, overlays=No
         # (text-to-3D, like the blade) fall back to the brief's palette.
         if reference:
             concept_correct(img, reference, report)
+        elif targets and sourced:
+            # Sourced assets: measured over the texels the piece's UVs sample, and lightness may come down
+            users = sorted(img_users[img], key=lambda o: o.name)
+            palette_correct(img, targets, report, mask=uv_footprint(users, *img.size), allow_darken=True,
+                            mask_note="the asset's UV footprint")
         elif targets:
             palette_correct(img, targets, report)
         if overlays:
@@ -1056,7 +1186,8 @@ def run(args, params, report):
     report["mesh_health"] = mesh_health(meshes)
 
     rebuild_materials(meshes, params["texture_size"], report, params.get("palette_targets"), params.get("reference_image"),
-                      params.get("texture_overlays"), args.input, params.get("shared_atlas"))
+                      params.get("texture_overlays"), args.input, params.get("shared_atlas"),
+                      sourced=params.get("source") == "download")
     # Weight steps first, so the weld below sees final weights (seam splits then match and merge)
     if params.get("rigid_parts"):
         if not rigged:

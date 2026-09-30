@@ -9,9 +9,42 @@
     "Saddle Leather": "#4A2A10",
     "Blackened Iron": "#242424"
   },
-  "script_sha256": "11ffc69675698b1454b74ff9bbf772f6340aeed0ccea808acf97c47ade2b2ddb",
+  "script_sha256": "fa591dd4d73a1111ea58dc2f6ec79545950cebf381a927cb366f7b2e231ea336",
+  "allow_darken": true,
+  "footprint_pieces": [
+    {
+      "asset_id": "kaykit_dungeon_barrel_large",
+      "source_file": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/barrel_large.gltf.glb",
+      "sha256": "9fae6a79056241baf253fe9272dc7a7ddb174e1caf153eb5013c58a596722148"
+    },
+    {
+      "asset_id": "kaykit_dungeon_box_large",
+      "source_file": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/obj/box_large.obj",
+      "sha256": "e53679a735f9288f358f16cbcf7a7863ce4e836658d6d5b16534d30889ef1ad6"
+    },
+    {
+      "asset_id": "kaykit_dungeon_floor_tile_large",
+      "source_file": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/floor_tile_large.gltf.glb",
+      "sha256": "5b6bbbc683f6729d094732056f157a928435de97ec3cf94c341c7465907fe17b"
+    },
+    {
+      "asset_id": "kaykit_dungeon_stairs",
+      "source_file": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/stairs.gltf.glb",
+      "sha256": "5ba16e5d919aaa8958435c4b73c1f8a94c98febeacf716faa1359f24e6b27d70"
+    },
+    {
+      "asset_id": "kaykit_dungeon_wall",
+      "source_file": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/wall.gltf.glb",
+      "sha256": "f2f343a7bdf2d45947e3f354494e16095a923485e05637e3804e3b81ce11d921"
+    },
+    {
+      "asset_id": "kaykit_dungeon_wall_doorway",
+      "source_file": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/wall_doorway.glb",
+      "sha256": "2be5369a2d1d1d8795150b2156d8343b3e37620d78de256cb03276c54ea70c97"
+    }
+  ],
   "atlas_source_sha256": "f9ae182518f908bd09461a56a430b9ca7369812ac10890224cc6f32e7da3e1ee",
-  "atlas_sha256": "aafa7471709862536638becc60997c8f466300c3382e0261cc2be9a9120e64f1",
+  "atlas_sha256": "dfe78eac04ef808ba61821a4f0dd20477aa6e08f32e74591aa9b5a371c58aafe",
   "source_pixels_sha256": "ff7a2f8ec0452c70e60d0b8ad7b4e2f19fe04471f8caa2431a61073c5825981a",
   "size_before": [
     1024,
@@ -21,6 +54,32 @@
     128,
     128
   ],
+  "footprint": [
+    {
+      "asset_id": "kaykit_dungeon_barrel_large",
+      "texels": 339
+    },
+    {
+      "asset_id": "kaykit_dungeon_box_large",
+      "texels": 377
+    },
+    {
+      "asset_id": "kaykit_dungeon_floor_tile_large",
+      "texels": 109
+    },
+    {
+      "asset_id": "kaykit_dungeon_stairs",
+      "texels": 136
+    },
+    {
+      "asset_id": "kaykit_dungeon_wall",
+      "texels": 150
+    },
+    {
+      "asset_id": "kaykit_dungeon_wall_doorway",
+      "texels": 446
+    }
+  ],
   "palette_correction": [
     {
       "image": "dungeon_texture.png",
@@ -28,60 +87,63 @@
         128,
         128
       ],
+      "lightness": "lifted or lowered (sourced asset)",
+      "measured_over": {
+        "texels": 740,
+        "of": 16384,
+        "mask": "union of the UV footprints of 6 pieces"
+      },
       "groups": [
         {
           "color": "Wet Slate",
           "target": "#736B66",
-          "share": 0.4946,
-          "median_before": "#999999",
-          "delta_e_before": 18.0,
+          "share": 0.5378,
+          "median_before": "#818A8F",
+          "delta_e_before": 14.2,
           "applied": true,
-          "median_after": "#9A9996",
-          "delta_e_after": 17.7
+          "median_after": "#726B66",
+          "delta_e_after": 0.4
         },
         {
           "color": "Rain Stone",
           "target": "#4D4740",
-          "share": 0.0659,
-          "median_before": "#4B4B4A",
-          "delta_e_before": 5.0,
+          "share": 0.0311,
+          "median_before": "#4B5256",
+          "delta_e_before": 9.7,
           "applied": true,
-          "median_after": "#504A43",
-          "delta_e_after": 1.3
+          "median_after": "#4D4740",
+          "delta_e_after": 0.0
         },
         {
           "color": "Peat Black",
           "target": "#2E2926",
-          "share": 0.0146,
+          "share": 0.0,
           "applied": false,
-          "reason": "covers 1.5% (< 3%); not really present"
+          "reason": "covers 0.0% (< 3%); not really present"
         },
         {
           "color": "Barrow Oak",
           "target": "#8C5933",
-          "share": 0.3535,
-          "median_before": "#D3875E",
-          "delta_e_before": 22.3,
+          "share": 0.4311,
+          "median_before": "#9C5B45",
+          "delta_e_before": 10.1,
           "applied": true,
-          "median_after": "#CF8962",
-          "delta_e_after": 21.5
+          "median_after": "#8C5933",
+          "delta_e_after": 0.0
         },
         {
           "color": "Saddle Leather",
           "target": "#4A2A10",
-          "share": 0.0098,
+          "share": 0.0,
           "applied": false,
-          "reason": "covers 1.0% (< 3%); not really present"
+          "reason": "covers 0.0% (< 3%); not really present"
         },
         {
           "color": "Blackened Iron",
           "target": "#242424",
-          "share": 0.0615,
-          "median_before": "#222528",
-          "delta_e_before": 2.4,
-          "applied": true,
-          "median_after": "#252524",
-          "delta_e_after": 0.2
+          "share": 0.0,
+          "applied": false,
+          "reason": "covers 0.0% (< 3%); not really present"
         }
       ]
     }
@@ -92,5 +154,5 @@
     "godot": "4.7.2.stable.official.ed1daf0bf",
     "tripo": "0.5.1"
   },
-  "built_at": "2026-09-30T03:49:22+00:00"
+  "built_at": "2026-09-30T04:48:18+00:00"
 }

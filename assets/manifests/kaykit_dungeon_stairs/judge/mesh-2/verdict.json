@@ -1,0 +1,33 @@
+{
+  "verdict": "pass",
+  "summary": "The KayKit stairs piece matches the brief's straight stone staircase with side walls. It is well under budget, every assertion passes, and there are no visible holes or loose fragments.",
+  "findings": [
+    {
+      "check": "concept_match",
+      "severity": "minor",
+      "observation": "The side walls are solid sloped walls ending in square-cut ends about 0.85 m above the top step rather than separate square posts; close enough to the prompt.",
+      "evidence": "02_right.png, 01_front.png, 05_clay_front.png"
+    },
+    {
+      "check": "malformed",
+      "severity": "minor",
+      "observation": "A small dark speck on one raised side-wall brick, likely atlas texture detail.",
+      "evidence": "02_right.png"
+    }
+  ],
+  "questions_answered": [
+    "Present: straight staircase (5.0 x 4.0 x 5.1 m with plinth), 8 grey treads, two side walls; posts changed to square-cut wall ends.",
+    "15 parts, one open loop each on hidden faces; none visible.",
+    "Yes: 358/1320, 128 px, source scale 1.0.",
+    "Yes: Wet Slate 12.4 -> 2.6, Rain Stone 9.7 -> 0.0.",
+    "Not applicable."
+  ],
+  "images_seen": [
+    "01_front.png",
+    "02_right.png",
+    "03_back.png",
+    "04_top.png",
+    "05_clay_front.png",
+    "06_wireframe_front.png"
+  ]
+}

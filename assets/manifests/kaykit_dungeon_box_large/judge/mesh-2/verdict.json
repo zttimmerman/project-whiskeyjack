@@ -1,0 +1,27 @@
+{
+  "verdict": "pass",
+  "summary": "The KayKit large crate matches the brief: a 1.5 m cube of reddish-brown plank panels set in a grey bevelled frame, closed, well within budget, and both palette colours within tolerance.",
+  "findings": [
+    {
+      "check": "other",
+      "severity": "minor",
+      "observation": "The views include front, right, back and top but no bottom or left, so the prompt's 'on every face' is confirmed for 4 of the 6 faces. The mesh has 0 boundary loops and the wireframe shows the same panel structure on the side faces, so nothing points to a defect on the unseen faces.",
+      "evidence": "01_front.png, 02_right.png, 03_back.png, 04_top.png, 06_wireframe_front.png; metrics.mesh.boundary_loops=0"
+    }
+  ],
+  "questions_answered": [
+    "No concept, so judged against the prompt. Cubic crate at 1.5 m: present. Reddish-brown plank panels: present. Grey bevelled frame: present. Present on every face: confirmed for front, right, back and top.",
+    "Nothing missing or malformed: one welded part, 0 boundary loops, 0 non-manifold edges.",
+    "Yes. 188 triangles against 1320, one 128x128 albedo texture, 1.5 m at source scale 1.0.",
+    "Yes. Wet Slate 48% share, 15.6 to 1.7 dE; Barrow Oak 52% share, 10.2 to 0.9 dE.",
+    "Not applicable: static prop."
+  ],
+  "images_seen": [
+    "01_front.png",
+    "02_right.png",
+    "03_back.png",
+    "04_top.png",
+    "05_clay_front.png",
+    "06_wireframe_front.png"
+  ]
+}

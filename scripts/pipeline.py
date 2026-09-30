@@ -919,10 +919,26 @@ def atlas_sidecar(atlas):
     return Path(atlas).with_suffix(".json")
 
 
+def atlas_pieces(brief):
+    """Every brief on the same shared atlas (the pack's imported pieces), sorted by id: the atlas's color
+    correction is driven by the texels these pieces' UVs sample, so it's one decision for the pack."""
+    out = []
+    for path in sorted(BRIEFS.glob("*.yaml")):
+        b = brief if path.stem == brief["asset_id"] else load_brief(path.stem)
+        if is_sourced(b) and b.get("atlas") == brief["atlas"] and b.get("atlas_source") == brief["atlas_source"]:
+            src = ROOT / b["source_file"]
+            if not src.exists():
+                raise PipelineError(f"{b['asset_id']}: {b['source_file']} isn't on disk; the shared atlas is corrected "
+                                    "from every piece on it, so download the pack first")
+            out.append({"asset_id": b["asset_id"], "source_file": b["source_file"], "sha256": sha256(src)})
+    return out
+
+
 def atlas_expected(brief):
     """What a shared atlas's sidecar must record for this brief to reuse the atlas."""
     return {"atlas_source": brief["atlas_source"], "texture_size": brief["texture_size"],
-            "palette_targets": palette_targets(brief), "script_sha256": sha256(BLENDER_SCRIPT)}
+            "palette_targets": palette_targets(brief), "script_sha256": sha256(BLENDER_SCRIPT),
+            "allow_darken": True, "footprint_pieces": atlas_pieces(brief)}
 
 
 def ensure_atlas(brief, dry_run=False, force=False):
@@ -930,9 +946,11 @@ def ensure_atlas(brief, dry_run=False, force=False):
     for ~200 pieces). The atlas is downscaled to texture_size and palette-corrected ONCE, into the committed
     brief['atlas'] PNG plus a JSON sidecar; every piece's clean stage then swaps its embedded copy for those
     exact pixels (after checking the piece really uses that atlas, by pixel hash), so all pieces carry an
-    identical corrected texture. Correction runs on the whole atlas, not on the texels one piece happens to
-    use, so it's deterministic per atlas: the same source, size and palette always give the same pixels.
-    Rebuilt only when the source, size, palette or the clean script change."""
+    identical corrected texture. The correction is measured over the union of the UV footprints of every
+    piece on the atlas (atlas_pieces), may darken as well as lift (sourced kits), and is applied to the
+    whole atlas as one function of color, so it's deterministic per atlas and piece set: the same source,
+    size, palette and pieces always give the same pixels. Rebuilt when any of those or the clean script
+    change; adding a piece to the pack therefore rebuilds the atlas, and every piece's clean stage re-runs."""
     atlas, side = ROOT / brief["atlas"], atlas_sidecar(ROOT / brief["atlas"])
     src = ROOT / brief["atlas_source"]
     want = atlas_expected(brief)
@@ -949,7 +967,9 @@ def ensure_atlas(brief, dry_run=False, force=False):
     wd = TRIPO_OUT / "_atlases" / atlas.stem
     wd.mkdir(parents=True, exist_ok=True)
     params_path, report_path = wd / "atlas-params.json", wd / "atlas-report.json"
-    params_path.write_text(json.dumps({"texture_size": brief["texture_size"], "palette_targets": want["palette_targets"]}, indent=2))
+    params_path.write_text(json.dumps({"texture_size": brief["texture_size"], "palette_targets": want["palette_targets"],
+                                       "allow_darken": want["allow_darken"],
+                                       "footprint_pieces": [str(ROOT / p["source_file"]) for p in want["footprint_pieces"]]}, indent=2))
     atlas.parent.mkdir(parents=True, exist_ok=True)
     cmd = [BLENDER, "-b", "--factory-startup", "--python-exit-code", "1", "-P", BLENDER_SCRIPT, "--", "--atlas",
            "--input", src, "--output", atlas, "--params", params_path, "--report", report_path]
@@ -958,6 +978,8 @@ def ensure_atlas(brief, dry_run=False, force=False):
         raise PipelineError("atlas build failed: " + "; ".join(report.get("errors", [])))
     side.write_text(json.dumps({**want, "atlas_sha256": sha256(atlas), "source_pixels_sha256": report["source_pixels_sha256"],
                                 "size_before": report["size_before"], "size_after": report["size_after"],
+                                "footprint": [{"asset_id": p["asset_id"], "texels": f["texels"]}
+                                              for p, f in zip(want["footprint_pieces"], report.get("footprint") or [])],
                                 "palette_correction": report.get("palette_correction"),
                                 "tool_versions": tool_versions(), "built_at": now()}, indent=2) + "\n")
     return atlas
