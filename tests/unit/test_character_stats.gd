@@ -4,8 +4,8 @@ extends GdUnitTestSuite
 @warning_ignore_start("redundant_await")
 
 # Characterization tests for CharacterStats as it is today (written after the fact, CLAUDE.md →
-# Testing). take_damage still subtracts defense; the settled ratio formula is pending in
-# test_design_targets.gd, and the subtraction tests here change in the PR that implements it.
+# Testing). take_damage uses the §6 ratio, max(1, round(damage × 100 / (100 + 10 × defense))); its
+# full case table is test_damage_ratio_formula in test_design_targets.gd.
 
 var stats: CharacterStats
 
@@ -21,17 +21,17 @@ func before_test() -> void:
 	stats.experience_to_next_level = 100
 
 
-func test_take_damage_subtracts_defense() -> void:
+func test_take_damage_applies_the_defense_ratio() -> void:
 	var monitor := monitor_signals(stats)
-	stats.take_damage(20)
-	assert_int(stats.current_hp).is_equal(85)
-	await assert_signal(monitor).is_emitted("health_changed", 85, 100)
+	stats.take_damage(20)  # 20 × 100 / 150 = 13.3
+	assert_int(stats.current_hp).is_equal(87)
+	await assert_signal(monitor).is_emitted("health_changed", 87, 100)
 	await assert_signal(monitor).wait_until(100).is_not_emitted("died")
 
 
-func test_take_damage_below_defense_deals_nothing() -> void:
-	stats.take_damage(3)
-	assert_int(stats.current_hp).is_equal(100)
+func test_take_damage_below_defense_still_deals_one() -> void:
+	stats.take_damage(1)  # 0.67 rounds to 1; armour never zeroes a hit
+	assert_int(stats.current_hp).is_equal(99)
 
 
 func test_take_damage_to_zero_emits_died_and_clamps() -> void:

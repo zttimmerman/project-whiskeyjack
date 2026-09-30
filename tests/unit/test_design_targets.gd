@@ -11,6 +11,7 @@ extends GdUnitTestSuite
 const PLAYER_SCENE := "res://scenes/player/Player.tscn"
 const LEVY_SCENE := "res://scenes/enemies/BaseEnemy.tscn"  # front-file levy (melee)
 const ARCHER_SCENE := "res://scenes/enemies/ArcherEnemy.tscn"  # back-file levy (archer)
+const PROJECTILE_SCENE := "res://scenes/enemies/Projectile.tscn"  # the back-file's arrow
 const STARTING_WEAPON := "res://data/items/sword_iron.tres"
 
 
@@ -51,9 +52,7 @@ func _light_hits_to_kill(attacker: CharacterStats, target: CharacterStats) -> in
 
 
 # §6 and §11.1: damage = max(1, round(damage × 100 / (100 + 10 × defense)))
-func test_damage_ratio_formula(
-	do_skip := true, skip_reason := "pending: the §6 damage ratio replaces damage − defense (design bible §11.1)"
-) -> void:
+func test_damage_ratio_formula() -> void:
 	# [incoming damage, defense, expected]
 	var cases := [
 		[10, 0, 10],
@@ -75,9 +74,7 @@ func test_damage_ratio_formula(
 
 
 # §11.5: an enemy hit takes about 8–10% of the player's HP at equal level
-func test_enemy_damage_share(
-	do_skip := true, skip_reason := "pending: enemy damage retune after the damage ratio (design bible §11.5)"
-) -> void:
+func test_enemy_damage_share() -> void:
 	var player := _equipped_player_stats()
 	var levy := _scene_stats(LEVY_SCENE)
 	assert_int(levy.level).is_equal(player.level)
@@ -85,22 +82,26 @@ func test_enemy_damage_share(
 	assert_float(share).is_between(0.08, 0.10)
 
 
+# §11.5 for the Back-file: its arrow (the projectile's hitbox, not its own) takes 8–10% too
+func test_enemy_damage_share_backfile() -> void:
+	var player := _equipped_player_stats()
+	var archer := _scene_stats(ARCHER_SCENE)
+	assert_int(archer.level).is_equal(player.level)
+	var share := float(_damage_taken(player, _scene_hitbox_damage(PROJECTILE_SCENE))) / player.max_hp
+	assert_float(share).is_between(0.08, 0.10)
+
+
 # ttk_levy_player: 10–14 levy hits kill the player, equal level, starting gear equipped
-func test_ttk_levy_player(
-	do_skip := true,
-	skip_reason := "pending: today about 34 hits; needs the damage ratio and enemy retune (design bible §11.1, §11.5)"
-) -> void:
+func test_ttk_levy_player() -> void:
 	var player := _equipped_player_stats()
 	var per_hit := _damage_taken(player, _scene_hitbox_damage(LEVY_SCENE))
 	assert_int(per_hit).is_greater(0)
 	assert_int(ceili(float(player.max_hp) / per_hit)).is_between(10, 14)
 
 
-# §6: enemy stats are base × (1 + 0.12 × (level − 1)). The API name is a proposal: a static
-# CharacterStats.level_scale(level) -> float multiplier (called dynamically so this file parses today).
-func test_level_band_scaling(
-	do_skip := true, skip_reason := "pending: level-band scaling isn't implemented (design bible §6)"
-) -> void:
+# §6: enemy stats are base × (1 + 0.12 × (level − 1)), as a static CharacterStats.level_scale(level)
+# -> float multiplier (decided 2026-09-30; called dynamically so a missing method fails, not the parse).
+func test_level_band_scaling() -> void:
 	assert_bool(CharacterStats.new().has_method("level_scale")).is_true()
 	var expected := {1: 1.0, 2: 1.12, 3: 1.24, 5: 1.48}
 	for level in expected:
@@ -108,6 +109,24 @@ func test_level_band_scaling(
 		assert_float(scale).is_equal_approx(expected[level], 0.0001)
 	# The first area's band is 1–3: a 30 HP levy at level 3 has about 37 HP
 	assert_float(30.0 * float((CharacterStats as GDScript).call("level_scale", 3))).is_equal_approx(37.2, 0.001)
+
+
+# Decided 2026-09-30: scaled integer stats round to nearest (CharacterStats.scaled_stat(base, level))
+func test_level_scaled_stat_rounds_to_nearest() -> void:
+	assert_bool(CharacterStats.new().has_method("scaled_stat")).is_true()
+	# [base, level, expected]
+	var cases := [
+		[30, 1, 30],
+		[30, 3, 37],  # 37.2
+		[14, 3, 17],  # 17.36
+		[20, 2, 22],  # 22.4
+		[25, 3, 31],  # 31.0
+		[5, 5, 7],  # 7.4
+		[10, 5, 15],  # 14.8 rounds up
+	]
+	for c in cases:
+		var scaled: int = (CharacterStats as GDScript).call("scaled_stat", c[0], c[1])
+		assert_int(scaled).override_failure_message("base %d at level %d: expected %d" % c).is_equal(c[2])
 
 
 # ttk_player_frontfile: 3–4 light hits kill a front-file levy at equal level (current: 4)
