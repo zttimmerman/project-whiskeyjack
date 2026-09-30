@@ -4,7 +4,11 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 
 ## Session handoff (update at the end of every session)
 
-- **Main** moves to Godot 4.7.2 with the `chore/godot-ai-trial` merge. Last session ended 2026-09-29 (Godot MCP trial).
+- **Main** is on Godot 4.7.2. The last session ended 2026-09-29. It covered the Godot MCP trial, the respawn fix, combat input polling, the MCP update check, the design bible and the tools review (PRs #5–#11).
+- **Start the next session with Phase A:** say *"Run Phase A per docs/plans/phase-a"*.
+  - The session orchestrates: it spawns one subagent per package, each in its own worktree with that package's brief, then reviews each PR's evidence and merges.
+  - Order: A1 alone; then A2a, A3 and A4 in parallel; then A2b after A2a.
+  - Subagents don't edit this file or CLAUDE.md. The orchestrator folds their proposed notes in at merge.
 - **Done:**
   - Tripo image pipeline; Barrow-levy, player and Levy Bow; Quaternius animation on all three characters.
   - Asset judge and motion review (`scripts/judge.py`, `scripts/review/motion_review.tscn`).
