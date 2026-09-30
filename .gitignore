@@ -36,3 +36,6 @@ assets/manifests/**/verdict.raw.json
 
 # godot-ai updater staging, lock and backups (the addon itself is tracked and pinned)
 addons/.godot_ai_update/
+
+# gdUnit4 test reports (tests/run.sh; CI uploads them as an artifact)
+/reports/
