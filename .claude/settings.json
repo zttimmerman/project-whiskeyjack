@@ -69,6 +69,17 @@
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/tools/godot_ai_update.py\" check --hook",
+            "timeout": 15
+          }
+        ]
+      }
     ]
   }
 }

@@ -289,6 +289,17 @@ GODOT_AI_GUARD_PROFILE=playtest claude -p "$(cat <brief>)" --mcp-config .mcp.jso
 - **Input:** every gameplay input is an Input Map action polled in the physics step (`move_*`, `attack_light`, `attack_heavy`, `dodge`, `lock_on`, `interact`), so frame-timed `input_sequence` drives movement and combat alike. Only UI keys (inventory, pause, mouse look) are read in `_input`.
 - **Screenshots** reach the playtester only (there's no save-to-disk), so the report must describe them.
 
+**Updates.** The pin (`addons/godot_ai/plugin.cfg` and `godot-ai==X` in `.mcp.json`) only changes deliberately:
+- **The check:** a SessionStart hook runs `scripts/tools/godot_ai_update.py check --hook`. It queries GitHub at most weekly and is silent unless a newer stable release exists or the two pins disagree. Tell the user when it reports one. Run `godot_ai_update.py check --force` for the full list and changelog link.
+- **Never update in place:** no dock Update button, and no editing the pin by hand on `main`.
+- **An update is a trial on `chore/godot-ai-<version>`,** held to the same bar as the Godot 4.7.2 upgrade:
+  1. Verify the new signed release with its own verifier. The signing key's SPKI fingerprint must match the one in `docs/godot-ai-integration.md`, and a changed key stops the update.
+  2. Swap `addons/godot_ai/` and the `.mcp.json` pin, keeping the editor settings' domain exclusions in step.
+  3. Diff the server's tool surface against the guard's tables. The hook denies anything unknown, so new tools can't slip in, but new ops and changed defaults get reviewed on purpose.
+  4. Re-run the guard tests, validate, the motion metrics, the movement test and the saved playtest scenarios; they must match the pinned version.
+  5. Open a PR with the changelog, the surface diff and the results.
+- **Wanted features** (pausing mid-sequence, screenshots saved to disk) are reasons to look at a release sooner; **security fixes** are reasons to update promptly.
+
 **The human playtesting the agent's work:** use the `playtest-branch` skill. It opens a disposable review copy, and the human's checkout is never touched.
 
 ---
