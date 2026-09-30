@@ -1,4 +1,4 @@
-# Design Bible (v0, proposed 2026-09-29)
+# Design Bible (v0, 2026-09-29)
 
 How the game should **play**. The art bible (`docs/art-bible.md`) governs how it looks, and the world bible (`docs/world/`) governs what it's about. This file governs camera, combat, encounters, levels, RPG systems and feedback, as **targets with numbers** wherever a playtest or a script can measure them.
 
@@ -30,7 +30,9 @@ How the game should **play**. The art bible (`docs/art-bible.md`) governs how it
 
 The third-person camera behind the player is the lens for everything else. Most of the first playtest's worst findings were camera findings.
 
-- **Framing:** the camera sits over the shoulder, offset 0.5–0.7 m to the side, with a pivot about 1.6–1.8 m above the floor (head height), 3.5–4.5 m behind, and a 70–75° FOV. **Current:** dead centre, pivot 2.4 m, 4 m behind, FOV 75°.
+- **Modes, not one camera (settled):** the rig supports swappable modes: third-person over-the-shoulder now, first person later, as in Skyrim or Fallout 4. Aiming, lock-on and interaction use the **camera's** forward ray, never the character's facing, so they work in either mode.
+  - First person is post-slice. It needs a first-person viewmodel (arms and weapon), and assets that hold up much closer than the 256 px texture budget assumes.
+- **Framing (settled):** the camera sits over the shoulder, offset 0.5–0.7 m to the side, with a pivot about 1.6–1.8 m above the floor (head height), 3.5–4.5 m behind, and a 70–75° FOV. **Current:** dead centre, pivot 2.4 m, 4 m behind, FOV 75°.
   - An over-the-shoulder offset is what stops the player model hiding the enemy at melee range (`cam_melee_occlusion`).
 - **Collision:** the spring arm uses a sphere probe with a margin, not a ray, and eases in and out.
   - The player must stay fully in frame (`cam_player_in_frame`), and wall must never fill the frame (`cam_wall_fill`).
@@ -51,11 +53,11 @@ The third-person camera behind the player is the lens for everything else. Most 
 
 **Player moveset: keep the shape, add commitment and sync.**
 - **Movement:** 5 m/s, stops in about 0.1 s. Keep it.
-- **Dodge:**
+- **Dodge (settled):**
   - Keep 4.2 m over 0.5 s.
   - I-frames cover the first 0.30 s, not the whole roll, so late dodges are punished a little (Witcher).
   - A 0.15 s recovery before the next dodge or attack. **Current:** i-frames for the whole 0.5 s, no recovery.
-- **Attacks commit:**
+- **Attacks commit (settled):**
   - Movement is locked for the swing, with a short forward lunge (0.3–0.5 m) toward a locked target.
   - A dodge can cancel an attack only after its active frames.
   - **Current:** you can move freely while swinging, and there's no lunge.
@@ -147,9 +149,8 @@ Units are metres; the player is 1.8 m tall.
   - Each area has a level band, and enemies spawn at the player's level clamped to it.
   - Enemy stats are defined as `base × (1 + 0.12 × (level − 1))`, so scaling exists from day one, untuned.
   - The first area's band is 1–3.
-- **Damage floor:** damage = `max(1, round(damage × 100 / (100 + 10 × defense)))`, a ratio, not a subtraction.
+- **Damage (settled):** damage = `max(1, round(damage × 100 / (100 + 10 × defense)))`, a ratio, not a subtraction.
   - Today's `damage − defense` lets armour zero out damage completely: the Elder's Shield makes the player immune to both levy variants. That kills tension and makes scaling brittle.
-  - This formula is a **proposal** (a decision in §11).
 - **Gear:** equipping must be visible and matter. **Current:** the starting Iron Sword isn't auto-equipped, so most players fight at base attack.
 - **Quests** follow the world bible's text limits (2 sentences per dialogue node; objectives in 12 words or fewer).
   - Main quests have **at least two resolutions**, with at least one non-combat option where the fiction allows (Fallout).
@@ -224,11 +225,13 @@ Units are metres; the player is 1.8 m tall.
 
 ---
 
-## 11. Decisions for the user
+## 11. Decisions (with the user, 2026-09-29)
 
-1. **Damage formula:** replace `damage − defense` with the ratio in §6? Armour currently makes the player immune in the slice.
-2. **Dodge i-frames:** cut from the whole roll to the first 0.30 s, with a 0.15 s recovery?
-3. **Attack commitment:** lock movement during swings, with a short lunge toward the target?
-4. **Over-the-shoulder camera:** confirm the offset. It changes the whole look of combat.
-5. **Enemy damage:** raise to hit the `ttk_levy_player` target (about 8–10% of HP per hit), which also depends on decision 1.
-6. **Stamina:** confirm it stays out of the slice.
+1. **Damage:** the ratio formula with a minimum of 1 replaces `damage − defense`.
+2. **Dodge:** i-frames cover the first 0.30 s, then a 0.15 s recovery.
+3. **Attacks commit:** movement is locked during swings, with a short lunge toward a locked target.
+4. **Camera:** over the shoulder, built as swappable modes so first person can follow later.
+5. **Enemy damage:** about 8–10% of the player's HP per hit at equal level (`ttk_levy_player`, 10–14 hits).
+6. **Stamina:** stays out of the slice, per the world bible.
+
+Everything else in this file is **proposed** until a playtest or the user settles it.
