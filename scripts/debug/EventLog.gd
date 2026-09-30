@@ -87,9 +87,15 @@ func close() -> void:
 
 
 func log_event(event: String, data: Dictionary = {}) -> void:
+	log_event_at(Engine.get_physics_frames() - frame_origin, event, data)
+
+
+## The same, stamped with a given frame (relative to frame_origin): the replay logs an input on the
+## frame it lands, one frame after it applies it
+func log_event_at(frame: int, event: String, data: Dictionary = {}) -> void:
 	if _file == null:
 		return
-	var entry := {"frame": Engine.get_physics_frames() - frame_origin, "event": event}
+	var entry := {"frame": frame, "event": event}
 	entry.merge(data)
 	_file.store_line(JSON.stringify(entry, "", false))
 	_file.flush()  # a run that crashes or is killed keeps everything up to that frame

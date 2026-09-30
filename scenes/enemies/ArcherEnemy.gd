@@ -12,6 +12,8 @@ const SHOOT_COOLDOWN: float = 2.0
 # Override: ATTACK fires a projectile rather than activating the melee hitbox
 func _change_state(new_state: State) -> void:
 	if new_state == State.ATTACK:
+		if EventLog.enabled:
+			EventLog.log_event("attack_started", {"actor": EventLog.label(self), "kind": "ranged"})
 		state = State.ATTACK
 		_face_player()
 		_attack_timer = 0.4

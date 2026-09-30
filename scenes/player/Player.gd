@@ -210,6 +210,9 @@ func _dodge() -> void:
 
 	if is_instance_valid(hurtbox):
 		hurtbox.invincible = true
+	if EventLog.enabled:
+		EventLog.log_event("dodge_start", {"actor": EventLog.label(self), "duration_s": dodge_duration,
+				"invincible": is_instance_valid(hurtbox) and hurtbox.invincible})
 
 
 func _tick_dodge(delta: float) -> void:
@@ -220,6 +223,8 @@ func _tick_dodge(delta: float) -> void:
 		_is_dodging = false
 		if is_instance_valid(hurtbox):
 			hurtbox.invincible = false
+		if EventLog.enabled:
+			EventLog.log_event("dodge_end", {"actor": EventLog.label(self), "invincible": false})
 
 
 # ── Camera ────────────────────────────────────────────────────────────────────
@@ -284,9 +289,13 @@ func _toggle_lock_on() -> void:
 			_release_lock_on()
 	else:
 		_lock_on_target = _find_lock_on_target()
+	if EventLog.enabled and _lock_on_target:
+		EventLog.log_event("lock_on", {"actor": EventLog.label(self), "target": EventLog.label(_lock_on_target)})
 
 
 func _release_lock_on() -> void:
+	if EventLog.enabled and _lock_on_target != null:
+		EventLog.log_event("lock_off", {"actor": EventLog.label(self)})
 	_lock_on_target = null
 	_lock_on_index = 0
 	_lock_on_candidates.clear()
@@ -383,6 +392,9 @@ func _attack_light() -> void:
 	hitbox.damage = base if _combo_index < 2 else base + base / 2
 	hitbox.knockback_force = 4.0
 	hitbox.is_heavy = false
+	if EventLog.enabled:
+		EventLog.log_event("attack_started", {"actor": EventLog.label(self), "kind": "light",
+				"combo_index": _combo_index, "damage": hitbox.damage})
 	hitbox.activate()
 	_play_anim("attack_light", true)
 	if _sfx_swing.stream:
@@ -402,6 +414,9 @@ func _attack_heavy() -> void:
 	hitbox.damage = base * 3
 	hitbox.knockback_force = 10.0
 	hitbox.is_heavy = true
+	if EventLog.enabled:
+		EventLog.log_event("attack_started", {"actor": EventLog.label(self), "kind": "heavy",
+				"combo_index": 0, "damage": hitbox.damage})
 	hitbox.activate()
 	_play_anim("attack_heavy", true)
 	if _sfx_swing.stream:
@@ -454,6 +469,8 @@ func _update_locomotion_anim() -> void:
 func die() -> void:
 	if not is_physics_processing():
 		return  # Guard against double-call
+	if EventLog.enabled:
+		EventLog.log_event("death", {"actor": EventLog.label(self)})
 	emit_signal("died")
 	set_physics_process(false)
 	set_process_input(false)
