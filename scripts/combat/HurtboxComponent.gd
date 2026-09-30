@@ -17,6 +17,8 @@ func _ready() -> void:
 
 func _on_hitbox_entered(area: Area3D) -> void:
 	if invincible:
+		if EventLog.enabled and area is HitboxComponent:
+			EventLog.log_event("iframe_block", {"target": EventLog.label(get_parent()), "attacker": EventLog.label(area.get_parent())})
 		return
 	var hitbox := area as HitboxComponent
 	if not hitbox:
@@ -24,7 +26,11 @@ func _on_hitbox_entered(area: Area3D) -> void:
 	if not stats:
 		return
 
+	var hp_before := stats.current_hp
 	stats.take_damage(hitbox.damage)
+	if EventLog.enabled:
+		EventLog.log_event("damage_taken", {"target": EventLog.label(get_parent()), "attacker": EventLog.label(hitbox.get_parent()),
+				"raw": hitbox.damage, "amount": hp_before - stats.current_hp, "hp": stats.current_hp, "max_hp": stats.max_hp})
 	_spawn_hit_particles()
 	AudioManager.play_sfx_at(impact_sfx, global_position)
 

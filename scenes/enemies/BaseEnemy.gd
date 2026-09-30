@@ -164,6 +164,8 @@ func _get_next_action() -> void:
 
 
 func _change_state(new_state: State) -> void:
+	if EventLog.enabled:
+		_log_state_change(new_state)
 	state = new_state
 	match new_state:
 		State.IDLE:
@@ -184,6 +186,26 @@ func _change_state(new_state: State) -> void:
 			velocity = Vector3.ZERO
 			_nav_agent.target_position = global_position
 			_play_anim("death")
+
+
+# Event log (scripts/debug/EventLog.gd), called before the state changes so the old state is known
+func _log_state_change(new_state: State) -> void:
+	var actor := EventLog.label(self)
+	var dist := EventLog.round3(global_position.distance_to(_player.global_position)) if is_instance_valid(_player) else -1.0
+	match new_state:
+		State.ATTACK:
+			EventLog.log_event("attack_started", {"actor": actor, "kind": "melee"})
+		State.STAGGER:
+			EventLog.log_event("stagger", {"actor": actor, "interrupted_attack": state == State.ATTACK})
+		State.DEAD:
+			EventLog.log_event("death", {"actor": actor})
+		State.CHASE:
+			if state == State.IDLE or state == State.PATROL:
+				EventLog.log_event("detected", {"actor": actor, "target": EventLog.label(_player), "distance": dist,
+						"line_of_sight": EventLog.line_of_sight(self, _player)})
+		State.IDLE:
+			if state == State.CHASE:
+				EventLog.log_event("disengaged", {"actor": actor, "distance": dist})
 
 
 # Parents each held prop to a BoneAttachment3D on the bone its socket maps to
@@ -241,7 +263,11 @@ func _on_hurtbox_hit(area: Area3D) -> void:
 func take_damage(amount: int, knockback_direction: Vector3 = Vector3.ZERO) -> void:
 	if state == State.DEAD:
 		return
+	var hp_before := stats.current_hp
 	stats.take_damage(amount)
+	if EventLog.enabled:
+		EventLog.log_event("damage_taken", {"target": EventLog.label(self), "attacker": "scripted", "raw": amount,
+				"amount": hp_before - stats.current_hp, "hp": stats.current_hp, "max_hp": stats.max_hp})
 	# stats.died may have fired synchronously above, calling die() → state = DEAD
 	if state == State.DEAD:
 		return

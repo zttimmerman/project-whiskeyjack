@@ -41,3 +41,6 @@ addons/.godot_ai_update/
 /reports/
 # Downloaded CC0 packs: original zips and extracted files (assets/sources.json records their SHA-256)
 .downloads/
+
+# Replay and capture outputs: event logs, metrics, movie frames, MP4s, contact sheets (scripts/review/run_scenario.sh, capture_evidence.sh)
+.replay-out/

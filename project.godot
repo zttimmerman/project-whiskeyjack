@@ -22,6 +22,7 @@ SaveManager="*uid://ch8tywqpocjgw"
 QuestManager="*uid://cecws7ifxbeme"
 DialogueRunner="*uid://cpcd3cmu4tfwq"
 AudioManager="*uid://cxv82dw4qnwfb"
+EventLog="*uid://c17iea51881fp"
 _mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
 
 [editor_plugins]

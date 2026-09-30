@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" uid="uid://wgdho6m1yhtj" path="res://scripts/review/replay.gd" id="1_replay"]
+
+[node name="Replay" type="Node"]
+script = ExtResource("1_replay")

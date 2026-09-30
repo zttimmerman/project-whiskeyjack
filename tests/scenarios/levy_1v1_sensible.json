@@ -1,0 +1,37 @@
+{
+  "name": "levy_1v1_sensible",
+  "description": "The scripted sensible player (design bible §4, §10): from the spawn, walk toward the Corridor A levy, lock on, stop and let it come, meet it with a three-hit light combo, dodge back when it recovers, and finish it with a fourth light hit as it closes again. Nothing else in Level 1 is close enough to engage.",
+  "scene": "res://scenes/world/Level1.tscn",
+  "seed": 1,
+  "player": {"position": [0, 1, 0], "yaw_deg": -90, "pitch": -0.2},
+  "duration_frames": 360,
+  "steps": [
+    {"frame": 0, "action": "move_forward", "pressed": true},
+    {"frame": 5, "action": "lock_on", "pressed": true},
+    {"frame": 6, "action": "lock_on", "pressed": false},
+    {"frame": 20, "action": "move_forward", "pressed": false},
+    {"frame": 120, "action": "attack_light", "pressed": true},
+    {"frame": 121, "action": "attack_light", "pressed": false},
+    {"frame": 148, "action": "attack_light", "pressed": true},
+    {"frame": 149, "action": "attack_light", "pressed": false},
+    {"frame": 176, "action": "attack_light", "pressed": true},
+    {"frame": 177, "action": "attack_light", "pressed": false},
+    {"frame": 200, "action": "move_backward", "pressed": true},
+    {"frame": 201, "action": "dodge", "pressed": true},
+    {"frame": 202, "action": "dodge", "pressed": false},
+    {"frame": 232, "action": "move_backward", "pressed": false},
+    {"frame": 280, "action": "attack_light", "pressed": true},
+    {"frame": 281, "action": "attack_light", "pressed": false}
+  ],
+  "checks": [
+    {"id": "ttk_player_frontfile", "enemy": "EnemyCorridorA", "target": [3, 4], "baseline": 4},
+    {"id": "ttk_levy_player", "attacker": "EnemyCorridorA", "target": [10, 14], "baseline": 34,
+     "pending": "enemy damage retune after the damage ratio (design bible §11.1, §11.5)"},
+    {"id": "enemy_melee_telegraph", "target": [0.5, null], "baseline": 0.0,
+     "pending": "enemy melee windups (design bible §3)"},
+    {"id": "atk_hitbox_sync", "target": [-2, 2], "baseline": 0,
+     "pending": "clip contact frames and hitboxes synced to them (design bible §3); until then the value is hitbox open minus press"},
+    {"id": "enc_first_fight_hp_cost", "target": [0.10, 0.15], "baseline": 0.06,
+     "pending": "not meaningful until telegraphs exist (design bible §9)"}
+  ]
+}
