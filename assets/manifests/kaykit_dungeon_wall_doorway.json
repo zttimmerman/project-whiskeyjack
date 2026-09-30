@@ -31,15 +31,15 @@
     },
     "model": {
       "status": "ok",
-      "timestamp": "2026-09-30T03:52:49+00:00",
+      "timestamp": "2026-09-30T04:48:30+00:00",
       "inputs": [
         {
           "path": "assets/briefs/kaykit_dungeon_wall_doorway.yaml",
-          "sha256": "5d78954dee79aaa3b6faf1f5dbff40677a9e3c03ab6fd1b01df32c678da22e14"
+          "sha256": "05579f0293fd603c4fea47aaf50438288ab960a13b81dd929cdeccdae36aa053"
         },
         {
           "path": "assets/sources.json",
-          "sha256": "1a5ce1f685cdd6e47fde7956739211ba0d0db13c76ef0d415793a0952fc1f28c"
+          "sha256": "de64c9399767c59dfa99e6d7dc1b96b06d35113761b16d2632c17d02920e0214"
         },
         {
           "path": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/wall_doorway.glb",
@@ -74,11 +74,11 @@
     },
     "clean": {
       "status": "ok",
-      "timestamp": "2026-09-30T03:52:50+00:00",
+      "timestamp": "2026-09-30T04:48:32+00:00",
       "inputs": [
         {
           "path": "assets/briefs/kaykit_dungeon_wall_doorway.yaml",
-          "sha256": "5d78954dee79aaa3b6faf1f5dbff40677a9e3c03ab6fd1b01df32c678da22e14"
+          "sha256": "05579f0293fd603c4fea47aaf50438288ab960a13b81dd929cdeccdae36aa053"
         },
         {
           "path": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/wall_doorway.glb",
@@ -86,21 +86,21 @@
         },
         {
           "path": "scripts/blender_cleanup.py",
-          "sha256": "11ffc69675698b1454b74ff9bbf772f6340aeed0ccea808acf97c47ade2b2ddb"
+          "sha256": "fa591dd4d73a1111ea58dc2f6ec79545950cebf381a927cb366f7b2e231ea336"
         },
         {
           "path": "assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png",
-          "sha256": "aafa7471709862536638becc60997c8f466300c3382e0261cc2be9a9120e64f1"
+          "sha256": "dfe78eac04ef808ba61821a4f0dd20477aa6e08f32e74591aa9b5a371c58aafe"
         },
         {
           "path": "assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.json",
-          "sha256": "3a7c4f0cfd71783b8b0dbd18e544a3e09b4c2763fb3c65ca7b628a4a142e5e9e"
+          "sha256": "ca346b74a1b1b87df77ed675e18ebc8a60236b82af7ee16799e5ade5405402a1"
         }
       ],
       "outputs": [
         {
           "path": "assets/meshes/kaykit_dungeon_wall_doorway.glb",
-          "sha256": "6bbc9d63b35ccd4ee7dfdadaed59f47bd009fca10441142878343bb8571de3ef"
+          "sha256": "9fddd37cd4958f815c4168c868d80ced35eb7ee3312af5ced1576435ba8b6096"
         }
       ],
       "tool_versions": {
@@ -149,8 +149,8 @@
         "reference_image": null,
         "texture_overlays": [],
         "shared_atlas": {
-          "image": "/Users/zach/Documents/repos/project-whiskeyjack-a4/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png",
-          "sidecar": "/Users/zach/Documents/repos/project-whiskeyjack-a4/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.json"
+          "image": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png",
+          "sidecar": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.json"
         }
       },
       "report": {
@@ -158,8 +158,8 @@
         "errors": [],
         "warnings": [],
         "blender_version": "5.0.1",
-        "input": "/Users/zach/Documents/repos/project-whiskeyjack-a4/.downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/wall_doorway.glb",
-        "output": "/Users/zach/Documents/repos/project-whiskeyjack-a4/assets/meshes/kaykit_dungeon_wall_doorway.glb",
+        "input": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/.downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/wall_doorway.glb",
+        "output": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/meshes/kaykit_dungeon_wall_doorway.glb",
         "materials": [
           {
             "name": "texture",
@@ -253,7 +253,8 @@
                     4.0,
                     1.0,
                     4.0
-                  ]
+                  ],
+                  "boundary_loops": 2
                 },
                 {
                   "triangles": 196,
@@ -262,7 +263,8 @@
                     2.0,
                     0.2,
                     2.75
-                  ]
+                  ],
+                  "boundary_loops": 1
                 },
                 {
                   "triangles": 144,
@@ -271,7 +273,8 @@
                     0.1371,
                     0.7735,
                     0.3676
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 120,
@@ -280,7 +283,8 @@
                     0.5184,
                     0.0979,
                     0.5184
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 120,
@@ -289,7 +293,8 @@
                     0.5184,
                     0.0979,
                     0.5184
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 23,
@@ -298,7 +303,8 @@
                     0.4905,
                     0.091,
                     0.3046
-                  ]
+                  ],
+                  "boundary_loops": 1
                 },
                 {
                   "triangles": 23,
@@ -307,7 +313,8 @@
                     0.4964,
                     0.091,
                     0.3046
-                  ]
+                  ],
+                  "boundary_loops": 1
                 },
                 {
                   "triangles": 23,
@@ -316,7 +323,8 @@
                     0.4905,
                     0.091,
                     0.3046
-                  ]
+                  ],
+                  "boundary_loops": 1
                 },
                 {
                   "triangles": 23,
@@ -325,7 +333,8 @@
                     0.4964,
                     0.091,
                     0.3046
-                  ]
+                  ],
+                  "boundary_loops": 1
                 },
                 {
                   "triangles": 20,
@@ -334,7 +343,8 @@
                     1.9561,
                     0.4,
                     0.4279
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 20,
@@ -343,7 +353,8 @@
                     1.9561,
                     0.4,
                     0.4279
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 14,
@@ -352,7 +363,8 @@
                     0.4368,
                     0.091,
                     0.3046
-                  ]
+                  ],
+                  "boundary_loops": 1
                 },
                 {
                   "triangles": 14,
@@ -361,7 +373,8 @@
                     0.5914,
                     0.091,
                     0.3046
-                  ]
+                  ],
+                  "boundary_loops": 1
                 },
                 {
                   "triangles": 14,
@@ -370,7 +383,8 @@
                     0.5352,
                     0.091,
                     0.3046
-                  ]
+                  ],
+                  "boundary_loops": 1
                 },
                 {
                   "triangles": 14,
@@ -379,7 +393,8 @@
                     0.5914,
                     0.091,
                     0.3046
-                  ]
+                  ],
+                  "boundary_loops": 1
                 },
                 {
                   "triangles": 14,
@@ -388,7 +403,8 @@
                     0.4368,
                     0.091,
                     0.3046
-                  ]
+                  ],
+                  "boundary_loops": 1
                 },
                 {
                   "triangles": 14,
@@ -397,7 +413,8 @@
                     0.5914,
                     0.091,
                     0.3046
-                  ]
+                  ],
+                  "boundary_loops": 1
                 },
                 {
                   "triangles": 14,
@@ -406,7 +423,8 @@
                     0.5352,
                     0.091,
                     0.3046
-                  ]
+                  ],
+                  "boundary_loops": 1
                 },
                 {
                   "triangles": 14,
@@ -415,7 +433,8 @@
                     0.5914,
                     0.091,
                     0.3046
-                  ]
+                  ],
+                  "boundary_loops": 1
                 }
               ],
               "quad_ratio": 0.0,
@@ -466,7 +485,8 @@
                       4.0,
                       1.0,
                       4.0
-                    ]
+                    ],
+                    "boundary_loops": 2
                   },
                   {
                     "triangles": 23,
@@ -475,7 +495,8 @@
                       0.4905,
                       0.091,
                       0.3046
-                    ]
+                    ],
+                    "boundary_loops": 1
                   },
                   {
                     "triangles": 23,
@@ -484,7 +505,8 @@
                       0.4964,
                       0.091,
                       0.3046
-                    ]
+                    ],
+                    "boundary_loops": 1
                   },
                   {
                     "triangles": 23,
@@ -493,7 +515,8 @@
                       0.4905,
                       0.091,
                       0.3046
-                    ]
+                    ],
+                    "boundary_loops": 1
                   },
                   {
                     "triangles": 23,
@@ -502,7 +525,8 @@
                       0.4964,
                       0.091,
                       0.3046
-                    ]
+                    ],
+                    "boundary_loops": 1
                   },
                   {
                     "triangles": 14,
@@ -511,7 +535,8 @@
                       0.4368,
                       0.091,
                       0.3046
-                    ]
+                    ],
+                    "boundary_loops": 1
                   },
                   {
                     "triangles": 14,
@@ -520,7 +545,8 @@
                       0.5914,
                       0.091,
                       0.3046
-                    ]
+                    ],
+                    "boundary_loops": 1
                   },
                   {
                     "triangles": 14,
@@ -529,7 +555,8 @@
                       0.5352,
                       0.091,
                       0.3046
-                    ]
+                    ],
+                    "boundary_loops": 1
                   },
                   {
                     "triangles": 14,
@@ -538,7 +565,8 @@
                       0.5914,
                       0.091,
                       0.3046
-                    ]
+                    ],
+                    "boundary_loops": 1
                   },
                   {
                     "triangles": 14,
@@ -547,7 +575,8 @@
                       0.4368,
                       0.091,
                       0.3046
-                    ]
+                    ],
+                    "boundary_loops": 1
                   },
                   {
                     "triangles": 14,
@@ -556,7 +585,8 @@
                       0.5914,
                       0.091,
                       0.3046
-                    ]
+                    ],
+                    "boundary_loops": 1
                   },
                   {
                     "triangles": 14,
@@ -565,7 +595,8 @@
                       0.5352,
                       0.091,
                       0.3046
-                    ]
+                    ],
+                    "boundary_loops": 1
                   },
                   {
                     "triangles": 14,
@@ -574,7 +605,8 @@
                       0.5914,
                       0.091,
                       0.3046
-                    ]
+                    ],
+                    "boundary_loops": 1
                   }
                 ],
                 "part_count": 13
@@ -623,7 +655,8 @@
                       2.0,
                       0.2,
                       2.75
-                    ]
+                    ],
+                    "boundary_loops": 1
                   },
                   {
                     "triangles": 144,
@@ -632,7 +665,8 @@
                       0.1371,
                       0.7735,
                       0.3676
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 120,
@@ -641,7 +675,8 @@
                       0.5184,
                       0.0979,
                       0.5184
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 120,
@@ -650,7 +685,8 @@
                       0.5184,
                       0.0979,
                       0.5184
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 20,
@@ -659,7 +695,8 @@
                       1.9561,
                       0.4,
                       0.4279
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 20,
@@ -668,7 +705,8 @@
                       1.9561,
                       0.4,
                       0.4279
-                    ]
+                    ],
+                    "boundary_loops": 0
                   }
                 ],
                 "part_count": 6
@@ -679,8 +717,8 @@
           "note": "baseline only; nothing fails on these yet"
         },
         "shared_atlas": {
-          "image": "/Users/zach/Documents/repos/project-whiskeyjack-a4/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png",
-          "atlas_sha256": "aafa7471709862536638becc60997c8f466300c3382e0261cc2be9a9120e64f1",
+          "image": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png",
+          "atlas_sha256": "dfe78eac04ef808ba61821a4f0dd20477aa6e08f32e74591aa9b5a371c58aafe",
           "source": ".downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/texture/dungeon_texture.png",
           "source_pixels_sha256": "ff7a2f8ec0452c70e60d0b8ad7b4e2f19fe04471f8caa2431a61073c5825981a",
           "note": "downscaled and palette-corrected once for the whole pack; not re-corrected per piece"
@@ -692,63 +730,126 @@
               128,
               128
             ],
+            "shared_atlas": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png",
+            "lightness": "lifted or lowered (sourced asset)",
+            "measured_over": {
+              "texels": 446,
+              "of": 16384,
+              "mask": "this piece's UV footprint on the shared atlas"
+            },
             "groups": [
               {
                 "color": "Wet Slate",
                 "target": "#736B66",
-                "share": 0.4946,
-                "median_before": "#999999",
-                "delta_e_before": 18.0,
+                "share": 0.4664,
+                "median_before": "#858F94",
+                "delta_e_before": 16.1,
                 "applied": true,
-                "median_after": "#9A9996",
-                "delta_e_after": 17.7
+                "median_after": "#77706B",
+                "delta_e_after": 2.2
               },
               {
                 "color": "Rain Stone",
                 "target": "#4D4740",
-                "share": 0.0659,
-                "median_before": "#4B4B4A",
-                "delta_e_before": 5.0,
+                "share": 0.0404,
+                "median_before": "#4A5054",
+                "delta_e_before": 9.3,
                 "applied": true,
-                "median_after": "#504A43",
-                "delta_e_after": 1.3
+                "median_after": "#4C453E",
+                "delta_e_after": 0.9
               },
               {
                 "color": "Peat Black",
                 "target": "#2E2926",
-                "share": 0.0146,
+                "share": 0.0,
                 "applied": false,
-                "reason": "covers 1.5% (< 3%); not really present"
+                "reason": "covers 0.0% (< 3%); not really present"
               },
               {
                 "color": "Barrow Oak",
                 "target": "#8C5933",
-                "share": 0.3535,
-                "median_before": "#D3875E",
-                "delta_e_before": 22.3,
+                "share": 0.4933,
+                "median_before": "#995843",
+                "delta_e_before": 10.2,
                 "applied": true,
-                "median_after": "#CF8962",
-                "delta_e_after": 21.5
+                "median_after": "#895631",
+                "delta_e_after": 1.2
               },
               {
                 "color": "Saddle Leather",
                 "target": "#4A2A10",
-                "share": 0.0098,
+                "share": 0.0,
                 "applied": false,
-                "reason": "covers 1.0% (< 3%); not really present"
+                "reason": "covers 0.0% (< 3%); not really present"
               },
               {
                 "color": "Blackened Iron",
                 "target": "#242424",
-                "share": 0.0615,
-                "median_before": "#222528",
-                "delta_e_before": 2.4,
-                "applied": true,
-                "median_after": "#252524",
-                "delta_e_after": 0.2
+                "share": 0.0,
+                "applied": false,
+                "reason": "covers 0.0% (< 3%); not really present"
               }
             ],
-            "shared_atlas": "/Users/zach/Documents/repos/project-whiskeyjack-a4/assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png"
+            "atlas_correction": {
+              "measured_over": {
+                "texels": 740,
+                "of": 16384,
+                "mask": "union of the UV footprints of 6 pieces"
+              },
+              "groups": [
+                {
+                  "color": "Wet Slate",
+                  "target": "#736B66",
+                  "share": 0.5378,
+                  "median_before": "#818A8F",
+                  "delta_e_before": 14.2,
+                  "applied": true,
+                  "median_after": "#726B66",
+                  "delta_e_after": 0.4
+                },
+                {
+                  "color": "Rain Stone",
+                  "target": "#4D4740",
+                  "share": 0.0311,
+                  "median_before": "#4B5256",
+                  "delta_e_before": 9.7,
+                  "applied": true,
+                  "median_after": "#4D4740",
+                  "delta_e_after": 0.0
+                },
+                {
+                  "color": "Peat Black",
+                  "target": "#2E2926",
+                  "share": 0.0,
+                  "applied": false,
+                  "reason": "covers 0.0% (< 3%); not really present"
+                },
+                {
+                  "color": "Barrow Oak",
+                  "target": "#8C5933",
+                  "share": 0.4311,
+                  "median_before": "#9C5B45",
+                  "delta_e_before": 10.1,
+                  "applied": true,
+                  "median_after": "#8C5933",
+                  "delta_e_after": 0.0
+                },
+                {
+                  "color": "Saddle Leather",
+                  "target": "#4A2A10",
+                  "share": 0.0,
+                  "applied": false,
+                  "reason": "covers 0.0% (< 3%); not really present"
+                },
+                {
+                  "color": "Blackened Iron",
+                  "target": "#242424",
+                  "share": 0.0,
+                  "applied": false,
+                  "reason": "covers 0.0% (< 3%); not really present"
+                }
+              ]
+            }
           }
         ],
         "shading": {
@@ -784,15 +885,15 @@
     },
     "validate": {
       "status": "ok",
-      "timestamp": "2026-09-30T03:52:51+00:00",
+      "timestamp": "2026-09-30T04:48:33+00:00",
       "inputs": [
         {
           "path": "assets/briefs/kaykit_dungeon_wall_doorway.yaml",
-          "sha256": "5d78954dee79aaa3b6faf1f5dbff40677a9e3c03ab6fd1b01df32c678da22e14"
+          "sha256": "05579f0293fd603c4fea47aaf50438288ab960a13b81dd929cdeccdae36aa053"
         },
         {
           "path": "assets/meshes/kaykit_dungeon_wall_doorway.glb",
-          "sha256": "6bbc9d63b35ccd4ee7dfdadaed59f47bd009fca10441142878343bb8571de3ef"
+          "sha256": "9fddd37cd4958f815c4168c868d80ced35eb7ee3312af5ced1576435ba8b6096"
         },
         {
           "path": "scripts/godot_validate.gd",
@@ -804,33 +905,33 @@
         },
         {
           "path": "assets/sources.json",
-          "sha256": "1a5ce1f685cdd6e47fde7956739211ba0d0db13c76ef0d415793a0952fc1f28c"
+          "sha256": "de64c9399767c59dfa99e6d7dc1b96b06d35113761b16d2632c17d02920e0214"
         }
       ],
       "outputs": [
         {
           "path": "assets/manifests/kaykit_dungeon_wall_doorway/front.png",
-          "sha256": "1dddf27f1736c907212dbfa2367457cb432e547d8dab589664df20a1b535e5a2"
+          "sha256": "ba67808d493559ba0d2cf76525a28ed3c11daed43d6f0470a0cc945ab4cfbffe"
         },
         {
           "path": "assets/manifests/kaykit_dungeon_wall_doorway/right.png",
-          "sha256": "5f09b4e865c022276c09793c039d0fd9e9e28404322ad03acf1afd3844e7ed80"
+          "sha256": "85e15066a4c1a369b5eff52b99db99926ebeef09400a1401ce3842425400b72d"
         },
         {
           "path": "assets/manifests/kaykit_dungeon_wall_doorway/back.png",
-          "sha256": "8ab7aff74321dcfaf9b10ec0e456462cb4f11caebce3a5a4c993324f6cfc6c43"
+          "sha256": "2702c269a8609ea6fd8805abbee4d0fcb661a3c8952022b07dcbbecd389a85e1"
         },
         {
           "path": "assets/manifests/kaykit_dungeon_wall_doorway/top.png",
-          "sha256": "b6d2f80b6c0f784a31b2875c26f522730dab8a5ec01520375adccb57592b90f1"
+          "sha256": "6a485d379f57405d617de1f942ebf51719b18476b2c6391445861b62daea371f"
         },
         {
           "path": "assets/manifests/kaykit_dungeon_wall_doorway/clay_front.png",
-          "sha256": "884eb483df0f5be3e78ce9f9cc733c6625b38c30d1558086d0315091a8257e3e"
+          "sha256": "c8b4513ed7a44331a43e07c699750c506b7ba4303ac9884775655903f93e2b02"
         },
         {
           "path": "assets/manifests/kaykit_dungeon_wall_doorway/wireframe_front.png",
-          "sha256": "10ab10a41abecbabb381134fc654d3b9e9938c55f199663d1e739f1e0618dabe"
+          "sha256": "ea17bb5b93036d006a27629b85617445be3bca871858780f44567fc076c3b666"
         }
       ],
       "tool_versions": {
@@ -940,27 +1041,27 @@
           "status": "ok",
           "views": {
             "front": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack-a4/assets/manifests/kaykit_dungeon_wall_doorway/front.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/manifests/kaykit_dungeon_wall_doorway/front.png",
               "coverage": 0.8284
             },
             "right": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack-a4/assets/manifests/kaykit_dungeon_wall_doorway/right.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/manifests/kaykit_dungeon_wall_doorway/right.png",
               "coverage": 0.1417
             },
             "back": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack-a4/assets/manifests/kaykit_dungeon_wall_doorway/back.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/manifests/kaykit_dungeon_wall_doorway/back.png",
               "coverage": 0.8284
             },
             "top": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack-a4/assets/manifests/kaykit_dungeon_wall_doorway/top.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/manifests/kaykit_dungeon_wall_doorway/top.png",
               "coverage": 0.2048
             },
             "clay_front": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack-a4/assets/manifests/kaykit_dungeon_wall_doorway/clay_front.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/manifests/kaykit_dungeon_wall_doorway/clay_front.png",
               "coverage": 0.8284
             },
             "wireframe_front": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack-a4/assets/manifests/kaykit_dungeon_wall_doorway/wireframe_front.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-kitjudge/assets/manifests/kaykit_dungeon_wall_doorway/wireframe_front.png",
               "coverage": 0.1274
             }
           },
@@ -976,10 +1077,10 @@
   },
   "brief": {
     "path": "assets/briefs/kaykit_dungeon_wall_doorway.yaml",
-    "sha256": "5d78954dee79aaa3b6faf1f5dbff40677a9e3c03ab6fd1b01df32c678da22e14"
+    "sha256": "05579f0293fd603c4fea47aaf50438288ab960a13b81dd929cdeccdae36aa053"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-09-30T03:59:22+00:00",
+  "updated_at": "2026-09-30T04:48:33+00:00",
   "judgments": [
     {
       "kind": "verdict",
