@@ -30,7 +30,7 @@
      "pending": "enemy melee windups (design bible §3)"},
     {"id": "atk_hitbox_sync", "target": [-2, 2], "baseline": 0,
      "pending": "clip contact frames and hitboxes synced to them (design bible §3); until then the value is hitbox open minus press"},
-    {"id": "enc_first_fight_hp_cost", "target": [0.10, 0.15], "baseline": 0.18,
+    {"id": "enc_first_fight_hp_cost", "target": [0.10, 0.15], "baseline": 0.09,
      "pending": "not meaningful until telegraphs exist (design bible §9)"}
   ]
 }
