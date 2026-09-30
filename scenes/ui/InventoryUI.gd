@@ -64,6 +64,7 @@ func _connect_player() -> void:
 
 # ── Toggle ────────────────────────────────────────────────────────────────────
 
+
 func _on_toggle() -> void:
 	if visible:
 		_close()
@@ -96,6 +97,7 @@ func _input(event: InputEvent) -> void:
 
 
 # ── Item list ─────────────────────────────────────────────────────────────────
+
 
 func _refresh_list() -> void:
 	item_list.clear()

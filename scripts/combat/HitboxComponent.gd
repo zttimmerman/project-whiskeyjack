@@ -36,7 +36,15 @@ func deactivate() -> void:
 func _on_area_entered(area: Area3D) -> void:
 	if area is HurtboxComponent:
 		if EventLog.enabled:
-			EventLog.log_event("hit", {"attacker": EventLog.label(get_parent()), "target": EventLog.label(area.get_parent()),
-					"damage": damage, "heavy": is_heavy, "iframed": (area as HurtboxComponent).invincible})
+			EventLog.log_event(
+				"hit",
+				{
+					"attacker": EventLog.label(get_parent()),
+					"target": EventLog.label(area.get_parent()),
+					"damage": damage,
+					"heavy": is_heavy,
+					"iframed": (area as HurtboxComponent).invincible
+				}
+			)
 		emit_signal("hit", area.get_parent(), damage)
 		GameManager.trigger_hit_stop(0.12 if is_heavy else 0.06)

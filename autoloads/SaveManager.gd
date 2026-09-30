@@ -108,6 +108,7 @@ func record_enemy_killed(enemy: Node) -> void:
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
+
 # Reads the save and returns it only if its format version and scene match the current scene;
 # otherwise returns {} (with a warning when `warn`), so a stale or foreign save is never applied.
 func _read_compatible_save(warn: bool) -> Dictionary:
@@ -133,13 +134,20 @@ func _read_compatible_save(warn: bool) -> Dictionary:
 	var version := int(data.get("version", 1))
 	if version != SAVE_FORMAT_VERSION:
 		if warn:
-			push_warning("SaveManager: ignoring %s: format version %d, expected %d" % [_save_path, version, SAVE_FORMAT_VERSION])
+			push_warning(
+				"SaveManager: ignoring %s: format version %d, expected %d" % [_save_path, version, SAVE_FORMAT_VERSION]
+			)
 		return {}
 	var scene := get_tree().current_scene
 	var scene_path: String = scene.scene_file_path if scene else ""
 	if str(data.get("scene", "")) != scene_path:
 		if warn:
-			push_warning("SaveManager: ignoring %s: saved in %s, current scene is %s" % [_save_path, data.get("scene", "?"), scene_path])
+			push_warning(
+				(
+					"SaveManager: ignoring %s: saved in %s, current scene is %s"
+					% [_save_path, data.get("scene", "?"), scene_path]
+				)
+			)
 		return {}
 	return data
 
@@ -160,6 +168,7 @@ func _get_player() -> Node:
 
 
 # ── Serialization ─────────────────────────────────────────────────────────────
+
 
 func _serialize_player(player: Node) -> Dictionary:
 	var pos: Vector3 = player.global_position
@@ -212,6 +221,7 @@ func _serialize_quests() -> Dictionary:
 
 
 # ── Deserialization ───────────────────────────────────────────────────────────
+
 
 # Removes the enemies the save lists as killed (quietly: no died signal, no XP) and makes the
 # save's list the current kill list, so the next save still includes them.

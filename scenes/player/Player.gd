@@ -13,15 +13,15 @@ const CHARACTER_LIGHT_LAYER := 2  # render layer of CameraRig/FillLight's cull m
 @export var held_props: Dictionary = {}
 @export var inventory: Inventory
 @export var move_speed: float = 5.0
-@export var dodge_speed: float = 8.4   # 4.2 m over the dodge, as before
+@export var dodge_speed: float = 8.4  # 4.2 m over the dodge, as before
 @export var dodge_duration: float = 0.5  # fits the roll clip's core at 1.8x
 @export var gravity: float = 20.0
-@export var camera_sensitivity: float = 0.003   # radians per pixel (mouse)
-@export var camera_pad_speed: float = 2.0        # radians per second (keys/gamepad)
-@export var camera_pitch_min: float = -0.4       # ~-23 degrees
-@export var camera_pitch_max: float = 0.8        # ~46 degrees
+@export var camera_sensitivity: float = 0.003  # radians per pixel (mouse)
+@export var camera_pad_speed: float = 2.0  # radians per second (keys/gamepad)
+@export var camera_pitch_min: float = -0.4  # ~-23 degrees
+@export var camera_pitch_max: float = 0.8  # ~46 degrees
 @export var lock_on_range: float = 15.0
-@export var combo_window: float = 0.6        # seconds before light combo resets
+@export var combo_window: float = 0.6  # seconds before light combo resets
 @export var attack_active_time: float = 0.2  # light hitbox active duration (seconds)
 @export var heavy_active_time: float = 0.35  # heavy hitbox active duration (seconds)
 
@@ -144,11 +144,9 @@ func _physics_process(delta: float) -> void:
 
 # ── Movement ──────────────────────────────────────────────────────────────────
 
+
 func _move(delta: float) -> void:
-	var input_dir := Vector2(
-		Input.get_axis("move_left", "move_right"),
-		Input.get_axis("move_forward", "move_backward")
-	)
+	var input_dir := Vector2(Input.get_axis("move_left", "move_right"), Input.get_axis("move_forward", "move_backward"))
 
 	if input_dir.length_squared() > 0.01:
 		input_dir = input_dir.normalized()
@@ -189,12 +187,10 @@ func _apply_gravity(delta: float) -> void:
 
 # ── Dodge ─────────────────────────────────────────────────────────────────────
 
+
 func _dodge() -> void:
 	# Snap dodge direction from current input; fallback to character forward
-	var input_dir := Vector2(
-		Input.get_axis("move_left", "move_right"),
-		Input.get_axis("move_forward", "move_backward")
-	)
+	var input_dir := Vector2(Input.get_axis("move_left", "move_right"), Input.get_axis("move_forward", "move_backward"))
 	if input_dir.length_squared() > 0.01:
 		var cam_forward := -camera_rig.global_transform.basis.z
 		var cam_right := camera_rig.global_transform.basis.x
@@ -211,8 +207,14 @@ func _dodge() -> void:
 	if is_instance_valid(hurtbox):
 		hurtbox.invincible = true
 	if EventLog.enabled:
-		EventLog.log_event("dodge_start", {"actor": EventLog.label(self), "duration_s": dodge_duration,
-				"invincible": is_instance_valid(hurtbox) and hurtbox.invincible})
+		EventLog.log_event(
+			"dodge_start",
+			{
+				"actor": EventLog.label(self),
+				"duration_s": dodge_duration,
+				"invincible": is_instance_valid(hurtbox) and hurtbox.invincible
+			}
+		)
 
 
 func _tick_dodge(delta: float) -> void:
@@ -229,12 +231,12 @@ func _tick_dodge(delta: float) -> void:
 
 # ── Camera ────────────────────────────────────────────────────────────────────
 
+
 func _update_camera(delta: float) -> void:
 	if not _lock_on_target:
 		# Gamepad / keyboard camera rotation
 		var cam_input := Vector2(
-			Input.get_axis("camera_left", "camera_right"),
-			Input.get_axis("camera_up", "camera_down")
+			Input.get_axis("camera_left", "camera_right"), Input.get_axis("camera_up", "camera_down")
 		)
 		_cam_yaw -= cam_input.x * camera_pad_speed * delta
 		_cam_pitch -= cam_input.y * camera_pad_speed * delta
@@ -279,6 +281,7 @@ func apply_view_state(view: Dictionary) -> void:
 
 # ── Lock-on ───────────────────────────────────────────────────────────────────
 
+
 func _toggle_lock_on() -> void:
 	if _lock_on_target:
 		# Cycle to next candidate; release if only one in range
@@ -305,8 +308,10 @@ func _validate_lock_on() -> void:
 	if not _lock_on_target:
 		return
 	# Release if target was freed or moved out of range
-	if not is_instance_valid(_lock_on_target) \
-			or global_position.distance_to(_lock_on_target.global_position) > lock_on_range * 1.5:
+	if (
+		not is_instance_valid(_lock_on_target)
+		or global_position.distance_to(_lock_on_target.global_position) > lock_on_range * 1.5
+	):
 		_release_lock_on()
 
 
@@ -315,8 +320,7 @@ func _find_lock_on_target() -> Node3D:
 	_lock_on_index = 0
 
 	for enemy in get_tree().get_nodes_in_group("enemy"):
-		if enemy is Node3D \
-				and global_position.distance_to(enemy.global_position) <= lock_on_range:
+		if enemy is Node3D and global_position.distance_to(enemy.global_position) <= lock_on_range:
 			_lock_on_candidates.append(enemy as Node3D)
 
 	if _lock_on_candidates.is_empty():
@@ -327,18 +331,20 @@ func _find_lock_on_target() -> Node3D:
 	cam_forward.y = 0.0
 	cam_forward = cam_forward.normalized()
 
-	_lock_on_candidates.sort_custom(func(a: Node3D, b: Node3D) -> bool:
-		var da := (a.global_position - global_position).normalized()
-		var db := (b.global_position - global_position).normalized()
-		da.y = 0.0
-		db.y = 0.0
-		return cam_forward.dot(da) > cam_forward.dot(db)
+	_lock_on_candidates.sort_custom(
+		func(a: Node3D, b: Node3D) -> bool:
+			var da := (a.global_position - global_position).normalized()
+			var db := (b.global_position - global_position).normalized()
+			da.y = 0.0
+			db.y = 0.0
+			return cam_forward.dot(da) > cam_forward.dot(db)
 	)
 
 	return _lock_on_candidates[0]
 
 
 # ── Interact ──────────────────────────────────────────────────────────────────
+
 
 func interact() -> void:
 	# Short forward raycast; interactables must implement interact()
@@ -359,6 +365,7 @@ func _toggle_inventory() -> void:
 
 
 # ── Combat ────────────────────────────────────────────────────────────────────
+
 
 func _on_hitbox_hit(_target: Node, _damage: int) -> void:
 	if hitbox.is_heavy:
@@ -393,8 +400,10 @@ func _attack_light() -> void:
 	hitbox.knockback_force = 4.0
 	hitbox.is_heavy = false
 	if EventLog.enabled:
-		EventLog.log_event("attack_started", {"actor": EventLog.label(self), "kind": "light",
-				"combo_index": _combo_index, "damage": hitbox.damage})
+		EventLog.log_event(
+			"attack_started",
+			{"actor": EventLog.label(self), "kind": "light", "combo_index": _combo_index, "damage": hitbox.damage}
+		)
 	hitbox.activate()
 	_play_anim("attack_light", true)
 	if _sfx_swing.stream:
@@ -415,8 +424,10 @@ func _attack_heavy() -> void:
 	hitbox.knockback_force = 10.0
 	hitbox.is_heavy = true
 	if EventLog.enabled:
-		EventLog.log_event("attack_started", {"actor": EventLog.label(self), "kind": "heavy",
-				"combo_index": 0, "damage": hitbox.damage})
+		EventLog.log_event(
+			"attack_started",
+			{"actor": EventLog.label(self), "kind": "heavy", "combo_index": 0, "damage": hitbox.damage}
+		)
 	hitbox.activate()
 	_play_anim("attack_heavy", true)
 	if _sfx_swing.stream:
@@ -426,17 +437,17 @@ func _attack_heavy() -> void:
 
 # ── Footsteps ─────────────────────────────────────────────────────────────────
 
+
 func _tick_footsteps(delta: float) -> void:
 	_footstep_timer -= delta
-	if _footstep_timer <= 0.0 \
-			and is_on_floor() \
-			and Vector2(velocity.x, velocity.z).length() > 0.5:
+	if _footstep_timer <= 0.0 and is_on_floor() and Vector2(velocity.x, velocity.z).length() > 0.5:
 		_footstep_timer = FOOTSTEP_INTERVAL
 		if _sfx_footstep.stream:
 			_sfx_footstep.play()
 
 
 # ── Animation ────────────────────────────────────────────────────────────────
+
 
 func _play_anim(anim_name: String, oneshot: bool = false) -> void:
 	if not _anim_player:
@@ -465,6 +476,7 @@ func _update_locomotion_anim() -> void:
 
 
 # ── Death ─────────────────────────────────────────────────────────────────────
+
 
 func die() -> void:
 	if not is_physics_processing():

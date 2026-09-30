@@ -79,8 +79,12 @@ func _run() -> void:
 		if not _point_region_at(scene_path, navmesh_path):
 			failed = true
 			continue
-		print("baked %s -> %s: %d polygons, %d vertices" % [
-			scene_path, navmesh_path, target.get_polygon_count(), target.vertices.size()])
+		print(
+			(
+				"baked %s -> %s: %d polygons, %d vertices"
+				% [scene_path, navmesh_path, target.get_polygon_count(), target.vertices.size()]
+			)
+		)
 	quit(1 if failed else 0)
 
 
@@ -123,7 +127,8 @@ static func bake_region(tree: SceneTree, scene_path: String, settings: Dictionar
 # collidable CSG shape adds those instead. Anything else that could carry geometry fails the bake,
 # so no floor or wall is silently left out of the navmesh.
 static func _add_collision_faces(
-		region: Node3D, source: NavigationMeshSourceGeometryData3D, scene_path: String) -> bool:
+	region: Node3D, source: NavigationMeshSourceGeometryData3D, scene_path: String
+) -> bool:
 	var ok := true
 	var nodes: Array[Node] = region.find_children("*", "", true, false)
 	nodes.sort_custom(func(a: Node, b: Node) -> bool: return str(region.get_path_to(a)) < str(region.get_path_to(b)))
@@ -139,8 +144,12 @@ static func _add_collision_faces(
 				continue
 			source.add_faces(shape.get_faces(), csg.global_transform)
 		elif node is GeometryInstance3D or node is CollisionObject3D or node is CollisionShape3D:
-			push_error("bake_navmeshes: %s: %s (%s) isn't a CSG shape; teach _add_collision_faces about it" % [
-				scene_path, region.get_path_to(node), node.get_class()])
+			push_error(
+				(
+					"bake_navmeshes: %s: %s (%s) isn't a CSG shape; teach _add_collision_faces about it"
+					% [scene_path, region.get_path_to(node), node.get_class()]
+				)
+			)
 			ok = false
 	return ok
 
@@ -162,15 +171,15 @@ func _point_region_at(scene_path: String, navmesh_path: String) -> bool:
 		return true
 	var uid := ResourceUID.id_to_text(_file_uid(navmesh_path))
 	var sub := RegEx.create_from_string(
-		'\\[sub_resource type="NavigationMesh" id="([^"]+)"\\]\\n(?:[^\\[\\n][^\\n]*\\n)*\\n')
+		'\\[sub_resource type="NavigationMesh" id="([^"]+)"\\]\\n(?:[^\\[\\n][^\\n]*\\n)*\\n'
+	)
 	var found := sub.search(text)
 	if found == null:
 		push_error("bake_navmeshes: %s has no inline NavigationMesh to repoint" % scene_path)
 		return false
 	var sub_id := found.get_string(1)
 	var ext_id := "navmesh_baked"
-	var ext_line := '[ext_resource type="NavigationMesh" uid="%s" path="%s" id="%s"]\n' % [
-		uid, navmesh_path, ext_id]
+	var ext_line := '[ext_resource type="NavigationMesh" uid="%s" path="%s" id="%s"]\n' % [uid, navmesh_path, ext_id]
 	text = text.replace(found.get_string(0), "")
 	var last_ext := text.rfind("\n[ext_resource ")
 	if last_ext < 0:

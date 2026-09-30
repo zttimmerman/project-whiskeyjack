@@ -27,7 +27,7 @@ func _ready() -> void:
 		await get_tree().process_frame
 	var player: CharacterBody3D = get_tree().get_first_node_in_group("player")
 	var enemy: Node3D = level.get_node(args.get("enemy", "EnemyCentral1"))
-	var dir := (player.global_position - enemy.global_position)
+	var dir := player.global_position - enemy.global_position
 	dir.y = 0
 	dir = dir.normalized() if dir.length() > 0.1 else Vector3.BACK
 	player.global_position = enemy.global_position + dir * START_DISTANCE + Vector3.UP * 0.1
@@ -45,8 +45,17 @@ func _ready() -> void:
 			# Kill the enemy nearest the player, so the death is in view
 			var nearest: Node3D = null
 			for body in level.find_children("*", "CharacterBody3D", true, false):
-				if body != player and body.has_method("die") and (nearest == null or
-						body.global_position.distance_to(player.global_position) < nearest.global_position.distance_to(player.global_position)):
+				if (
+					body != player
+					and body.has_method("die")
+					and (
+						nearest == null
+						or (
+							body.global_position.distance_to(player.global_position)
+							< nearest.global_position.distance_to(player.global_position)
+						)
+					)
+				):
 					nearest = body
 			enemy = nearest
 			enemy.call("die")

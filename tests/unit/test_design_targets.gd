@@ -51,7 +51,9 @@ func _light_hits_to_kill(attacker: CharacterStats, target: CharacterStats) -> in
 
 
 # §6 and §11.1: damage = max(1, round(damage × 100 / (100 + 10 × defense)))
-func test_damage_ratio_formula(do_skip := true, skip_reason := "pending: the §6 damage ratio replaces damage − defense (design bible §11.1)") -> void:
+func test_damage_ratio_formula(
+	do_skip := true, skip_reason := "pending: the §6 damage ratio replaces damage − defense (design bible §11.1)"
+) -> void:
 	# [incoming damage, defense, expected]
 	var cases := [
 		[10, 0, 10],
@@ -65,13 +67,17 @@ func test_damage_ratio_formula(do_skip := true, skip_reason := "pending: the §6
 	for c in cases:
 		var target := CharacterStats.new()
 		target.defense = c[1]
-		assert_int(_damage_taken(target, c[0])) \
-			.override_failure_message("damage %d vs defense %d: expected %d" % c) \
-			.is_equal(c[2])
+		(
+			assert_int(_damage_taken(target, c[0]))
+			. override_failure_message("damage %d vs defense %d: expected %d" % c)
+			. is_equal(c[2])
+		)
 
 
 # §11.5: an enemy hit takes about 8–10% of the player's HP at equal level
-func test_enemy_damage_share(do_skip := true, skip_reason := "pending: enemy damage retune after the damage ratio (design bible §11.5)") -> void:
+func test_enemy_damage_share(
+	do_skip := true, skip_reason := "pending: enemy damage retune after the damage ratio (design bible §11.5)"
+) -> void:
 	var player := _equipped_player_stats()
 	var levy := _scene_stats(LEVY_SCENE)
 	assert_int(levy.level).is_equal(player.level)
@@ -80,7 +86,10 @@ func test_enemy_damage_share(do_skip := true, skip_reason := "pending: enemy dam
 
 
 # ttk_levy_player: 10–14 levy hits kill the player, equal level, starting gear equipped
-func test_ttk_levy_player(do_skip := true, skip_reason := "pending: today about 34 hits; needs the damage ratio and enemy retune (design bible §11.1, §11.5)") -> void:
+func test_ttk_levy_player(
+	do_skip := true,
+	skip_reason := "pending: today about 34 hits; needs the damage ratio and enemy retune (design bible §11.1, §11.5)"
+) -> void:
 	var player := _equipped_player_stats()
 	var per_hit := _damage_taken(player, _scene_hitbox_damage(LEVY_SCENE))
 	assert_int(per_hit).is_greater(0)
@@ -89,7 +98,9 @@ func test_ttk_levy_player(do_skip := true, skip_reason := "pending: today about 
 
 # §6: enemy stats are base × (1 + 0.12 × (level − 1)). The API name is a proposal: a static
 # CharacterStats.level_scale(level) -> float multiplier (called dynamically so this file parses today).
-func test_level_band_scaling(do_skip := true, skip_reason := "pending: level-band scaling isn't implemented (design bible §6)") -> void:
+func test_level_band_scaling(
+	do_skip := true, skip_reason := "pending: level-band scaling isn't implemented (design bible §6)"
+) -> void:
 	assert_bool(CharacterStats.new().has_method("level_scale")).is_true()
 	var expected := {1: 1.0, 2: 1.12, 3: 1.24, 5: 1.48}
 	for level in expected:

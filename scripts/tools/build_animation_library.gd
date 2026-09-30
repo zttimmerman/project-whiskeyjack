@@ -16,16 +16,38 @@ const SOURCES := {
 	"UAL2": "res://assets/animations/quaternius/UAL2_Standard.glb",
 }
 # The characters' bones after retargeting (the mixamorig BoneMap's profile names)
-const CHARACTER_BONES := ["Root", "Hips", "Spine", "Chest", "UpperChest", "Neck", "Head",
-	"LeftShoulder", "LeftUpperArm", "LeftLowerArm", "LeftHand", "RightShoulder", "RightUpperArm",
-	"RightLowerArm", "RightHand", "LeftUpperLeg", "LeftLowerLeg", "LeftFoot", "LeftToes",
-	"RightUpperLeg", "RightLowerLeg", "RightFoot", "RightToes"]
+const CHARACTER_BONES := [
+	"Root",
+	"Hips",
+	"Spine",
+	"Chest",
+	"UpperChest",
+	"Neck",
+	"Head",
+	"LeftShoulder",
+	"LeftUpperArm",
+	"LeftLowerArm",
+	"LeftHand",
+	"RightShoulder",
+	"RightUpperArm",
+	"RightLowerArm",
+	"RightHand",
+	"LeftUpperLeg",
+	"LeftLowerLeg",
+	"LeftFoot",
+	"LeftToes",
+	"RightUpperLeg",
+	"RightLowerLeg",
+	"RightFoot",
+	"RightToes"
+]
 
 # code name -> [pack, clip, options]. Options: loop (bool), speed (playback multiplier baked in),
 # trim ([start, end] seconds of the source), in_place (bool: hold Hips/Root horizontal position at
 # the first frame, so a clip with travel baked in (Death01 falls backward) plays on the spot).
 const LIBRARIES := {
-	"player": {
+	"player":
+	{
 		"idle": ["UAL1", "Sword_Idle", {"loop": true}],
 		"run": ["UAL1", "Jog_Fwd_Loop", {"loop": true, "speed": 0.93}],  # 5.36 m/s native, player moves at 5.0
 		"dodge_roll": ["UAL1", "Roll", {"trim": [0.20, 1.10], "speed": 1.8}],  # roll core fitted into the 0.5 s dodge
@@ -33,16 +55,19 @@ const LIBRARIES := {
 		"attack_heavy": ["UAL2", "Sword_Regular_C", {}],
 		"death": ["UAL1", "Death01", {"in_place": true}],
 	},
-	"levy_frontfile": {
+	"levy_frontfile":
+	{
 		"idle": ["UAL1", "Sword_Idle", {"loop": true}],
 		"run": ["UAL1", "Jog_Fwd_Loop", {"loop": true, "speed": 0.75}],  # 4.0 m/s: BaseEnemy chase speed matches
 		"attack": ["UAL2", "Sword_Regular_A", {}],
 		"stagger": ["UAL1", "Hit_Chest", {}],
 		"death": ["UAL1", "Death01", {"in_place": true}],
 	},
-	"levy_backfile": {
+	"levy_backfile":
+	{
 		"idle": ["UAL1", "Idle_Loop", {"loop": true}],
-		"run": ["UAL1", "Walk_Loop", {"loop": true, "speed": 1.44}],  # 1.4 m/s: ArcherEnemy speed matches (Walk_Formal clasps the hands behind the back)
+		# 1.4 m/s: ArcherEnemy speed matches (Walk_Formal clasps the hands behind the back)
+		"run": ["UAL1", "Walk_Loop", {"loop": true, "speed": 1.44}],
 		"attack": ["UAL2", "OverhandThrow", {}],  # STAND-IN: no bow-draw clip in either Standard pack
 		"stagger": ["UAL1", "Hit_Chest", {}],
 		"death": ["UAL1", "Death01", {"in_place": true}],
@@ -71,8 +96,15 @@ func _init() -> void:
 func _clip(pack: String, clip: String, opts: Dictionary) -> Animation:
 	var speed: float = opts.get("speed", 1.0)
 	var trim: Array = opts.get("trim", [])
-	var key := "%s%s%s%s" % [clip, ("_x%.2f" % speed) if speed != 1.0 else "",
-			("_%.2f-%.2f" % [trim[0], trim[1]]) if trim else "", "_loop" if opts.get("loop", false) else ""]
+	var key := (
+		"%s%s%s%s"
+		% [
+			clip,
+			("_x%.2f" % speed) if speed != 1.0 else "",
+			("_%.2f-%.2f" % [trim[0], trim[1]]) if trim else "",
+			"_loop" if opts.get("loop", false) else ""
+		]
+	)
 	if opts.get("in_place", false):
 		key += "_inplace"
 	if _built.has(key):
@@ -100,8 +132,11 @@ func _clip(pack: String, clip: String, opts: Dictionary) -> Animation:
 			continue
 		var t := out.add_track(type)
 		out.track_set_path(t, path)
-		var hold_xz: bool = opts.get("in_place", false) and type == Animation.TYPE_POSITION_3D \
-				and String(path.get_concatenated_subnames()) in ["Hips", "Root"]
+		var hold_xz: bool = (
+			opts.get("in_place", false)
+			and type == Animation.TYPE_POSITION_3D
+			and String(path.get_concatenated_subnames()) in ["Hips", "Root"]
+		)
 		var first := Vector3.ZERO
 		var travel := 0.0
 		for f in frames + 1:
@@ -121,9 +156,18 @@ func _clip(pack: String, clip: String, opts: Dictionary) -> Animation:
 				Animation.TYPE_SCALE_3D:
 					out.scale_track_insert_key(t, u, src.scale_track_interpolate(i, s))
 		if hold_xz:
-			print("IN_PLACE %s %s: removed up to %.2f (track units) of horizontal travel" % [clip, path.get_concatenated_subnames(), travel])
+			print(
+				(
+					"IN_PLACE %s %s: removed up to %.2f (track units) of horizontal travel"
+					% [clip, path.get_concatenated_subnames(), travel]
+				)
+			)
 	var file := "res://data/animations/clips/%s.res" % key
-	print("CLIP ", file, " length %.2f s, %d tracks, err %d" % [out.length, out.get_track_count(), ResourceSaver.save(out, file)])
+	print(
+		"CLIP ",
+		file,
+		" length %.2f s, %d tracks, err %d" % [out.length, out.get_track_count(), ResourceSaver.save(out, file)]
+	)
 	out.take_over_path(file)
 	_built[key] = out
 	return out
