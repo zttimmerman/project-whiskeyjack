@@ -403,6 +403,16 @@ Editing workflow:
 
 ---
 
+## Testing (test-first for new gameplay)
+
+- **Rules with a right answer are test-first.** Damage, i-frame and recovery windows, attack tokens, telegraph durations, level bands, save rules. Write the failing gdUnit4 test first, named after its design-bible target ID where there is one (for example `test_enemy_melee_telegraph`), then implement until it passes.
+- **Behaviour measured in play is scenario-first.** Camera framing, encounter pacing, level metrics. Write the replay scenario (`tests/scenarios/`) and its target check first, confirm it fails at today's value, then iterate. Feel is still judged by playtests and the user.
+- **Existing code gets characterization tests before a refactor,** written after the fact, so behaviour is pinned before it changes.
+- **Commit the test before the implementation,** so the order shows in review. Throwaway spikes on scratch branches are fine, but the real branch starts with the failing test.
+- **CI requires tests to pass;** it doesn't police the order.
+
+---
+
 ## What Claude Should Always Do
 - Write complete, runnable GDScript — no pseudocode or placeholder stubs unless explicitly asked
 - Use Godot 4 syntax (not Godot 3) — e.g., `CharacterBody3D` not `KinematicBody`, `velocity` not `move_and_slide(velocity)`
