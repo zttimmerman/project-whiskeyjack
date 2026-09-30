@@ -180,3 +180,42 @@ jobs:
             *.log
             clearance.json
           retention-days: 14
+
+  replays:
+    name: replays (scenarios, determinism, design-bible metrics)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container:
+      image: barichello/godot-ci:4.7.2@sha256:cdcca31e9194fd59a68a63f4b1b9c3981716819c520cd6f7966c5d72ca7246bd
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install Python and fontconfig
+        # Without libfontconfig Godot logs "Unable to load fontconfig" as an ERROR on every run.
+        run: apt-get update -qq && apt-get install -y -qq --no-install-recommends python3 libfontconfig1
+      - name: Test the metrics script on its fixture logs (tests/replay/)
+        run: python3 tests/replay/test_replay_metrics.py
+      - name: Restore the import cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .godot
+          key: godot-import-4.7.2-${{ hashFiles('project.godot', '**/*.import') }}
+          restore-keys: godot-import-4.7.2-
+      - name: Import
+        run: godot --headless --path . --import < /dev/null 2>&1 | tee import.log
+      - name: Run every scenario twice headless, compare the logs and check the targets (no capture)
+        # Rendered capture (scripts/review/capture_evidence.sh) stays on the Mac: llvmpipe colours differ.
+        run: GODOT_BIN="$(command -v godot)" scripts/review/run_scenario.sh tests/scenarios/*.json 2>&1 | tee replays.log
+      - name: Summarise the metrics
+        if: ${{ !cancelled() }}
+        run: |
+          { echo '### Replay metrics (design bible §9)'; echo '```'; grep -E '^(==|compare|  [A-Z]{4,})' replays.log | sed "s|$PWD/||g"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - name: Keep the event logs and metrics
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: replays
+          path: |
+            .replay-out/
+            replays.log
+          include-hidden-files: true
+          retention-days: 14
