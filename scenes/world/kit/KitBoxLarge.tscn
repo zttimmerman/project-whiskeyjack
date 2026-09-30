@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://bpdff6mvhgu3"]
+
+[ext_resource type="PackedScene" uid="uid://ddqo11ch70bf4" path="res://assets/meshes/kaykit_dungeon_box_large.glb" id="1_mesh"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_Box"]
+size = Vector3(1.5, 1.5, 1.5)
+
+[node name="KitBoxLarge" type="StaticBody3D"]
+
+[node name="Mesh" parent="." instance=ExtResource("1_mesh")]
+
+[node name="Box" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+shape = SubResource("BoxShape3D_Box")

@@ -13,24 +13,17 @@
 [ext_resource type="PackedScene" uid="uid://cui1gyiyh5sam" path="res://assets/meshes/prop_weapon_rack.glb" id="11_weaponrack"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/NPC.tscn" id="12_npc"]
 [ext_resource type="NavigationMesh" uid="uid://ng0iyhnebc2k" path="res://scenes/world/Level1_navmesh.tres" id="navmesh_baked"]
-
-[sub_resource type="StandardMaterial3D" id="Mat_floor"]
-albedo_color = Color(0.3, 0.28, 0.25, 1)
-
-[sub_resource type="StandardMaterial3D" id="Mat_wall"]
-albedo_color = Color(0.45, 0.42, 0.4, 1)
-
-[sub_resource type="StandardMaterial3D" id="Mat_pillar"]
-albedo_color = Color(0.5, 0.45, 0.38, 1)
-
-[sub_resource type="StandardMaterial3D" id="Mat_door"]
-albedo_color = Color(0.55, 0.35, 0.2, 1)
-
-[sub_resource type="StandardMaterial3D" id="Mat_crate"]
-albedo_color = Color(0.45, 0.32, 0.18, 1)
-
-[sub_resource type="StandardMaterial3D" id="Mat_barrel"]
-albedo_color = Color(0.38, 0.28, 0.15, 1)
+[ext_resource type="PackedScene" uid="uid://b10j13xe5o14w" path="res://scenes/world/kit/KitWall.tscn" id="k_wall"]
+[ext_resource type="PackedScene" uid="uid://l3vbyjicsm1x" path="res://scenes/world/kit/KitWallHalf.tscn" id="k_wallhalf"]
+[ext_resource type="PackedScene" uid="uid://cobsu6c5xfdg" path="res://scenes/world/kit/KitWallDoorway.tscn" id="k_doorway"]
+[ext_resource type="PackedScene" uid="uid://chhkiq5eck8ch" path="res://scenes/world/kit/KitFloorLarge.tscn" id="k_floorl"]
+[ext_resource type="PackedScene" uid="uid://by6hynjgeoa1g" path="res://scenes/world/kit/KitFloorSmall.tscn" id="k_floors"]
+[ext_resource type="PackedScene" uid="uid://318fsosadpkf" path="res://scenes/world/kit/KitPillar.tscn" id="k_pillar"]
+[ext_resource type="PackedScene" uid="uid://by0qcymeo7gw6" path="res://scenes/world/kit/KitBoxSmall.tscn" id="k_boxs"]
+[ext_resource type="PackedScene" uid="uid://bpdff6mvhgu3" path="res://scenes/world/kit/KitBoxLarge.tscn" id="k_boxl"]
+[ext_resource type="PackedScene" uid="uid://b7fvooeoe0yob" path="res://scenes/world/kit/KitBarrelSmall.tscn" id="k_barrels"]
+[ext_resource type="PackedScene" uid="uid://ddr764hhgi3xr" path="res://scenes/world/kit/KitBarrelLarge.tscn" id="k_barrell"]
+[ext_resource type="PackedScene" uid="uid://7lydti5iiesp" path="res://scenes/world/kit/KitBarrelStack.tscn" id="k_stack"]
 
 [sub_resource type="Environment" id="Environment_level1"]
 ambient_light_source = 2
@@ -39,6 +32,9 @@ ambient_light_energy = 0.5
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_questadvance"]
 size = Vector3(1, 3, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_weaponrack"]
+size = Vector3(1.136, 1.5, 0.547)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_exit"]
 size = Vector3(3, 3, 1)
@@ -55,248 +51,552 @@ environment = SubResource("Environment_level1")
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=435188948]
 navigation_mesh = ExtResource("navmesh_baked")
 
-[node name="StartFloor" type="CSGBox3D" parent="NavigationRegion3D" unique_id=585649691]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
-use_collision = true
-size = Vector3(12, 0.2, 12)
-material = SubResource("Mat_floor")
+[node name="Floors" type="Node3D" parent="NavigationRegion3D"]
 
-[node name="StartWallN" type="CSGBox3D" parent="NavigationRegion3D" unique_id=918273442]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -6.25)
-use_collision = true
-size = Vector3(12, 4, 0.5)
-material = SubResource("Mat_wall")
+[node name="StartFloor1" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -4)
 
-[node name="StartWallS" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1292294584]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 6.25)
-use_collision = true
-size = Vector3(12, 4, 0.5)
-material = SubResource("Mat_wall")
+[node name="StartFloor2" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0)
 
-[node name="StartWallW" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1432518825]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.25, 2, 0)
-use_collision = true
-size = Vector3(0.5, 4, 12)
-material = SubResource("Mat_wall")
+[node name="StartFloor3" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 4)
 
-[node name="StartWallEN" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1825422792]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.25, 2, -4)
-use_collision = true
-size = Vector3(0.5, 4, 4)
-material = SubResource("Mat_wall")
+[node name="StartFloor4" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
 
-[node name="StartWallES" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1312351174]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.25, 2, 4)
-use_collision = true
-size = Vector3(0.5, 4, 4)
-material = SubResource("Mat_wall")
+[node name="StartFloor5" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
-[node name="CorridorAFloor" type="CSGBox3D" parent="NavigationRegion3D" unique_id=426791667]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, -0.1, 0)
-use_collision = true
-size = Vector3(10, 0.2, 4)
-material = SubResource("Mat_floor")
+[node name="StartFloor6" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
 
-[node name="CorridorAWallN" type="CSGBox3D" parent="NavigationRegion3D" unique_id=80854453]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 2, -2.25)
-use_collision = true
-size = Vector3(10, 4, 0.5)
-material = SubResource("Mat_wall")
+[node name="StartFloor7" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -4)
 
-[node name="CorridorAWallS" type="CSGBox3D" parent="NavigationRegion3D" unique_id=788700837]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 2, 2.25)
-use_collision = true
-size = Vector3(10, 4, 0.5)
-material = SubResource("Mat_wall")
+[node name="StartFloor8" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 0)
 
-[node name="CentralFloor" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1389426416]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, -0.1, 0)
-use_collision = true
-size = Vector3(16, 0.2, 16)
-material = SubResource("Mat_floor")
+[node name="StartFloor9" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 4)
 
-[node name="CentralWallN" type="CSGBox3D" parent="NavigationRegion3D" unique_id=715877941]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 2, -8.25)
-use_collision = true
-size = Vector3(16, 4, 0.5)
-material = SubResource("Mat_wall")
+[node name="CorridorAFloor1" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 0)
 
-[node name="CentralWallE" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1210332488]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.25, 2, 0)
-use_collision = true
-size = Vector3(0.5, 4, 16)
-material = SubResource("Mat_wall")
+[node name="CorridorAFloor2" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, 0)
 
-[node name="CentralWallWN" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1273428752]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.75, 2, -5)
-use_collision = true
-size = Vector3(0.5, 4, 6)
-material = SubResource("Mat_wall")
+[node name="CorridorAFloor3" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floors")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, -1)
 
-[node name="CentralWallWS" type="CSGBox3D" parent="NavigationRegion3D" unique_id=2080449335]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.75, 2, 5)
-use_collision = true
-size = Vector3(0.5, 4, 6)
-material = SubResource("Mat_wall")
+[node name="CorridorAFloor4" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floors")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, 1)
 
-[node name="CentralWallSW" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1263908837]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 2, 8.25)
-use_collision = true
-size = Vector3(6, 4, 0.5)
-material = SubResource("Mat_wall")
+[node name="CentralFloor1" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, -6)
 
-[node name="CentralWallSE" type="CSGBox3D" parent="NavigationRegion3D" unique_id=48373780]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29, 2, 8.25)
-use_collision = true
-size = Vector3(6, 4, 0.5)
-material = SubResource("Mat_wall")
+[node name="CentralFloor2" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, -2)
 
-[node name="Pillar1" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1024124094]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 1.5, -3)
-use_collision = true
-size = Vector3(1, 3, 1)
-material = SubResource("Mat_pillar")
+[node name="CentralFloor3" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 2)
 
-[node name="Pillar2" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1125154228]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 1.5, 3)
-use_collision = true
-size = Vector3(1, 3, 1)
-material = SubResource("Mat_pillar")
+[node name="CentralFloor4" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 6)
 
-[node name="Pillar3" type="CSGBox3D" parent="NavigationRegion3D" unique_id=943956751]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 1.5, 0)
-use_collision = true
-size = Vector3(1, 3, 1)
-material = SubResource("Mat_pillar")
+[node name="CentralFloor5" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, -6)
 
-[node name="CorridorBFloor" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1593641164]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, -0.1, 13)
-use_collision = true
-size = Vector3(4, 0.2, 10)
-material = SubResource("Mat_floor")
+[node name="CentralFloor6" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, -2)
 
-[node name="CorridorBWallE" type="CSGBox3D" parent="NavigationRegion3D" unique_id=482222197]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.25, 2, 13)
-use_collision = true
-size = Vector3(0.5, 4, 10)
-material = SubResource("Mat_wall")
+[node name="CentralFloor7" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, 2)
 
-[node name="CorridorBWallW" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1908301197]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.75, 2, 13)
-use_collision = true
-size = Vector3(0.5, 4, 10)
-material = SubResource("Mat_wall")
+[node name="CentralFloor8" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, 6)
 
-[node name="ExitFloor" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1692023233]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, -0.1, 24)
-use_collision = true
-size = Vector3(12, 0.2, 12)
-material = SubResource("Mat_floor")
+[node name="CentralFloor9" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, -6)
 
-[node name="ExitWallNW" type="CSGBox3D" parent="NavigationRegion3D" unique_id=873803700]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 2, 17.75)
-use_collision = true
-size = Vector3(4, 4, 0.5)
-material = SubResource("Mat_wall")
+[node name="CentralFloor10" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, -2)
 
-[node name="ExitWallNE" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1416311030]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 2, 17.75)
-use_collision = true
-size = Vector3(4, 4, 0.5)
-material = SubResource("Mat_wall")
+[node name="CentralFloor11" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, 2)
 
-[node name="ExitWallS" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1396598720]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 2, 30.25)
-use_collision = true
-size = Vector3(12, 4, 0.5)
-material = SubResource("Mat_wall")
+[node name="CentralFloor12" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, 6)
 
-[node name="ExitWallE" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1741066158]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.25, 2, 24)
-use_collision = true
-size = Vector3(0.5, 4, 12)
-material = SubResource("Mat_wall")
+[node name="CentralFloor13" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, -6)
 
-[node name="ExitWallW" type="CSGBox3D" parent="NavigationRegion3D" unique_id=988748033]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.75, 2, 24)
-use_collision = true
-size = Vector3(0.5, 4, 12)
-material = SubResource("Mat_wall")
+[node name="CentralFloor14" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, -2)
 
-[node name="DoorframeL" type="CSGBox3D" parent="NavigationRegion3D" unique_id=27352843]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.25, 2, 29.75)
-use_collision = true
-size = Vector3(0.5, 4, 0.5)
-material = SubResource("Mat_door")
+[node name="CentralFloor15" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 2)
 
-[node name="DoorframeR" type="CSGBox3D" parent="NavigationRegion3D" unique_id=689756264]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.75, 2, 29.75)
-use_collision = true
-size = Vector3(0.5, 4, 0.5)
-material = SubResource("Mat_door")
+[node name="CentralFloor16" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 6)
 
-[node name="Crate1" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1945533285]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.4, -4.5)
-use_collision = true
-size = Vector3(0.8, 0.8, 0.8)
-material = SubResource("Mat_crate")
+[node name="CorridorBFloor1" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 10)
 
-[node name="Crate2" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1888330207]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.4, -4.5)
-use_collision = true
-size = Vector3(0.8, 0.8, 0.8)
-material = SubResource("Mat_crate")
+[node name="CorridorBFloor2" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 14)
 
-[node name="Barrel1" type="CSGCylinder3D" parent="NavigationRegion3D" unique_id=413674195]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0.45, -4)
-use_collision = true
-radius = 0.35
-height = 0.9
-sides = 12
-material = SubResource("Mat_barrel")
+[node name="CorridorBFloor3" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floors")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 0, 17)
 
-[node name="Barrel2" type="CSGCylinder3D" parent="NavigationRegion3D" unique_id=201938140]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0.45, 4)
-use_collision = true
-radius = 0.35
-height = 0.9
-sides = 12
-material = SubResource("Mat_barrel")
+[node name="CorridorBFloor4" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floors")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 17)
 
-[node name="TorchLight1" type="OmniLight3D" parent="." unique_id=1601409006]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 2.5, 0)
-light_color = Color(1, 0.85, 0.6, 1)
-light_energy = 0.5
+[node name="ExitFloor1" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 20)
 
-[node name="TorchLight2" type="OmniLight3D" parent="." unique_id=1529411890]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 2.5, -1.5)
-light_color = Color(1, 0.85, 0.6, 1)
-light_energy = 0.5
+[node name="ExitFloor2" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 24)
 
-[node name="TorchLight3" type="OmniLight3D" parent="." unique_id=1762316648]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.5, 2.5, 0)
-light_color = Color(1, 0.85, 0.6, 1)
-light_energy = 0.5
+[node name="ExitFloor3" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 28)
 
-[node name="TorchLight4" type="OmniLight3D" parent="." unique_id=1971544120]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 2.5, 18.3)
-light_color = Color(1, 0.85, 0.6, 1)
-light_energy = 0.5
+[node name="ExitFloor4" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 20)
 
-[node name="Torch1" parent="." unique_id=1743810043 instance=ExtResource("10_torch")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -6, 2, 0)
+[node name="ExitFloor5" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 24)
 
-[node name="Torch2" parent="." unique_id=825033135 instance=ExtResource("10_torch")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 2, -2)
+[node name="ExitFloor6" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 28)
 
-[node name="Torch3" parent="." unique_id=88274245 instance=ExtResource("10_torch")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 32, 2, 0)
+[node name="ExitFloor7" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, 20)
 
-[node name="Torch4" parent="." unique_id=570819788 instance=ExtResource("10_torch")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 24, 2, 18)
-
-[node name="WeaponRack" parent="." unique_id=1843799104 instance=ExtResource("11_weaponrack")]
+[node name="ExitFloor8" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, 24)
+
+[node name="ExitFloor9" parent="NavigationRegion3D/Floors" instance=ExtResource("k_floorl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, 28)
+
+[node name="Walls" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="StartWallN1" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -6.25)
+
+[node name="StartWallS1" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 6.25)
+
+[node name="StartWallN2" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6.25)
+
+[node name="StartWallS2" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6.25)
+
+[node name="StartWallN3" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -6.25)
+
+[node name="StartWallS3" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 6.25)
+
+[node name="StartWallW1" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6.25, 0, -4)
+
+[node name="StartWallW2" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6.25, 0, 0)
+
+[node name="StartWallW3" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6.25, 0, 4)
+
+[node name="StartWallEN" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6.25, 0, -4)
+
+[node name="StartWallES" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6.25, 0, 4)
+
+[node name="CorridorAWallN1" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0, -2.25)
+
+[node name="CorridorAWallN2" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.5, 0, -2.25)
+
+[node name="CorridorAWallS1" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0, 2.25)
+
+[node name="CorridorAWallS2" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.5, 0, 2.25)
+
+[node name="CentralWallN1" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, -8.25)
+
+[node name="CentralWallN2" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, -8.25)
+
+[node name="CentralWallN3" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, -8.25)
+
+[node name="CentralWallN4" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, -8.25)
+
+[node name="CentralWallE1" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 32.25, 0, -6)
+
+[node name="CentralWallE2" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 32.25, 0, -2)
+
+[node name="CentralWallE3" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 32.25, 0, 2)
+
+[node name="CentralWallE4" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 32.25, 0, 6)
+
+[node name="CentralWallWN1" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 15.75, 0, -4)
+
+[node name="CentralWallWN2" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wallhalf")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 15.75, 0, -6)
+
+[node name="CentralWallWS1" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 15.75, 0, 4)
+
+[node name="CentralWallWS2" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wallhalf")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 15.75, 0, 6)
+
+[node name="CentralWallSW1" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 8.25)
+
+[node name="CentralWallSW2" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wallhalf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 8.25)
+
+[node name="CentralWallSE1" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wallhalf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, 8.25)
+
+[node name="CentralWallSE2" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 8.25)
+
+[node name="CorridorBWallW1" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 21.75, 0, 10.5)
+
+[node name="CorridorBWallW2" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 21.75, 0, 15.5)
+
+[node name="CorridorBWallE1" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 26.25, 0, 10.5)
+
+[node name="CorridorBWallE2" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 26.25, 0, 15.5)
+
+[node name="ExitWallNW" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 17.75)
+
+[node name="ExitWallNE" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, 17.75)
+
+[node name="ExitWallS1" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 30.25)
+
+[node name="ExitDoorway" parent="NavigationRegion3D/Walls" instance=ExtResource("k_doorway")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 30.25)
+
+[node name="ExitWallS2" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, 30.25)
+
+[node name="ExitWallE1" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 30.25, 0, 20)
+
+[node name="ExitWallW1" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 17.75, 0, 20)
+
+[node name="ExitWallE2" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 30.25, 0, 24)
+
+[node name="ExitWallW2" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 17.75, 0, 24)
+
+[node name="ExitWallE3" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 30.25, 0, 28)
+
+[node name="ExitWallW3" parent="NavigationRegion3D/Walls" instance=ExtResource("k_wall")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 17.75, 0, 28)
+
+[node name="Pillars" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="Pillar1" parent="NavigationRegion3D/Pillars" instance=ExtResource("k_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, -3)
+
+[node name="Pillar2" parent="NavigationRegion3D/Pillars" instance=ExtResource("k_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, 3)
+
+[node name="Pillar3" parent="NavigationRegion3D/Pillars" instance=ExtResource("k_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 0)
+
+[node name="CorridorPillars" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="CorridorAPillarN" parent="NavigationRegion3D/CorridorPillars" instance=ExtResource("k_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, -2.5)
+
+[node name="CorridorAPillarS" parent="NavigationRegion3D/CorridorPillars" instance=ExtResource("k_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 2.5)
+
+[node name="CorridorBPillarW" parent="NavigationRegion3D/CorridorPillars" instance=ExtResource("k_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 0, 13)
+
+[node name="CorridorBPillarE" parent="NavigationRegion3D/CorridorPillars" instance=ExtResource("k_pillar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.5, 0, 13)
+
+[node name="Dressing" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="StartCrateLarge1" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.95, 0, -4.95)
+
+[node name="StartCrate1" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.6, 0, -5.2)
+
+[node name="StartBarrel1" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_barrels")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.95, 0, -3.5)
+
+[node name="StartBarrelStack1" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_stack")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5.2)
+
+[node name="StartBarrel2" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_barrels")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, -5.2)
+
+[node name="StartBarrelLarge1" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_barrell")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8, 0, -4.8)
+
+[node name="StartCrate2" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -5.2)
+
+[node name="StartCrate3" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, 0, 5.2)
+
+[node name="StartCrate4" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxs")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -5.2, 0, 3.9)
+
+[node name="StartBarrel3" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_barrels")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.9, 0, 5.2)
+
+[node name="StartCrateLarge2" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 4.95)
+
+[node name="StartBarrel4" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_barrels")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 0, 5.2)
+
+[node name="StartBarrelLarge2" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_barrell")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8, 0, 4.8)
+
+[node name="StartCrate5" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, 0, -1.5)
+
+[node name="CentralCrateLarge1" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.05, 0, -6.95)
+
+[node name="CentralCrate1" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.6, 0, -7.2)
+
+[node name="CentralBarrel1" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_barrels")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.8, 0, -7.2)
+
+[node name="CentralBarrel2" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_barrels")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 0, -7.2)
+
+[node name="CentralBarrelStack1" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_stack")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.5, 0, -7.2)
+
+[node name="CentralCrate2" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.4, 0, -7.2)
+
+[node name="CentralBarrelLarge1" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_barrell")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.8, 0, -6.8)
+
+[node name="CentralCrate3" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.2, 0, -5)
+
+[node name="CentralBarrel3" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_barrels")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.2, 0, -3.2)
+
+[node name="CentralCrateLarge2" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.95, 0, 3.5)
+
+[node name="CentralBarrel4" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_barrels")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.2, 0, 5)
+
+[node name="CentralCrateLarge3" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.95, 0, 6.95)
+
+[node name="CentralCrate4" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.2, 0, 7.2)
+
+[node name="CentralBarrel5" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_barrels")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.6, 0, 7.2)
+
+[node name="CentralCrate5" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.3, 0, 7.2)
+
+[node name="CentralBarrelStack2" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_stack")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.5, 0, 7.2)
+
+[node name="CentralBarrel6" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_barrels")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.8, 0, 7.2)
+
+[node name="CentralBarrel7" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_barrels")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.8, 0, -5.4)
+
+[node name="CentralCrate6" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.8, 0, -4.2)
+
+[node name="CentralBarrel8" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_barrels")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.8, 0, 3.9)
+
+[node name="CentralCrate7" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.8, 0, 5.6)
+
+[node name="ExitCrateLarge1" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.05, 0, 19.05)
+
+[node name="ExitBarrel1" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_barrels")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.8, 0, 18.8)
+
+[node name="ExitBarrelLarge1" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_barrell")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.8, 0, 19.2)
+
+[node name="ExitCrate1" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.2, 0, 20.8)
+
+[node name="ExitBarrel2" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_barrels")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.8, 0, 21.4)
+
+[node name="ExitCrate2" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.8, 0, 26.2)
+
+[node name="ExitCrate3" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.8, 0, 27.6)
+
+[node name="ExitBarrelStack1" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_stack")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.73, 0, 29.2)
+
+[node name="ExitCrateLarge2" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.95, 0, 28.95)
+
+[node name="ExitCrate4" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_boxs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.2, 0, 29.2)
+
+[node name="ExitBarrel3" parent="NavigationRegion3D/Dressing" instance=ExtResource("k_barrels")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.2, 0, 26.6)
+
+[node name="WeaponRack" type="StaticBody3D" parent="NavigationRegion3D/Dressing"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 29.45, 0.8, 24)
+
+[node name="Mesh" parent="NavigationRegion3D/Dressing/WeaponRack" instance=ExtResource("11_weaponrack")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Dressing/WeaponRack"]
+shape = SubResource("BoxShape3D_weaponrack")
+
+[node name="Torches" type="Node3D" parent="."]
+
+[node name="TorchStartW" parent="Torches" instance=ExtResource("10_torch")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6, 2.8, -3)
+
+[node name="TorchStartWLight" type="OmniLight3D" parent="Torches"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 3.1, -3)
+light_color = Color(1, 0.85, 0.6, 1)
+light_energy = 0.5
+
+[node name="TorchStartEN" parent="Torches" instance=ExtResource("10_torch")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 6, 2.8, -3)
+
+[node name="TorchStartENLight" type="OmniLight3D" parent="Torches"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 3.1, -3)
+light_color = Color(1, 0.85, 0.6, 1)
+light_energy = 0.5
+
+[node name="TorchStartES" parent="Torches" instance=ExtResource("10_torch")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 6, 2.8, 3)
+
+[node name="TorchStartESLight" type="OmniLight3D" parent="Torches"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 3.1, 3)
+light_color = Color(1, 0.85, 0.6, 1)
+light_energy = 0.5
+
+[node name="TorchCorridorA" parent="Torches" instance=ExtResource("10_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 2.8, -1.95)
+
+[node name="TorchCorridorALight" type="OmniLight3D" parent="Torches"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 3.1, -1.45)
+light_color = Color(1, 0.85, 0.6, 1)
+light_energy = 0.5
+
+[node name="TorchCentralPillar" parent="Torches" instance=ExtResource("10_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 2.8, -2.45)
+
+[node name="TorchCentralPillarLight" type="OmniLight3D" parent="Torches"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 3.1, -1.95)
+light_color = Color(1, 0.85, 0.6, 1)
+light_energy = 0.5
+
+[node name="TorchCentralN" parent="Torches" instance=ExtResource("10_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 2.8, -8)
+
+[node name="TorchCentralNLight" type="OmniLight3D" parent="Torches"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 3.1, -7.5)
+light_color = Color(1, 0.85, 0.6, 1)
+light_energy = 0.5
+
+[node name="TorchCentralE" parent="Torches" instance=ExtResource("10_torch")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 32, 2.8, 0)
+
+[node name="TorchCentralELight" type="OmniLight3D" parent="Torches"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.5, 3.1, 0)
+light_color = Color(1, 0.85, 0.6, 1)
+light_energy = 0.5
+
+[node name="TorchCentralS" parent="Torches" instance=ExtResource("10_torch")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 20, 2.8, 8)
+
+[node name="TorchCentralSLight" type="OmniLight3D" parent="Torches"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 3.1, 7.5)
+light_color = Color(1, 0.85, 0.6, 1)
+light_energy = 0.5
+
+[node name="TorchCorridorB" parent="Torches" instance=ExtResource("10_torch")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 22.05, 2.8, 13)
+
+[node name="TorchCorridorBLight" type="OmniLight3D" parent="Torches"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.55, 3.1, 13)
+light_color = Color(1, 0.85, 0.6, 1)
+light_energy = 0.5
+
+[node name="TorchExitW" parent="Torches" instance=ExtResource("10_torch")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 2.8, 24)
+
+[node name="TorchExitWLight" type="OmniLight3D" parent="Torches"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.5, 3.1, 24)
+light_color = Color(1, 0.85, 0.6, 1)
+light_energy = 0.5
+
+[node name="TorchExitE" parent="Torches" instance=ExtResource("10_torch")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 30, 2.8, 24)
+
+[node name="TorchExitELight" type="OmniLight3D" parent="Torches"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.5, 3.1, 24)
+light_color = Color(1, 0.85, 0.6, 1)
+light_energy = 0.5
+
+[node name="TorchExitDoorL" parent="Torches" instance=ExtResource("10_torch")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 21.8, 2.8, 30)
+
+[node name="TorchExitDoorLLight" type="OmniLight3D" parent="Torches"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.8, 3.1, 29.5)
+light_color = Color(1, 0.85, 0.6, 1)
+light_energy = 0.5
+
+[node name="TorchExitDoorR" parent="Torches" instance=ExtResource("10_torch")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 26.2, 2.8, 30)
+
+[node name="TorchExitDoorRLight" type="OmniLight3D" parent="Torches"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.2, 3.1, 29.5)
+light_color = Color(1, 0.85, 0.6, 1)
+light_energy = 0.5
 
 [node name="Player" parent="." unique_id=1126046969 instance=ExtResource("2_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)

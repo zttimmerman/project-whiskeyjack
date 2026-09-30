@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://l3vbyjicsm1x"]
+
+[ext_resource type="PackedScene" uid="uid://cves2maorxeyi" path="res://assets/meshes/kaykit_dungeon_wall_half.glb" id="1_mesh"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_Body"]
+size = Vector3(2, 4, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_TopBand"]
+size = Vector3(2, 0.8, 1)
+
+[node name="KitWallHalf" type="StaticBody3D"]
+
+[node name="Mesh" parent="." instance=ExtResource("1_mesh")]
+
+[node name="Body" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 2, 0)
+shape = SubResource("BoxShape3D_Body")
+
+[node name="TopBand" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 3.6, 0)
+shape = SubResource("BoxShape3D_TopBand")

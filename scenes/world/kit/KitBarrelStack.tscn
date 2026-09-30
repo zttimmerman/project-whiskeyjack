@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://7lydti5iiesp"]
+
+[ext_resource type="PackedScene" uid="uid://38wmgecjygkk" path="res://assets/meshes/kaykit_dungeon_barrel_small_stack.glb" id="1_mesh"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_BarrelL"]
+height = 1.02
+radius = 0.5
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_BarrelR"]
+height = 1.02
+radius = 0.5
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_BarrelTop"]
+height = 0.75
+radius = 0.5
+
+[node name="KitBarrelStack" type="StaticBody3D"]
+
+[node name="Mesh" parent="." instance=ExtResource("1_mesh")]
+
+[node name="BarrelL" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0.51, 0)
+shape = SubResource("CylinderShape3D_BarrelL")
+
+[node name="BarrelR" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0.51, 0)
+shape = SubResource("CylinderShape3D_BarrelR")
+
+[node name="BarrelTop" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.395, 0)
+shape = SubResource("CylinderShape3D_BarrelTop")
