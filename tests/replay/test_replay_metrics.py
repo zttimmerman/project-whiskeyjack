@@ -193,5 +193,36 @@ class Evaluate(unittest.TestCase):
             self.assertEqual(rm.main(["--scenario", scenario, "--log", log, "--quiet"]), 1)
 
 
+class CompareLogs(unittest.TestCase):
+    """Determinism: two runs of one scenario must log the same events on the same frames."""
+
+    def write(self, tmp, name, events):
+        path = os.path.join(tmp, name)
+        with open(path, "w") as f:
+            f.writelines(json.dumps(e) + "\n" for e in events)
+        return path
+
+    def test_identical_logs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a = self.write(tmp, "a.jsonl", [ev(1, "hit", target="A"), ev(2, "death", actor="A")])
+            b = self.write(tmp, "b.jsonl", [ev(1, "hit", target="A"), ev(2, "death", actor="A")])
+            self.assertEqual(rm.compare_logs(a, b)["result"], "identical")
+
+    def test_reordered_within_a_frame_is_tolerated(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a = self.write(tmp, "a.jsonl", [ev(1, "hit", target="A"), ev(1, "hit", target="Player")])
+            b = self.write(tmp, "b.jsonl", [ev(1, "hit", target="Player"), ev(1, "hit", target="A")])
+            self.assertEqual(rm.compare_logs(a, b)["result"], "same_per_frame")
+
+    def test_different_logs_report_the_first_frame(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a = self.write(tmp, "a.jsonl", [ev(1, "hit", target="A"), ev(5, "death", actor="A")])
+            b = self.write(tmp, "b.jsonl", [ev(1, "hit", target="A"), ev(6, "death", actor="A")])
+            r = rm.compare_logs(a, b)
+            self.assertEqual(r["result"], "different")
+            self.assertEqual(r["first_frame"], 5)
+            self.assertEqual(rm.main(["--compare", a, b, "--quiet"]), 1)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
