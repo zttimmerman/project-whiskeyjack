@@ -18,7 +18,7 @@ height = 1.8
 script = ExtResource("2_stats")
 max_hp = 30
 current_hp = 30
-attack = 8
+attack = 14
 defense = 2
 speed = 4.6
 level = 1
@@ -63,7 +63,7 @@ collision_layer = 16
 collision_mask = 1
 script = ExtResource("4_hitbox")
 metadata/_custom_type_script = "uid://hitboxcmp001"
-damage = 8
+damage = 14
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="HitboxComponent"]
 shape = SubResource("SphereShape3D_hitbox")

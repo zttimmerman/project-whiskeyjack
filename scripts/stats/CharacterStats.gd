@@ -15,9 +15,27 @@ signal xp_changed(current_xp: int, xp_to_next: int)
 @export var experience: int = 0
 @export var experience_to_next_level: int = 100
 
+# Design bible §6: enemy stats scale as base × (1 + 0.12 × (level − 1))
+const LEVEL_SCALE_PER_LEVEL: float = 0.12
+
+
+# The level-band multiplier for a stat defined at level 1
+static func level_scale(for_level: int) -> float:
+	return 1.0 + LEVEL_SCALE_PER_LEVEL * (for_level - 1)
+
+
+# An integer stat scaled to a level, rounded to nearest (decided 2026-09-30)
+static func scaled_stat(base: int, for_level: int) -> int:
+	return roundi(base * level_scale(for_level))
+
+
+# The §6 damage ratio: armour reduces a hit proportionally and never below 1
+static func mitigated_damage(amount: int, target_defense: int) -> int:
+	return maxi(1, roundi(amount * 100.0 / (100.0 + 10.0 * target_defense)))
+
 
 func take_damage(amount: int) -> void:
-	var actual: int = max(0, amount - defense)
+	var actual: int = mitigated_damage(amount, defense)
 	current_hp = max(0, current_hp - actual)
 	emit_signal("health_changed", current_hp, max_hp)
 	if current_hp == 0:

@@ -25,13 +25,12 @@
   ],
   "checks": [
     {"id": "ttk_player_frontfile", "enemy": "EnemyCorridorA", "target": [3, 4], "baseline": 4},
-    {"id": "ttk_levy_player", "attacker": "EnemyCorridorA", "target": [10, 14], "baseline": 34,
-     "pending": "enemy damage retune after the damage ratio (design bible §11.1, §11.5)"},
+    {"id": "ttk_levy_player", "attacker": "EnemyCorridorA", "target": [10, 14], "baseline": 12},
     {"id": "enemy_melee_telegraph", "target": [0.5, null], "baseline": 0.0,
      "pending": "enemy melee windups (design bible §3)"},
     {"id": "atk_hitbox_sync", "target": [-2, 2], "baseline": 0,
      "pending": "clip contact frames and hitboxes synced to them (design bible §3); until then the value is hitbox open minus press"},
-    {"id": "enc_first_fight_hp_cost", "target": [0.10, 0.15], "baseline": 0.03,
+    {"id": "enc_first_fight_hp_cost", "target": [0.10, 0.15], "baseline": 0.18,
      "pending": "not meaningful until telegraphs exist (design bible §9)"}
   ]
 }
