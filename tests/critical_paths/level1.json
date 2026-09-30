@@ -1,0 +1,11 @@
+{
+  "scene": "res://scenes/world/Level1.tscn",
+  "note": "Critical path waypoints on the floor (y = 0), read by scripts/tools/check_path_clearance.gd. Exit is the ExitDoor trigger's near edge.",
+  "waypoints": [
+    {"name": "spawn", "position": [0, 0, 0]},
+    {"name": "corridor_a", "position": [11, 0, 0]},
+    {"name": "central", "position": [20, 0, 0]},
+    {"name": "corridor_b", "position": [24, 0, 13]},
+    {"name": "exit", "position": [24, 0, 29]}
+  ]
+}

@@ -8,7 +8,6 @@ var _sealed_label: Label = null
 
 func _ready() -> void:
 	AudioManager.play_music(preload("res://assets/audio/music_ambient.ogg"))
-	$NavigationRegion3D.bake_navigation_mesh()
 	$ExitDoor.body_entered.connect(_on_exit_door_body_entered)
 	$QuestAdvanceArea.body_entered.connect(_on_quest_advance_area_entered)
 	_wire_enemy_deaths()

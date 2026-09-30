@@ -125,4 +125,58 @@ jobs:
           path: |
             reports/
             gdunit4.log
+
+  navmesh:
+    name: navmesh (stale bake, pathfinding, path clearance)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container:
+      image: barichello/godot-ci:4.7.2@sha256:cdcca31e9194fd59a68a63f4b1b9c3981716819c520cd6f7966c5d72ca7246bd
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install Python and fontconfig
+        # Without libfontconfig Godot logs "Unable to load fontconfig" as an ERROR on every run.
+        run: apt-get update -qq && apt-get install -y -qq --no-install-recommends python3 libfontconfig1
+      - name: Restore the import cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .godot
+          key: godot-import-4.7.2-${{ hashFiles('project.godot', '**/*.import') }}
+          restore-keys: godot-import-4.7.2-
+      - name: Import
+        run: godot --headless --path . --import < /dev/null 2>&1 | tee import.log
+      - name: Rebake the navmeshes and fail if the committed bake is stale
+        # scripts/tools/bake_navmeshes.gd is the only writer of scenes/world/*_navmesh.tres.
+        run: |
+          mkdir -p /tmp/committed
+          cp scenes/world/*_navmesh.tres scenes/world/Level*.tscn /tmp/committed/
+          godot --headless --path . -s res://scripts/tools/bake_navmeshes.gd < /dev/null 2>&1 | tee bake.log
+          stale=0
+          for f in /tmp/committed/*; do
+            diff -u "$f" "scenes/world/$(basename "$f")" || stale=1
+          done
+          if [ "$stale" = 1 ]; then
+            echo "::error::Stale navmesh bake: run godot --headless --path . -s res://scripts/tools/bake_navmeshes.gd and commit the result"
+            exit 1
+          fi
+      - name: Enemies path-find on the baked navmeshes (no runtime bake)
+        run: godot --headless --path . -s res://tests/test_enemy_pathfinding.gd < /dev/null 2>&1 | tee pathfinding.log
+      - name: No runtime-bake warnings in the bake or level runs
+        run: |
+          if grep -E "parse RenderingServer meshes|is ceiled to cell" bake.log pathfinding.log; then
+            echo "::error::A navmesh bake warning is back (design bible section 8)"
+            exit 1
+          fi
+      - name: Path clearance (lvl_path_clearance_min; report-only until the level fixes land)
+        run: |
+          godot --headless --path . -s res://scripts/tools/check_path_clearance.gd -- --out=clearance.json < /dev/null 2>&1 | tee clearance.log
+          { echo '### Path clearance (lvl_path_clearance_min >= 1.0 m)'; echo '```'; grep -E '^(res://|  )' clearance.log; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - name: Keep the logs and the clearance report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: navmesh-logs
+          path: |
+            *.log
+            clearance.json
           retention-days: 14

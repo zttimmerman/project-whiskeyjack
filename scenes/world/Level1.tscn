@@ -12,10 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://bexl2exnx2xva" path="res://assets/meshes/prop_torch.glb" id="10_torch"]
 [ext_resource type="PackedScene" uid="uid://cui1gyiyh5sam" path="res://assets/meshes/prop_weapon_rack.glb" id="11_weaponrack"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/NPC.tscn" id="12_npc"]
-
-[sub_resource type="NavigationMesh" id="NavMesh_1"]
-agent_height = 1.8
-agent_radius = 0.4
+[ext_resource type="NavigationMesh" uid="uid://ng0iyhnebc2k" path="res://scenes/world/Level1_navmesh.tres" id="navmesh_baked"]
 
 [sub_resource type="StandardMaterial3D" id="Mat_floor"]
 albedo_color = Color(0.3, 0.28, 0.25, 1)
@@ -56,7 +53,7 @@ transform = Transform3D(0.866, -0.25, 0.433, 0, 0.866, 0.5, -0.5, -0.433, 0.75, 
 environment = SubResource("Environment_level1")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=435188948]
-navigation_mesh = SubResource("NavMesh_1")
+navigation_mesh = ExtResource("navmesh_baked")
 
 [node name="StartFloor" type="CSGBox3D" parent="NavigationRegion3D" unique_id=585649691]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
