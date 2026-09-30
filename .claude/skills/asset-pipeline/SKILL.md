@@ -127,7 +127,7 @@ For each clip it writes a timestamped 14-frame strip (side and three-quarter, or
 
 **Libraries.** `scripts/tools/build_animation_library.gd` resamples each clip at 30 fps with its speed and trim baked in, keeps only the characters' 23 bones (fingers dropped), saves each unique clip once in `data/animations/clips/`, and writes one AnimationLibrary per character: `player`, `levy_frontfile` and `levy_backfile` in `data/animations/*_library.tres`. Each character scene has an `AnimationPlayer` under its model (`root_node ..`) using its library. Godot's importer strips a `_Loop` suffix from clip names. Contact sheets: `scripts/review/anim_sheet.tscn` (→ `assets/manifests/animation/*_sheet.png`); in-game check: `scripts/review/level1_play_capture.tscn`.
 
-**Locomotion rule:** pick the clip whose native speed (root travel in the `_RM` file) is closest to the gameplay speed, keep playback within 0.75–1.5×, and change the gameplay speed rather than distort the clip. No loop in either pack sits between 1.05 and 5.36 m/s.
+**Locomotion rule:** pick the clip whose native speed (root travel in the `_RM` file) is closest to the gameplay speed, keep playback within 0.75–1.5×, and change the gameplay speed rather than distort the clip. No loop in either pack sits between 1.05 and 5.36 m/s. **Native speeds are the Quaternius mannequin's; retargeting scales travel by the character's size** (the Barrow-levy is about 13% larger, so its jog at 0.75× plants its feet at 4.6 m/s, not 4.0). Set the gameplay speed to what the motion review measures on the character, not to native × playback; `tests/unit/test_locomotion_foot_slide.gd` fails when a character's `run` and its scene's speed drift apart.
 
 | Code plays | Character | Clip (pack) | Baked | Notes |
 |---|---|---|---|---|
@@ -138,10 +138,10 @@ For each clip it writes a timestamped 14-frame strip (side and three-quarter, or
 | `attack_heavy` | player | `Sword_Regular_C` (UAL2) | | a spinning slash |
 | `death` | player | `Death01` (UAL1) | in place | Hips/Root horizontal travel held at the first frame (the clip falls about 0.5 m backward) |
 | `idle` | Front-file | `Sword_Idle` (UAL1) | loop | reads hunched and forward, the art bible's Front-file posture |
-| `run` | Front-file | `Jog_Fwd_Loop` (UAL1) | 0.75×, loop | 4.0 m/s: **chase speed raised from 3.0 to 4.0** |
+| `run` | Front-file | `Jog_Fwd_Loop` (UAL1) | 0.75×, loop | 4.6 m/s: **chase speed raised from 3.0 to 4.0, then to 4.6** (the levy's size; slid 0.80 m/s at 4.0) |
 | `attack` | Front-file | `Sword_Regular_A` (UAL2) | | |
 | `idle` | Back-file | `Idle_Loop` (UAL1) | loop | upright, the art bible's Back-file posture |
-| `run` | Back-file | `Walk_Loop` (UAL1) | 1.44×, loop | 1.4 m/s: **speed lowered from 2.5 to 1.4**. Not `Walk_Formal_Loop`, which clasps the hands behind the back |
+| `run` | Back-file | `Walk_Loop` (UAL1) | 1.44×, loop | 1.5 m/s: **speed lowered from 2.5 to 1.4, then raised to 1.5** (the levy's size). Not `Walk_Formal_Loop`, which clasps the hands behind the back |
 | `attack` | Back-file | `OverhandThrow` (UAL2) | | **STAND-IN for a bow draw.** No bow clip in either Standard pack; Quaternius's setup sheet shows `Bow_Aim_*` / `Bow_Notch` in a non-Standard UAL2 tier (not bought yet) |
 | `stagger` | both levies | `Hit_Chest` (UAL1) | | 0.33 s for the 0.4 s stagger |
 | `death` | both levies | `Death01` (UAL1) | in place | the enemy's velocity and navigation stop the frame death starts; it's freed after the clip (2.4 s), fading over the last 0.3 s through material alpha |
