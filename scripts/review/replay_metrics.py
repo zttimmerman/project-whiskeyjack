@@ -19,6 +19,12 @@ and evaluates the scenario's "checks". Each check names a target ID and its para
 Statuses: pass, fail, pending, drift, unmeasured (no value and pending), info (no target).
 Exit code: 0 when nothing failed or drifted, 1 otherwise (and when the log didn't reach scenario_end).
 Frames are physics frames at 60 per second (the replay runs with --fixed-fps 60).
+
+    python3 scripts/review/replay_metrics.py --compare <run1.jsonl> <run2.jsonl>
+
+Determinism: two runs of a scenario must log the same events on the same frames. "identical" is
+byte for byte; "same_per_frame" tolerates a different order within a frame (Jolt can report
+simultaneous overlaps in either order); "different" fails, naming the first frame that differs.
 """
 import argparse
 import json
@@ -273,6 +279,27 @@ def evaluate(scenario, events):
     return [evaluate_check(c, events) for c in scenario.get("checks", [])]
 
 
+def _canonical(events):
+    by_frame = {}
+    for e in events:
+        by_frame.setdefault(e["frame"], []).append(json.dumps(e, sort_keys=True))
+    return {f: sorted(lines) for f, lines in by_frame.items()}
+
+
+def compare_logs(path_a, path_b):
+    with open(path_a) as f:
+        raw_a = f.read()
+    with open(path_b) as f:
+        raw_b = f.read()
+    if raw_a == raw_b:
+        return {"result": "identical", "events": raw_a.count("\n")}
+    a, b = _canonical(load_events(path_a)), _canonical(load_events(path_b))
+    if a == b:
+        return {"result": "same_per_frame", "events": sum(len(v) for v in a.values())}
+    first = min(f for f in set(a) | set(b) if a.get(f) != b.get(f))
+    return {"result": "different", "first_frame": first, "a": a.get(first, []), "b": b.get(first, [])}
+
+
 def _fmt(v):
     if isinstance(v, float):
         return ("%.3f" % v).rstrip("0").rstrip(".")
@@ -281,11 +308,21 @@ def _fmt(v):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--scenario", required=True)
-    ap.add_argument("--log", required=True)
+    ap.add_argument("--scenario")
+    ap.add_argument("--log")
+    ap.add_argument("--compare", nargs=2, metavar=("LOG1", "LOG2"), help="check two runs' logs match")
     ap.add_argument("--out", help="write the report as JSON here")
     ap.add_argument("--quiet", action="store_true")
     args = ap.parse_args(argv)
+    if args.compare:
+        r = compare_logs(*args.compare)
+        if not args.quiet:
+            print("compare %s %s: %s" % (args.compare[0], args.compare[1], r["result"]))
+            if r["result"] == "different":
+                print("  first difference at frame %d\n  run 1: %s\n  run 2: %s" % (r["first_frame"], r["a"], r["b"]))
+        return 1 if r["result"] == "different" else 0
+    if not args.scenario or not args.log:
+        ap.error("--scenario and --log are required (or --compare LOG1 LOG2)")
 
     with open(args.scenario) as f:
         scenario = json.load(f)
