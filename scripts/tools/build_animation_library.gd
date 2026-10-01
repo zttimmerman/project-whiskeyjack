@@ -58,7 +58,7 @@ const LIBRARIES := {
 	"levy_frontfile":
 	{
 		"idle": ["UAL1", "Sword_Idle", {"loop": true}],
-		"run": ["UAL1", "Jog_Fwd_Loop", {"loop": true, "speed": 0.75}],  # 4.0 m/s: BaseEnemy chase speed matches
+		"run": ["UAL1", "Jog_Fwd_Loop", {"loop": true, "speed": 0.75}],  # levy feet at 4.6 m/s: BaseEnemy speed
 		"attack": ["UAL2", "Sword_Regular_A", {}],
 		"stagger": ["UAL1", "Hit_Chest", {}],
 		"death": ["UAL1", "Death01", {"in_place": true}],
@@ -66,7 +66,7 @@ const LIBRARIES := {
 	"levy_backfile":
 	{
 		"idle": ["UAL1", "Idle_Loop", {"loop": true}],
-		# 1.4 m/s: ArcherEnemy speed matches (Walk_Formal clasps the hands behind the back)
+		# levy feet at 1.5 m/s: ArcherEnemy speed matches (Walk_Formal clasps the hands behind the back)
 		"run": ["UAL1", "Walk_Loop", {"loop": true, "speed": 1.44}],
 		"attack": ["UAL2", "OverhandThrow", {}],  # STAND-IN: no bow-draw clip in either Standard pack
 		"stagger": ["UAL1", "Hit_Chest", {}],

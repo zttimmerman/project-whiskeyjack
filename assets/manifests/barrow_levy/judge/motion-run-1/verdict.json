@@ -1,0 +1,16 @@
+{
+  "verdict": "pass",
+  "summary": "The Front-file run clip stays in place, its planted feet hold, and the frame strip shows no broken poses; all four assertions pass.",
+  "findings": [],
+  "questions_answered": [
+    "Body stays in place: hips move 0.038 m side to side and return to 0.00 m.",
+    "Planted feet hold: foot slide p90 0.211 m/s (limit 0.5); hips bob in a steady two-step cycle.",
+    "No broken poses in any of the 14 frames; skin stretch 0, expected for rigid parts.",
+    "All four pass: root travel 0.038 m (0.15), foot slide p90 0.211 (0.5), bind deviation 1.032 m RightHand (1.8), edge stretch 0.0 (1.0)."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png"
+  ]
+}

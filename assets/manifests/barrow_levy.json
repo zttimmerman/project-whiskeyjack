@@ -2232,7 +2232,7 @@
     "sha256": "e3c912c2d51344044c0821f976f228a9e696dd91507c20577536912144ece15a"
   },
   "total_cost_credits": 155,
-  "updated_at": "2026-09-28T21:50:04+00:00",
+  "updated_at": "2026-10-01T00:56:41+00:00",
   "concept_approval": {
     "attempt": "concept-3",
     "image": {
@@ -2305,6 +2305,123 @@
       "revise": null,
       "escalation_reason": null,
       "summary": "The Front-file death clip keeps the Hips pinned at the origin and collapses into a clean supine pose with no broken joints or stretch; all three assertions pass, and the only issue is a reported-only foot slide the tolerances already accept for deaths.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:run",
+      "recorded_at": "2026-10-01T00:56:40+00:00",
+      "packet": "assets/manifests/barrow_levy/judge/motion-run-1/packet.json",
+      "packet_sha256": "26c1ecdddbdd9ed771c0174af03d6cd564e25961d0fe2311261ac020ca182e46",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "run",
+        "source": "res://data/animations/levy_frontfile_library.tres:run",
+        "model": "res://assets/meshes/barrow_levy.glb",
+        "metrics_file": {
+          "path": ".tripo-out/g5/after/frontfile/run_metrics.json",
+          "sha256": "885adca67c544899ea416f81cf15e6375f6e941d5f7650786763de59865296a3"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/barrow_levy/judge/motion-run-1/01_frame_strip.png",
+          "sha256": "768aba181ffcd91391ac00b50d93eeae4b61a0c723136a5e465cc3fa4dbace1d",
+          "source": ".tripo-out/g5/after/frontfile/run_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/barrow_levy/judge/motion-run-1/02_onion_skin.png",
+          "sha256": "162b98d42af585028af71d7634f839ceb6b5549914cffdbd8f69ee225575c6e5",
+          "source": ".tripo-out/g5/after/frontfile/run_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/barrow_levy/judge/motion-run-1/03_plots.png",
+          "sha256": "78af21825fbc4336c41f307932b837aba95b95818a2bef34af7bda562590358d",
+          "source": ".tripo-out/g5/after/frontfile/run_plots.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/barrow_levy/judge/motion-run-1/01_frame_strip.png",
+        "assets/manifests/barrow_levy/judge/motion-run-1/02_onion_skin.png",
+        "assets/manifests/barrow_levy/judge/motion-run-1/03_plots.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The Front-file run clip stays in place, its planted feet hold, and the frame strip shows no broken poses; all four assertions pass.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:run",
+      "recorded_at": "2026-10-01T00:56:41+00:00",
+      "packet": "assets/manifests/barrow_levy/judge/motion-run-2/packet.json",
+      "packet_sha256": "a640c46595afe91815550ed9ea1b413d33b370fdae77b9836d4a03fdd8a230bb",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "run",
+        "source": "res://data/animations/levy_backfile_library.tres:run",
+        "model": "res://assets/meshes/barrow_levy.glb",
+        "metrics_file": {
+          "path": ".tripo-out/g5/after/backfile/run_metrics.json",
+          "sha256": "1f7a19212da729a9b6b8148da519d280260a7d3bc41698af57d93f99c9e14cd7"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/barrow_levy/judge/motion-run-2/01_frame_strip.png",
+          "sha256": "704bbb0460294d820f107a7af9edc11d565346948947761adcd685b68e65e3f0",
+          "source": ".tripo-out/g5/after/backfile/run_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/barrow_levy/judge/motion-run-2/02_onion_skin.png",
+          "sha256": "dd978c4403082623a322c2dbb0fffe62f0b775b871ef1aa39c34a7f7610fe9af",
+          "source": ".tripo-out/g5/after/backfile/run_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/barrow_levy/judge/motion-run-2/03_plots.png",
+          "sha256": "d0f1e72c7ec08901a7ecee79ff1d8cb6a1bf82819d3d30a49944a768de3a7059",
+          "source": ".tripo-out/g5/after/backfile/run_plots.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/barrow_levy/judge/motion-run-2/01_frame_strip.png",
+        "assets/manifests/barrow_levy/judge/motion-run-2/02_onion_skin.png",
+        "assets/manifests/barrow_levy/judge/motion-run-2/03_plots.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "Worst single-frame planted-foot speed is 0.769 m/s, only at lift-off and touch-down; mid-stance near 0 and p90 0.172 m/s. Not visible at gameplay distance.",
+          "evidence": "03_plots.png; foot_slide_max_mps 0.769, foot_slide_p90_mps 0.172"
+        },
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "Hips sway about 0.06 m side to side, normal walk weight shift; ends at 0.00 m.",
+          "evidence": "03_plots.png; 02_onion_skin.png; root travel 0.061 vs 0.15"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The Back-file run clip (Walk_Loop) stays in place, its planted feet hold, and it shows no broken poses or stretching; all four assertions pass.",
       "next": "proceed to the next stage"
     }
   ]

@@ -10,18 +10,18 @@
     {"frame": 5, "action": "lock_on", "pressed": true},
     {"frame": 6, "action": "lock_on", "pressed": false},
     {"frame": 20, "action": "move_forward", "pressed": false},
-    {"frame": 120, "action": "attack_light", "pressed": true},
-    {"frame": 121, "action": "attack_light", "pressed": false},
-    {"frame": 148, "action": "attack_light", "pressed": true},
-    {"frame": 149, "action": "attack_light", "pressed": false},
-    {"frame": 176, "action": "attack_light", "pressed": true},
-    {"frame": 177, "action": "attack_light", "pressed": false},
-    {"frame": 200, "action": "move_backward", "pressed": true},
-    {"frame": 201, "action": "dodge", "pressed": true},
-    {"frame": 202, "action": "dodge", "pressed": false},
-    {"frame": 232, "action": "move_backward", "pressed": false},
-    {"frame": 280, "action": "attack_light", "pressed": true},
-    {"frame": 281, "action": "attack_light", "pressed": false}
+    {"frame": 105, "action": "attack_light", "pressed": true},
+    {"frame": 106, "action": "attack_light", "pressed": false},
+    {"frame": 133, "action": "attack_light", "pressed": true},
+    {"frame": 134, "action": "attack_light", "pressed": false},
+    {"frame": 161, "action": "attack_light", "pressed": true},
+    {"frame": 162, "action": "attack_light", "pressed": false},
+    {"frame": 185, "action": "move_backward", "pressed": true},
+    {"frame": 186, "action": "dodge", "pressed": true},
+    {"frame": 187, "action": "dodge", "pressed": false},
+    {"frame": 217, "action": "move_backward", "pressed": false},
+    {"frame": 258, "action": "attack_light", "pressed": true},
+    {"frame": 259, "action": "attack_light", "pressed": false}
   ],
   "checks": [
     {"id": "ttk_player_frontfile", "enemy": "EnemyCorridorA", "target": [3, 4], "baseline": 4},
@@ -30,7 +30,7 @@
      "pending": "enemy melee windups (design bible §3)"},
     {"id": "atk_hitbox_sync", "target": [-2, 2], "baseline": 0,
      "pending": "clip contact frames and hitboxes synced to them (design bible §3); until then the value is hitbox open minus press"},
-    {"id": "enc_first_fight_hp_cost", "target": [0.10, 0.15], "baseline": 0.18,
+    {"id": "enc_first_fight_hp_cost", "target": [0.10, 0.15], "baseline": 0.09,
      "pending": "not meaningful until telegraphs exist (design bible §9)"}
   ]
 }
