@@ -24,6 +24,8 @@ extends Node
 ##   lock_off        actor
 ##   detected        actor, target, distance, line_of_sight   (enemy spotted the player)
 ##   disengaged      actor, distance          (enemy leashed back to idle)
+##   lost_sight      actor, distance          (a chasing enemy lost sight and starts searching)
+##   search_end      actor, outcome (regained | gave_up)   (regained: a detected event follows)
 ##   quest           kind (started | updated | completed), quest_id, stage
 ## The replay runner adds scenario_start, input and scenario_end.
 

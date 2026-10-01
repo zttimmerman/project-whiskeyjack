@@ -2,7 +2,9 @@ extends CharacterBody3D
 
 signal died
 
-enum State { IDLE, PATROL, CHASE, ATTACK, STAGGER, DEAD }
+# SEARCH is last so the other states keep their values
+enum State { IDLE, PATROL, CHASE, ATTACK, STAGGER, DEAD, SEARCH }
+enum SearchPhase { GO, LOOK, RETURN }
 
 @export var stats: CharacterStats
 @export var xp_reward: int = 10
@@ -31,6 +33,13 @@ const CHEST_HEIGHT: float = 0.4
 ## Melee enemies without an attack token hold this far from the player (design bible §3: 3–5 m)
 const HOLD_MIN_DISTANCE: float = 3.0
 const HOLD_MAX_DISTANCE: float = 5.0
+## Losing sight (decided with the user, 2026-09-30): go to where the player was last seen, turn in place
+## looking around for SEARCH_LOOK_TIME, then walk back to the post and idle
+const SEARCH_LOOK_TIME: float = 3.5
+const SEARCH_TURN_RATE: float = deg_to_rad(90.0)
+## Close enough to a search point; and the most time spent walking to one (an unreachable spot)
+const SEARCH_ARRIVE_DISTANCE: float = 0.5
+const SEARCH_WALK_TIMEOUT: float = 8.0
 
 var state: State = State.IDLE
 var _player: CharacterBody3D = null
@@ -52,6 +61,12 @@ var _sight_timer: float = 0.0  # until the next sight ray may run
 var _can_see_player: bool = false
 var _cone_cos: float = 0.0
 
+## Where the player was last seen, and this enemy's post (its spawn transform), for SEARCH
+var _last_seen_position: Vector3 = Vector3.ZERO
+var _post: Transform3D = Transform3D.IDENTITY
+var _search_phase: SearchPhase = SearchPhase.GO
+var _search_timer: float = 0.0
+
 
 func _ready() -> void:
 	add_to_group("enemy")
@@ -63,6 +78,7 @@ func _ready() -> void:
 	_player = get_tree().get_first_node_in_group("player")
 	_sight_query = WorldRay.make_query([get_rid()])
 	_cone_cos = cos(deg_to_rad(view_cone_deg * 0.5))
+	_post = global_transform
 	# Grab AnimationPlayer from the model sub-scene (SkeletonModel/AnimationPlayer)
 	var model_node: Node = get_node_or_null("SkeletonModel")
 	if model_node:
@@ -92,6 +108,8 @@ func _physics_process(delta: float) -> void:
 			_tick_attack(delta)
 		State.STAGGER:
 			_tick_stagger(delta)
+		State.SEARCH:
+			_tick_search(delta)
 		State.DEAD:
 			# Collapse in place: no knockback or chase velocity carries through the death clip
 			velocity.x = 0.0
@@ -163,6 +181,8 @@ func _refresh_sight(delta: float) -> void:
 		return
 	_sight_timer = SIGHT_INTERVAL
 	_can_see_player = has_line_of_sight()
+	if _can_see_player:
+		_last_seen_position = _player.global_position
 
 
 func _tick_chase(delta: float) -> void:
@@ -179,6 +199,10 @@ func _tick_chase(delta: float) -> void:
 		_change_state(State.IDLE)
 		return
 
+	if not _can_see_player:
+		_change_state(State.SEARCH)
+		return
+
 	if not _may_close_in(dist):
 		_hold_off(dist)
 		return
@@ -187,8 +211,12 @@ func _tick_chase(delta: float) -> void:
 		_change_state(State.ATTACK)
 		return
 
-	# Navigate toward player; falls back to direct movement if no nav mesh is baked
-	_nav_agent.target_position = _player.global_position
+	_navigate_toward(_player.global_position)
+
+
+# Navigate toward a point; falls back to direct movement if no nav mesh is baked
+func _navigate_toward(target: Vector3) -> void:
+	_nav_agent.target_position = target
 	var move_dir: Vector3
 
 	if not _nav_agent.is_navigation_finished():
@@ -197,10 +225,10 @@ func _tick_chase(delta: float) -> void:
 		move_dir.y = 0.0
 		# If nav gives us essentially our own position, go direct
 		if move_dir.length_squared() < 0.1:
-			move_dir = _player.global_position - global_position
+			move_dir = target - global_position
 			move_dir.y = 0.0
 	else:
-		move_dir = _player.global_position - global_position
+		move_dir = target - global_position
 		move_dir.y = 0.0
 
 	if move_dir.length_squared() > 0.01:
@@ -213,6 +241,49 @@ func _tick_chase(delta: float) -> void:
 		velocity.x = 0.0
 		velocity.z = 0.0
 		_update_locomotion_anim()
+
+
+# Lost sight: walk to the last-seen spot, look around, walk back to the post. Noticing the player again
+# (the same rule as from IDLE) resumes the chase at any point.
+func _tick_search(delta: float) -> void:
+	_attack_cooldown_timer = max(0.0, _attack_cooldown_timer - delta)
+	if _notices_player(delta):
+		if EventLog.enabled:
+			EventLog.log_event("search_end", {"actor": EventLog.label(self), "outcome": "regained"})
+		_change_state(State.CHASE)
+		return
+	_search_timer -= delta
+	match _search_phase:
+		SearchPhase.GO:
+			if _flat_distance_to(_last_seen_position) <= SEARCH_ARRIVE_DISTANCE or _search_timer <= 0.0:
+				_search_phase = SearchPhase.LOOK
+				_search_timer = SEARCH_LOOK_TIME
+				velocity.x = 0.0
+				velocity.z = 0.0
+				_update_locomotion_anim()
+			else:
+				_navigate_toward(_last_seen_position)
+		SearchPhase.LOOK:
+			velocity.x = 0.0
+			velocity.z = 0.0
+			rotate_y(SEARCH_TURN_RATE * delta)
+			if _search_timer <= 0.0:
+				if EventLog.enabled:
+					EventLog.log_event("search_end", {"actor": EventLog.label(self), "outcome": "gave_up"})
+				_search_phase = SearchPhase.RETURN
+				_search_timer = SEARCH_WALK_TIMEOUT
+		SearchPhase.RETURN:
+			if _flat_distance_to(_post.origin) <= SEARCH_ARRIVE_DISTANCE or _search_timer <= 0.0:
+				velocity.x = 0.0
+				velocity.z = 0.0
+				global_basis = _post.basis  # face the way it stood guard
+				_change_state(State.IDLE)
+			else:
+				_navigate_toward(_post.origin)
+
+
+func _flat_distance_to(point: Vector3) -> float:
+	return Vector2(point.x - global_position.x, point.z - global_position.z).length()
 
 
 func _tick_attack(delta: float) -> void:
@@ -292,8 +363,16 @@ func _change_state(new_state: State) -> void:
 		State.IDLE:
 			_release_attack_tokens()
 			_play_anim("idle")
+		State.SEARCH:
+			_release_attack_tokens()
+			_search_phase = SearchPhase.GO
+			_search_timer = SEARCH_WALK_TIMEOUT
+			_sight_timer = 0.0
+			_update_locomotion_anim()
 		State.CHASE:
-			if old_state == State.IDLE or old_state == State.PATROL:
+			if is_instance_valid(_player):
+				_last_seen_position = _player.global_position
+			if old_state == State.IDLE or old_state == State.PATROL or old_state == State.SEARCH:
 				# Usually it has just seen the player, but a hit or a script can start a chase too
 				_can_see_player = has_line_of_sight()
 				_sight_timer = SIGHT_INTERVAL
@@ -328,8 +407,10 @@ func _log_state_change(new_state: State) -> void:
 			EventLog.log_event("stagger", {"actor": actor, "interrupted_attack": state == State.ATTACK})
 		State.DEAD:
 			EventLog.log_event("death", {"actor": actor})
+		State.SEARCH:
+			EventLog.log_event("lost_sight", {"actor": actor, "distance": dist})
 		State.CHASE:
-			if state == State.IDLE or state == State.PATROL:
+			if state == State.IDLE or state == State.PATROL or state == State.SEARCH:
 				EventLog.log_event(
 					"detected",
 					{
@@ -357,7 +438,7 @@ func _play_anim(anim_name: String) -> void:
 
 
 func _update_locomotion_anim() -> void:
-	if not _anim_player or state != State.CHASE:
+	if not _anim_player or (state != State.CHASE and state != State.SEARCH):
 		return
 	var dominated: float = Vector2(velocity.x, velocity.z).length()
 	if dominated > 0.5:
@@ -370,7 +451,7 @@ func _update_locomotion_anim() -> void:
 
 func _on_animation_finished(_anim_name: StringName) -> void:
 	# After a oneshot (attack/stagger) finishes, resume locomotion anim
-	if state == State.CHASE:
+	if state == State.CHASE or state == State.SEARCH:
 		_update_locomotion_anim()
 	elif state == State.IDLE:
 		_play_anim("idle")
