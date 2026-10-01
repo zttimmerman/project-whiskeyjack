@@ -87,6 +87,44 @@ class SyntheticLogs(unittest.TestCase):
         r = rm.compute({"id": "enemy_melee_telegraph"}, rm.sort_events(events))
         self.assertAlmostEqual(r["value"], 0.5)  # the shortest windup, 30 frames at 60 fps
 
+    def test_telegraph_counts_a_windup_logged_with_the_attack_start(self):
+        # BaseEnemy logs attack_windup and attack_started on the frame the windup begins
+        events = [ev(100, "attack_windup", actor="Levy"), ev(100, "attack_started", actor="Levy", kind="melee"),
+                  ev(136, "hitbox_open", actor="Levy", heavy=False, damage=14)]
+        r = rm.compute({"id": "enemy_melee_telegraph"}, rm.sort_events(events))
+        self.assertAlmostEqual(r["value"], 0.6)
+        self.assertEqual(r["detail"]["with_windup_event"], 1)
+
+    def test_ranged_telegraph_measures_draw_to_release(self):
+        events = []
+        for start, draw in ((100, 54), (400, 60)):
+            events += [ev(start, "attack_windup", actor="Archer"),
+                       ev(start, "attack_started", actor="Archer", kind="ranged"),
+                       ev(start + draw, "attack_release", actor="Archer", kind="ranged")]
+        r = rm.compute({"id": "enemy_ranged_telegraph"}, rm.sort_events(events))
+        self.assertAlmostEqual(r["value"], 0.9)  # the shortest draw, 54 frames
+        self.assertEqual(r["detail"]["attacks"], 2)
+
+    def test_ranged_telegraph_without_a_windup_is_zero(self):
+        events = [ev(100, "attack_started", actor="Archer", kind="ranged"),
+                  ev(100, "attack_release", actor="Archer", kind="ranged")]
+        r = rm.compute({"id": "enemy_ranged_telegraph"}, rm.sort_events(events))
+        self.assertAlmostEqual(r["value"], 0.0)
+
+    def test_ranged_telegraph_ignores_a_cancelled_draw(self):
+        # A draw staggered before release has no release; the next draw is measured on its own
+        events = [ev(100, "attack_windup", actor="Archer"), ev(100, "attack_started", actor="Archer", kind="ranged"),
+                  ev(120, "stagger", actor="Archer", interrupted_attack=True),
+                  ev(300, "attack_windup", actor="Archer"), ev(300, "attack_started", actor="Archer", kind="ranged"),
+                  ev(354, "attack_release", actor="Archer", kind="ranged")]
+        r = rm.compute({"id": "enemy_ranged_telegraph"}, rm.sort_events(events))
+        self.assertAlmostEqual(r["value"], 0.9)
+        self.assertEqual(r["detail"]["attacks"], 1)
+
+    def test_ranged_telegraph_unmeasured_without_shots(self):
+        r = rm.compute({"id": "enemy_ranged_telegraph"}, [])
+        self.assertIsNone(r["value"])
+
     def test_attackers_max_counts_distinct_melee_in_a_2s_window(self):
         events = (melee_attack(100, "A") + melee_attack(130, "B") + melee_attack(200, "C")
                   + melee_attack(600, "A"))
