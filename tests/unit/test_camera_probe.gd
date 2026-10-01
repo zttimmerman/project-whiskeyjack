@@ -58,11 +58,12 @@ func _settle() -> void:
 		await get_tree().physics_frame
 
 
-func test_wall_fill_is_high_with_a_wall_filling_the_view() -> void:
+func test_wall_fill_is_high_with_a_wall_between_camera_and_player() -> void:
+	# The camera pushed into a wall: the wall fills the view between it and him
 	_floor()
 	_wall_at(-1.0)
 	_camera_at(Vector3(0, 1.6, 0), Vector3(0, 1.6, -5))
-	var player := _body_at(Vector3(0, BODY_Y, 3))
+	var player := _body_at(Vector3(0, BODY_Y, -3))
 	await _settle()
 	var s := CameraProbe.sample(_camera, player, null)
 	assert_float(s["wall_fill"]).is_greater(0.9)
@@ -85,10 +86,35 @@ func test_wall_fill_merges_coplanar_wall_pieces() -> void:
 		wall.position = Vector3(x, 0, -1.2)
 		add_child(auto_free(wall))
 	_camera_at(Vector3(0, 1.6, 0), Vector3(0, 1.6, -5))
-	var player := _body_at(Vector3(0, BODY_Y, 3))
+	var player := _body_at(Vector3(0, BODY_Y, -3))
 	await _settle()
 	var s := CameraProbe.sample(_camera, player, null)
 	assert_float(s["wall_fill"]).is_greater(0.9)
+
+
+func test_wall_fill_ignores_a_wall_he_faces_beyond_him() -> void:
+	# The user's rule (2026-10-01): a wall the player deliberately faces close up isn't the camera's
+	# fault; only wall between the camera and him, or beside him, counts
+	_floor()
+	_wall_at(-0.75)  # its near face 0.5 m in front of him
+	_camera_at(Vector3(0.6, 1.7, 4), Vector3(0.6, 1.4, -2))
+	var player := _body_at(Vector3(0, BODY_Y, 0))
+	await _settle()
+	var s := CameraProbe.sample(_camera, player, null)
+	assert_float(s["wall_fill"]).is_less(0.05)
+
+
+func test_wall_fill_counts_a_wall_beside_him() -> void:
+	# A side wall running past him counts up to his depth
+	_floor()
+	var wall: Node3D = (load(WALL_SCENE) as PackedScene).instantiate()
+	wall.transform = Transform3D(Basis(Vector3.UP, PI / 2), Vector3(-0.9, 0, 2))
+	add_child(auto_free(wall))
+	_camera_at(Vector3(-0.3, 1.7, 3.5), Vector3(-0.3, 1.4, -2))
+	var player := _body_at(Vector3(0.3, BODY_Y, 0))
+	await _settle()
+	var s := CameraProbe.sample(_camera, player, null)
+	assert_float(s["wall_fill"]).is_greater(0.1)
 
 
 func test_player_ahead_in_open_space_is_in_view_and_visible() -> void:
