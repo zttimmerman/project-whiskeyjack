@@ -17,6 +17,7 @@ var _reward_given: bool = false
 
 func _ready() -> void:
 	add_to_group("npc")
+	QuestManager.quest_completed.connect(_on_quest_completed)
 
 
 func interact() -> void:
@@ -30,13 +31,19 @@ func interact() -> void:
 	if not completion_quest_id.is_empty() and QuestManager.is_quest_complete(completion_quest_id):
 		if not completion_dialogue_id.is_empty():
 			active_dialogue = completion_dialogue_id
-		if not _reward_given:
-			_reward_given = true
-			quest_reward_given.emit()
 
 	if active_dialogue.is_empty():
 		return
 	DialogueRunner.start(active_dialogue)
+
+
+# The reward lands when the quest completes, whether interact() or a dialogue mutation completed
+# it. A loaded save restores completed quests without the signal, so it isn't given twice.
+func _on_quest_completed(quest_id: String) -> void:
+	if quest_id != completion_quest_id or completion_quest_id.is_empty() or _reward_given:
+		return
+	_reward_given = true
+	quest_reward_given.emit()
 
 
 func _on_interact_area_body_entered(body: Node3D) -> void:

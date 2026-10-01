@@ -49,12 +49,14 @@ jobs:
         run: godot --headless --path . --import < /dev/null 2>&1 | tee import-1.log
       - name: Import, second run (checked)
         run: godot --headless --path . --import < /dev/null 2>&1 | tee import-2.log
+      - name: Compile every .dialogue file and name each syntax error's line (ci/check_dialogue.gd)
+        run: godot --headless --path . -s ci/check_dialogue.gd < /dev/null 2>&1 | tee check-dialogue.log
       - name: Load every script and scene, with GDScript warnings on (-d)
         # -d prints GDScript warnings; stdin is /dev/null so the debugger never waits at a debug> prompt.
         run: godot --headless --path . -d -s ci/load_all.gd < /dev/null 2>&1 | tee load-all.log
       - name: Check the logs (no errors; warnings match ci/warnings-baseline.txt)
         if: ${{ !cancelled() }}
-        run: python3 ci/check_log.py --baseline ci/warnings-baseline.txt import-2.log load-all.log
+        run: python3 ci/check_log.py --baseline ci/warnings-baseline.txt import-2.log check-dialogue.log load-all.log
       - name: Keep the logs
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -87,7 +89,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - name: Lint data/dialogues and data/quests (baseline ci/data-lint-baseline.txt)
+      - name: Lint data/dialogues (.dialogue) and data/quests (baseline ci/data-lint-baseline.txt)
         run: python3 ci/data_lint.py
 
   lint:

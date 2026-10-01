@@ -1,0 +1,24 @@
+# Fixture for tests/unit/test_dialogue_runner.gd: one conversation whose opening depends on quest
+# state and a world flag, with a quest mutation and a flag mutation behind its choices.
+~ start
+if QuestManager.is_quest_complete("clear_eastern_road")
+	Tester: Done already.
+	=> END
+elif QuestManager.get_flag("tester_declined")
+	Tester: Back again?
+	=> offer
+Tester: First line.
+Tester: Second line.
+=> offer
+
+~ offer
+Tester: Will you?
+- Yes
+	$> QuestManager.start_quest("clear_eastern_road")
+	Tester: Good.
+- No
+	$> QuestManager.set_flag("tester_declined")
+	Tester: Fine.
+- Hidden choice [if QuestManager.get_flag("never_set") /]
+	Tester: You should never see this.
+=> END
