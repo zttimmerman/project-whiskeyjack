@@ -43,8 +43,14 @@ func _get_next_action() -> void:
 
 	var dist: float = global_position.distance_to(_player.global_position)
 
-	# Fire when in range, with line of sight (design bible §3), and cooldown has expired
-	if dist <= FIRE_RANGE and _attack_cooldown_timer <= 0.0 and _can_see_player:
+	# Fire when in range, with line of sight, and cooldown has expired, unless another archer fired at the
+	# player in the last 2 s (design bible §3; the token check comes last, since a granted shot is recorded)
+	if (
+		dist <= FIRE_RANGE
+		and _attack_cooldown_timer <= 0.0
+		and _can_see_player
+		and _attack_tokens().try_fire_ranged(self, _physics_time_s())
+	):
 		_change_state(State.ATTACK)
 		return
 

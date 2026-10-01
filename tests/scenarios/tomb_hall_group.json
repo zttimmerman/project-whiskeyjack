@@ -11,8 +11,7 @@
     {"frame": 260, "action": "move_forward", "pressed": false}
   ],
   "checks": [
-    {"id": "enemy_attackers_max", "target": {"melee": [null, 2], "ranged": [null, 1]}, "baseline": {"melee": 2, "ranged": 2},
-     "pending": "attack tokens (design bible §3)"},
+    {"id": "enemy_attackers_max", "target": {"melee": [null, 2], "ranged": [null, 1]}, "baseline": {"melee": 2, "ranged": 1}},
     {"id": "detect_through_walls", "target": [null, 0], "baseline": 0}
   ]
 }

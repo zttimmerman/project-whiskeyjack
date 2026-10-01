@@ -28,6 +28,9 @@ const SIGHT_INTERVAL: float = 0.1
 ## Ray ends above the body origin (the capsule centre, 0.9 m above the feet): enemy eyes, player chest
 const EYE_HEIGHT: float = 0.7
 const CHEST_HEIGHT: float = 0.4
+## Melee enemies without an attack token hold this far from the player (design bible §3: 3–5 m)
+const HOLD_MIN_DISTANCE: float = 3.0
+const HOLD_MAX_DISTANCE: float = 5.0
 
 var state: State = State.IDLE
 var _player: CharacterBody3D = null
@@ -35,6 +38,7 @@ var _nav_agent: NavigationAgent3D = null
 var _hitbox: HitboxComponent = null
 const HeldProps := preload("res://scripts/combat/HeldProps.gd")
 const WorldRay := preload("res://scripts/combat/WorldRay.gd")
+const AttackTokens := preload("res://scripts/combat/AttackTokens.gd")
 
 var _anim_player: AnimationPlayer = null
 
@@ -175,6 +179,10 @@ func _tick_chase(delta: float) -> void:
 		_change_state(State.IDLE)
 		return
 
+	if not _may_close_in(dist):
+		_hold_off(dist)
+		return
+
 	if dist <= attack_range and _attack_cooldown_timer <= 0.0:
 		_change_state(State.ATTACK)
 		return
@@ -226,6 +234,50 @@ func _tick_stagger(delta: float) -> void:
 		_change_state(State.CHASE)
 
 
+# Attack tokens (design bible §3, enemy_attackers_max): a melee enemy closes inside HOLD_MAX_DISTANCE only
+# holding one of the player's melee tokens. Archers (attack_range 0) never need one.
+func _may_close_in(dist: float) -> bool:
+	if attack_range <= 0.0 or dist > HOLD_MAX_DISTANCE:
+		return true
+	var tokens := _attack_tokens()
+	return tokens == null or tokens.try_acquire_melee(self)
+
+
+# Without a token: back off inside HOLD_MIN_DISTANCE, otherwise stand and face the player
+func _hold_off(dist: float) -> void:
+	var away := global_position - _player.global_position
+	away.y = 0.0
+	if dist < HOLD_MIN_DISTANCE and away.length_squared() > 0.01:
+		away = away.normalized()
+		velocity.x = away.x * stats.speed
+		velocity.z = away.z * stats.speed
+	else:
+		velocity.x = 0.0
+		velocity.z = 0.0
+	_face_player()
+	_update_locomotion_anim()
+
+
+## The player's attack tokens, created by the first enemy to ask; null without a player
+func _attack_tokens() -> AttackTokens:
+	if not is_instance_valid(_player):
+		return null
+	if not _player.has_meta(AttackTokens.META):
+		_player.set_meta(AttackTokens.META, AttackTokens.new())
+	return _player.get_meta(AttackTokens.META) as AttackTokens
+
+
+func _release_attack_tokens() -> void:
+	var tokens := _attack_tokens()
+	if tokens:
+		tokens.release(self)
+
+
+# Physics time in seconds, for the ranged token's window (deterministic in replays, unlike wall time)
+func _physics_time_s() -> float:
+	return Engine.get_physics_frames() / float(Engine.physics_ticks_per_second)
+
+
 # Override in subclasses to inject additional per-frame state logic
 func _get_next_action() -> void:
 	pass
@@ -238,6 +290,7 @@ func _change_state(new_state: State) -> void:
 	state = new_state
 	match new_state:
 		State.IDLE:
+			_release_attack_tokens()
 			_play_anim("idle")
 		State.CHASE:
 			if old_state == State.IDLE or old_state == State.PATROL:
@@ -255,6 +308,7 @@ func _change_state(new_state: State) -> void:
 			_stagger_timer = STAGGER_DURATION
 			_play_anim("stagger")
 		State.DEAD:
+			_release_attack_tokens()
 			_hitbox.deactivate()
 			velocity = Vector3.ZERO
 			_nav_agent.target_position = global_position

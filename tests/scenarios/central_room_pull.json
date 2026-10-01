@@ -15,8 +15,7 @@
   "checks": [
     {"id": "enc_group_max_first_area", "target": [null, 3], "baseline": 3},
     {"id": "detect_through_walls", "target": [null, 0], "baseline": 0},
-    {"id": "enemy_attackers_max", "target": {"melee": [null, 2], "ranged": [null, 1]}, "baseline": {"melee": 2, "ranged": 1},
-     "pending": "attack tokens (design bible §3)"},
+    {"id": "enemy_attackers_max", "target": {"melee": [null, 2], "ranged": [null, 1]}, "baseline": {"melee": 2, "ranged": 1}},
     {"id": "enemy_melee_telegraph", "target": [0.5, null], "baseline": 0.0,
      "pending": "enemy melee windups (design bible §3)"}
   ]
