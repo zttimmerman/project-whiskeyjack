@@ -67,7 +67,9 @@ Patches 1–3 are upstream bugs worth reporting; each upstream fix shrinks the p
 
 **Not covered:** a typo in a method or property name inside an expression (`QuestManager.start_quets(...)`). The compiler doesn't check state names, so it fails only at runtime. The gdUnit4 branch tests catch it for Idrenna; a lint of `QuestManager.<name>` against the script's methods would catch it everywhere (a follow-up).
 
-The syntax gate was demonstrated on this PR with a throwaway commit that broke `village_elder.dialogue`, then reverted it; the PR body links the failing and passing CI runs.
+**The syntax gate, demonstrated:** a throwaway commit removed a closing parenthesis in `village_elder.dialogue`. The pre-push hook, which runs the same import and `check_log.py` as CI's import job, refused the push with `::error::…import.log: 1 errors found in res://data/dialogues/village_elder.dialogue`. `ci/check_dialogue.gd` printed `ERROR: res://data/dialogues/village_elder.dialogue:4: Missing closing bracket.` and exited 1.
+
+Pushing it to CI would have meant `--no-verify`, which the project rules forbid, so the commit was dropped unpushed. The CI import job runs the same two commands.
 
 ## Comparison with today's JSON
 
