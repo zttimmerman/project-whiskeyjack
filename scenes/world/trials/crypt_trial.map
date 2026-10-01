@@ -1,8 +1,9 @@
 // Game: Whiskeyjack
 // Format: Standard
-// Crypt trial (trial B2, docs/trials/func-godot.md). Units: 32 per metre; Godot (x, y, z) = Quake (y, z, x) / 32.
-// Built into scenes/world/trials/CryptTrial_brushes.tscn by scripts/tools/build_brush_maps.gd; never edit that scene.
-// entity 0: worldspawn (the hall, the dais and the doorway wall)
+// Crypt trial (docs/trials/func-godot.md). Units: 32 per metre; Godot (x, y, z) = Quake (y, z, x) / 32.
+// Written by scripts/tools/brush_boxes.py from scripts/tools/brush_layouts/crypt_trial.py.
+// Built into scenes/world/trials/CryptTrial_brushes.tscn by scripts/tools/build_brush_maps.gd.
+// entity 0: worldspawn, the hall, the dais and the doorway wall
 {
 "classname" "worldspawn"
 "_cull_interior_faces" "1"
@@ -249,7 +250,7 @@
 ( -296 48 68 ) ( -296 48 69 ) ( -296 49 68 ) crypt_dais 0 0 0 1 1
 }
 }
-// entity 1: func_room (the corridor; a separate mesh, so the renderer's 8-lights-per-mesh cap applies per room)
+// entity 1: func_room, the corridor; its own mesh, so the 8-light cap is per room
 {
 "classname" "func_room"
 "_cull_interior_faces" "1"

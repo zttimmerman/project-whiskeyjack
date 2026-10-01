@@ -75,6 +75,8 @@ jobs:
         run: command -v python3 || (apt-get update -qq && apt-get install -y -qq --no-install-recommends python3)
       - name: Test the sourced-asset licence rules (CC0 only; ci/test_sources.py)
         run: python3 ci/test_sources.py
+      - name: Test the brush-map writer and check committed .map files match their layouts
+        run: python3 tests/tools/test_brush_boxes.py
       - name: Run scripts/godot_validate.gd on every asset with a brief, plus the assets/sources.json check (no Blender renders)
         run: python3 ci/validate_assets.py
 
