@@ -120,8 +120,11 @@ func test_regaining_sight_resumes_chase() -> void:
 		if levy.state == SEARCH:
 			break
 	assert_int(levy.state).override_failure_message("the levy never searched").is_equal(SEARCH)
-	# The player steps back out in front of it
-	player.global_position = levy.global_position + (-levy.global_basis.z).normalized() * 6.0
+	# A few frames into the walk to the last-seen spot it faces -z; the player steps out ahead of it, clear
+	# of the wall
+	await _physics_frames(10)
+	assert_int(levy.state).is_equal(SEARCH)
+	player.global_position = Vector3(1, BODY_Y, -8)
 	var resumed := false
 	for _i in 20:
 		await get_tree().physics_frame
