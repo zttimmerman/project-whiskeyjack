@@ -33,9 +33,9 @@ func _arena() -> void:
 	_player.apply_view_state({"facing": 0.0, "camera_yaw": 0.0, "camera_pitch": -0.2})
 
 
-func _enemy(name: String, pos: Vector3) -> CharacterBody3D:
+func _enemy(label: String, pos: Vector3) -> CharacterBody3D:
 	var enemy: CharacterBody3D = FakeEnemy.new()
-	enemy.name = name
+	enemy.name = label
 	enemy.position = pos
 	add_child(auto_free(enemy))
 	return enemy

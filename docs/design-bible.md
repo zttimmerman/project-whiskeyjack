@@ -43,7 +43,7 @@ The third-person camera behind the player is the lens for everything else. Most 
   - Cycling picks the next-nearest to screen centre.
   - The camera keeps both the player and the target in frame (`cam_lock_both_in_frame`).
   - Lock releases on target death, on losing line of sight for 2 s, or beyond 1.5× range.
-  - **Current:** no reticle; no line-of-sight or dead filter; camera input is disabled while locked.
+  - **Current:** no reticle and no line-of-sight filter; camera input is disabled while locked. When the target dies, the lock moves at once to the nearest living enemy in range, or releases (decided 2026-10-01).
 - **Respawn and loads** restore the saved view heading, so the same input moves the same way (fixed in #6).
 - **Bindings:** one action per key. **Current:** E is bound to both `interact` and `camera_right`. Gameplay actions are polled in the physics step, so automated input can frame-time them.
 

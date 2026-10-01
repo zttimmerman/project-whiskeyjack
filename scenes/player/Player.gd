@@ -301,14 +301,39 @@ func _release_lock_on() -> void:
 
 
 func _validate_lock_on() -> void:
-	if not _lock_on_target:
+	# A freed target compares equal to null, so the candidate list tells "never locked" from "target gone"
+	if _lock_on_target == null and _lock_on_candidates.is_empty():
 		return
-	# Release if target was freed or moved out of range
-	if (
-		not is_instance_valid(_lock_on_target)
-		or global_position.distance_to(_lock_on_target.global_position) > lock_on_range * 1.5
-	):
+	if not is_instance_valid(_lock_on_target) or _is_dead(_lock_on_target):
+		_lock_on_next_after_death()
+	elif global_position.distance_to(_lock_on_target.global_position) > lock_on_range * 1.5:
 		_release_lock_on()
+
+
+# The locked target died (or was freed): lock the nearest living enemy in range at once, else release
+func _lock_on_next_after_death() -> void:
+	var gone := _lock_on_target
+	var next: Node3D = null
+	var best := INF
+	for enemy in get_tree().get_nodes_in_group("enemy"):
+		if not enemy is Node3D or enemy == gone or _is_dead(enemy):
+			continue
+		var d := global_position.distance_to((enemy as Node3D).global_position)
+		if d <= lock_on_range and d < best:
+			best = d
+			next = enemy as Node3D
+	if next == null:
+		_release_lock_on()
+		return
+	_lock_on_target = next
+	_lock_on_candidates = [next]
+	_lock_on_index = 0
+	if EventLog.enabled:
+		EventLog.log_event("lock_on", {"actor": EventLog.label(self), "target": EventLog.label(next)})
+
+
+static func _is_dead(node: Node) -> bool:
+	return node.has_method("is_dead") and bool(node.call("is_dead"))
 
 
 func _find_lock_on_target() -> Node3D:
@@ -316,7 +341,11 @@ func _find_lock_on_target() -> Node3D:
 	_lock_on_index = 0
 
 	for enemy in get_tree().get_nodes_in_group("enemy"):
-		if enemy is Node3D and global_position.distance_to(enemy.global_position) <= lock_on_range:
+		if (
+			enemy is Node3D
+			and not _is_dead(enemy)
+			and global_position.distance_to(enemy.global_position) <= lock_on_range
+		):
 			_lock_on_candidates.append(enemy as Node3D)
 
 	if _lock_on_candidates.is_empty():
