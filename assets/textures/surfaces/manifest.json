@@ -1,0 +1,249 @@
+{
+ "textures": {
+  "packed_earth": {
+   "graph": "assets/textures/src/packed_earth.ptex",
+   "graph_sha256": "fa14da1b30af93cfd3259dd81627c6951cbcf16d8c2c1b6c5074d51e9d881130",
+   "ramp": {
+    "Peat Black": "#2E2926",
+    "Saddle Leather": "#4A2A10",
+    "Rain Stone": "#4D4740"
+   },
+   "ramp_steps": 8,
+   "size": 128,
+   "png": "assets/textures/surfaces/packed_earth.png",
+   "png_sha256": "b85151b7ce3c90a3cd78e24420092c083bc484a51a96f8bc4eb17fb462120805",
+   "pixels_sha256": "8569ac649dff9c5227fc9146462cf5d25227b01e459414bbd7c414065ca340d6",
+   "material_maker_export_sha256": "55d9c8e36b1653f049263e16b57f6f44f60be045f2f8941e930228062451f179",
+   "distinct_colours": 17,
+   "ramp_entries": 17,
+   "de_before_lock": {
+    "ramp_de_median": 0.79,
+    "ramp_de_p95": 1.46,
+    "ramp_de_max": 1.76,
+    "groups": [
+     {
+      "palette": "Peat Black",
+      "share": 0.013,
+      "median_de": 9.29
+     },
+     {
+      "palette": "Saddle Leather",
+      "share": 0.352,
+      "median_de": 6.44
+     },
+     {
+      "palette": "Rain Stone",
+      "share": 0.635,
+      "median_de": 3.18
+     }
+    ]
+   },
+   "de_after_lock": {
+    "ramp_de_median": 0.0,
+    "ramp_de_p95": 0.0,
+    "ramp_de_max": 0.0,
+    "groups": [
+     {
+      "palette": "Peat Black",
+      "share": 0.017,
+      "median_de": 8.42
+     },
+     {
+      "palette": "Saddle Leather",
+      "share": 0.331,
+      "median_de": 6.03
+     },
+     {
+      "palette": "Rain Stone",
+      "share": 0.651,
+      "median_de": 2.77
+     }
+    ]
+   }
+  },
+  "plaster": {
+   "graph": "assets/textures/src/plaster.ptex",
+   "graph_sha256": "a170a0f1fde12d9887c1ed1380f4543f7f2b2fcca0e486069adec435d464f2ca",
+   "ramp": {
+    "Rain Stone": "#4D4740",
+    "Wet Slate": "#736B66",
+    "Old Bone": "#CCB484"
+   },
+   "ramp_steps": 8,
+   "size": 128,
+   "png": "assets/textures/surfaces/plaster.png",
+   "png_sha256": "3759651f33345fb3b86a09cd745d08d49ce74072e80299633d14bd629c4caffc",
+   "pixels_sha256": "70bdc682466430e69b12c892e7a9bea6bd5ecf161ef8ac0ccdce4185fcb4ed51",
+   "material_maker_export_sha256": "24d1cfd122d630a82d52d2f1c5d0c1b01a6e0c586bed7989396e3e8f9db63355",
+   "distinct_colours": 13,
+   "ramp_entries": 17,
+   "de_before_lock": {
+    "ramp_de_median": 0.9,
+    "ramp_de_p95": 2.2,
+    "ramp_de_max": 2.55,
+    "groups": [
+     {
+      "palette": "Rain Stone",
+      "share": 0.0
+     },
+     {
+      "palette": "Wet Slate",
+      "share": 0.359,
+      "median_de": 9.78
+     },
+     {
+      "palette": "Old Bone",
+      "share": 0.641,
+      "median_de": 5.69
+     }
+    ]
+   },
+   "de_after_lock": {
+    "ramp_de_median": 0.0,
+    "ramp_de_p95": 0.0,
+    "ramp_de_max": 0.0,
+    "groups": [
+     {
+      "palette": "Rain Stone",
+      "share": 0.0
+     },
+     {
+      "palette": "Wet Slate",
+      "share": 0.323,
+      "median_de": 9.38
+     },
+     {
+      "palette": "Old Bone",
+      "share": 0.677,
+      "median_de": 4.27
+     }
+    ]
+   }
+  },
+  "stone_dressed": {
+   "graph": "assets/textures/src/stone_dressed.ptex",
+   "graph_sha256": "ccc13107dd2910cc351d387ffa36c7d6ce7be7e7b5d893c0a10fc17a718c30f8",
+   "ramp": {
+    "Peat Black": "#2E2926",
+    "Rain Stone": "#4D4740",
+    "Wet Slate": "#736B66"
+   },
+   "ramp_steps": 8,
+   "size": 128,
+   "png": "assets/textures/surfaces/stone_dressed.png",
+   "png_sha256": "d2d06ed7527b4505e330e70da7bc6e3c3f22c6719e0d8841b4d973e91e75f73e",
+   "pixels_sha256": "168ce6ad393e44df6c86595a49ff69d70f008c2a8c0d90d7630c560d9dff621e",
+   "material_maker_export_sha256": "e99e84acf62963a4ddb872699b96a4c15865bc8993f40b659c3ce41579018cfe",
+   "distinct_colours": 16,
+   "ramp_entries": 17,
+   "de_before_lock": {
+    "ramp_de_median": 0.47,
+    "ramp_de_p95": 1.0,
+    "ramp_de_max": 1.35,
+    "groups": [
+     {
+      "palette": "Peat Black",
+      "share": 0.264,
+      "median_de": 0.47
+     },
+     {
+      "palette": "Rain Stone",
+      "share": 0.342,
+      "median_de": 3.9
+     },
+     {
+      "palette": "Wet Slate",
+      "share": 0.395,
+      "median_de": 1.21
+     }
+    ]
+   },
+   "de_after_lock": {
+    "ramp_de_median": 0.0,
+    "ramp_de_p95": 0.0,
+    "ramp_de_max": 0.0,
+    "groups": [
+     {
+      "palette": "Peat Black",
+      "share": 0.261,
+      "median_de": 0.0
+     },
+     {
+      "palette": "Rain Stone",
+      "share": 0.315,
+      "median_de": 4.02
+     },
+     {
+      "palette": "Wet Slate",
+      "share": 0.424,
+      "median_de": 1.74
+     }
+    ]
+   }
+  },
+  "wood_planks": {
+   "graph": "assets/textures/src/wood_planks.ptex",
+   "graph_sha256": "504adff64b17a5201e1a813f81577d1e1f69a74449fa3f53731eb3b11a6376ee",
+   "ramp": {
+    "Peat Black": "#2E2926",
+    "Saddle Leather": "#4A2A10",
+    "Barrow Oak": "#8C5933"
+   },
+   "ramp_steps": 8,
+   "size": 128,
+   "png": "assets/textures/surfaces/wood_planks.png",
+   "png_sha256": "98754bd9297f9d099596f5157123fab64f917b57b5ff389698aa1487ae905275",
+   "pixels_sha256": "fd5c6355381139c21b1262313f78da2ca58a4c6bc884f1e6687184ffc0535008",
+   "material_maker_export_sha256": "41638ea6016afc89e3fe69b4f98dacb925308adf658d3d00bd67b891975e3365",
+   "distinct_colours": 15,
+   "ramp_entries": 17,
+   "de_before_lock": {
+    "ramp_de_median": 0.93,
+    "ramp_de_p95": 1.59,
+    "ramp_de_max": 3.04,
+    "groups": [
+     {
+      "palette": "Peat Black",
+      "share": 0.108,
+      "median_de": 1.77
+     },
+     {
+      "palette": "Saddle Leather",
+      "share": 0.515,
+      "median_de": 9.32
+     },
+     {
+      "palette": "Barrow Oak",
+      "share": 0.377,
+      "median_de": 8.51
+     }
+    ]
+   },
+   "de_after_lock": {
+    "ramp_de_median": 0.0,
+    "ramp_de_p95": 0.0,
+    "ramp_de_max": 0.0,
+    "groups": [
+     {
+      "palette": "Peat Black",
+      "share": 0.109,
+      "median_de": 3.03
+     },
+     {
+      "palette": "Saddle Leather",
+      "share": 0.43,
+      "median_de": 9.43
+     },
+     {
+      "palette": "Barrow Oak",
+      "share": 0.461,
+      "median_de": 8.83
+     }
+    ]
+   }
+  }
+ },
+ "generator": "scripts/tools/make_textures.py",
+ "material_maker": "1.5p1",
+ "lock_script_sha256": "413e9bb2d026cfc4948eaec021971bd52314a209a490a92e13a68d1b3e523b9f"
+}
