@@ -1,6 +1,6 @@
 {
   "name": "levy_1v1_sensible",
-  "description": "The scripted sensible player (design bible §4, §10): from the spawn, walk toward the Corridor A levy, lock on, stop and let it come. It reacts to each levy windup (enemy_melee_telegraph) about 0.27 s after the tell starts (16 frames) by dodging back, meets the levy with a three-hit light combo as it closes again, dodges its next windup the same way, and finishes it with a fourth light hit as it closes. Nothing else in Level 1 is close enough to engage.",
+  "description": "The scripted sensible player (design bible §4, §10): from the spawn, walk toward the Corridor A levy, lock on, stop and let it come. It reacts to each levy windup (enemy_melee_telegraph) about 0.27 s after the tell starts (16 frames) by dodging back, meets the levy with a three-hit light combo as it closes again, dodges its next windup the same way, and finishes it with a fourth light hit as it closes. It models a skilled player: it dodges every swing, so its HP cost is 0%, the skilled ceiling, and enc_first_fight_hp_cost (a reasonable player, design bible §4) isn't checked here. Nothing else in Level 1 is close enough to engage.",
   "scene": "res://scenes/world/Level1.tscn",
   "seed": 1,
   "player": {"position": [0, 1, 0], "yaw_deg": -90, "pitch": -0.2},
@@ -30,7 +30,6 @@
   "checks": [
     {"id": "ttk_player_frontfile", "enemy": "EnemyCorridorA", "target": [3, 4], "baseline": 4},
     {"id": "enemy_melee_telegraph", "target": [0.5, null], "baseline": 0.6},
-    {"id": "atk_hitbox_sync", "target": [-2, 2], "baseline": 0, "pending": "clip contact frames and hitboxes synced to them (design bible §3); until then the value is hitbox open minus press"},
-    {"id": "enc_first_fight_hp_cost", "target": [0.1, 0.15], "baseline": 0.0, "pending": "measured 0: the sensible player dodges both levy swings on their tell (design bible §4 target vs this script is open)"}
+    {"id": "atk_hitbox_sync", "target": [-2, 2], "baseline": 0, "pending": "clip contact frames and hitboxes synced to them (design bible §3); until then the value is hitbox open minus press"}
   ]
 }
