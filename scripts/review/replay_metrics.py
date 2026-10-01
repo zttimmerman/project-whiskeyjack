@@ -229,6 +229,17 @@ def _through_walls(check, events):
     return {"value": len(blind), "detail": {"actors": blind}}
 
 
+def _reach_distance(check, events):
+    point = check.get("point")
+    if point is None or len(point) != 3:
+        raise ValueError("%s needs \"point\": [x, y, z]" % check["id"])
+    ends = of(events, "scenario_end")
+    if not ends or "player_position" not in ends[-1]:
+        return {"value": None, "detail": {"note": "no scenario_end with a player position"}}
+    end = ends[-1]["player_position"]
+    return {"value": math.dist(end, point), "detail": {"end_position": end, "point": point}}
+
+
 METRICS = {
     "ttk_player_frontfile": _hits_to_kill,
     "ttk_player_backfile": _hits_to_kill,
@@ -242,6 +253,8 @@ METRICS = {
     "enc_group_max_first_area": _group_size,
     # Not a §9 target ID: §3's rule that detection needs line of sight, as detections without it
     "detect_through_walls": _through_walls,
+    # Not a §9 target ID: how far from "point" the player ends the run (a walk-through gets there)
+    "reach_distance_m": _reach_distance,
 }
 
 
