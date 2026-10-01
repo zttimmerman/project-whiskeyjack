@@ -122,6 +122,13 @@ func _ready() -> void:
 		_send_current_scene_to_debugger()
 
 
+# [whiskeyjack patch] Unregister the debugger capture, or Godot logs "Capture not registered: 'dm'"
+# at exit in every debug run.
+func _exit_tree() -> void:
+	if EngineDebugger.has_capture("dm"):
+		EngineDebugger.unregister_message_capture("dm")
+
+
 ## Set a random seed.
 func reseed_randomizer(next_seed: int) -> void:
 	_rng.seed = next_seed

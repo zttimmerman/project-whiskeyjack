@@ -45,6 +45,11 @@ func _enter_tree() -> void:
 		export_plugin = DMExportPlugin.new()
 		add_export_plugin(export_plugin)
 
+		# [whiskeyjack patch] Headless editors (CI imports) need only the importer and exporter. The
+		# editor UI loads every global class script for autocomplete and leaks them at exit.
+		if DisplayServer.get_name() == "headless":
+			return
+
 		inspector_plugin = DMInspectorPlugin.new()
 		add_inspector_plugin(inspector_plugin)
 
@@ -75,6 +80,11 @@ func _exit_tree() -> void:
 
 	remove_export_plugin(export_plugin)
 	export_plugin = null
+
+	# [whiskeyjack patch] Nothing else was added headless (see _enter_tree).
+	if DisplayServer.get_name() == "headless":
+		instance = null
+		return
 
 	remove_inspector_plugin(inspector_plugin)
 	inspector_plugin = null
