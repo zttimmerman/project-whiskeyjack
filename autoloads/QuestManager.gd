@@ -3,10 +3,14 @@ extends Node
 signal quest_started(quest_id: String)
 signal quest_updated(quest_id: String, stage_id: String)
 signal quest_completed(quest_id: String)
+signal flag_changed(flag: String, value: Variant)
 
 # { quest_id: { "data": {...}, "stage": stage_id } }
 var _active_quests: Dictionary = {}
 var _completed_quests: Array[String] = []
+# World flags: named story facts (choices made, doors opened) that dialogue conditions read.
+# Saved with the quests by SaveManager.
+var _flags: Dictionary = {}
 
 
 func _ready() -> void:
@@ -64,6 +68,21 @@ func get_quest_stage(quest_id: String) -> String:
 	if not is_quest_active(quest_id):
 		return ""
 	return _active_quests[quest_id].get("stage", "")
+
+
+func set_flag(flag: String, value: Variant = true) -> void:
+	if _flags.has(flag) and _flags[flag] == value:
+		return
+	_flags[flag] = value
+	flag_changed.emit(flag, value)
+
+
+func get_flag(flag: String, default: Variant = false) -> Variant:
+	return _flags.get(flag, default)
+
+
+func has_flag(flag: String) -> bool:
+	return _flags.has(flag)
 
 
 func _load_quest_data(quest_id: String) -> Dictionary:
