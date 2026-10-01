@@ -19,7 +19,7 @@
      "pending": "detection by line of sight (design bible §3)"},
     {"id": "enemy_attackers_max", "target": {"melee": [null, 2], "ranged": [null, 1]}, "baseline": {"melee": 2, "ranged": 2},
      "pending": "attack tokens (design bible §3)"},
-    {"id": "enemy_melee_telegraph", "target": [0.5, null], "baseline": 0.0},
-    {"id": "enemy_ranged_telegraph", "target": [0.8, null], "baseline": 0.0}
+    {"id": "enemy_melee_telegraph", "target": [0.5, null], "baseline": 0.6},
+    {"id": "enemy_ranged_telegraph", "target": [0.8, null], "baseline": 0.9}
   ]
 }
