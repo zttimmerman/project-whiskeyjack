@@ -2,7 +2,7 @@
 
 This is Phase B trial 5 in `docs/tools-review-2026-09.md`. The question: should the over-the-shoulder camera, built as modes (design bible §2), be built on Phantom Camera v0.11.0.3 (MIT) or on our own rig of about 150 lines? It's evidence for a decision, not the decision.
 
-**Recommendation: keep A, our own rig, and drop Phantom Camera.** This PR switches the game to A (`scenes/player/CameraRig.tscn`) and leaves Phantom Camera out of the repo. A meets every `cam_*` target in every scenario but one wall-fill frame range in the stress run (0.604 against ≤ 0.6; see Open questions). B, Phantom Camera configured to do the same, misses `cam_player_in_frame` in four of six scenarios and `cam_lock_both_in_frame` in one. It does nothing when the arm is squeezed, starts every scene with the camera inside the player for 6 to 12 frames, and shows a runtime error and a self-updater in the code paths read for the audit. Matching A would mean writing A's framing code on top of it anyway.
+**Recommendation: keep A, our own rig, and drop Phantom Camera.** This PR switches the game to A (`scenes/player/CameraRig.tscn`) and leaves Phantom Camera out of the repo. A meets every `cam_*` target in every scenario. B, Phantom Camera configured to do the same, misses `cam_player_in_frame` in four of six scenarios and `cam_lock_both_in_frame` in one. It does nothing when the arm is squeezed, starts every scene with the camera inside the player for 6 to 12 frames, and shows a runtime error and a self-updater in the code paths read for the audit. Matching A would mean writing A's framing code on top of it anyway.
 
 ## How the camera is measured (new in this PR)
 
@@ -10,7 +10,7 @@ The replay harness now scores the camera headless. There's no rendering: points 
 - `replay.gd` logs one `camera` event per physics frame whenever a scenario has a `cam_*` check, and sizes the headless root viewport to the game's 1152×648 (headless, it's 64×64).
 - `replay_metrics.py` turns those events into the four targets:
   - **`cam_player_in_frame`**: the share of frames in which the player's head and torso are fully in frame. That means all eight corners of a box, from the capsule's centre to its top and as wide and deep as the capsule, project inside the viewport. The camera must also be outside the capsule, and at least 75% of a 5×7 ray grid on the body must reach it before any world geometry does.
-  - **`cam_wall_fill`**: the worst frame's largest share of a 32×18 grid of screen rays that land on one wall plane. Coplanar kit pieces merge, and floors don't count.
+  - **`cam_wall_fill`**: the worst frame's largest share of a 32×18 grid of screen rays that land on one wall plane. Coplanar kit pieces merge, and floors don't count. Since the user's ruling (2026-10-01), a hit counts only when it's no deeper along the view than the player's axis: wall between the camera and him, or beside him, not a wall he faces beyond him.
   - **`cam_melee_occlusion`**: over locked frames with the target within 3 m, the mean share of the target's ray grid that hits the player first. The detail also gives p90 and the maximum.
   - **`cam_lock_both_in_frame`**: the share of locked frames in which both the player and the target are framed, by the same test as the player.
 - `tests/scenarios/camera_stress.json` is a new stress scenario in Level 1, with the other enemies removed:
@@ -44,26 +44,26 @@ The replay harness now scores the camera headless. There's no rendering: points 
 
 ## Results
 
-All three runs use the same inputs, the same seed and the same probe. Each run was replayed twice and compared: identical, or `same_per_frame`. The gameplay checks didn't move in any scenario (`ttk_*`, the telegraphs, attackers and detection). The pass marks are against the design-bible targets.
+All three runs use the same inputs, the same seed and the same probe. Wall-fill values for today and A use the user's final definition (wall beyond him doesn't count); ¹ B's were measured under the earlier one, which counted it. Lock-on numbers for A include the dead-target retarget (below). Each run was replayed twice and compared: identical, or `same_per_frame`. The gameplay checks didn't move in any scenario (`ttk_*`, the telegraphs, attackers and detection). The pass marks are against the design-bible targets.
 
 | Scenario | Target | Today | A, our rig | B, Phantom Camera |
 |---|---|---|---|---|
 | levy_1v1_passive | `cam_player_in_frame` (1.0) | 1.000 | **1.000** | 0.985 (start-up) |
-| | `cam_wall_fill` (≤ 0.6) | 0.080 | **0.151** | 0.149 |
+| | `cam_wall_fill` (≤ 0.6) | 0.014 | **0.038** | 0.149¹ |
 | | `cam_melee_occlusion` (≤ 0.25) | 0.873 | **0.116** (max 0.17) | 0.118 |
 | | `cam_lock_both_in_frame` (≥ 0.95) | 1.000 | **1.000** | 0.996 |
 | levy_1v1_sensible | `cam_player_in_frame` | 0.667 | **1.000** | 0.674 |
-| | `cam_wall_fill` | 0.092 | **0.359** | 0.231 |
+| | `cam_wall_fill` | 0.014 | **0.408** | 0.231¹ |
 | | `cam_melee_occlusion` | 0.681 | **0.033** | 0.090 |
 | | `cam_lock_both_in_frame` | 0.664 | **0.974** | 0.680 |
 | central_room_pull | `cam_player_in_frame` | 1.000 | **1.000** | 1.000 |
-| | `cam_wall_fill` | 0.368 | **0.392** | 0.417 |
+| | `cam_wall_fill` | 0.368 | **0.392** | 0.417¹ |
 | tomb_hall_group | `cam_player_in_frame` | 1.000 | **1.000** | 0.978 (start-up) |
-| | `cam_wall_fill` | 0.441 | **0.424** | 0.465 |
+| | `cam_wall_fill` | 0.441 | **0.415** | 0.465¹ |
 | crypt_trial_walk (from main) | `cam_player_in_frame` | 1.000 | **1.000** | not run (B's branch predates it) |
-| | `cam_wall_fill` | 0.573 | **0.394** | not run |
+| | `cam_wall_fill` | 0.573 | **0.361** | not run |
 | camera_stress (new) | `cam_player_in_frame` | 0.577 | **1.000** | 0.897 |
-| | `cam_wall_fill` | 0.486 | 0.604 (pending) | 0.564 |
+| | `cam_wall_fill` | 0.462 | **0.406** | 0.564¹ |
 | | `cam_melee_occlusion` | 0.595 | **0.021** | 0.025 |
 | | `cam_lock_both_in_frame` | 0.355 | **1.000** | 1.000 |
 
@@ -72,7 +72,7 @@ Where each candidate loses frames:
 - **A:**
   - It loses no frames on the player.
   - **Lock-on, `levy_1v1_sensible`:** for 14 frames (0.23 s) after the dodge back against the west wall, the camera swings along the wall and is briefly too close to fit the levy beside him (0.974, which passes).
-  - **Wall fill, `camera_stress`:** frames 917 to 929 of the corridor about-turn. He faces the corridor's far wall from about 3.5 m, with the camera pinned to the near wall. That wall is 0.60 to 0.62 of the frame at every look-down tilt tried (0 to 0.25 rad), so it's the corridor's geometry, not the arm.
+  - **Wall fill, `camera_stress`, under the earlier definition:** frames 917 to 929 of the corridor about-turn read 0.604. He faces the corridor's far wall from about 3.5 m, with the camera pinned to the near wall, and that wall was 0.60 to 0.62 of the frame at every look-down tilt tried (0 to 0.25 rad). The user's ruling excludes that case.
 - **B:**
   - Frames 0 to 6 (up to 12) of every scene: Phantom Camera creates its spring arm deferred, so the camera starts at the pivot, inside the player.
   - Backed into a wall (`camera_stress` 52–145, `levy_1v1_sensible` 371–end): the spring arm shortens to the wall and the camera sits against his back. The rendered frames show an arm and a shoulder.
@@ -130,7 +130,21 @@ Code paths read for the audit: `plugin.gd`, the updater (`scripts/panel/updater/
 
 ## Open questions (for the user)
 
-1. **`cam_wall_fill` in a 4 m corridor:** facing the far wall from the near one, one wall is about 0.6 of the frame at 72° whatever the rig does. Is the target meant for that case, or only for a camera pressed into a wall or corner? If it's meant for that case, it interacts with `lvl_corridor_width_min` (≥ 3 m). `camera_stress` keeps it `pending` with that reason.
+1. **`cam_wall_fill` in a 4 m corridor (answered by the user, 2026-10-01):** wall the player deliberately faces close up doesn't count, only wall between the camera and him or beside him. Under that rule, `camera_stress` reads 0.406 (it was 0.604 and pending), and the check is no longer pending.
 2. **How `cam_melee_occlusion` aggregates frames:** the mean over locked frames within 3 m (here 0.02 to 0.12, max 0.17). The bible doesn't say which: mean, p90 or worst frame. All three meet ≤ 0.25 with A.
 3. **Lock-on on a dead target (answered by the user, 2026-10-01):** the lock now moves at once to the nearest living enemy in range, or releases (`tests/unit/test_lock_on.gd`). After the change, `levy_1v1_sensible` reads wall fill 0.432, melee occlusion 0.044 and both-in-frame 0.969, and `camera_stress` reads melee occlusion 0.038.
 4. The pivot is now 1.7 m (the bible's 1.6 to 1.8), so `FillLight` sits 0.7 m lower than before, still 0.6 m above and 2.5 m behind the pivot. The back-luminance figure in the art bible (0.133) was measured with the old pivot and may want a re-measure.
+
+## FillLight back luminance with the new pivot (2026-10-01)
+
+`scripts/review/level1_compare.tscn -- … --fill 3.5,5,0.6,2.5 --measure 1` renders the gameplay shot twice, with and without the player. It takes his pixels as the ones that changed, and averages their Rec. 709 luminance.
+
+| Framing | linear | of the sRGB values |
+|---|---|---|
+| old dead-centre framing (`gameplay`) | 0.0301 | 0.146 |
+| A's framing (`rig`: pivot 1.7 m, 0.6 m right, look 0.1 rad lower) | 0.0303 | 0.146 |
+| A's framing, fill light off | 0.0088 | 0.054 |
+
+- His whole visible body is unchanged by the new pivot, since the fill light keeps its place relative to the pivot.
+- The 0.133 in `docs/decisions.md` came from a different region of his back that isn't in the repo. This method gives 0.146 for the same old setup, so the two aren't directly comparable, but the change between framings is about 0.
+- The art bible doesn't quote the 0.133, so it isn't edited.

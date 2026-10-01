@@ -1,13 +1,17 @@
 extends Node
 
 # Renders the player and the Barrow-levy in Level 1 under the level's own torchlight and ambient,
-# at gameplay camera framing (Player.tscn: pivot 1.5 m, SpringArm 4 m, pitch -0.2 rad).
+# at gameplay camera framing. "gameplay" is the old dead-centre rig's framing; "rig" is
+# scenes/player/CameraRig.gd's (pivot 1.7 m, 0.6 m right, 4 m arm at -0.2 rad, look 0.1 rad lower).
 # Review tool, not part of the game. Windowed run (headless can't render), as a scene so the
 # project's autoloads load:
 #   godot --path . res://scripts/review/level1_compare.tscn -- --player <glb> --levy <glb> --out <dir>
 #       [--ambient-energy <float>] [--torch-energy <float>] [--tag <name>]
 #       [--fill <energy>,<range>,<up>,<back>]   character fill light on CHARACTER_LAYER, placed in the
 #                                               camera rig's space (up from the pivot, back toward the camera)
+#       [--measure 1]   also prints the mean Rec. 709 luminance (linear, and of the sRGB values) of the
+#                       player's pixels in each shot:
+#                       the shot is rendered again without him, and his pixels are those that changed
 # The energy overrides try level-side lighting changes without editing Level1.tscn.
 
 const CHARACTER_LAYER := 2  # render layer the fill light is limited to; only the player sits on it
@@ -22,6 +26,17 @@ const SHOTS := {
 		"yaw": -90.0,
 		"pitch": -0.2,
 		"arm": 4.0
+	},
+	"rig":
+	{
+		"player": [Vector3(9.0, 0.0, 0.0), 90.0],
+		"levy": [Vector3(14.0, 0.0, 0.6), -90.0],
+		"pivot": Vector3(9.0, 1.7, 0.0),
+		"yaw": -90.0,
+		"pitch": -0.2,
+		"arm": 4.0,
+		"shoulder": 0.6,
+		"look_down": 0.1
 	},
 	"faceoff":
 	{
@@ -88,7 +103,10 @@ func _ready() -> void:
 		_place(levy, s["levy"])
 		# Same construction as the player's camera rig: yaw at the pivot, pitch on the arm, camera at +Z
 		var rig := Transform3D(Basis(Vector3.UP, deg_to_rad(s["yaw"])) * Basis(Vector3.RIGHT, s["pitch"]), s["pivot"])
-		cam.global_transform = rig * Transform3D(Basis(), Vector3(0, 0, s["arm"]))
+		cam.global_transform = rig * Transform3D(Basis(), Vector3(s.get("shoulder", 0.0), 0, s["arm"]))
+		if s.has("look_down"):
+			var look := Basis(Vector3.UP, deg_to_rad(s["yaw"])) * Basis(Vector3.RIGHT, s["pitch"] - s["look_down"])
+			cam.global_basis = look
 		if fill:
 			fill.global_position = (
 				Transform3D(Basis(Vector3.UP, deg_to_rad(s["yaw"])), s["pivot"]) * fill.get_meta("offset")
@@ -101,7 +119,34 @@ func _ready() -> void:
 		var path: String = args["out"].path_join("level1_%s%s.png" % [shot, tag])
 		img.save_png(path)
 		print("SAVED ", path)
+		if args.has("measure"):
+			player.visible = false
+			for i in 6:
+				await get_tree().process_frame
+			await RenderingServer.frame_post_draw
+			var lum := _masked_luminance(img, get_viewport().get_texture().get_image())
+			print("PLAYER_LUMINANCE %s linear %.4f srgb %.4f" % [shot, lum.x, lum.y])
+			player.visible = true
 	get_tree().quit()
+
+
+# Mean Rec. 709 luminance of the pixels that differ between the two renders: x from linear colour, y from the
+# sRGB-encoded values
+func _masked_luminance(with_player: Image, without: Image) -> Vector2:
+	var total := 0.0
+	var total_srgb := 0.0
+	var count := 0
+	for y in with_player.get_height():
+		for x in with_player.get_width():
+			var c := with_player.get_pixel(x, y)
+			var b := without.get_pixel(x, y)
+			if absf(c.r - b.r) + absf(c.g - b.g) + absf(c.b - b.b) < 0.02:
+				continue
+			var lin := c.srgb_to_linear()
+			total += 0.2126 * lin.r + 0.7152 * lin.g + 0.0722 * lin.b
+			total_srgb += 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b
+			count += 1
+	return Vector2(total, total_srgb) / count if count > 0 else Vector2.ZERO
 
 
 func _override_lighting(level: Node, args: Dictionary) -> void:
