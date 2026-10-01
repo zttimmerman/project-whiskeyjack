@@ -4,14 +4,22 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 
 ## Session handoff (update at the end of every session)
 
-- **Main** is on Godot 4.7.2. The last session ended 2026-09-30. It ran **Phase A** (PRs #14–#21), and every package is merged.
-- **Start the next session with Phase B** (trials, below), or with the backlog items the new tooling now measures.
+- **Main** is on Godot 4.7.2. The last session ended 2026-10-01. It ran **Phase A** (PRs #14–#22) and a **gameplay batch** (PRs #23–#28), and every package is merged. **Phase B's four trials were started** (branches `feature/camera-trial`, `feature/func-godot-trial`, `feature/material-maker-trial`, `feature/dialogue-manager-trial`); check their PRs first.
+- **Next, in the order the user set (2026-09-30):** finish Phase B, then the camera rework (built on whichever B1 picks). The user buys UAL2 Source ($14.99) now that the batch is done; swap the archer's draw and the bow markers when it lands.
+- **Gameplay batch, done (2026-09-30 – 10-01):**
+  - **Damage** (#23): `CharacterStats.mitigated_damage` (the ratio), `level_scale` and `scaled_stat` (round to nearest, not yet wired into spawning: no per-area level bands). Enemy attack 14 for both levy variants and arrows (9 HP per hit); `ttk_levy_player` 12.
+  - **Skating** (#24): the levy is about 13% larger than the Quaternius mannequin, so its clips cover more ground. Front-file chase 4.0 → 4.6 m/s (the user kept it; the player's escape margin is 0.4 m/s), Back-file 1.4 → 1.5. Foot slide 0.21 / 0.17 m/s, enforced by `test_locomotion_foot_slide`. The motion review's foot-slide measurement had a Foot→Toes switching bug, now fixed.
+  - **Level 1 in KayKit** (#25): 12 kit pieces at scale 1.0, wrapped in `scenes/world/kit/Kit*.tscn` (StaticBody3D + box/cylinder; the baker reads them), small crates and barrel stacks only, 13 torches. Skirting and plinths are visual-only collision; denser torch spacing accepted.
+  - **Line of sight** (#26): a 120° cone plus 4 m hearing, both needing a clear ray (`scripts/combat/WorldRay.gd`); a SEARCH state (last-seen spot, 3.5 s, back to post); `AttackTokens` (2 melee, 1 archer per 2 s); arrows stop at walls. New scenario `tomb_hall_group`.
+  - **Telegraphs** (#27): melee 0.6 s (`Sword_Attack`, short hold on the raised blade), archer 0.9 s (`Spell_Simple_Enter`). The timings are constants; clips fit them through `tell`/`contact` MARKERS in `build_animation_library.gd`. A dying enemy's hit no longer lands. `levy_1v1_sensible` is a perfect dodger (0% HP is the skilled ceiling); `ttk_levy_player` lives in `levy_1v1_passive`.
+  - **Kit texture imports** (#28): committed as the editor detects them (VRAM compressed), so checkouts stay clean.
+- **Decided 2026-09-30 – 10-01:** the user approved every default above. Hearing needs sight; no alerting of nearby enemies; waiting levies hold until a strafe clip exists; short pose holds allowed; tell sounds wait for the audio pass. The player's own sword waits until Tripo P2.0 is researched (don't spend on the P1 model).
 - **Phase A, done:**
   - **CI** (#14): `.github/workflows/ci.yml` runs import, validate, data-lint, lint, hooks, gdunit4, navmesh and replays on every PR. `ci/warnings-baseline.txt` (23 lines) and `ci/data-lint-baseline.txt` (1) are burn-down lists: new warnings fail, and a fixed warning's line is deleted.
   - **gdUnit4** (#17): v6.2.1 (commit 08ffc7c), pinned. `tests/run.sh` runs every suite (about 5 s). Characterization tests cover stats, inventory, quests and saves. Pending tests (the damage ratio, enemy damage share, `ttk_levy_player`, level bands) flip on in the PRs that implement them.
   - **Navmeshes bake at edit time** (#18): `scripts/tools/bake_navmeshes.gd` (collision faces, whole-cell agent 2.0/0.5 m); levels no longer bake at runtime. `check_path_clearance.gd` reports `lvl_path_clearance_min` from `tests/critical_paths/*.json`. Every segment passes; the narrowest is Level 2 vault → corridor C at 1.5 m.
   - **Downloaded-asset import** (#16, #19): CC0 kits go through `scripts/tools/import_pack.py` into the gitignored `.downloads/`, with provenance in `assets/sources.json` (CC0 only, checked by validate). Six KayKit Dungeon Remastered pieces pass the judge. For sourced kits, colour is measured over each piece's UV footprint and may be darkened, the shared atlas is corrected once from the pack's combined footprints (adding a piece re-cleans the pack), and holes use `mesh_kit_max_loops_per_part` (2).
-  - **Replay harness** (#20): the `EventLog` autoload (off by default; `WHISKEYJACK_EVENT_LOG` or `--event-log`), `scripts/review/replay.tscn`, `replay_metrics.py`, and the scenarios `levy_1v1_sensible` and `central_room_pull`. Runs are deterministic; same-frame event order may vary (Jolt), which `--compare` accepts. Baselines match the design bible §9 Current column: `ttk_player_frontfile` 4, `ttk_levy_player` 34, telegraph 0 s, first-fight HP cost 6%, first-area group 4. The Corridor B archer spots the player through the central room's south wall (`detect_through_walls` = 1).
+  - **Replay harness** (#20): the `EventLog` autoload (off by default; `WHISKEYJACK_EVENT_LOG` or `--event-log`), `scripts/review/replay.tscn`, `replay_metrics.py`, and the scenarios `levy_1v1_sensible` and `central_room_pull`. Runs are deterministic; same-frame event order may vary (Jolt), which `--compare` accepts. Baselines match the design bible §9 Current column: `ttk_player_frontfile` 4, `ttk_levy_player` 34, telegraph 0 s, first-fight HP cost 6%, first-area group 4 (all since moved by the gameplay batch; see the bible's §9).
   - **Git hooks** (#21): `.githooks/` (enable with `git config core.hooksPath .githooks`; needs `pipx install gdtoolkit==4.5.0`). pre-commit runs gdformat/gdlint/data-lint, pre-push runs the warnings check and the tests. All scripts are gdformatted at 120 columns.
   - Also: `Player.tscn`'s script path case (#15).
 - **Decided this session (2026-09-30):**
@@ -22,21 +30,19 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
   - Sourced props budget: 1,320 triangles, 128 px from the kit's shared atlas (art bible). Kit scale stays 1.0 until pieces are first placed; any rescale is one factor per pack.
   - The per-footprint colour measurement stays for sourced assets only. The floor tile's slight brown drift is accepted.
 - **Backlog, as design-bible targets:**
-  - `cam_melee_occlusion`, `cam_player_in_frame`, `cam_wall_fill` and `cam_lock_both_in_frame`: the camera rework and a lock-on reticle.
-  - `enemy_melee_telegraph`, `enemy_ranged_telegraph` and `enemy_attackers_max`, plus line-of-sight detection (the replay's `detect_through_walls` is the check) and arrows hitting walls.
-  - `atk_hitbox_sync` (needs contact frames marked on clips) and attack commitment; the damage formula and `ttk_*`.
-  - The `lvl_*` targets and `read_*`. The start-room crate snag is off-path player movement, so a replay or capsule check catches it, not the navmesh.
+  - `cam_melee_occlusion`, `cam_player_in_frame`, `cam_wall_fill` and `cam_lock_both_in_frame`: the camera rework and a lock-on reticle (B1 adds the measurements).
+  - `atk_hitbox_sync` (the `contact` markers now exist; wire the check), player attack commitment and the 0.15 s recovery; stagger should start the enemy's cooldown (§3).
+  - A "reasonable player" scenario (reacts late to some tells) for `enc_first_fight_hp_cost`; a two-fight route for `enc_spacing_s`; a pillar or doorway replay for the SEARCH state.
+  - The `lvl_*` targets and `read_*`: ceilings (the kit has none; B2 trials brush ceilings), `lvl_bare_wall_run_max`, the kit doorway's 2.0 m opening (under 2.2 m) once doors are walk-through.
   - Stability: the 13 invalid hand-written UIDs, the 10 GDScript warnings, and the E key's double binding.
-  - Found in play: a levy's hit still lands on the frame it dies (hitbox deactivation is deferred).
+  - Small: the attack-token hand-off on death is immediate (a 2 s window can briefly count 3); the replay harness stamps first-frame events 1–2 frames early; `import_pack.py` should write `compress/mode=2` for new kit textures; the pre-push hook ran `tests/run.sh` to exit 100 once (not reproduced; watch for a flaky test).
 - **Next:**
-  - **Phase B, trials:** Phantom Camera against our own rig; func_godot `.map` crypts; Material Maker textures; Dialogue Manager.
-  - **Phase C, content:** CC0 kits (KayKit, Quaternius, Kenney) through the import path, plus UAL2 Source ($14.99; the user buys it).
-  - **Replay follow-ups:** a two-fight route scenario for `enc_spacing_s`; camera and luminance checks in capture mode.
+  - **Phase B, trials (running):** B1 camera (Phantom Camera vs our rig), B2 func_godot `.map` crypts, B3 Material Maker textures, B4 Dialogue Manager. Each PR recommends keep / drop; adopting is the user's call.
+  - **Then the camera rework,** on B1's winner.
+  - **Phase C, content:** more CC0 kits through the import path, plus UAL2 Source (the user buys it): real bow clips and possibly a strafe clip for waiting levies.
 - **Open questions:**
-  - Is `OverhandThrow` acceptable as the Back-file's bow attack, or buy the UAL2 tier with `Bow_*`?
-  - Is the player's sword a new asset, or keep reusing the Levy Blade?
-  - The levy jog slides at 0.80 m/s and the Back-file walk at 0.64 (the player's run: 0.35).
-  - Is Level 2's 0.5 m burial platform meant to be walkable? It's above the 0.25 m climb limit, so enemies path around it.
+  - Is Level 2's 0.5 m burial platform meant to be walkable? It's above the 0.25 m climb limit, so enemies path around it. (The user hasn't been there in a while; ask when Level 2 is next worked on.)
+  - Research Tripo P2.0 before any new generation (the player's sword is waiting on it).
 - **Before any Tripo spend:** read the tripo skill. The cap is 500 per session, starting at 0. The balance is 590. Costs: concept 15, multiview 10, model 50, rig 25.
 - **Tools:**
   - `scripts/pipeline.py <id> --stage all`, `scripts/judge.py packet|record|resolve|log`, and `scripts/tools/import_pack.py` for kits;
