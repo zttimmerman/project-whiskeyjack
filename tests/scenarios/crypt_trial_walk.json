@@ -1,0 +1,15 @@
+{
+  "name": "crypt_trial_walk",
+  "description": "Trial B2 (docs/trials/func-godot.md): walk the brush-built crypt from the corridor start through the 3 m doorway, across the hall and up the dais stairs (a 1 m climb over a clip-brush ramp), then stop on the dais in front of the sarcophagus. It checks that brushwork built headless by func_godot collides and climbs the way the navmesh says it does.",
+  "scene": "res://scenes/world/trials/CryptTrial.tscn",
+  "seed": 1,
+  "player": {"position": [0, 1, 11], "yaw_deg": 0, "pitch": -0.2},
+  "duration_frames": 330,
+  "steps": [
+    {"frame": 0, "action": "move_forward", "pressed": true},
+    {"frame": 240, "action": "move_forward", "pressed": false}
+  ],
+  "checks": [
+    {"id": "reach_distance_m", "point": [0, 1.9, -9], "target": [null, 1.0]}
+  ]
+}
