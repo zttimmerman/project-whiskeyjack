@@ -1,0 +1,54 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/world/trials/CryptTrial.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/world/trials/CryptTrial_brushes.tscn" id="2_brushes"]
+[ext_resource type="PackedScene" uid="uid://cyibe5n4nuirt" path="res://scenes/player/Player.tscn" id="3_player"]
+[ext_resource type="PackedScene" uid="uid://by0qcymeo7gw6" path="res://scenes/world/kit/KitBoxSmall.tscn" id="4_boxs"]
+[ext_resource type="PackedScene" uid="uid://b7fvooeoe0yob" path="res://scenes/world/kit/KitBarrelSmall.tscn" id="5_barrels"]
+[ext_resource type="PackedScene" uid="uid://7lydti5iiesp" path="res://scenes/world/kit/KitBarrelStack.tscn" id="6_stack"]
+[ext_resource type="PackedScene" uid="uid://bpdff6mvhgu3" path="res://scenes/world/kit/KitBoxLarge.tscn" id="7_boxl"]
+[ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="8_hud"]
+[ext_resource type="PackedScene" uid="uid://d0513t21m2eqq" path="res://scenes/ui/PauseMenu.tscn" id="9_pause"]
+[ext_resource type="NavigationMesh" uid="uid://cfuwwtlncg4hy" path="res://scenes/world/trials/CryptTrial_navmesh.tres" id="navmesh_baked"]
+
+[sub_resource type="Environment" id="Environment_crypt"]
+ambient_light_source = 2
+ambient_light_color = Color(0.4509804, 0.41960785, 0.4, 1)
+ambient_light_energy = 0.5
+
+[node name="CryptTrial" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866, -0.25, 0.433, 0, 0.866, 0.5, -0.5, -0.433, 0.75, 0, 10, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_crypt")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = ExtResource("navmesh_baked")
+
+[node name="Brushes" parent="NavigationRegion3D" instance=ExtResource("2_brushes")]
+
+[node name="Dressing" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="BarrelStackNW" parent="NavigationRegion3D/Dressing" instance=ExtResource("6_stack")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, -10.5)
+
+[node name="BoxLargeNE" parent="NavigationRegion3D/Dressing" instance=ExtResource("7_boxl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -10.75)
+
+[node name="BarrelSW" parent="NavigationRegion3D/Dressing" instance=ExtResource("5_barrels")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.25, 0, -1)
+
+[node name="BoxSE" parent="NavigationRegion3D/Dressing" instance=ExtResource("4_boxs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.25, 0, -1)
+
+[node name="Player" parent="." instance=ExtResource("3_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 11)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="HUD" parent="CanvasLayer" instance=ExtResource("8_hud")]
+
+[node name="PauseMenu" parent="CanvasLayer" instance=ExtResource("9_pause")]
