@@ -103,7 +103,7 @@ func test_enemy_melee_telegraph_holds_the_tell_pose() -> void:
 	var contact := clip.get_marker_time("contact")
 	levy._change_state(BaseEnemy.State.ATTACK)
 	_step(levy, int(MELEE_TELEGRAPH_MIN_S / 2.0 / DT) + 6)
-	assert_str(anim_player.current_animation).is_equal("attack")
+	assert_str(anim_player.assigned_animation).is_equal("attack")  # paused while posed
 	assert_float(anim_player.current_animation_position).is_equal_approx(tell, 0.001)
 	_frames_until_open(levy)
 	# Contact lands with the hitbox, within the ±2 frames atk_hitbox_sync allows the player
