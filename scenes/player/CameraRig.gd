@@ -26,10 +26,12 @@ const LOCK_SWING_STEP := 0.3  # radians
 const LOCK_SWING_STEPS := 5
 const LOCK_SWING_MAX := 1.5
 
-@export var pivot_height: float = 0.8  # above the body origin (0.9 m above the feet): 1.7 m, head height
-@export var arm_length: float = 4.0
-@export var shoulder_offset: float = 0.6  # to the right
+@export var pivot_height: float = 0.7  # above the body origin (0.9 m above the feet): 1.6 m
+@export var arm_length: float = 2.5
+@export var lock_arm_length: float = 3.0  # locked on, the arm pulls back a little to fit both
+@export var shoulder_offset: float = 0.9  # to the right
 @export var fov: float = 72.0
+@export var look_right: float = deg_to_rad(4.0)  # the free look turns this far right, so he sits in the left third
 @export var look_down: float = 0.1  # radians the look tilts below the arm, so a wall ahead leaves floor in view
 @export var probe_radius: float = 0.3
 @export var ease_out_speed: float = 5.0  # 1/s, the arm growing back after a squeeze
@@ -45,6 +47,7 @@ var mode: Mode = Mode.OVER_SHOULDER
 
 var _body: Node3D
 var _length: float = 0.0
+var _mode_length: float = 0.0  # the arm the mode wants, eased between modes so a lock change never jumps
 var _lock_angle: float = 0.0
 var _shake_timer: float = 0.0
 var _shake_duration: float = 0.0
@@ -59,6 +62,7 @@ func _ready() -> void:
 	top_level = true
 	camera.fov = fov
 	_length = arm_length
+	_mode_length = arm_length
 	var sphere := SphereShape3D.new()
 	sphere.radius = probe_radius
 	_query.shape = sphere
@@ -78,6 +82,8 @@ func update_view(delta: float, yaw: float, pitch: float, target: Node3D) -> void
 	global_transform = Transform3D(Basis(Vector3.UP, yaw), pivot)
 	_update_exclusions()
 
+	var want_length := lock_arm_length if mode == Mode.LOCK_ON else arm_length
+	_mode_length = lerpf(_mode_length, want_length, 1.0 - exp(-ease_out_speed * delta)) if delta > 0.0 else want_length
 	var want_angle := 0.0
 	if mode == Mode.LOCK_ON:
 		var to_target := target.global_position - _body.global_position
@@ -86,7 +92,9 @@ func update_view(delta: float, yaw: float, pitch: float, target: Node3D) -> void
 			pivot, yaw, pitch, clampf(asin(minf(lock_separation / dist, 1.0)), lock_angle_min, lock_angle_max)
 		)
 	# Swings faster while the arm is squeezed, so a lock with his back to a wall finds room quickly
-	var swing_speed := lock_angle_speed * (1.0 + 3.0 * clampf(1.0 - _length / squeeze_length, 0.0, 1.0))
+	var swing_speed := lock_angle_speed
+	if want_angle > _lock_angle:  # opening to find room; closing again stays gentle, so unlocking doesn't jump
+		swing_speed *= 1.0 + 3.0 * clampf(1.0 - _length / squeeze_length, 0.0, 1.0)
 	_lock_angle = lerpf(_lock_angle, want_angle, 1.0 - exp(-swing_speed * delta)) if delta > 0.0 else want_angle
 
 	# Positive yaw turns left, so the view looks left of the target and the target sits right of centre
@@ -102,12 +110,12 @@ func update_view(delta: float, yaw: float, pitch: float, target: Node3D) -> void
 	# Squeezed: rise, and turn the look from the heading toward his torso, so he stays whole in view from above
 	# his shoulder; the tilt below then keeps his head and torso, and the target, inside the vertical FOV
 	var squeeze := clampf(1.0 - _length / squeeze_length, 0.0, 1.0)
-	var look_yaw := view_yaw
+	var look_yaw := view_yaw - (look_right if mode == Mode.OVER_SHOULDER else 0.0)
 	var look_pitch := pitch - look_down
 	if squeeze > 0.0:
 		var up := Vector3.UP * squeeze_rise * squeeze
 		cam_pos += up * _cast(cam_pos, cam_pos + up)
-		var ahead := Basis(Vector3.UP, view_yaw) * Basis(Vector3.RIGHT, look_pitch) * Vector3.FORWARD
+		var ahead := Basis(Vector3.UP, look_yaw) * Basis(Vector3.RIGHT, look_pitch) * Vector3.FORWARD
 		var aim := (_body.global_position + Vector3.UP * TORSO_HEIGHT - cam_pos).normalized()
 		if mode == Mode.LOCK_ON:
 			# Between him and the target by angle, weighted to him: his framing is the stricter target
@@ -123,6 +131,7 @@ func update_view(delta: float, yaw: float, pitch: float, target: Node3D) -> void
 				target.global_position - Vector3.UP * BODY_HALF_HEIGHT
 			]
 		)
+	look_yaw = _framed_yaw(cam_pos, look_yaw)
 	look_pitch = _framed_pitch(cam_pos, look_yaw, look_pitch, spans)
 	camera.global_transform = Transform3D(Basis(Vector3.UP, look_yaw) * Basis(Vector3.RIGHT, look_pitch), cam_pos)
 	_apply_shake(delta)
@@ -133,7 +142,7 @@ func update_view(delta: float, yaw: float, pitch: float, target: Node3D) -> void
 func _arm(pivot: Vector3, view: Basis) -> Array:
 	var side := pivot + view.x * shoulder_offset
 	var shoulder := pivot.lerp(side, _cast(pivot, side))
-	return [shoulder, arm_length * _cast(shoulder, shoulder + view.z * arm_length), view.z]
+	return [shoulder, _mode_length * _cast(shoulder, shoulder + view.z * _mode_length), view.z]
 
 
 # Locked on with his back to a wall, swing the view further off the heading until the arm has room
@@ -172,6 +181,27 @@ func _framed_pitch(cam_pos: Vector3, view_yaw: float, pitch: float, spans: Array
 		lo = maxf(lo, top - half)
 		hi = minf(hi, bottom + half)
 	return clampf(pitch, lo, hi)
+
+
+# The look yaw nearest `yaw` that keeps the corners of his head-and-torso box inside the horizontal FOV: close
+# in, the shoulder offset and look_right would otherwise push his near side off the left edge
+func _framed_yaw(cam_pos: Vector3, yaw: float) -> float:
+	var vp := get_viewport().get_visible_rect().size
+	var half := atan(tan(deg_to_rad(fov * 0.5)) * vp.x / maxf(vp.y, 1.0)) - deg_to_rad(FRAME_MARGIN_DEG)
+	var lo := -INF
+	var hi := INF
+	var c := _body.global_position
+	var heading := Basis(Vector3.UP, yaw)  # the box turns with the view, as the replay's probe measures it
+	for dx: float in [-BODY_RADIUS, BODY_RADIUS]:
+		for dz: float in [-BODY_RADIUS, BODY_RADIUS]:
+			var d := c + heading * Vector3(dx, 0, dz) - cam_pos
+			var a := atan2(-d.x, -d.z)  # the yaw that would look straight at this corner
+			var rel := wrapf(a - yaw, -PI, PI)
+			lo = maxf(lo, rel - half)
+			hi = minf(hi, rel + half)
+	if lo > hi:
+		return yaw
+	return yaw + clampf(0.0, lo, hi)
 
 
 static func _elevation(from: Vector3, p: Vector3, forward: Vector3) -> float:

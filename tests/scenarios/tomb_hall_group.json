@@ -14,6 +14,6 @@
     {"id": "enemy_attackers_max", "target": {"melee": [null, 2], "ranged": [null, 1]}, "baseline": {"melee": 2, "ranged": 1}},
     {"id": "detect_through_walls", "target": [null, 0], "baseline": 0},
     {"id": "cam_player_in_frame", "target": [1.0, null], "baseline": 1.0, "tolerance": 0.05},
-    {"id": "cam_wall_fill", "target": [null, 0.6], "baseline": 0.415, "tolerance": 0.05}
+    {"id": "cam_wall_fill", "target": [null, 0.6], "baseline": 0.368, "tolerance": 0.05}
   ]
 }

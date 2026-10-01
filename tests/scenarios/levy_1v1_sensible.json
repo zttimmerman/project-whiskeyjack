@@ -32,8 +32,8 @@
     {"id": "enemy_melee_telegraph", "target": [0.5, null], "baseline": 0.6},
     {"id": "atk_hitbox_sync", "target": [-2, 2], "baseline": 0, "pending": "clip contact frames and hitboxes synced to them (design bible §3); until then the value is hitbox open minus press"},
     {"id": "cam_player_in_frame", "target": [1.0, null], "baseline": 1.0, "tolerance": 0.05},
-    {"id": "cam_wall_fill", "target": [null, 0.6], "baseline": 0.408, "tolerance": 0.05},
-    {"id": "cam_melee_occlusion", "target": [null, 0.25], "baseline": 0.0438, "tolerance": 0.05},
-    {"id": "cam_lock_both_in_frame", "target": [0.95, null], "baseline": 0.9688, "tolerance": 0.05}
+    {"id": "cam_wall_fill", "target": [null, 0.6], "baseline": 0.413, "tolerance": 0.05},
+    {"id": "cam_melee_occlusion", "target": [null, 0.25], "baseline": 0.0214, "tolerance": 0.05},
+    {"id": "cam_lock_both_in_frame", "target": [0.95, null], "baseline": 1.0, "tolerance": 0.05}
   ]
 }
