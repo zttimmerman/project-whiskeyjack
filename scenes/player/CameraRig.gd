@@ -1,0 +1,201 @@
+extends Node3D
+
+## The player's camera (design bible §2), built as modes: over the shoulder, and lock-on framing; first
+## person comes later as a third mode. Player.gd owns the inputs, the heading (yaw), pitch and the lock-on
+## target, and calls update_view() every physics frame after moving.
+##
+## The rig is top level and sits on the pivot, turned to the heading only, so camera-relative movement reads
+## its basis and shake never turns it. FillLight (CLAUDE.md, lighting) is a child, behind and above the pivot
+## on the camera side. The Camera3D is placed each frame:
+##   - the arm runs from the pivot out to the shoulder, then back; a sphere probe (cast_motion, so a margin,
+##     not a ray) shortens it at once against walls and lets it ease back out;
+##   - squeezed shorter than squeeze_length, the camera rises;
+##   - the look pitch tilts as little as needed to keep his head and torso, then the target, inside the
+##     vertical FOV (cam_player_in_frame, cam_lock_both_in_frame);
+##   - locked on, the view swings off the heading by an angle that grows as the target closes, so the player
+##     stands left of it on screen instead of in front of it (cam_melee_occlusion), and further when his back
+##     is to a wall, until the arm has room.
+
+enum Mode { OVER_SHOULDER, LOCK_ON }
+
+const BODY_HALF_HEIGHT := 0.9  # the player's and the levy's capsules: origin to top
+const FRAME_MARGIN_DEG := 3.0
+const LOCK_SWING_STEP := 0.3  # radians
+const LOCK_SWING_STEPS := 5
+const LOCK_SWING_MAX := 1.5
+
+@export var pivot_height: float = 0.8  # above the body origin (0.9 m above the feet): 1.7 m, head height
+@export var arm_length: float = 4.0
+@export var shoulder_offset: float = 0.6  # to the right
+@export var fov: float = 72.0
+@export var look_down: float = 0.1  # radians the look tilts below the arm, so a wall ahead leaves floor in view
+@export var probe_radius: float = 0.3
+@export var ease_out_speed: float = 3.0  # 1/s, the arm growing back after a squeeze
+@export var squeeze_length: float = 1.5  # below this arm length the camera rises
+@export var squeeze_rise: float = 1.0  # metres at an arm of zero
+@export var lock_separation: float = 1.1  # metres the target should stand off the player's line of sight
+@export var lock_angle_min: float = deg_to_rad(8.0)
+@export var lock_angle_max: float = deg_to_rad(50.0)
+@export var lock_angle_speed: float = 5.0  # 1/s
+@export_flags_3d_physics var collision_mask: int = 1
+
+var mode: Mode = Mode.OVER_SHOULDER
+
+var _body: Node3D
+var _length: float = 0.0
+var _lock_angle: float = 0.0
+var _shake_timer: float = 0.0
+var _shake_duration: float = 0.0
+var _shake_intensity: float = 0.0
+var _query := PhysicsShapeQueryParameters3D.new()
+
+@onready var camera: Camera3D = $Camera3D
+
+
+func _ready() -> void:
+	_body = get_parent() as Node3D
+	top_level = true
+	camera.fov = fov
+	_length = arm_length
+	var sphere := SphereShape3D.new()
+	sphere.radius = probe_radius
+	_query.shape = sphere
+	_query.collision_mask = collision_mask
+
+
+func get_pivot() -> Vector3:
+	return _body.global_position + Vector3.UP * pivot_height
+
+
+## Place the camera for this frame. yaw is the heading (world-space; 0 faces -Z), pitch the arm's tilt.
+func update_view(delta: float, yaw: float, pitch: float, target: Node3D) -> void:
+	mode = Mode.LOCK_ON if is_instance_valid(target) else Mode.OVER_SHOULDER
+	if not is_inside_tree():
+		return
+	var pivot := get_pivot()
+	global_transform = Transform3D(Basis(Vector3.UP, yaw), pivot)
+	_update_exclusions()
+
+	var want_angle := 0.0
+	if mode == Mode.LOCK_ON:
+		var to_target := target.global_position - _body.global_position
+		var dist := maxf(Vector2(to_target.x, to_target.z).length(), 0.01)
+		want_angle = _roomiest_angle(
+			pivot, yaw, pitch, clampf(asin(minf(lock_separation / dist, 1.0)), lock_angle_min, lock_angle_max)
+		)
+	_lock_angle = lerpf(_lock_angle, want_angle, 1.0 - exp(-lock_angle_speed * delta)) if delta > 0.0 else want_angle
+
+	# Positive yaw turns left, so the view looks left of the target and the target sits right of centre
+	var view_yaw := yaw + _lock_angle
+	var arm := _arm(pivot, Basis(Vector3.UP, view_yaw) * Basis(Vector3.RIGHT, pitch))
+	var reach: float = arm[1]
+	if reach < _length or delta <= 0.0:
+		_length = reach
+	else:
+		_length = lerpf(_length, reach, 1.0 - exp(-ease_out_speed * delta))
+	var cam_pos: Vector3 = arm[0] + arm[2] * _length
+
+	# Squeezed: come in off the shoulder (back along the probed offset) and rise; the tilt below keeps him in view
+	var squeeze := clampf(1.0 - _length / squeeze_length, 0.0, 1.0)
+	if squeeze > 0.0:
+		var inward: Vector3 = (pivot - arm[0]) * squeeze
+		cam_pos += inward * _cast(cam_pos, cam_pos + inward)
+		var up := Vector3.UP * squeeze_rise * squeeze
+		cam_pos += up * _cast(cam_pos, cam_pos + up)
+	var spans := [[_body.global_position + Vector3.UP * BODY_HALF_HEIGHT, _body.global_position]]
+	if mode == Mode.LOCK_ON:
+		spans.append(
+			[
+				target.global_position + Vector3.UP * BODY_HALF_HEIGHT,
+				target.global_position - Vector3.UP * BODY_HALF_HEIGHT
+			]
+		)
+	var look_pitch := _framed_pitch(cam_pos, view_yaw, pitch - look_down, spans)
+	camera.global_transform = Transform3D(Basis(Vector3.UP, view_yaw) * Basis(Vector3.RIGHT, look_pitch), cam_pos)
+	_apply_shake(delta)
+
+
+# The arm for a view: [shoulder point, reach along the view's back, the back direction]. It runs out to the
+# shoulder first, so a wall at his right side shortens the offset instead of the camera passing through it.
+func _arm(pivot: Vector3, view: Basis) -> Array:
+	var side := pivot + view.x * shoulder_offset
+	var shoulder := pivot.lerp(side, _cast(pivot, side))
+	return [shoulder, arm_length * _cast(shoulder, shoulder + view.z * arm_length), view.z]
+
+
+# Locked on with his back to a wall, swing the view further off the heading until the arm has room
+func _roomiest_angle(pivot: Vector3, yaw: float, pitch: float, angle: float) -> float:
+	var best := angle
+	var best_reach := -1.0
+	for i in LOCK_SWING_STEPS:
+		var a := minf(angle + LOCK_SWING_STEP * i, LOCK_SWING_MAX)
+		var reach: float = _arm(pivot, Basis(Vector3.UP, yaw + a) * Basis(Vector3.RIGHT, pitch))[1]
+		if reach >= squeeze_length:
+			return a
+		if reach > best_reach + 0.05:
+			best_reach = reach
+			best = a
+	return best
+
+
+# The look pitch nearest `pitch` that keeps each span (a body's [top, bottom]) inside the vertical FOV, the
+# player's first; a target that can't fit with him is left out
+func _framed_pitch(cam_pos: Vector3, view_yaw: float, pitch: float, spans: Array) -> float:
+	var half := deg_to_rad(fov * 0.5 - FRAME_MARGIN_DEG)
+	var forward := Basis(Vector3.UP, view_yaw) * Vector3.FORWARD
+	var lo := -PI * 0.5
+	var hi := PI * 0.5
+	for i in spans.size():
+		var top := _elevation(cam_pos, spans[i][0], forward)
+		var bottom := _elevation(cam_pos, spans[i][1], forward)
+		if maxf(lo, top - half) > minf(hi, bottom + half):
+			if i == 0:
+				return (top + bottom) * 0.5
+			break
+		lo = maxf(lo, top - half)
+		hi = minf(hi, bottom + half)
+	return clampf(pitch, lo, hi)
+
+
+static func _elevation(from: Vector3, p: Vector3, forward: Vector3) -> float:
+	var d := p - from
+	return atan2(d.y, maxf(d.dot(forward), 0.05))
+
+
+## Shake the view (not the heading), fading out linearly over duration
+func shake(intensity: float, duration: float) -> void:
+	_shake_intensity = intensity
+	_shake_duration = duration
+	_shake_timer = duration
+
+
+func stop_shake() -> void:
+	_shake_timer = 0.0
+
+
+func _apply_shake(delta: float) -> void:
+	if _shake_timer <= 0.0:
+		return
+	_shake_timer -= delta
+	var t: float = _shake_timer / _shake_duration if _shake_duration > 0.0 else 0.0
+	camera.rotate_object_local(Vector3.UP, randf_range(-_shake_intensity, _shake_intensity) * t)
+	camera.rotate_object_local(Vector3.RIGHT, randf_range(-_shake_intensity, _shake_intensity) * t * 0.5)
+
+
+# The safe fraction of a sphere's move from `from` to `to` against the world (characters excluded)
+func _cast(from: Vector3, to: Vector3) -> float:
+	_query.transform = Transform3D(Basis.IDENTITY, from)
+	_query.motion = to - from
+	var result := get_world_3d().direct_space_state.cast_motion(_query)
+	return result[0] if result.size() > 0 else 1.0
+
+
+# Characters share layer 1 with the level; the camera passes through them (the player, enemies)
+func _update_exclusions() -> void:
+	var rids: Array[RID] = []
+	if _body is CollisionObject3D:
+		rids.append((_body as CollisionObject3D).get_rid())
+	for enemy in get_tree().get_nodes_in_group("enemy"):
+		if enemy is CollisionObject3D:
+			rids.append((enemy as CollisionObject3D).get_rid())
+	_query.exclude = rids

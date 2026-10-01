@@ -21,12 +21,13 @@ const CHARACTER_LIGHT_LAYER := 2  # render layer of CameraRig/FillLight's cull m
 @export var camera_pitch_min: float = -0.4  # ~-23 degrees
 @export var camera_pitch_max: float = 0.8  # ~46 degrees
 @export var lock_on_range: float = 15.0
+@export var lock_on_pitch: float = -0.2  # the arm's tilt locked on a target level with him (as free look starts)
 @export var combo_window: float = 0.6  # seconds before light combo resets
 @export var attack_active_time: float = 0.2  # light hitbox active duration (seconds)
 @export var heavy_active_time: float = 0.35  # heavy hitbox active duration (seconds)
 
+# The camera (scenes/player/CameraRig.gd): top level on the head-height pivot, turned to the heading only
 @onready var camera_rig: Node3D = $CameraRig
-@onready var spring_arm: SpringArm3D = $CameraRig/SpringArm3D
 @onready var hurtbox: HurtboxComponent = $HurtboxComponent
 @onready var hitbox: HitboxComponent = $HitboxComponent
 @onready var _sfx_swing: AudioStreamPlayer3D = $SFXSwing
@@ -50,10 +51,6 @@ var _combo_index: int = 0
 var _combo_timer: float = 0.0
 var _attack_timer: float = 0.0
 
-var _shake_timer: float = 0.0
-var _shake_duration: float = 0.0
-var _shake_intensity: float = 0.0
-
 const FOOTSTEP_INTERVAL: float = 0.4
 var _footstep_timer: float = 0.0
 
@@ -68,8 +65,9 @@ func _ready() -> void:
 	for mesh in $PlayerModel.find_children("*", "VisualInstance3D", true, false):
 		(mesh as VisualInstance3D).layers |= 1 << (CHARACTER_LIGHT_LAYER - 1)
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	_cam_yaw = camera_rig.rotation.y + rotation.y
-	_cam_pitch = spring_arm.rotation.x
+	_cam_yaw = rotation.y
+	_cam_pitch = 0.0
+	camera_rig.update_view(0.0, _cam_yaw, _cam_pitch, null)
 	if stats:
 		stats.died.connect(die)
 	if is_instance_valid(hitbox):
@@ -136,8 +134,9 @@ func _physics_process(delta: float) -> void:
 		_move(delta)
 
 	_tick_attack(delta)
-	_update_camera(delta)
 	move_and_slide()
+	# After moving, so the camera frames where he is this frame
+	_update_camera(delta)
 	_update_locomotion_anim()
 	_tick_footsteps(delta)
 
@@ -248,19 +247,12 @@ func _update_camera(delta: float) -> void:
 
 		# Tilt camera slightly down to keep target in frame
 		var flat_dist := Vector2(to_target.x, to_target.z).length()
-		var desired_pitch: float = clamp(-atan2(to_target.y, flat_dist) * 0.5, camera_pitch_min, camera_pitch_max)
+		var desired_pitch: float = clamp(
+			lock_on_pitch - atan2(to_target.y, flat_dist) * 0.5, camera_pitch_min, camera_pitch_max
+		)
 		_cam_pitch = lerp(_cam_pitch, desired_pitch, 5.0 * delta)
 
-	# Subtract player's own rotation so the rig's world-space yaw equals _cam_yaw
-	camera_rig.rotation.y = _cam_yaw - rotation.y
-	spring_arm.rotation.x = _cam_pitch
-
-	# Camera shake — fades out linearly over the shake duration
-	if _shake_timer > 0.0:
-		_shake_timer -= delta
-		var t: float = _shake_timer / _shake_duration if _shake_duration > 0.0 else 0.0
-		camera_rig.rotation.y += randf_range(-_shake_intensity, _shake_intensity) * t
-		spring_arm.rotation.x += randf_range(-_shake_intensity, _shake_intensity) * t * 0.5
+	camera_rig.update_view(delta, _cam_yaw, _cam_pitch, get_lock_on_target())
 
 
 # Body facing and camera heading (world-space yaw, pitch) for SaveManager
@@ -273,10 +265,9 @@ func apply_view_state(view: Dictionary) -> void:
 	_cam_yaw = wrapf(float(view.get("camera_yaw", _cam_yaw)), -PI, PI)
 	_cam_pitch = clampf(float(view.get("camera_pitch", _cam_pitch)), camera_pitch_min, camera_pitch_max)
 	_release_lock_on()
-	_shake_timer = 0.0
+	camera_rig.stop_shake()
 	# Apply now rather than next physics frame, so input this frame already uses the restored view
-	camera_rig.rotation.y = _cam_yaw - rotation.y
-	spring_arm.rotation.x = _cam_pitch
+	camera_rig.update_view(0.0, _cam_yaw, _cam_pitch, null)
 
 
 # ── Lock-on ───────────────────────────────────────────────────────────────────
@@ -378,9 +369,7 @@ func _on_hitbox_hit(_target: Node, _damage: int) -> void:
 
 
 func camera_shake(intensity: float, duration: float) -> void:
-	_shake_intensity = intensity
-	_shake_duration = duration
-	_shake_timer = duration
+	camera_rig.shake(intensity, duration)
 
 
 func _tick_attack(delta: float) -> void:
