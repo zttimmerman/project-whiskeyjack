@@ -189,7 +189,7 @@ Units are metres; the player is 1.8 m tall.
 |---|---|---|---|
 | `cam_melee_occlusion` | ≤ 0.25 | locked on, target within 3 m: fraction of the target's screen box covered by the player (replay: mean over those frames) | 0.02–0.12 (was 0.60–0.87, trial B1) |
 | `cam_player_in_frame` | 1.0 | fraction of sampled frames with the player's head and torso fully in frame | 1.0 in every scenario (was 0.58 in `camera_stress`) |
-| `cam_wall_fill` | ≤ 0.6 | the largest fraction of the frame covered by one wall surface | 0.15–0.42; 0.604 facing a 4 m corridor's far wall (`camera_stress`) |
+| `cam_wall_fill` | ≤ 0.6 | the largest fraction of the frame covered by one wall surface, counting only wall between the camera and the player or beside him (no deeper along the view than his axis), so a wall he deliberately faces close up doesn't count (user, 2026-10-01) | 0.04–0.41 (was 0.01–0.57) |
 | `cam_lock_both_in_frame` | ≥ 0.95 | while locked, fraction of frames with both player and target in frame | 0.97–1.0 (was 0.36–1.0) |
 | `atk_hitbox_sync` | ±2 frames | hitbox open frame vs the clip's contact frame | hitbox opens on the press |
 | `enemy_melee_telegraph` | ≥ 0.5 s | windup from the tell's start to the hitbox opening | 0.6 s |

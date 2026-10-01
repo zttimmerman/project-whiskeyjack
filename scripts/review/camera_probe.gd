@@ -13,7 +13,8 @@ extends RefCounted
 ##   camera_in_player   the camera is inside the player's capsule (plus the near distance)
 ##   camera_in_world    the camera is inside world geometry (it would see through a wall)
 ##   wall_fill          the largest fraction of a grid of screen rays that land on one wall surface (one plane:
-##                      coplanar kit pieces merge; floors and ceilings don't count)
+##                      coplanar kit pieces merge; floors and ceilings don't count), counting only hits no
+##                      deeper along the view than the player's axis (a wall he faces beyond him doesn't count)
 ##   locked             a lock-on target was given; then also
 ##   target_in_view, target_visible   the same for the target's whole capsule
 ##   target_distance    player to target, in metres
@@ -42,7 +43,7 @@ static func sample(camera: Camera3D, player: CollisionObject3D, target: Node3D) 
 	out["player_visible"] = _rays_to_body(camera, space, player, pc, p_bottom, p_top, null)["visible"]
 	out["camera_in_player"] = _inside_capsule(camera.global_position, pc, camera.near)
 	out["camera_in_world"] = _inside_world(space, camera.global_position)
-	out["wall_fill"] = wall_fill(camera, space)
+	out["wall_fill"] = wall_fill(camera, space, pc["center"])
 	out["locked"] = is_instance_valid(target)
 	if out["locked"]:
 		var tc := capsule(target)
@@ -66,9 +67,12 @@ static func capsule(body: Node3D) -> Dictionary:
 	return {"center": body.global_position, "radius": DEFAULT_RADIUS, "height": DEFAULT_HEIGHT}
 
 
-## The largest fraction of the screen covered by one wall plane
-static func wall_fill(camera: Camera3D, space: PhysicsDirectSpaceState3D) -> float:
+## The largest fraction of the screen covered by one wall plane, counting only wall no deeper (along the view)
+## than the player's axis: wall between the camera and him or beside him, not a wall he faces beyond him
+static func wall_fill(camera: Camera3D, space: PhysicsDirectSpaceState3D, player_center: Vector3) -> float:
 	var rect := camera.get_viewport().get_visible_rect()
+	var forward := -camera.global_basis.z
+	var max_depth := (player_center - camera.global_position).dot(forward)
 	var query := PhysicsRayQueryParameters3D.new()
 	query.collision_mask = WORLD_MASK
 	var counts := {}
@@ -84,6 +88,8 @@ static func wall_fill(camera: Camera3D, space: PhysicsDirectSpaceState3D) -> flo
 				continue
 			var n: Vector3 = hit["normal"]
 			if absf(n.y) > WALL_NORMAL_Y_MAX:
+				continue
+			if (hit["position"] - camera.global_position).dot(forward) > max_depth:
 				continue
 			var key := (
 				"%d,%d,%d,%d"

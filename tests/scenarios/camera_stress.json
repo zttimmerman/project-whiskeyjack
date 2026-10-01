@@ -36,7 +36,7 @@
   ],
   "checks": [
     {"id": "cam_player_in_frame", "target": [1.0, null], "baseline": 1.0, "tolerance": 0.05},
-    {"id": "cam_wall_fill", "target": [null, 0.6], "baseline": 0.604, "tolerance": 0.05, "pending": "turning about in the 4 m corridor he faces its far wall from about 3.5 m, which fills 0.60-0.62 of the frame at every look-down tilt tried (0-0.25 rad): a corridor-width or target-definition question (docs/trials/phantom-camera.md)"},
+    {"id": "cam_wall_fill", "target": [null, 0.6], "baseline": 0.406, "tolerance": 0.05},
     {"id": "cam_melee_occlusion", "target": [null, 0.25], "baseline": 0.0377, "tolerance": 0.05},
     {"id": "cam_lock_both_in_frame", "target": [0.95, null], "baseline": 1.0, "tolerance": 0.05}
   ]
