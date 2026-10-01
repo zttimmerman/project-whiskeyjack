@@ -1,0 +1,178 @@
+{
+ "connections": [
+  {
+   "from": "clods",
+   "from_port": 0,
+   "to": "clods_amt",
+   "to_port": 0
+  },
+  {
+   "from": "grit",
+   "from_port": 0,
+   "to": "grit_amt",
+   "to_port": 0
+  },
+  {
+   "from": "clods_amt",
+   "from_port": 0,
+   "to": "sum",
+   "to_port": 0
+  },
+  {
+   "from": "grit_amt",
+   "from_port": 0,
+   "to": "sum",
+   "to_port": 1
+  },
+  {
+   "from": "sum",
+   "from_port": 0,
+   "to": "colorize",
+   "to_port": 0
+  },
+  {
+   "from": "colorize",
+   "from_port": 0,
+   "to": "export",
+   "to_port": 0
+  }
+ ],
+ "label": "Graph",
+ "name": "packed_earth",
+ "node_position": {
+  "x": 0,
+  "y": 0
+ },
+ "nodes": [
+  {
+   "name": "clods",
+   "node_position": {
+    "x": 0,
+    "y": 0
+   },
+   "parameters": {
+    "folds": 0,
+    "iterations": 4,
+    "noise": 3,
+    "offset": 0,
+    "persistence": 0.5,
+    "scale_x": 6,
+    "scale_y": 6
+   },
+   "seed_int": 3201,
+   "type": "fbm2"
+  },
+  {
+   "name": "grit",
+   "node_position": {
+    "x": 0,
+    "y": 250
+   },
+   "parameters": {
+    "folds": 0,
+    "iterations": 2,
+    "noise": 0,
+    "offset": 0,
+    "persistence": 0.5,
+    "scale_x": 32,
+    "scale_y": 32
+   },
+   "seed_int": 3202,
+   "type": "fbm2"
+  },
+  {
+   "name": "clods_amt",
+   "node_position": {
+    "x": 250,
+    "y": 0
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0.0,
+    "default_in2": 0.75,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "grit_amt",
+   "node_position": {
+    "x": 250,
+    "y": 250
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0.0,
+    "default_in2": 0.25,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "sum",
+   "node_position": {
+    "x": 450,
+    "y": 100
+   },
+   "parameters": {
+    "clamp": true,
+    "default_in1": 0.0,
+    "default_in2": 0.0,
+    "op": 0
+   },
+   "type": "math"
+  },
+  {
+   "name": "colorize",
+   "node_position": {
+    "x": 700,
+    "y": 100
+   },
+   "parameters": {
+    "gradient": {
+     "interpolation": 1,
+     "points": [
+      {
+       "a": 1,
+       "b": 0.14902,
+       "g": 0.160784,
+       "pos": 0.15,
+       "r": 0.180392
+      },
+      {
+       "a": 1,
+       "b": 0.062745,
+       "g": 0.164706,
+       "pos": 0.3,
+       "r": 0.290196
+      },
+      {
+       "a": 1,
+       "b": 0.25098,
+       "g": 0.278431,
+       "pos": 0.5,
+       "r": 0.301961
+      }
+     ],
+     "type": "Gradient"
+    }
+   },
+   "type": "colorize"
+  },
+  {
+   "name": "export",
+   "node_position": {
+    "x": 1400,
+    "y": 0
+   },
+   "parameters": {
+    "format": 0,
+    "size": 11,
+    "suffix": "albedo"
+   },
+   "type": "export"
+  }
+ ],
+ "parameters": {},
+ "type": "graph"
+}

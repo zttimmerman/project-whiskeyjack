@@ -1,0 +1,301 @@
+{
+ "connections": [
+  {
+   "from": "blotch",
+   "from_port": 0,
+   "to": "blotch_amt",
+   "to_port": 0
+  },
+  {
+   "from": "fine",
+   "from_port": 0,
+   "to": "fine_amt",
+   "to_port": 0
+  },
+  {
+   "from": "blotch_amt",
+   "from_port": 0,
+   "to": "sum",
+   "to_port": 0
+  },
+  {
+   "from": "fine_amt",
+   "from_port": 0,
+   "to": "sum",
+   "to_port": 1
+  },
+  {
+   "from": "cracks",
+   "from_port": 1,
+   "to": "crack_amt",
+   "to_port": 0
+  },
+  {
+   "from": "crack_amt",
+   "from_port": 0,
+   "to": "crack_mask",
+   "to_port": 0
+  },
+  {
+   "from": "sum",
+   "from_port": 0,
+   "to": "masked",
+   "to_port": 0
+  },
+  {
+   "from": "masked",
+   "from_port": 0,
+   "to": "colorize",
+   "to_port": 0
+  },
+  {
+   "from": "colorize",
+   "from_port": 0,
+   "to": "export",
+   "to_port": 0
+  },
+  {
+   "from": "crack_mask",
+   "from_port": 0,
+   "to": "crack_lift",
+   "to_port": 0
+  },
+  {
+   "from": "crack_lift",
+   "from_port": 0,
+   "to": "crack_floor",
+   "to_port": 0
+  },
+  {
+   "from": "crack_floor",
+   "from_port": 0,
+   "to": "masked",
+   "to_port": 1
+  }
+ ],
+ "label": "Graph",
+ "name": "plaster",
+ "node_position": {
+  "x": 0,
+  "y": 0
+ },
+ "nodes": [
+  {
+   "name": "blotch",
+   "node_position": {
+    "x": 0,
+    "y": 0
+   },
+   "parameters": {
+    "folds": 0,
+    "iterations": 6,
+    "noise": 1,
+    "offset": 0,
+    "persistence": 0.55,
+    "scale_x": 3,
+    "scale_y": 3
+   },
+   "seed_int": 2201,
+   "type": "fbm2"
+  },
+  {
+   "name": "fine",
+   "node_position": {
+    "x": 0,
+    "y": 250
+   },
+   "parameters": {
+    "folds": 0,
+    "iterations": 3,
+    "noise": 0,
+    "offset": 0,
+    "persistence": 0.5,
+    "scale_x": 16,
+    "scale_y": 16
+   },
+   "seed_int": 2202,
+   "type": "fbm2"
+  },
+  {
+   "name": "cracks",
+   "node_position": {
+    "x": 0,
+    "y": 500
+   },
+   "parameters": {
+    "intensity": 1,
+    "randomness": 0.85,
+    "scale_x": 3,
+    "scale_y": 3,
+    "stretch_x": 1,
+    "stretch_y": 1
+   },
+   "seed_int": 2203,
+   "type": "voronoi"
+  },
+  {
+   "name": "blotch_amt",
+   "node_position": {
+    "x": 250,
+    "y": 0
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0.0,
+    "default_in2": 0.7,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "fine_amt",
+   "node_position": {
+    "x": 250,
+    "y": 250
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0.0,
+    "default_in2": 0.3,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "sum",
+   "node_position": {
+    "x": 450,
+    "y": 100
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0.0,
+    "default_in2": 0.0,
+    "op": 0
+   },
+   "type": "math"
+  },
+  {
+   "name": "crack_mask",
+   "node_position": {
+    "x": 450,
+    "y": 500
+   },
+   "parameters": {
+    "clamp": true,
+    "default_in1": 0.0,
+    "default_in2": 0.0,
+    "op": 20
+   },
+   "type": "math"
+  },
+  {
+   "name": "crack_amt",
+   "node_position": {
+    "x": 650,
+    "y": 500
+   },
+   "parameters": {
+    "clamp": true,
+    "default_in1": 0.0,
+    "default_in2": 30.0,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "masked",
+   "node_position": {
+    "x": 850,
+    "y": 200
+   },
+   "parameters": {
+    "clamp": true,
+    "default_in1": 0.0,
+    "default_in2": 0.0,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "colorize",
+   "node_position": {
+    "x": 1100,
+    "y": 200
+   },
+   "parameters": {
+    "gradient": {
+     "interpolation": 1,
+     "points": [
+      {
+       "a": 1,
+       "b": 0.25098,
+       "g": 0.278431,
+       "pos": 0.0,
+       "r": 0.301961
+      },
+      {
+       "a": 1,
+       "b": 0.4,
+       "g": 0.419608,
+       "pos": 0.3,
+       "r": 0.45098
+      },
+      {
+       "a": 1,
+       "b": 0.517647,
+       "g": 0.705882,
+       "pos": 0.6,
+       "r": 0.8
+      }
+     ],
+     "type": "Gradient"
+    }
+   },
+   "type": "colorize"
+  },
+  {
+   "name": "export",
+   "node_position": {
+    "x": 1400,
+    "y": 0
+   },
+   "parameters": {
+    "format": 0,
+    "size": 11,
+    "suffix": "albedo"
+   },
+   "type": "export"
+  },
+  {
+   "name": "crack_lift",
+   "node_position": {
+    "x": 650,
+    "y": 650
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0.0,
+    "default_in2": 0.4,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "crack_floor",
+   "node_position": {
+    "x": 800,
+    "y": 650
+   },
+   "parameters": {
+    "clamp": true,
+    "default_in1": 0.0,
+    "default_in2": 0.6,
+    "op": 0
+   },
+   "type": "math"
+  }
+ ],
+ "parameters": {},
+ "type": "graph"
+}
