@@ -1,0 +1,29 @@
+{
+  "verdict": "pass",
+  "summary": "The Back-file run clip (Walk_Loop) stays in place, its planted feet hold, and it shows no broken poses or stretching; all four assertions pass.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "minor",
+      "observation": "Worst single-frame planted-foot speed is 0.769 m/s, only at lift-off and touch-down; mid-stance near 0 and p90 0.172 m/s. Not visible at gameplay distance.",
+      "evidence": "03_plots.png; foot_slide_max_mps 0.769, foot_slide_p90_mps 0.172"
+    },
+    {
+      "check": "motion",
+      "severity": "minor",
+      "observation": "Hips sway about 0.06 m side to side, normal walk weight shift; ends at 0.00 m.",
+      "evidence": "03_plots.png; 02_onion_skin.png; root travel 0.061 vs 0.15"
+    }
+  ],
+  "questions_answered": [
+    "Body stays in place; hips peak 0.06 m and end at 0.00 m.",
+    "Planted feet hold through contact; spikes only at lift-off and touch-down; root at 1.5 m/s.",
+    "No broken poses in 14 frames; edge stretch 0 for a rigid-part character.",
+    "All four pass: root travel 0.061 (0.15), foot slide p90 0.172 (0.5), bind deviation 0.758 (1.8), skin stretch 0.0 (1.0)."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png"
+  ]
+}
