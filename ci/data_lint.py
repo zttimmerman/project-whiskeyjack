@@ -4,13 +4,19 @@
     python3 ci/data_lint.py [--baseline ci/data-lint-baseline.txt] [--update]
 
 Structure (always fails; never baselined):
-  dialogues (data/dialogues/*.json): a list of nodes with unique string ids, a `start` node (where
-  DialogueRunner begins), every `next_id` (on a node or a choice) null or an existing id, no node
-  unreachable from `start`, and `set_quest` naming a quest in data/quests/.
+  dialogues (data/dialogues/*.dialogue, Dialogue Manager scripts; syntax is checked by its own
+  compiler at import and by ci/check_dialogue.gd): a `~ start` cue (where DialogueRunner begins),
+  every jump (`=> cue`) to a cue in the file or END, every QuestManager call naming a quest in
+  data/quests/ (and a stage of it, in `get_quest_stage("q") == "stage"`), and every flag a
+  dialogue reads (`get_flag`/`has_flag`) set somewhere (`set_flag` in a dialogue or a script).
+  Legacy JSON dialogues (data/dialogues/*.json), if any come back: a list of nodes with unique
+  string ids, a `start` node, every `next_id` null or an existing id, no node unreachable from
+  `start`, and `set_quest` naming a quest in data/quests/.
   quests (data/quests/*.json): `id` matching the file name, a title and description, and stages
   with unique ids, a description and a completion_condition.
 Text limits from docs/world/00-tone.md ("Keep it short"), baselined:
-  at most 2 sentences per dialogue node; quest objectives (stage descriptions) 12 words or fewer.
+  at most 2 sentences per dialogue node (in a .dialogue file, per spoken line; choices are not
+  counted); quest objectives (stage descriptions) 12 words or fewer.
   Existing violations are listed in the baseline instead of rewriting content; new ones fail, and
   a fixed one must be deleted from the baseline.
 """
@@ -108,6 +114,77 @@ def lint_dialogue(path, quest_ids, errors, limits):
             errors.append(f"{where}: node '{nid}' is unreachable from 'start'")
 
 
+# .dialogue lines that aren't spoken text (Dialogue Manager syntax)
+DM_KEYWORD = re.compile(r"^(if|elif|else|while|match|when|using|import)\b")
+DM_JUMP = re.compile(r"=><?\s*([\w/!]+)\s*$")
+DM_TAG = re.compile(r"\[[^\]]*\]|\{\{.*?\}\}")  # BBCode, [if]/[#tag]/[ID:] markup and {{expressions}}
+QUEST_CALL = re.compile(
+    r"QuestManager\.(start_quest|advance_quest|complete_quest|is_quest_active|is_quest_complete|get_quest_stage)"
+    r"\(\s*\"([^\"]*)\"\s*\)"
+)
+STAGE_CHECK = re.compile(r"get_quest_stage\(\s*\"([^\"]*)\"\s*\)\s*[!=]=\s*\"([^\"]*)\"")
+FLAG_SET = re.compile(r"set_flag\(\s*\"([^\"]+)\"")
+FLAG_READ = re.compile(r"(?:get_flag|has_flag)\(\s*\"([^\"]+)\"")
+
+
+def flags_set_in_scripts():
+    """Flags set by GDScript outside addons/ and tests/ (game code may set a flag dialogue reads)."""
+    found = set()
+    for gd in ROOT.rglob("*.gd"):
+        parts = gd.relative_to(ROOT).parts
+        if parts[0] in ("addons", "tests", ".godot") or parts[0].startswith("."):
+            continue
+        found |= set(FLAG_SET.findall(gd.read_text(errors="replace")))
+    return found
+
+
+def lint_dialogue_script(path, quests, flags_set, errors, limits):
+    """A Dialogue Manager .dialogue file. `quests` maps quest id -> its stage ids."""
+    where = rel(path)
+    lines = path.read_text().splitlines()
+    cues, jumps, cue = set(), [], None
+    for n, raw in enumerate(lines, 1):
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        for q in QUEST_CALL.findall(line):
+            if q[1] not in quests:
+                errors.append(f"{where}:{n}: QuestManager.{q[0]} names unknown quest '{q[1]}'")
+        for q, stage in STAGE_CHECK.findall(line):
+            if q in quests and stage not in quests[q]:
+                errors.append(f"{where}:{n}: quest '{q}' has no stage '{stage}'")
+        for flag in FLAG_READ.findall(line):
+            if flag not in flags_set:
+                errors.append(f"{where}:{n}: flag '{flag}' is read but never set (set_flag) anywhere")
+        if line.startswith("~ "):
+            cue = line[2:].strip()
+            cues.add(cue)
+            continue
+        jump = DM_JUMP.search(line)
+        if jump:
+            jumps.append((n, jump.group(1)))
+        if line.startswith(("=>", "$>", "- ", "do ", "do! ", "set ")) or DM_KEYWORD.match(line):
+            continue
+        # Spoken text: optional random weight (%2) or concurrent marker (|), optional "Character: "
+        text = re.sub(r"^(%[\d.]*\s*|\|\s*)", "", line)
+        speaker, sep, said = text.partition(": ")
+        if not sep or "[" in speaker or "{" in speaker:
+            speaker, said = "", text
+        said = DM_TAG.sub("", said).strip()
+        count = sentences(said)
+        if count > MAX_SENTENCES:
+            opening = " ".join(said.split()[:6])
+            who = f"{speaker} " if speaker else ""
+            limits.append(
+                f"{where}: cue '{cue}': {who}\"{opening}...\": {count} sentences (limit {MAX_SENTENCES})"
+            )
+    if "start" not in cues:
+        errors.append(f"{where}: no '~ start' cue (DialogueRunner.start() begins there)")
+    for n, target in jumps:
+        if target not in cues and target not in ("END", "END!") and "/" not in target:
+            errors.append(f"{where}:{n}: jump to unknown cue '{target}'")
+
+
 def lint_quest(path, errors, limits):
     data = load_json(path, errors)
     if data is None:
@@ -151,11 +228,24 @@ def main():
     errors, limits = [], []
     quest_files = sorted(QUESTS.glob("*.json"))
     dialogue_files = sorted(DIALOGUES.glob("*.json"))
+    script_files = sorted(DIALOGUES.glob("*.dialogue"))
     for p in quest_files:
         lint_quest(p, errors, limits)
     for p in dialogue_files:
         lint_dialogue(p, {q.stem for q in quest_files}, errors, limits)
-    print(f"data_lint: {len(dialogue_files)} dialogues, {len(quest_files)} quests")
+    quests = {}
+    for q in quest_files:
+        try:
+            quests[q.stem] = {st.get("id") for st in json.loads(q.read_text()).get("stages", []) if isinstance(st, dict)}
+        except (json.JSONDecodeError, AttributeError):
+            quests[q.stem] = set()  # lint_quest already reported it
+    flags_set = flags_set_in_scripts()
+    for p in script_files:
+        flags_set |= set(FLAG_SET.findall(p.read_text()))
+    for p in script_files:
+        lint_dialogue_script(p, quests, flags_set, errors, limits)
+    print(f"data_lint: {len(script_files)} .dialogue files, {len(dialogue_files)} JSON dialogues, "
+          f"{len(quest_files)} quests")
 
     baseline = set()
     if args.baseline.exists():

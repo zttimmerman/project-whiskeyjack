@@ -24,7 +24,7 @@ if [ ${#gd_files[@]} -gt 0 ]; then
 	gdlint "${gd_files[@]}" || fail=1
 fi
 
-if git diff --cached --name-only --diff-filter=ACMR -- 'data/dialogues/*.json' 'data/quests/*.json' | grep -q .; then
+if git diff --cached --name-only --diff-filter=ACMR -- 'data/dialogues/*.json' 'data/dialogues/*.dialogue' 'data/quests/*.json' | grep -q .; then
 	python3 ci/data_lint.py || fail=1
 fi
 
