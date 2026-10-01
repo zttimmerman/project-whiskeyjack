@@ -5,32 +5,51 @@ const FIRE_RANGE: float = 12.0
 const MIN_DISTANCE: float = 4.0
 const PREFERRED_DISTANCE: float = 7.0
 const SHOOT_COOLDOWN: float = 2.0
+## enemy_ranged_telegraph (design bible §3, at least 0.8 s): the draw, from its start to the arrow
+## leaving. A gameplay constant: the draw clip (a stand-in until the bow clips) is fitted to it
+## through its markers, so a clip swap doesn't change it.
+const DRAW_TIME: float = 0.9
+const POST_SHOT_PAUSE: float = 0.4
 
 @export var projectile_scene: PackedScene
 
 
-# Override: ATTACK fires a projectile rather than activating the melee hitbox
+# Override: ATTACK draws (the windup), then fires a projectile rather than opening the melee hitbox
 func _change_state(new_state: State) -> void:
 	if new_state == State.ATTACK:
 		if EventLog.enabled:
+			EventLog.log_event("attack_windup", {"actor": EventLog.label(self)})
 			EventLog.log_event("attack_started", {"actor": EventLog.label(self), "kind": "ranged"})
 		state = State.ATTACK
 		_face_player()
-		_attack_timer = 0.4
 		_attack_cooldown_timer = SHOOT_COOLDOWN
-		_play_anim("attack")
-		_fire_projectile()
+		_begin_windup()
 	else:
 		super._change_state(new_state)
 
 
-# Override: hold still during the brief post-fire pause; don't reset cooldown
+# Override: the archer holds still but keeps aiming while it draws; it can't be cancelled except by
+# a stagger, and fires where the player is at the release
 func _tick_attack(delta: float) -> void:
-	velocity.x = 0.0
-	velocity.z = 0.0
-	_attack_timer -= delta
-	if _attack_timer <= 0.0:
-		_change_state(State.CHASE)
+	if _winding_up:
+		_face_player()
+	super._tick_attack(delta)
+
+
+func _windup_time() -> float:
+	return DRAW_TIME
+
+
+func _release_attack() -> void:
+	if EventLog.enabled:
+		EventLog.log_event("attack_release", {"actor": EventLog.label(self), "kind": "ranged"})
+	_fire_projectile()
+	_attack_timer = POST_SHOT_PAUSE
+
+
+# Override: the cooldown started with the draw, so it isn't reset after the shot
+func _finish_attack() -> void:
+	_change_state(State.CHASE)
 
 
 # Override: distance management and fire trigger.
@@ -79,6 +98,10 @@ func _fire_projectile() -> void:
 	var proj: Node3D = projectile_scene.instantiate() as Node3D
 	if not proj:
 		return
+	# The arrow's damage is this archer's attack (set before _ready, which opens and logs its hitbox)
+	var arrow_hitbox := proj.get_node_or_null("HitboxComponent") as HitboxComponent
+	if arrow_hitbox:
+		arrow_hitbox.damage = stats.attack
 	get_tree().current_scene.add_child(proj)
 	# Spawn at chest height so the projectile doesn't clip the ground
 	proj.global_position = global_position + Vector3(0, 0.8, 0)

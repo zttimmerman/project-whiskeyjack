@@ -10,7 +10,8 @@ extends Node
 ##
 ## Events and their fields (besides "frame" and "event"):
 ##   attack_started  actor, kind (light | heavy | melee | ranged), combo_index and damage (player)
-##   attack_windup   actor                   (reserved: enemy telegraphs don't exist yet)
+##   attack_windup   actor                   (an enemy's tell begins: logged with its attack_started)
+##   attack_release  actor, kind (ranged)    (the arrow leaves; the draw is windup to release)
 ##   hitbox_open     actor, heavy, damage    (logged when activate() is called; the overlap
 ##   hitbox_close    actor                    starts on the next physics step)
 ##   hit             attacker, target, damage, heavy, iframed

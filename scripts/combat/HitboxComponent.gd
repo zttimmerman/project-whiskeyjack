@@ -8,6 +8,10 @@ signal hit(target: Node, damage: int)
 @export var is_heavy: bool = false
 
 var _logged_open: bool = false  # only tracked while EventLog is on, so hitbox_close pairs with an open
+# Open between activate() and deactivate(), immediately. Monitoring follows only at the end of the
+# frame (it can't change inside a physics callback), so an overlap reported in the frame a hitbox
+# closes (its owner died or was staggered) would still land without this check.
+var _active: bool = false
 
 
 func _ready() -> void:
@@ -18,6 +22,7 @@ func _ready() -> void:
 
 # Enable the hitbox for one attack swing
 func activate() -> void:
+	_active = true
 	set_deferred("monitoring", true)
 	set_deferred("monitorable", true)
 	if EventLog.enabled:
@@ -26,6 +31,7 @@ func activate() -> void:
 
 
 func deactivate() -> void:
+	_active = false
 	set_deferred("monitoring", false)
 	set_deferred("monitorable", false)
 	if EventLog.enabled and _logged_open:
@@ -33,7 +39,14 @@ func deactivate() -> void:
 		EventLog.log_event("hitbox_close", {"actor": EventLog.label(get_parent())})
 
 
+## Whether the hitbox can hit: true from activate() until deactivate()
+func is_active() -> bool:
+	return _active
+
+
 func _on_area_entered(area: Area3D) -> void:
+	if not _active:
+		return
 	if area is HurtboxComponent:
 		if EventLog.enabled:
 			EventLog.log_event(

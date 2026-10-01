@@ -8,8 +8,9 @@
 #                       for the playtest critic; events/index.json lists them with the event fields
 #   contact_sheet.png   16 evenly spaced frames, 4x4, labelled with their scenario frame
 #   capture.jsonl       the run's event log; it is compared with the headless run1.jsonl when that exists
-# Hands off the keyboard and mouse while the window runs: the replay ignores real devices, but a covered
-# window can still be throttled by macOS. Rendered capture stays on the Mac (Linux llvmpipe colours differ).
+# Hands off the keyboard and mouse while the window runs: the replay ignores real devices. The window is
+# kept on top (--always-on-top): covered, macOS throttles it and Movie Maker records stale frames (63 of 542
+# rendered once). Rendered capture stays on the Mac (Linux llvmpipe colours differ).
 # Godot comes from $GODOT_BIN, else /Applications/Godot.app; ffmpeg from $FFMPEG, else /opt/homebrew/bin/ffmpeg.
 set -uo pipefail
 
@@ -44,7 +45,7 @@ for f in /System/Library/Fonts/Supplemental/Arial.ttf /System/Library/Fonts/Helv
 done
 
 echo "== $name: rendering (Movie Maker)"
-"$GODOT" --fixed-fps 60 --write-movie "$out/frames/frame.png" --path "$ROOT" res://scripts/review/replay.tscn -- \
+"$GODOT" --always-on-top --fixed-fps 60 --write-movie "$out/frames/frame.png" --path "$ROOT" res://scripts/review/replay.tscn -- \
 	--scenario "$scenario_abs" --event-log "$out/capture.jsonl" --save-slot=replay < /dev/null > "$out/capture.log" 2>&1
 code=$?
 if [ $code -ne 0 ] || ! grep -q '"event":"scenario_end"' "$out/capture.jsonl" 2> /dev/null; then

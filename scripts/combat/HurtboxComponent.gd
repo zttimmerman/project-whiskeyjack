@@ -16,6 +16,9 @@ func _ready() -> void:
 
 
 func _on_hitbox_entered(area: Area3D) -> void:
+	# A hitbox closed this frame (its owner died or was staggered) still overlaps until the frame ends
+	if area is HitboxComponent and not (area as HitboxComponent).is_active():
+		return
 	if invincible:
 		if EventLog.enabled and area is HitboxComponent:
 			EventLog.log_event(

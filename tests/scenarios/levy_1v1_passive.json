@@ -1,0 +1,18 @@
+{
+  "name": "levy_1v1_passive",
+  "description": "A player who never fights back: from the spawn, walk toward the Corridor A levy, lock on, stop, and stand while it attacks. It measures the levy's windup (enemy_melee_telegraph) and its damage per hit (ttk_levy_player, projected from the hits taken), which levy_1v1_sensible no longer can: its player dodges every swing.",
+  "scene": "res://scenes/world/Level1.tscn",
+  "seed": 1,
+  "player": {"position": [0, 1, 0], "yaw_deg": -90, "pitch": -0.2},
+  "duration_frames": 480,
+  "steps": [
+    {"frame": 0, "action": "move_forward", "pressed": true},
+    {"frame": 5, "action": "lock_on", "pressed": true},
+    {"frame": 6, "action": "lock_on", "pressed": false},
+    {"frame": 20, "action": "move_forward", "pressed": false}
+  ],
+  "checks": [
+    {"id": "ttk_levy_player", "attacker": "EnemyCorridorA", "target": [10, 14], "baseline": 12},
+    {"id": "enemy_melee_telegraph", "target": [0.5, null], "baseline": 0.6}
+  ]
+}

@@ -25,6 +25,11 @@ const ATTACK_ACTIVE_TIME: float = 0.3
 const DEATH_FADE_TIME: float = 0.3
 const DEATH_FALLBACK_TIME: float = 2.4  # Death01's length, if the model has no death clip
 const ATTACK_COOLDOWN: float = 1.5
+## enemy_melee_telegraph (design bible §3, at least 0.5 s): the tell, from the attack starting to its
+## hitbox opening. A gameplay constant: the attack clip is fitted to it through its markers.
+const MELEE_WINDUP: float = 0.6
+## Share of the windup before the strike spent easing into the clip's "tell" pose; it's held after
+const TELL_WINDBACK_SHARE: float = 0.6
 ## Sight rays run at most this often per enemy (the cheap range and cone tests run every frame)
 const SIGHT_INTERVAL: float = 0.1
 ## Ray ends above the body origin (the capsule centre, 0.9 m above the feet): enemy eyes, player chest
@@ -54,6 +59,8 @@ var _anim_player: AnimationPlayer = null
 var _stagger_timer: float = 0.0
 var _attack_timer: float = 0.0
 var _attack_cooldown_timer: float = 0.0
+var _winding_up: bool = false
+var _windup_elapsed: float = 0.0
 
 var _sight_query: PhysicsRayQueryParameters3D = null
 var _sight_timer: float = 0.0  # until the next sight ray may run
@@ -75,6 +82,7 @@ func _ready() -> void:
 	$HurtboxComponent.stats = stats
 	_nav_agent = $NavigationAgent3D
 	_hitbox = $HitboxComponent
+	_hitbox.damage = stats.attack
 	_player = get_tree().get_first_node_in_group("player")
 	_sight_query = WorldRay.make_query([get_rid()])
 	_cone_cos = cos(deg_to_rad(view_cone_deg * 0.5))
@@ -286,14 +294,71 @@ func _flat_distance_to(point: Vector3) -> float:
 	return Vector2(point.x - global_position.x, point.z - global_position.z).length()
 
 
+# The attack commits (§3): no moving or re-aiming from the windup to the swing's end; only a
+# stagger (or death) cancels it
 func _tick_attack(delta: float) -> void:
 	velocity.x = 0.0
 	velocity.z = 0.0
+	if _winding_up:
+		_windup_elapsed = minf(_windup_elapsed + delta, _windup_time())
+		_pose_windup()
+		# A small epsilon so float accumulation can't push the release a frame late
+		if _windup_elapsed >= _windup_time() - 0.0001:
+			_winding_up = false
+			if _anim_player:
+				_anim_player.play()  # resumes the attack clip from its contact marker
+			_release_attack()
+		return
 	_attack_timer -= delta
 	if _attack_timer <= 0.0:
-		_hitbox.deactivate()
-		_attack_cooldown_timer = ATTACK_COOLDOWN
-		_change_state(State.CHASE)
+		_finish_attack()
+
+
+## Seconds of tell before the attack lands; overridden by enemies with a different windup
+func _windup_time() -> float:
+	return MELEE_WINDUP
+
+
+## The windup is over: the attack lands (the melee hitbox opens for the swing)
+func _release_attack() -> void:
+	_hitbox.activate()
+	_attack_timer = ATTACK_ACTIVE_TIME
+
+
+## The swing is over: back to the chase, after the cooldown
+func _finish_attack() -> void:
+	_hitbox.deactivate()
+	_attack_cooldown_timer = ATTACK_COOLDOWN
+	_change_state(State.CHASE)
+
+
+func _begin_windup() -> void:
+	_winding_up = true
+	_windup_elapsed = 0.0
+	_play_anim("attack")
+	if _anim_player and _anim_player.current_animation == "attack":
+		_anim_player.pause()  # posed by _pose_windup() each physics frame until the release
+		_pose_windup()
+
+
+# The tell: the attack clip eases into its "tell" marker pose (the wind-back), holds it, then plays
+# on so its "contact" marker lands as the windup ends. A clip without both markers plays as it is.
+func _pose_windup() -> void:
+	if not _anim_player or _anim_player.assigned_animation != "attack":
+		return
+	var clip := _anim_player.get_animation("attack")
+	if not (clip.has_marker("tell") and clip.has_marker("contact")):
+		return
+	var tell := clip.get_marker_time("tell")
+	var strike_start := maxf(_windup_time() - (clip.get_marker_time("contact") - tell), 0.0)
+	var windback := clampf(strike_start * TELL_WINDBACK_SHARE, minf(tell, strike_start), strike_start)
+	var t := _windup_elapsed
+	var pos := tell
+	if t < windback:
+		pos = tell * t / windback
+	elif t >= strike_start:
+		pos = tell + (t - strike_start)
+	_anim_player.seek(pos, true)
 
 
 func _tick_stagger(delta: float) -> void:
@@ -378,15 +443,15 @@ func _change_state(new_state: State) -> void:
 				_sight_timer = SIGHT_INTERVAL
 			_update_locomotion_anim()
 		State.ATTACK:
-			_face_player()
-			_hitbox.activate()
-			_attack_timer = ATTACK_ACTIVE_TIME
-			_play_anim("attack")
+			_face_player()  # aimed once, at the windup's start
+			_begin_windup()
 		State.STAGGER:
+			_winding_up = false
 			_hitbox.deactivate()
 			_stagger_timer = STAGGER_DURATION
 			_play_anim("stagger")
 		State.DEAD:
+			_winding_up = false
 			_release_attack_tokens()
 			_hitbox.deactivate()
 			velocity = Vector3.ZERO
@@ -402,6 +467,7 @@ func _log_state_change(new_state: State) -> void:
 	)
 	match new_state:
 		State.ATTACK:
+			EventLog.log_event("attack_windup", {"actor": actor})
 			EventLog.log_event("attack_started", {"actor": actor, "kind": "melee"})
 		State.STAGGER:
 			EventLog.log_event("stagger", {"actor": actor, "interrupted_attack": state == State.ATTACK})

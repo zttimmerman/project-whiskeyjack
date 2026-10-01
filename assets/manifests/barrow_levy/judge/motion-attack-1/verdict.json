@@ -1,0 +1,23 @@
+{
+  "verdict": "pass",
+  "summary": "The Front-file attack (Sword_Attack) stays in place, has no broken poses, and passes both numeric assertions. The only issue is a right-foot drag during the recovery, which is minor and comes from the source clip.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "minor",
+      "observation": "During recovery (about 0.92-1.3 s) the right foot slides back into stance at about 1.4-1.5 m/s while flagged planted, driving foot-slide p90 1.277 m/s (reported only for action clips). It reads as the lunge recovery dragging the back foot in, not a retarget fault. The left-foot spike (~8 m/s at 0.31 s) is a contact-detection edge as the foot lifts into the lunge.",
+      "evidence": "03_plots.png; foot_slide_p90_mps 1.277, foot_slide_max_mps 8.145; 01_frame_strip.png frames 9-12"
+    }
+  ],
+  "questions_answered": [
+    "Body stays in place: hips peak 0.114 m in the lunge and return to 0.00 m.",
+    "Mostly: feet hold in the opening windows; the right foot drags back in recovery (minor).",
+    "No broken poses: overhead raise, deep lunge, no intersections.",
+    "Both pass: bind deviation 1.264 m RightHand (1.8), skin stretch 0.0 (1.0)."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png"
+  ]
+}

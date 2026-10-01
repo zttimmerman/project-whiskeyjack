@@ -1,0 +1,23 @@
+{
+  "verdict": "pass",
+  "summary": "The Back-file attack clip (the Spell_Simple_Enter stand-in) stays in place with planted feet and no broken poses, and both assertions pass.",
+  "findings": [
+    {
+      "check": "other",
+      "severity": "minor",
+      "observation": "From the side and top views it's unclear which arm is raised; the bow is socketed to hand_l, so it should be the left. Confirm in-game with the bow attached; not a motion defect. (Orchestrator: the g1_cmp_ranged comparison sheet, rendered with the bow attached, shows the bow arm raised and aimed.)",
+      "evidence": "01_frame_strip.png, 02_onion_skin.png (top view)"
+    }
+  ],
+  "questions_answered": [
+    "Body stays in place: hips travel 0.026 m; only the arm sweeps from hanging to straight out.",
+    "Feet planted throughout: p90 0.069 m/s (0.5), ground speed 0.",
+    "No broken poses in 14 frames.",
+    "Both pass: bind deviation 0.973 m LeftHand (1.8), skin stretch 0.0 (1.0)."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png"
+  ]
+}
