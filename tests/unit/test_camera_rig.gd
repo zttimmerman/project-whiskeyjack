@@ -74,19 +74,30 @@ func _camera(player: Node) -> Camera3D:
 
 
 func test_cam_framing_over_the_shoulder() -> void:
-	# §2 Framing: offset 0.5–0.7 m to the side, pivot 1.6–1.8 m above the floor, 3.5–4.5 m behind, FOV 70–75°
+	# §2 Framing (user, 2026-10-01, Witcher-like): pivot about 1.6 m above the floor, about 0.9 m to the right,
+	# an arm of about 2.5 m, FOV 70–75°
 	_floor()
 	var player := _player_at(Vector3(0, BODY_Y, 0))
 	await _physics_frames(SETTLE_FRAMES)
 	var cam := _camera(player)
 	var rig: Node3D = player.get_node("CameraRig")
 	var pivot: Vector3 = rig.call("get_pivot")
-	assert_float(pivot.y - FEET_Y).is_between(1.6, 1.8)
+	assert_float(pivot.y - FEET_Y).is_between(1.5, 1.7)
 	var local := cam.global_position - pivot
-	assert_float(absf(local.x)).override_failure_message("shoulder offset %.2f" % local.x).is_between(0.5, 0.7)
-	assert_float(Vector2(local.x, local.z).length()).is_between(3.5, 4.6)
-	assert_float(local.z).is_greater(3.4)  # behind: the player looks along -z
+	assert_float(absf(local.x)).override_failure_message("shoulder offset %.2f" % local.x).is_between(0.8, 1.0)
+	assert_float(local.z).override_failure_message("behind %.2f" % local.z).is_between(2.2, 2.8)
 	assert_float(cam.fov).is_between(70.0, 75.0)
+
+
+func test_cam_player_in_the_left_third() -> void:
+	# The player sits in the left third, with a clear view past his right shoulder
+	_floor()
+	var player := _player_at(Vector3(0, BODY_Y, 0))
+	await _physics_frames(SETTLE_FRAMES)
+	var cam := _camera(player)
+	var x := cam.unproject_position(player.global_position + Vector3.UP * 0.45).x
+	var width := cam.get_viewport().get_visible_rect().size.x
+	assert_float(x / width).override_failure_message("player at %.2f of the width" % (x / width)).is_between(0.2, 0.36)
 
 
 func test_cam_player_in_frame_backed_into_a_wall() -> void:
