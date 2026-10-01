@@ -45,9 +45,9 @@ Phase B, step 6 of `docs/tools-review-2026-09.md`. **The question:** should cryp
 | `lvl_corridor_width_min` (≥ 3 m) | 4 m | 4 m |
 | `lvl_verticality` | one 1 m rise (the dais) in about 20 m of path | 0 |
 | `lvl_bare_wall_run_max` (≤ 8 m) | 6 m (the corridor walls and the hall's north wall, broken by torches; the hall's side walls are 5 m, broken by niches) | 16 m |
-| `lvl_light_spacing` (8–12 m) | at most 7.5 m along the path | ≤ 12 m (test_level1_kit) |
+| `lvl_light_spacing` (8–12 m) | at most 7.5 m along the path | largest gap 11 m |
 | `lvl_landmark_visible` | yes: the dais and sarcophagus are lit at the end of the corridor (still 1) | no |
-| `lvl_dressing_density` (1–3 per 10 m²) | not targeted: 0.6 in the hall (4 kit props, 4 pillars, the sarcophagus). The props are the same either way. | 0.14–0.20 |
+| `lvl_dressing_density` (1–3 per 10 m²) | not targeted: 0.6 in the hall (4 kit props, 4 pillars, the sarcophagus). The props are the same either way. | 1.05–1.18 |
 | `lvl_floor_luminance_min` | not measured | not measured |
 | Draw calls | one mesh per brush entity, one surface per texture (4 in the hall) | one mesh per piece |
 
