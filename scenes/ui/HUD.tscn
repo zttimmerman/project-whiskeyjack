@@ -2,11 +2,14 @@
 
 [ext_resource type="Script" uid="uid://bhudscript001" path="res://scenes/ui/HUD.gd" id="1_hud"]
 [ext_resource type="AudioStream" path="res://assets/audio/sting_you_died.ogg" id="2_sting"]
+[ext_resource type="PackedScene" path="res://scenes/ui/LockOnReticle.tscn" id="3_reticle"]
 
 [node name="HUD" type="Control"]
 script = ExtResource("1_hud")
 anchor_right = 1.0
 anchor_bottom = 1.0
+
+[node name="LockOnReticle" parent="." instance=ExtResource("3_reticle")]
 
 [node name="HPPanel" type="Panel" parent="."]
 anchor_top = 1.0
