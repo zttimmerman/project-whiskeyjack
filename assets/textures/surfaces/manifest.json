@@ -2,39 +2,38 @@
  "textures": {
   "packed_earth": {
    "graph": "assets/textures/src/packed_earth.ptex",
-   "graph_sha256": "fa14da1b30af93cfd3259dd81627c6951cbcf16d8c2c1b6c5074d51e9d881130",
+   "graph_sha256": "9ad4f485a45a3b781dc2c34a76741d0ee85dd81721869972739b1791a12e3252",
    "ramp": {
     "Peat Black": "#2E2926",
     "Saddle Leather": "#4A2A10",
     "Rain Stone": "#4D4740"
    },
-   "ramp_steps": 8,
+   "ramp_steps": 16,
    "size": 128,
    "png": "assets/textures/surfaces/packed_earth.png",
-   "png_sha256": "b85151b7ce3c90a3cd78e24420092c083bc484a51a96f8bc4eb17fb462120805",
-   "pixels_sha256": "8569ac649dff9c5227fc9146462cf5d25227b01e459414bbd7c414065ca340d6",
-   "material_maker_export_sha256": "55d9c8e36b1653f049263e16b57f6f44f60be045f2f8941e930228062451f179",
-   "distinct_colours": 17,
-   "ramp_entries": 17,
+   "png_sha256": "9ad73757c00f2f21f094a1d806aefba680ba287aef1767a0829dc190a655b723",
+   "pixels_sha256": "1601e09995f72ee4d2e7d5f26ada865eb0ae7c727b80fb2bf9e665ef4857f28c",
+   "material_maker_export_sha256": "cbae968900b33f4b233920da2e898719ce819fdcab8be86bcba695e6cdf7da4f",
+   "distinct_colours": 12,
+   "ramp_entries": 33,
    "de_before_lock": {
-    "ramp_de_median": 0.79,
-    "ramp_de_p95": 1.46,
-    "ramp_de_max": 1.76,
+    "ramp_de_median": 0.62,
+    "ramp_de_p95": 0.82,
+    "ramp_de_max": 1.32,
     "groups": [
      {
       "palette": "Peat Black",
-      "share": 0.013,
-      "median_de": 9.29
+      "share": 0.0
      },
      {
       "palette": "Saddle Leather",
-      "share": 0.352,
-      "median_de": 6.44
+      "share": 0.062,
+      "median_de": 10.94
      },
      {
       "palette": "Rain Stone",
-      "share": 0.635,
-      "median_de": 3.18
+      "share": 0.938,
+      "median_de": 7.91
      }
     ]
    },
@@ -45,42 +44,41 @@
     "groups": [
      {
       "palette": "Peat Black",
-      "share": 0.017,
-      "median_de": 8.42
+      "share": 0.0
      },
      {
       "palette": "Saddle Leather",
-      "share": 0.331,
-      "median_de": 6.03
+      "share": 0.065,
+      "median_de": 10.84
      },
      {
       "palette": "Rain Stone",
-      "share": 0.651,
-      "median_de": 2.77
+      "share": 0.935,
+      "median_de": 8.14
      }
     ]
    }
   },
   "plaster": {
    "graph": "assets/textures/src/plaster.ptex",
-   "graph_sha256": "a170a0f1fde12d9887c1ed1380f4543f7f2b2fcca0e486069adec435d464f2ca",
+   "graph_sha256": "0bbda9df44c7a2c6780d5b77060eccf7e6a28dff357f06c6a37124ce2342d915",
    "ramp": {
     "Rain Stone": "#4D4740",
     "Wet Slate": "#736B66",
     "Old Bone": "#CCB484"
    },
-   "ramp_steps": 8,
+   "ramp_steps": 16,
    "size": 128,
    "png": "assets/textures/surfaces/plaster.png",
-   "png_sha256": "3759651f33345fb3b86a09cd745d08d49ce74072e80299633d14bd629c4caffc",
-   "pixels_sha256": "70bdc682466430e69b12c892e7a9bea6bd5ecf161ef8ac0ccdce4185fcb4ed51",
-   "material_maker_export_sha256": "24d1cfd122d630a82d52d2f1c5d0c1b01a6e0c586bed7989396e3e8f9db63355",
-   "distinct_colours": 13,
-   "ramp_entries": 17,
+   "png_sha256": "5e68a3df56ee312e2714e950f9f0a9c7e8e50b8872d7199516072433dc73965f",
+   "pixels_sha256": "640a068c39bde72fb1b638b7788d2b90694895b7b8f1855976bf8a11c6b79049",
+   "material_maker_export_sha256": "fec66f010b84a96c43a1c698dbc334829bc7f834c4de7a93b979667bfe701366",
+   "distinct_colours": 10,
+   "ramp_entries": 33,
    "de_before_lock": {
-    "ramp_de_median": 0.9,
-    "ramp_de_p95": 2.2,
-    "ramp_de_max": 2.55,
+    "ramp_de_median": 0.62,
+    "ramp_de_p95": 1.04,
+    "ramp_de_max": 1.29,
     "groups": [
      {
       "palette": "Rain Stone",
@@ -88,13 +86,13 @@
      },
      {
       "palette": "Wet Slate",
-      "share": 0.359,
-      "median_de": 9.78
+      "share": 0.0,
+      "median_de": 16.85
      },
      {
       "palette": "Old Bone",
-      "share": 0.641,
-      "median_de": 5.69
+      "share": 1.0,
+      "median_de": 4.27
      }
     ]
    },
@@ -109,12 +107,12 @@
      },
      {
       "palette": "Wet Slate",
-      "share": 0.323,
-      "median_de": 9.38
+      "share": 0.0,
+      "median_de": 16.86
      },
      {
       "palette": "Old Bone",
-      "share": 0.677,
+      "share": 1.0,
       "median_de": 4.27
      }
     ]

@@ -1,9 +1,9 @@
 {
  "connections": [
   {
-   "from": "blotch",
+   "from": "stain",
    "from_port": 0,
-   "to": "blotch_amt",
+   "to": "stain_amt",
    "to_port": 0
   },
   {
@@ -13,37 +13,85 @@
    "to_port": 0
   },
   {
-   "from": "blotch_amt",
+   "from": "stain_amt",
    "from_port": 0,
-   "to": "sum",
+   "to": "wash",
    "to_port": 0
   },
   {
    "from": "fine_amt",
    "from_port": 0,
-   "to": "sum",
+   "to": "wash",
    "to_port": 1
+  },
+  {
+   "from": "wash",
+   "from_port": 0,
+   "to": "base",
+   "to_port": 0
   },
   {
    "from": "cracks",
    "from_port": 1,
-   "to": "crack_amt",
+   "to": "crack_width",
    "to_port": 0
   },
   {
-   "from": "crack_amt",
+   "from": "crack_width",
    "from_port": 0,
-   "to": "crack_mask",
+   "to": "crack_soft",
    "to_port": 0
   },
   {
-   "from": "sum",
+   "from": "crack_soft",
    "from_port": 0,
-   "to": "masked",
+   "to": "crack_line",
+   "to_port": 1
+  },
+  {
+   "from": "crack_patches",
+   "from_port": 0,
+   "to": "patch_lo",
    "to_port": 0
   },
   {
-   "from": "masked",
+   "from": "patch_lo",
+   "from_port": 0,
+   "to": "patch_mask",
+   "to_port": 0
+  },
+  {
+   "from": "crack_line",
+   "from_port": 0,
+   "to": "crack_masked",
+   "to_port": 0
+  },
+  {
+   "from": "patch_mask",
+   "from_port": 0,
+   "to": "crack_masked",
+   "to_port": 1
+  },
+  {
+   "from": "crack_masked",
+   "from_port": 0,
+   "to": "crack_depth",
+   "to_port": 0
+  },
+  {
+   "from": "base",
+   "from_port": 0,
+   "to": "plaster",
+   "to_port": 0
+  },
+  {
+   "from": "crack_depth",
+   "from_port": 0,
+   "to": "plaster",
+   "to_port": 1
+  },
+  {
+   "from": "plaster",
    "from_port": 0,
    "to": "colorize",
    "to_port": 0
@@ -53,24 +101,6 @@
    "from_port": 0,
    "to": "export",
    "to_port": 0
-  },
-  {
-   "from": "crack_mask",
-   "from_port": 0,
-   "to": "crack_lift",
-   "to_port": 0
-  },
-  {
-   "from": "crack_lift",
-   "from_port": 0,
-   "to": "crack_floor",
-   "to_port": 0
-  },
-  {
-   "from": "crack_floor",
-   "from_port": 0,
-   "to": "masked",
-   "to_port": 1
   }
  ],
  "label": "Graph",
@@ -81,19 +111,19 @@
  },
  "nodes": [
   {
-   "name": "blotch",
+   "name": "stain",
    "node_position": {
-    "x": 0,
+    "x": 150,
     "y": 0
    },
    "parameters": {
     "folds": 0,
-    "iterations": 6,
+    "iterations": 4,
     "noise": 1,
     "offset": 0,
-    "persistence": 0.55,
-    "scale_x": 3,
-    "scale_y": 3
+    "persistence": 0.5,
+    "scale_x": 2,
+    "scale_y": 2
    },
    "seed_int": 2201,
    "type": "fbm2"
@@ -101,32 +131,50 @@
   {
    "name": "fine",
    "node_position": {
-    "x": 0,
-    "y": 250
+    "x": 300,
+    "y": 0
    },
    "parameters": {
     "folds": 0,
-    "iterations": 3,
+    "iterations": 2,
     "noise": 0,
     "offset": 0,
     "persistence": 0.5,
-    "scale_x": 16,
-    "scale_y": 16
+    "scale_x": 32,
+    "scale_y": 32
    },
    "seed_int": 2202,
    "type": "fbm2"
   },
   {
+   "name": "crack_patches",
+   "node_position": {
+    "x": 450,
+    "y": 0
+   },
+   "parameters": {
+    "folds": 0,
+    "iterations": 3,
+    "noise": 1,
+    "offset": 0,
+    "persistence": 0.5,
+    "scale_x": 3,
+    "scale_y": 3
+   },
+   "seed_int": 2204,
+   "type": "fbm2"
+  },
+  {
    "name": "cracks",
    "node_position": {
-    "x": 0,
-    "y": 500
+    "x": 600,
+    "y": 0
    },
    "parameters": {
     "intensity": 1,
-    "randomness": 0.85,
-    "scale_x": 3,
-    "scale_y": 3,
+    "randomness": 0.9,
+    "scale_x": 4,
+    "scale_y": 4,
     "stretch_x": 1,
     "stretch_y": 1
    },
@@ -134,15 +182,15 @@
    "type": "voronoi"
   },
   {
-   "name": "blotch_amt",
+   "name": "stain_amt",
    "node_position": {
-    "x": 250,
+    "x": 750,
     "y": 0
    },
    "parameters": {
     "clamp": false,
-    "default_in1": 0.0,
-    "default_in2": 0.7,
+    "default_in1": 0,
+    "default_in2": 0.2,
     "op": 2
    },
    "type": "math"
@@ -150,22 +198,22 @@
   {
    "name": "fine_amt",
    "node_position": {
-    "x": 250,
-    "y": 250
+    "x": 900,
+    "y": 0
    },
    "parameters": {
     "clamp": false,
-    "default_in1": 0.0,
-    "default_in2": 0.3,
+    "default_in1": 0,
+    "default_in2": 0.04,
     "op": 2
    },
    "type": "math"
   },
   {
-   "name": "sum",
+   "name": "wash",
    "node_position": {
-    "x": 450,
-    "y": 100
+    "x": 1050,
+    "y": 0
    },
    "parameters": {
     "clamp": false,
@@ -176,10 +224,38 @@
    "type": "math"
   },
   {
-   "name": "crack_mask",
+   "name": "base",
    "node_position": {
-    "x": 450,
-    "y": 500
+    "x": 1200,
+    "y": 0
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0,
+    "default_in2": 0.72,
+    "op": 0
+   },
+   "type": "math"
+  },
+  {
+   "name": "crack_width",
+   "node_position": {
+    "x": 1350,
+    "y": 0
+   },
+   "parameters": {
+    "clamp": true,
+    "default_in1": 0,
+    "default_in2": 45.0,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "crack_soft",
+   "node_position": {
+    "x": 0,
+    "y": 200
    },
    "parameters": {
     "clamp": true,
@@ -190,27 +266,55 @@
    "type": "math"
   },
   {
-   "name": "crack_amt",
+   "name": "crack_line",
    "node_position": {
-    "x": 650,
-    "y": 500
+    "x": 150,
+    "y": 200
    },
    "parameters": {
     "clamp": true,
-    "default_in1": 0.0,
-    "default_in2": 30.0,
+    "default_in1": 1.0,
+    "default_in2": 0,
+    "op": 1
+   },
+   "type": "math"
+  },
+  {
+   "name": "patch_lo",
+   "node_position": {
+    "x": 300,
+    "y": 200
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0,
+    "default_in2": 0.5,
+    "op": 1
+   },
+   "type": "math"
+  },
+  {
+   "name": "patch_mask",
+   "node_position": {
+    "x": 450,
+    "y": 200
+   },
+   "parameters": {
+    "clamp": true,
+    "default_in1": 0,
+    "default_in2": 3.0,
     "op": 2
    },
    "type": "math"
   },
   {
-   "name": "masked",
+   "name": "crack_masked",
    "node_position": {
-    "x": 850,
+    "x": 600,
     "y": 200
    },
    "parameters": {
-    "clamp": true,
+    "clamp": false,
     "default_in1": 0.0,
     "default_in2": 0.0,
     "op": 2
@@ -218,9 +322,37 @@
    "type": "math"
   },
   {
+   "name": "crack_depth",
+   "node_position": {
+    "x": 750,
+    "y": 200
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0,
+    "default_in2": 0.3,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "plaster",
+   "node_position": {
+    "x": 900,
+    "y": 200
+   },
+   "parameters": {
+    "clamp": true,
+    "default_in1": 0,
+    "default_in2": 0,
+    "op": 1
+   },
+   "type": "math"
+  },
+  {
    "name": "colorize",
    "node_position": {
-    "x": 1100,
+    "x": 1050,
     "y": 200
    },
    "parameters": {
@@ -238,14 +370,14 @@
        "a": 1,
        "b": 0.4,
        "g": 0.419608,
-       "pos": 0.3,
+       "pos": 0.4,
        "r": 0.45098
       },
       {
        "a": 1,
        "b": 0.517647,
        "g": 0.705882,
-       "pos": 0.6,
+       "pos": 0.9,
        "r": 0.8
       }
      ],
@@ -257,8 +389,8 @@
   {
    "name": "export",
    "node_position": {
-    "x": 1400,
-    "y": 0
+    "x": 1200,
+    "y": 200
    },
    "parameters": {
     "format": 0,
@@ -266,34 +398,6 @@
     "suffix": "albedo"
    },
    "type": "export"
-  },
-  {
-   "name": "crack_lift",
-   "node_position": {
-    "x": 650,
-    "y": 650
-   },
-   "parameters": {
-    "clamp": false,
-    "default_in1": 0.0,
-    "default_in2": 0.4,
-    "op": 2
-   },
-   "type": "math"
-  },
-  {
-   "name": "crack_floor",
-   "node_position": {
-    "x": 800,
-    "y": 650
-   },
-   "parameters": {
-    "clamp": true,
-    "default_in1": 0.0,
-    "default_in2": 0.6,
-    "op": 0
-   },
-   "type": "math"
   }
  ],
  "parameters": {},
