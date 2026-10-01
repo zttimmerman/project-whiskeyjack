@@ -229,6 +229,73 @@ def _through_walls(check, events):
     return {"value": len(blind), "detail": {"actors": blind}}
 
 
+# Camera checks (design bible §2, §9) read the per-frame "camera" samples (scripts/review/camera_probe.gd)
+CAM_VISIBLE_MIN = 0.75  # a body counts as in frame when this much of it is unhidden by world geometry
+CAM_MELEE_RANGE = 3.0  # cam_melee_occlusion: locked frames with the target this close (metres)
+
+
+def _camera_samples(events, locked=None):
+    samples = of(events, "camera")
+    if locked is not None:
+        samples = [e for e in samples if bool(e.get("locked")) == locked]
+    return samples
+
+
+def _player_framed(e):
+    return (bool(e.get("player_in_view")) and not e.get("camera_in_player")
+            and e.get("player_visible", 0.0) >= CAM_VISIBLE_MIN)
+
+
+def _target_framed(e):
+    return bool(e.get("target_in_view")) and e.get("target_visible", 0.0) >= CAM_VISIBLE_MIN
+
+
+def _frames_where(samples, bad):
+    return [e["frame"] for e in samples if bad(e)]
+
+
+def _cam_player_in_frame(check, events):
+    samples = _camera_samples(events)
+    if not samples:
+        return {"value": None, "detail": {"note": "no camera samples", "samples": 0}}
+    out = _frames_where(samples, lambda e: not _player_framed(e))
+    return {"value": round(1.0 - len(out) / len(samples), 4),
+            "detail": {"samples": len(samples), "out_of_frame": len(out), "first_out": out[:10],
+                       "camera_in_player": sum(1 for e in samples if e.get("camera_in_player")),
+                       "camera_in_world": sum(1 for e in samples if e.get("camera_in_world"))}}
+
+
+def _cam_wall_fill(check, events):
+    samples = _camera_samples(events)
+    if not samples:
+        return {"value": None, "detail": {"note": "no camera samples", "samples": 0}}
+    worst = max(samples, key=lambda e: e.get("wall_fill", 0.0))
+    over = [e["frame"] for e in samples if e.get("wall_fill", 0.0) > 0.6]
+    return {"value": worst.get("wall_fill", 0.0),
+            "detail": {"samples": len(samples), "worst_frame": worst["frame"], "frames_over_0.6": len(over)}}
+
+
+def _cam_melee_occlusion(check, events):
+    rng = check.get("range_m", CAM_MELEE_RANGE)
+    samples = [e for e in _camera_samples(events, locked=True) if e.get("target_distance", math.inf) <= rng]
+    if not samples:
+        return {"value": None, "detail": {"note": "no locked frames with the target within %g m" % rng,
+                                          "samples": 0}}
+    values = sorted(e.get("melee_occlusion", 0.0) for e in samples)
+    return {"value": round(sum(values) / len(values), 4),
+            "detail": {"samples": len(values), "aggregate": "mean", "max": values[-1],
+                       "p90": values[min(len(values) - 1, int(0.9 * len(values)))]}}
+
+
+def _cam_lock_both_in_frame(check, events):
+    samples = _camera_samples(events, locked=True)
+    if not samples:
+        return {"value": None, "detail": {"note": "never locked on", "samples": 0}}
+    out = _frames_where(samples, lambda e: not (_player_framed(e) and _target_framed(e)))
+    return {"value": round(1.0 - len(out) / len(samples), 4),
+            "detail": {"samples": len(samples), "out_of_frame": len(out), "first_out": out[:10]}}
+
+
 METRICS = {
     "ttk_player_frontfile": _hits_to_kill,
     "ttk_player_backfile": _hits_to_kill,
@@ -242,6 +309,10 @@ METRICS = {
     "enc_group_max_first_area": _group_size,
     # Not a §9 target ID: §3's rule that detection needs line of sight, as detections without it
     "detect_through_walls": _through_walls,
+    "cam_player_in_frame": _cam_player_in_frame,
+    "cam_wall_fill": _cam_wall_fill,
+    "cam_melee_occlusion": _cam_melee_occlusion,
+    "cam_lock_both_in_frame": _cam_lock_both_in_frame,
 }
 
 

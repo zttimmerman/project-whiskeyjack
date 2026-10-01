@@ -296,6 +296,11 @@ func _toggle_lock_on() -> void:
 		EventLog.log_event("lock_on", {"actor": EventLog.label(self), "target": EventLog.label(_lock_on_target)})
 
 
+# The locked-on enemy, or null (the replay's camera checks read it)
+func get_lock_on_target() -> Node3D:
+	return _lock_on_target if is_instance_valid(_lock_on_target) else null
+
+
 func _release_lock_on() -> void:
 	if EventLog.enabled and _lock_on_target != null:
 		EventLog.log_event("lock_off", {"actor": EventLog.label(self)})

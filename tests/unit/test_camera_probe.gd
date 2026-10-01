@@ -171,7 +171,7 @@ func test_target_behind_a_wall_is_not_visible() -> void:
 	_floor()
 	_wall_at(-3.0)
 	_camera_at(Vector3(0, 2.0, 4), Vector3(0, 1.2, -4))
-	var player := _body_at(Vector3(0, BODY_Y, 0))
+	var player := _body_at(Vector3(1.5, BODY_Y, 0))  # aside, so he covers none of the target
 	var target := _body_at(Vector3(0, BODY_Y, -5))
 	await _settle()
 	var s := CameraProbe.sample(_camera, player, target)
