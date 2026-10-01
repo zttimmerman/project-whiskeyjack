@@ -4,7 +4,7 @@ How the game should **play**. The art bible (`docs/art-bible.md`) governs how it
 
 **How to use it**
 - Every measurable target has an ID in **Targets** (§9). Playtest reports, the playtest critic and fix PRs cite those IDs ("fixes `cam_melee_occlusion`: 0.62 → 0.18").
-- "Current" is the game as measured on 2026-09-29 (Godot 4.7.2, `main` at `817d56a`).
+- "Current" is the game as measured on 2026-10-01 (Godot 4.7.2, `main` at `523cf6b`), by the replay scenarios in `tests/scenarios/` where a target has one.
 - **Status:** a target is *proposed* until the user confirms it, then *settled*. Changing a settled target is the user's call; record the decision in `docs/decisions.md`.
 - Fix things against this file, not ad hoc. The backlog in `docs/decisions.md` maps to IDs here.
 
@@ -77,10 +77,10 @@ The third-person camera behind the player is the lens for everything else. Most 
 - **Hit-stop and hit effects never fire on a dodged (i-framed) hit.** **Current:** they do.
 
 **Enemy tells and fairness (pillar 1):**
-- **Melee tell:** at least 0.5 s of readable windup before an attack becomes active (`enemy_melee_telegraph`). The pose must be visible from the gameplay camera. **Current:** no windup at all; the hitbox opens on the attack's first frame.
-- **Archers show the draw:** at least 0.8 s (`enemy_ranged_telegraph`) with the bow up. Arrows collide with walls, and archers only shoot with line of sight. **Current:** no draw, and arrows pass through walls.
-- **Detection needs line of sight** within a 120° view cone at the detection range, plus a 4 m hearing radius. **Current:** pure distance, through walls.
-- **Attack tokens:** at most **2 melee attackers** engage the player at once, while others circle at 3–5 m. At most **1 archer** fires in any 2 s window (`enemy_attackers_max`). **Current:** everyone in range attacks at once.
+- **Melee tell:** at least 0.5 s of readable windup before an attack becomes active (`enemy_melee_telegraph`). The pose must be visible from the gameplay camera. **Current:** 0.6 s (`Sword_Attack` with a short hold on the raised blade).
+- **Archers show the draw:** at least 0.8 s (`enemy_ranged_telegraph`) with the bow up. Arrows collide with walls, and archers only shoot with line of sight. **Current:** 0.9 s draw (`Spell_Simple_Enter` stand-in until the UAL2 bow clips); arrows stop at walls; archers shoot only with sight.
+- **Detection needs line of sight** within a 120° view cone at the detection range, plus a 4 m hearing radius. **Current:** met; hearing also needs a clear line. An enemy that loses sight searches the last-seen spot for 3.5 s, then returns to its post.
+- **Attack tokens:** at most **2 melee attackers** engage the player at once, while others circle at 3–5 m. At most **1 archer** fires in any 2 s window (`enemy_attackers_max`). **Current:** met, except that tokenless levies hold 3–5 m off facing the player instead of circling (no strafe clip yet).
 - **Staggers:**
   - Light hits stagger on the third combo hit, or when accumulated poise breaks (about 25 damage within 2 s).
   - Heavies always stagger.
@@ -123,7 +123,7 @@ Units are metres; the player is 1.8 m tall.
 - **Visual rhythm:**
   - no bare wall run longer than 8 m without a break: a niche, pillar, prop, light or opening (`lvl_bare_wall_run_max`);
   - 1–3 dressing props per 10 m² of floor in lived-in or tomb spaces (`lvl_dressing_density`).
-- **Props never snag the critical path:** it keeps at least 1.0 m of clear navmesh width (`lvl_path_clearance_min`), and small clutter has rounded or no collision. **Current:** a start-room crate cost a playtester 5 s.
+- **Props never snag the critical path:** it keeps at least 1.0 m of clear navmesh width (`lvl_path_clearance_min`), and small clutter has rounded or no collision. **Current:** every Level 1 segment passes at 3.0 m; the old crate snag was off-path player movement.
 
 **Outdoors (the road, terraces, the village):**
 - **Terraces are the verticality** (world bible → geography): at least one elevation change of 1 m or more per 20 m of path on a spoke (`lvl_verticality`). Steps, ramps, drops and barrow mounds all count. **Current:** every floor in both levels is at y = 0, apart from one 0.5 m platform in Level 2.
@@ -178,38 +178,38 @@ Units are metres; the player is 1.8 m tall.
 ## 8. Performance and stability
 
 - **60 fps** on the development Mac in the Compatibility renderer (`perf_fps_min`) at the gameplay camera in any area.
-- **Navmeshes are baked at edit time,** not at runtime. **Current:** they bake at runtime, with a warning.
-- **No errors, and no new warnings, in a normal playthrough.** **Current:** invalid hand-written UIDs in 9 scenes, plus 3 GDScript warnings.
+- **Navmeshes are baked at edit time,** not at runtime. **Current:** met (`scripts/tools/bake_navmeshes.gd`; CI fails a stale bake).
+- **No errors, and no new warnings, in a normal playthrough.** **Current:** 23 known warnings in `ci/warnings-baseline.txt` (13 invalid hand-written UIDs, 10 GDScript warnings); CI fails any new one.
 
 ---
 
 ## 9. Targets
 
-| ID | Target | How measured | Current (2026-09-29) |
+| ID | Target | How measured | Current (2026-10-01) |
 |---|---|---|---|
 | `cam_melee_occlusion` | ≤ 0.25 | locked on, target within 3 m: fraction of the target's screen box covered by the player | about 1.0 (the target is fully hidden) |
 | `cam_player_in_frame` | 1.0 | fraction of sampled frames with the player's head and torso fully in frame | failed in corners (playtest) |
 | `cam_wall_fill` | ≤ 0.6 | the largest fraction of the frame covered by one wall surface | about 0.9 in a corner |
 | `cam_lock_both_in_frame` | ≥ 0.95 | while locked, fraction of frames with both player and target in frame | not measured |
 | `atk_hitbox_sync` | ±2 frames | hitbox open frame vs the clip's contact frame | hitbox opens on the press |
-| `enemy_melee_telegraph` | ≥ 0.5 s | windup from the tell's start to the hitbox opening | 0 s |
-| `enemy_ranged_telegraph` | ≥ 0.8 s | draw start to release | 0 s |
-| `enemy_attackers_max` | 2 melee, 1 archer per 2 s | simultaneous attackers in the scripted group fight | unlimited |
+| `enemy_melee_telegraph` | ≥ 0.5 s | windup from the tell's start to the hitbox opening | 0.6 s |
+| `enemy_ranged_telegraph` | ≥ 0.8 s | draw start to release | 0.9 s |
+| `enemy_attackers_max` | 2 melee, 1 archer per 2 s | simultaneous attackers in the scripted group fight | 2 melee, 1 archer per 2 s |
 | `ttk_player_frontfile` | 3–4 light hits | hits to kill at equal level | 4 |
 | `ttk_player_backfile` | 2–3 light hits | same | 3 |
-| `ttk_levy_player` | 10–14 hits | levy hits to kill the player, equal level, starting gear equipped | about 34 (3 damage per hit) |
-| `enc_first_fight_hp_cost` | 10–15% | HP lost in the scripted sensible-player 1-on-1 | not measurable until telegraphs exist |
-| `enc_group_max_first_area` | ≤ 3 | enemies engaged in any one fight, first area | 3 in the central room, plus pulls through walls |
+| `ttk_levy_player` | 10–14 hits | levy hits to kill the player, equal level, starting gear equipped | 12 (9 damage per hit) |
+| `enc_first_fight_hp_cost` | 10–15% | HP lost in the scripted sensible-player 1-on-1 | 0% for the scripted perfect dodger (the skilled ceiling); no "reasonable player" scenario yet |
+| `enc_group_max_first_area` | ≤ 3 | enemies engaged in any one fight, first area | 3 |
 | `enc_spacing_s` | 20–60 s | walking time between fights on a spoke | about 5–10 s |
 | `lvl_interior_ceiling` | present | every interior space has a ceiling | none |
 | `lvl_corridor_width_min` | ≥ 3 m | narrowest combat corridor | 4 m |
 | `lvl_bare_wall_run_max` | ≤ 8 m | longest unbroken wall run | 16 m |
-| `lvl_dressing_density` | 1–3 per 10 m² | props per floor area, lived-in or tomb spaces | 0.14 (start room), 0.20 (central room, pillars included) |
-| `lvl_path_clearance_min` | ≥ 1.0 m | narrowest navmesh width on the critical path | crate snag |
+| `lvl_dressing_density` | 1–3 per 10 m² | props per floor area, lived-in or tomb spaces | 1.05–1.18 (Level 1, KayKit dressing) |
+| `lvl_path_clearance_min` | ≥ 1.0 m | narrowest navmesh width on the critical path | 3.0 m (Level 1); 1.5 m (Level 2 vault → corridor C) |
 | `lvl_verticality` | ≥ 1 per 20 m | elevation changes of 1 m or more per 20 m of spoke path | 0 |
 | `lvl_poi_interval_s` | 30–45 s | walking time between points of interest outdoors | not applicable (no outdoor space yet) |
 | `lvl_landmark_visible` | yes | a landmark visible from each area's entrance | no |
-| `lvl_light_spacing` | 8–12 m | distance between visible light sources along interior paths | 16.6–20.6 m (4 torches) |
+| `lvl_light_spacing` | 8–12 m | distance between visible light sources along interior paths | largest gap 11 m (13 torches); some 5–6 m, accepted as denser (2026-09-30) |
 | `lvl_floor_luminance_min` | ≥ 0.05 | walkable floor luminance from the gameplay camera | not measured |
 | `read_char_contrast_min` | ≥ 1.3 | character vs background luminance contrast | levy 1.57; player fixed by the fill light |
 | `perf_fps_min` | ≥ 60 | fps at the gameplay camera, any area | not measured |

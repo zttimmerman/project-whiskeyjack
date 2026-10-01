@@ -1,0 +1,69 @@
+[gd_resource type="Resource" script_class="FuncGodotMapSettings" format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/map/func_godot_map_settings.gd" id="1_settings"]
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_file.gd" id="2_fgd"]
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_solid_class.gd" id="3_solid"]
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="4_point"]
+[ext_resource type="Resource" path="res://addons/func_godot/fgd/vertex_merge_distance_base.tres" id="5_merge"]
+[ext_resource type="Resource" path="res://addons/func_godot/fgd/cull_interior_faces.tres" id="6_cull"]
+[ext_resource type="PackedScene" path="res://scenes/world/trials/CryptTorch.tscn" id="7_torch"]
+[ext_resource type="Material" path="res://assets/textures/brush/brush_material_template.tres" id="8_template"]
+
+[sub_resource type="Resource" id="Resource_worldspawn"]
+script = ExtResource("3_solid")
+spawn_type = 0
+origin_type = 1
+collision_shape_type = 2
+classname = "worldspawn"
+description = "Static crypt structure: one StaticBody3D with one MeshInstance3D and one concave CollisionShape3D (the navmesh bake reads its faces)."
+base_classes = Array[Resource]([ExtResource("5_merge"), ExtResource("6_cull")])
+meta_properties = Dictionary[String, Variant]({
+"color": Color(0.8, 0.8, 0.8, 1)
+})
+node_class = "StaticBody3D"
+
+[sub_resource type="Resource" id="Resource_func_room"]
+script = ExtResource("3_solid")
+spawn_type = 2
+origin_type = 4
+collision_shape_type = 2
+classname = "func_room"
+description = "A room or corridor built as its own StaticBody3D (mesh plus concave collision), so each room is a separate mesh: the renderer lights a mesh with at most 8 local lights."
+base_classes = Array[Resource]([ExtResource("5_merge"), ExtResource("6_cull")])
+meta_properties = Dictionary[String, Variant]({
+"color": Color(0.8, 0.8, 0.8, 1)
+})
+node_class = "StaticBody3D"
+
+[sub_resource type="Resource" id="Resource_light_torch"]
+script = ExtResource("4_point")
+scene_file = ExtResource("7_torch")
+apply_scale_on_map_build = false
+node_groups = Array[String](["nav_ignore"])
+classname = "light_torch"
+description = "Wall torch with its light (art bible: local lights only on visible sources). Its back faces the wall; 'angle' is the direction it faces. In the nav_ignore group: no collision, so the navmesh bake skips it."
+meta_properties = Dictionary[String, Variant]({
+"color": Color(1, 0.8, 0.5, 1),
+"size": AABB(-8, -8, -8, 16, 16, 16)
+})
+
+[sub_resource type="Resource" id="Resource_fgd"]
+script = ExtResource("2_fgd")
+fgd_name = "Whiskeyjack"
+entity_definitions = Array[Resource]([ExtResource("5_merge"), ExtResource("6_cull"), SubResource("Resource_worldspawn"), SubResource("Resource_func_room"), SubResource("Resource_light_torch")])
+
+[resource]
+script = ExtResource("1_settings")
+inverse_scale_factor = 32.0
+entity_fgd = SubResource("Resource_fgd")
+base_texture_dir = "res://assets/textures/brush"
+default_material = ExtResource("8_template")
+albedo_map_pattern = ""
+normal_map_pattern = ""
+metallic_map_pattern = ""
+roughness_map_pattern = ""
+emission_map_pattern = ""
+ao_map_pattern = ""
+height_map_pattern = ""
+orm_map_pattern = ""
+save_generated_materials = false

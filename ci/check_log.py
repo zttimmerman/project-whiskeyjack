@@ -4,7 +4,8 @@
     python3 ci/check_log.py --baseline ci/warnings-baseline.txt LOG [LOG ...]
     python3 ci/check_log.py --baseline ci/warnings-baseline.txt --update LOG [LOG ...]
 
-Fails (exit 1) when a log has any `ERROR:` or `SCRIPT ERROR:` line, when a warning isn't in the
+Fails (exit 1) when a log has any `ERROR:` or `SCRIPT ERROR:` line (or Dialogue Manager's
+"N errors found in <file>.dialogue"), when a warning isn't in the
 baseline (a new warning), or when a baseline entry no longer appears (a fixed warning: delete
 its line so the baseline only shrinks). The baseline is the list of warnings to burn down.
 
@@ -22,7 +23,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 ANSI = re.compile(r"\x1b\[[0-9;]*m")
 PROMPT = re.compile(r"^(debug> )+")
-ERROR = re.compile(r"^(SCRIPT )?ERROR: ")
+# Dialogue Manager's importer reports a .dialogue that doesn't compile only as "N errors found in <path>"
+ERROR = re.compile(r"^((SCRIPT )?ERROR: |\d+ errors? found in res://\S+\.dialogue$)")
 WARNING = re.compile(r"^WARNING: (.*)$")
 GDSCRIPT_AT = re.compile(r"^\s*at: GDScript::reload \((res://[^)]+)\)")
 RES_LINE = re.compile(r"(res://[^\s:()\"']+):\d+")

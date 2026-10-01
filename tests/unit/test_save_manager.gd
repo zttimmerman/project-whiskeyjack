@@ -25,9 +25,14 @@ var _real_mtime: int
 
 func before_test() -> void:
 	_real_mtime = _real_save_mtime()
-	_quest_snapshot = [QuestManager._active_quests.duplicate(true), QuestManager._completed_quests.duplicate()]
+	_quest_snapshot = [
+		QuestManager._active_quests.duplicate(true),
+		QuestManager._completed_quests.duplicate(),
+		QuestManager._flags.duplicate(true),
+	]
 	QuestManager._active_quests.clear()
 	QuestManager._completed_quests.clear()
+	QuestManager._flags.clear()
 
 	saves = auto_free(load("res://autoloads/SaveManager.gd").new())
 	add_child(saves)
@@ -62,6 +67,7 @@ func after_test() -> void:
 	world.free()
 	QuestManager._active_quests = _quest_snapshot[0]
 	QuestManager._completed_quests.assign(_quest_snapshot[1])
+	QuestManager._flags = _quest_snapshot[2]
 	assert_int(_real_save_mtime()).override_failure_message("user://save.json was modified").is_equal(_real_mtime)
 
 
@@ -90,6 +96,7 @@ func test_round_trip_restores_player_quests_and_kills() -> void:
 	player.stats.experience = 60
 	QuestManager.start_quest("clear_eastern_road")
 	QuestManager.advance_quest("clear_eastern_road")
+	QuestManager.set_flag("idrenna_turned_down")
 	saves.record_enemy_killed(enemy)
 	saves.save_game()
 	assert_bool(saves.save_exists()).is_true()
@@ -107,6 +114,7 @@ func test_round_trip_restores_player_quests_and_kills() -> void:
 	player.inventory.unequip_item("weapon", player.stats)
 	player.inventory.items.clear()
 	QuestManager._active_quests.clear()
+	QuestManager._flags.clear()
 	saves.load_game()
 
 	assert_vector(player.global_position).is_equal_approx(Vector3(3.0, 1.0, -2.0), Vector3.ONE * 0.001)
@@ -118,6 +126,7 @@ func test_round_trip_restores_player_quests_and_kills() -> void:
 	assert_int(player.inventory.items.size()).is_equal(2)
 	assert_str(player.inventory.equipment["weapon"].id).is_equal("sword_iron")
 	assert_str(QuestManager.get_quest_stage("clear_eastern_road")).is_equal("defeat_monsters")
+	assert_bool(QuestManager.get_flag("idrenna_turned_down")).is_true()
 	# The killed enemy leaves the group at once and is freed
 	assert_bool(enemy.is_in_group("enemy")).is_false()
 	assert_bool(enemy.is_queued_for_deletion()).is_true()
@@ -150,6 +159,17 @@ func test_other_format_version_is_ignored() -> void:
 	player.stats.current_hp = 100
 	saves.load_game()
 	assert_int(player.stats.current_hp).is_equal(100)
+
+
+func test_save_without_flags_loads_with_none() -> void:
+	# Saves from before world flags existed have no "flags" key; they load as "no flags set"
+	saves.save_game()
+	var data := _read_save()
+	data.quests.erase("flags")
+	_write_save(data)
+	QuestManager.set_flag("idrenna_turned_down")
+	saves.load_game()
+	assert_bool(QuestManager.has_flag("idrenna_turned_down")).is_false()
 
 
 func test_runtime_spawned_enemy_is_not_recorded() -> void:

@@ -49,12 +49,14 @@ jobs:
         run: godot --headless --path . --import < /dev/null 2>&1 | tee import-1.log
       - name: Import, second run (checked)
         run: godot --headless --path . --import < /dev/null 2>&1 | tee import-2.log
+      - name: Compile every .dialogue file and name each syntax error's line (ci/check_dialogue.gd)
+        run: godot --headless --path . -s ci/check_dialogue.gd < /dev/null 2>&1 | tee check-dialogue.log
       - name: Load every script and scene, with GDScript warnings on (-d)
         # -d prints GDScript warnings; stdin is /dev/null so the debugger never waits at a debug> prompt.
         run: godot --headless --path . -d -s ci/load_all.gd < /dev/null 2>&1 | tee load-all.log
       - name: Check the logs (no errors; warnings match ci/warnings-baseline.txt)
         if: ${{ !cancelled() }}
-        run: python3 ci/check_log.py --baseline ci/warnings-baseline.txt import-2.log load-all.log
+        run: python3 ci/check_log.py --baseline ci/warnings-baseline.txt import-2.log check-dialogue.log load-all.log
       - name: Keep the logs
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -75,8 +77,13 @@ jobs:
         run: command -v python3 || (apt-get update -qq && apt-get install -y -qq --no-install-recommends python3)
       - name: Test the sourced-asset licence rules (CC0 only; ci/test_sources.py)
         run: python3 ci/test_sources.py
+      - name: Test the brush-map writer and check committed .map files match their layouts
+        run: python3 tests/tools/test_brush_boxes.py
       - name: Run scripts/godot_validate.gd on every asset with a brief, plus the assets/sources.json check (no Blender renders)
         run: python3 ci/validate_assets.py
+      - name: Check the generated surface textures against their graphs, ramps and manifest (scripts/tools/make_textures.py --check)
+        # Verify only: regenerating needs Material Maker on a Mac. Fails on hand-edited or stale textures.
+        run: python3 scripts/tools/make_textures.py --check
 
   data-lint:
     name: data-lint (dialogues and quests)
@@ -84,7 +91,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - name: Lint data/dialogues and data/quests (baseline ci/data-lint-baseline.txt)
+      - name: Lint data/dialogues (.dialogue) and data/quests (baseline ci/data-lint-baseline.txt)
         run: python3 ci/data_lint.py
 
   lint:
@@ -158,15 +165,32 @@ jobs:
           restore-keys: godot-import-4.7.2-
       - name: Import
         run: godot --headless --path . --import < /dev/null 2>&1 | tee import.log
+      - name: Rebuild the brush maps (func_godot, trial B2) and fail if a committed build is stale
+        # scripts/tools/build_brush_maps.gd is the only writer of the scenes it builds from .map files.
+        # It runs before the navmesh bake, which reads the built scenes.
+        run: |
+          built="scenes/world/trials/CryptTrial_brushes.tscn"
+          mkdir -p /tmp/committed-brushes
+          for f in $built; do cp --parents "$f" /tmp/committed-brushes/; done
+          godot --headless --path . -s res://scripts/tools/build_brush_maps.gd < /dev/null 2>&1 | tee brushes.log
+          stale=0
+          for f in $built; do diff -u "/tmp/committed-brushes/$f" "$f" | cut -c1-200 | head -40 || stale=1; done
+          if [ "$stale" = 1 ]; then
+            echo "::error::Stale brush build: run godot --headless --path . -s res://scripts/tools/build_brush_maps.gd and commit the result"
+            exit 1
+          fi
       - name: Rebake the navmeshes and fail if the committed bake is stale
-        # scripts/tools/bake_navmeshes.gd is the only writer of scenes/world/*_navmesh.tres.
+        # scripts/tools/bake_navmeshes.gd is the only writer of scenes/world/*_navmesh.tres (and the
+        # trial's scenes/world/trials/*_navmesh.tres).
         run: |
           mkdir -p /tmp/committed
-          cp scenes/world/*_navmesh.tres scenes/world/Level*.tscn /tmp/committed/
+          for f in scenes/world/*_navmesh.tres scenes/world/Level*.tscn scenes/world/trials/*_navmesh.tres scenes/world/trials/CryptTrial.tscn; do
+            cp --parents "$f" /tmp/committed/
+          done
           godot --headless --path . -s res://scripts/tools/bake_navmeshes.gd < /dev/null 2>&1 | tee bake.log
           stale=0
-          for f in /tmp/committed/*; do
-            diff -u "$f" "scenes/world/$(basename "$f")" || stale=1
+          for f in $(cd /tmp/committed && find . -type f); do
+            diff -u "/tmp/committed/$f" "$f" || stale=1
           done
           if [ "$stale" = 1 ]; then
             echo "::error::Stale navmesh bake: run godot --headless --path . -s res://scripts/tools/bake_navmeshes.gd and commit the result"

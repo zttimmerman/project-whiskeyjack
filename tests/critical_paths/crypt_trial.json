@@ -1,0 +1,10 @@
+{
+  "scene": "res://scenes/world/trials/CryptTrial.tscn",
+  "note": "Trial B2 (docs/trials/func-godot.md): the corridor start, the doorway, the foot of the dais stairs and the dais top (y = 1). Read by scripts/tools/check_path_clearance.gd.",
+  "waypoints": [
+    {"name": "corridor_start", "position": [0, 0, 11]},
+    {"name": "doorway", "position": [0, 0, 0.5]},
+    {"name": "stairs_foot", "position": [0, 0, -5]},
+    {"name": "dais_top", "position": [0, 1, -8.5]}
+  ]
+}

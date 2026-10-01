@@ -217,6 +217,7 @@ func _serialize_quests() -> Dictionary:
 	return {
 		"active": active,
 		"completed": QuestManager._completed_quests.duplicate(),
+		"flags": QuestManager._flags.duplicate(true),
 	}
 
 
@@ -301,6 +302,10 @@ func _deserialize_player(player: Node, data: Dictionary) -> void:
 func _deserialize_quests(data: Dictionary) -> void:
 	QuestManager._active_quests.clear()
 	QuestManager._completed_quests.clear()
+	QuestManager._flags.clear()
+	# Saves from before world flags have no "flags" key
+	var flags: Dictionary = data.get("flags", {})
+	QuestManager._flags.merge(flags)
 
 	var completed: Array = data.get("completed", [])
 	for quest_id in completed:

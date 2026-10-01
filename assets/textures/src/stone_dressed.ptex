@@ -1,0 +1,243 @@
+{
+ "connections": [
+  {
+   "from": "bricks",
+   "from_port": 1,
+   "to": "block_tone",
+   "to_port": 0
+  },
+  {
+   "from": "block_tone",
+   "from_port": 0,
+   "to": "tone_amt",
+   "to_port": 0
+  },
+  {
+   "from": "surface",
+   "from_port": 0,
+   "to": "surface_amt",
+   "to_port": 0
+  },
+  {
+   "from": "tone_amt",
+   "from_port": 0,
+   "to": "sum",
+   "to_port": 0
+  },
+  {
+   "from": "surface_amt",
+   "from_port": 0,
+   "to": "sum",
+   "to_port": 1
+  },
+  {
+   "from": "sum",
+   "from_port": 0,
+   "to": "base",
+   "to_port": 0
+  },
+  {
+   "from": "base",
+   "from_port": 0,
+   "to": "masked",
+   "to_port": 0
+  },
+  {
+   "from": "bricks",
+   "from_port": 0,
+   "to": "masked",
+   "to_port": 1
+  },
+  {
+   "from": "masked",
+   "from_port": 0,
+   "to": "colorize",
+   "to_port": 0
+  },
+  {
+   "from": "colorize",
+   "from_port": 0,
+   "to": "export",
+   "to_port": 0
+  }
+ ],
+ "label": "Graph",
+ "name": "stone_dressed",
+ "node_position": {
+  "x": 0,
+  "y": 0
+ },
+ "nodes": [
+  {
+   "name": "bricks",
+   "node_position": {
+    "x": 0,
+    "y": 0
+   },
+   "parameters": {
+    "bevel": 0.12,
+    "columns": 2,
+    "corner": 0.0,
+    "mortar": 0.05,
+    "pattern": 0,
+    "repeat": 1,
+    "round": 0.0,
+    "row_offset": 0.5,
+    "rows": 4
+   },
+   "type": "bricks2"
+  },
+  {
+   "name": "block_tone",
+   "node_position": {
+    "x": 250,
+    "y": 100
+   },
+   "parameters": {
+    "edgecolor": 0.0
+   },
+   "seed_int": 1201,
+   "type": "fill_to_random_grey"
+  },
+  {
+   "name": "surface",
+   "node_position": {
+    "x": 0,
+    "y": 250
+   },
+   "parameters": {
+    "folds": 0,
+    "iterations": 5,
+    "noise": 1,
+    "offset": 0,
+    "persistence": 0.6,
+    "scale_x": 8,
+    "scale_y": 8
+   },
+   "seed_int": 1202,
+   "type": "fbm2"
+  },
+  {
+   "name": "tone_amt",
+   "node_position": {
+    "x": 500,
+    "y": 100
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0.0,
+    "default_in2": 0.3,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "surface_amt",
+   "node_position": {
+    "x": 500,
+    "y": 250
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0.0,
+    "default_in2": 0.25,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "sum",
+   "node_position": {
+    "x": 700,
+    "y": 150
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0.0,
+    "default_in2": 0.0,
+    "op": 0
+   },
+   "type": "math"
+  },
+  {
+   "name": "base",
+   "node_position": {
+    "x": 900,
+    "y": 150
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0.0,
+    "default_in2": 0.45,
+    "op": 0
+   },
+   "type": "math"
+  },
+  {
+   "name": "masked",
+   "node_position": {
+    "x": 1100,
+    "y": 50
+   },
+   "parameters": {
+    "clamp": true,
+    "default_in1": 0.0,
+    "default_in2": 0.0,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "colorize",
+   "node_position": {
+    "x": 1250,
+    "y": 50
+   },
+   "parameters": {
+    "gradient": {
+     "interpolation": 1,
+     "points": [
+      {
+       "a": 1,
+       "b": 0.14902,
+       "g": 0.160784,
+       "pos": 0.0,
+       "r": 0.180392
+      },
+      {
+       "a": 1,
+       "b": 0.25098,
+       "g": 0.278431,
+       "pos": 0.5,
+       "r": 0.301961
+      },
+      {
+       "a": 1,
+       "b": 0.4,
+       "g": 0.419608,
+       "pos": 0.85,
+       "r": 0.45098
+      }
+     ],
+     "type": "Gradient"
+    }
+   },
+   "type": "colorize"
+  },
+  {
+   "name": "export",
+   "node_position": {
+    "x": 1400,
+    "y": 0
+   },
+   "parameters": {
+    "format": 0,
+    "size": 11,
+    "suffix": "albedo"
+   },
+   "type": "export"
+  }
+ ],
+ "parameters": {},
+ "type": "graph"
+}

@@ -21,7 +21,11 @@ extends SceneTree
 const LEVELS := {
 	"res://scenes/world/Level1.tscn": "res://scenes/world/Level1_navmesh.tres",
 	"res://scenes/world/Level2.tscn": "res://scenes/world/Level2_navmesh.tres",
+	# Trial B2: brushwork built by scripts/tools/build_brush_maps.gd (docs/trials/func-godot.md)
+	"res://scenes/world/trials/CryptTrial.tscn": "res://scenes/world/trials/CryptTrial_navmesh.tres",
 }
+# Decorative nodes with no collision (a brush map's torches) are in this group; the bake skips them.
+const IGNORE_GROUP := "nav_ignore"
 const REGION := "NavigationRegion3D"
 
 # Cell size and height match the navigation map defaults (0.25 m). The agent sizes are whole cells:
@@ -126,8 +130,10 @@ static func bake_region(tree: SceneTree, scene_path: String, settings: Dictionar
 # Godot's own parser reads a CSG shape or a mesh through its render mesh, which warns about reading
 # RenderingServer meshes outside the editor. Collision faces are what the agent walks on, so each
 # collidable CSG shape adds its collision faces, and each StaticBody3D adds the faces of its box and
-# cylinder shapes. A mesh inside a StaticBody3D is that body's visual (its collision stands for it);
-# anything else that could carry geometry fails the bake, so no floor or wall is silently left out.
+# cylinder shapes, plus the concave trimesh of brush-built geometry. A mesh inside a StaticBody3D is that
+# body's visual (its collision stands for it), and a node in IGNORE_GROUP is decoration with no
+# collision; anything else that could carry geometry fails the bake, so no floor or wall is silently
+# left out.
 static func _add_collision_faces(
 	region: Node3D, source: NavigationMeshSourceGeometryData3D, scene_path: String
 ) -> bool:
@@ -160,8 +166,8 @@ static func _add_collision_faces(
 				ok = false
 				continue
 			source.add_faces(faces, col.global_transform)
-		elif node is StaticBody3D or _in_static_body(node, region):
-			continue  # the body's shapes carry it
+		elif node is StaticBody3D or _in_static_body(node, region) or _ignored(node, region):
+			continue  # the body's shapes carry it, or it's decoration
 		elif node is GeometryInstance3D or node is CollisionObject3D or node is CollisionShape3D:
 			push_error(
 				(
@@ -173,6 +179,15 @@ static func _add_collision_faces(
 	return ok
 
 
+static func _ignored(node: Node, region: Node) -> bool:
+	var at := node
+	while at != null and at != region:
+		if at.is_in_group(IGNORE_GROUP):
+			return true
+		at = at.get_parent()
+	return false
+
+
 static func _in_static_body(node: Node, region: Node) -> bool:
 	var at := node.get_parent()
 	while at != null and at != region:
@@ -182,7 +197,8 @@ static func _in_static_body(node: Node, region: Node) -> bool:
 	return false
 
 
-# Triangles of a box or cylinder collision shape in its own space (empty for any other shape).
+# Triangles of a box, cylinder or concave (trimesh) collision shape in its own space (empty for any
+# other shape).
 static func shape_faces(shape: Shape3D) -> PackedVector3Array:
 	var faces := PackedVector3Array()
 	if shape is BoxShape3D:
@@ -198,6 +214,8 @@ static func shape_faces(shape: Shape3D) -> PackedVector3Array:
 			[c.call(1, -1, -1), c.call(1, 1, -1), c.call(1, 1, 1), c.call(1, -1, 1)],
 		]:
 			faces.append_array([quad[0], quad[1], quad[2], quad[0], quad[2], quad[3]])
+	elif shape is ConcavePolygonShape3D:
+		faces = (shape as ConcavePolygonShape3D).get_faces()
 	elif shape is CylinderShape3D:
 		var r: float = (shape as CylinderShape3D).radius
 		var y: float = (shape as CylinderShape3D).height / 2.0

@@ -135,7 +135,7 @@ scripts/
   stats/            CharacterStats resource
   dialogue/         DialogueRunner
 data/
-  dialogues/        JSON dialogue trees
+  dialogues/        Dialogue Manager .dialogue scripts
   items/            .tres item resources
   quests/           JSON quest definitions
 assets/             Meshes, textures, audio, fonts

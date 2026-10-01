@@ -1,0 +1,70 @@
+diff --git a/addons/dialogue_manager/components/update_button.gd b/addons/dialogue_manager/components/update_button.gd
+index acc0655..da1bb38 100644
+--- a/addons/dialogue_manager/components/update_button.gd
++++ b/addons/dialogue_manager/components/update_button.gd
+@@ -51,6 +51,9 @@ func apply_theme() -> void:
+ 
+ 
+ func check_for_update() -> void:
++	# [whiskeyjack patch] The addon is pinned (docs/trials/dialogue-manager.md): no update check
++	# against GitHub and no one-click in-place update, which would also drop these patches.
++	return
+ 	if DMSettings.get_user_value("check_for_updates", true):
+ 		http_request.request(REMOTE_RELEASES_URL)
+ 
+diff --git a/addons/dialogue_manager/dialogue_manager.gd b/addons/dialogue_manager/dialogue_manager.gd
+index 4f34b4f..c3d1c18 100644
+--- a/addons/dialogue_manager/dialogue_manager.gd
++++ b/addons/dialogue_manager/dialogue_manager.gd
+@@ -122,6 +122,13 @@ func _ready() -> void:
+ 		_send_current_scene_to_debugger()
+ 
+ 
++# [whiskeyjack patch] Unregister the debugger capture, or Godot logs "Capture not registered: 'dm'"
++# at exit in every debug run.
++func _exit_tree() -> void:
++	if EngineDebugger.has_capture("dm"):
++		EngineDebugger.unregister_message_capture("dm")
++
++
+ ## Set a random seed.
+ func reseed_randomizer(next_seed: int) -> void:
+ 	_rng.seed = next_seed
+@@ -350,6 +357,9 @@ func get_line(resource: DialogueResource, key: String, extra_game_states: Array)
+ 			data.id = key
+ 
+ 	# Set up a line object.
++	# [whiskeyjack patch] On a copy: writing the resource into its own lines dictionary is a
++	# reference cycle, and every dialogue that ran is reported "still in use at exit".
++	data = data.duplicate()
+ 	data.resource = resource
+ 	var line: DialogueLine = await create_dialogue_line(data, extra_game_states)
+ 
+diff --git a/addons/dialogue_manager/plugin.gd b/addons/dialogue_manager/plugin.gd
+index e06b2b6..2507be8 100644
+--- a/addons/dialogue_manager/plugin.gd
++++ b/addons/dialogue_manager/plugin.gd
+@@ -45,6 +45,11 @@ func _enter_tree() -> void:
+ 		export_plugin = DMExportPlugin.new()
+ 		add_export_plugin(export_plugin)
+ 
++		# [whiskeyjack patch] Headless editors (CI imports) need only the importer and exporter. The
++		# editor UI loads every global class script for autocomplete and leaks them at exit.
++		if DisplayServer.get_name() == "headless":
++			return
++
+ 		inspector_plugin = DMInspectorPlugin.new()
+ 		add_inspector_plugin(inspector_plugin)
+ 
+@@ -76,6 +81,11 @@ func _exit_tree() -> void:
+ 	remove_export_plugin(export_plugin)
+ 	export_plugin = null
+ 
++	# [whiskeyjack patch] Nothing else was added headless (see _enter_tree).
++	if DisplayServer.get_name() == "headless":
++		instance = null
++		return
++
+ 	remove_inspector_plugin(inspector_plugin)
+ 	inspector_plugin = null
+ 

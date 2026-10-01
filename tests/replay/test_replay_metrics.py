@@ -214,6 +214,18 @@ class SyntheticLogs(unittest.TestCase):
         r = rm.compute({"id": "ttk_player_backfile", "enemy": "Archer"}, rm.sort_events(events))
         self.assertEqual(r["value"], 3)
 
+    def test_reach_distance_is_the_end_position_to_the_point(self):
+        events = [ev(0, "scenario_start", scenario="walk"),
+                  ev(300, "scenario_end", player_position=[0.0, 1.9, -8.0], player_hp=100)]
+        r = rm.compute({"id": "reach_distance_m", "point": [0, 1.9, -9]}, events)
+        self.assertAlmostEqual(r["value"], 1.0)
+        self.assertEqual(r["detail"]["end_position"], [0.0, 1.9, -8.0])
+
+    def test_reach_distance_needs_a_point(self):
+        events = [ev(300, "scenario_end", player_position=[0.0, 0.0, 0.0])]
+        with self.assertRaises(ValueError):
+            rm.compute({"id": "reach_distance_m"}, events)
+
 
 class Evaluate(unittest.TestCase):
     def setUp(self):
