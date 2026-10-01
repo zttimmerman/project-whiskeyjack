@@ -1,0 +1,34 @@
+{
+  "verdict": "escalate",
+  "summary": "The KayKit small barrel matches the brief's shape, scale and budget and has no visible holes, but one palette assertion fails: Wet Slate before correction is 22.3 against a limit of 20. The failure looks misleading, and whether the hoops should be dark iron rather than mid grey is a palette call for the user.",
+  "findings": [
+    {
+      "check": "color",
+      "severity": "major",
+      "observation": "The kit's hoops are cool blue-grey (#96A2A7, 45% of the footprint), 22.3 dE from Wet Slate before correction (limit 20); after correction #89827D at 9.1 dE passes, and they still read as plain grey metal bands.",
+      "evidence": "assertion 'palette color Wet Slate close before correction'; 01_front.png, 04_top.png"
+    },
+    {
+      "check": "concept_match",
+      "severity": "minor",
+      "observation": "Prompt asks for dark iron hoops; they render mid warm grey (grouped under Wet Slate, not Blackened Iron).",
+      "evidence": "01_front.png, 02_right.png; Blackened Iron share 0.0"
+    }
+  ],
+  "questions_answered": [
+    "1.0 x 1.0 x 1.02 m barrel with brown staves and two hoops; hoops mid grey.",
+    "Two parts; bung's loop not visible.",
+    "207/1320, 128 px.",
+    "Barrow Oak passes; Wet Slate fails before (22.3) and passes after (9.1).",
+    "Not applicable."
+  ],
+  "images_seen": [
+    "01_front.png",
+    "02_right.png",
+    "03_back.png",
+    "04_top.png",
+    "05_clay_front.png",
+    "06_wireframe_front.png"
+  ],
+  "escalation_reason": "Only the before-correction Wet Slate assertion fails (22.3 > 20) and the views show it is misleading. No revise action fits a sourced kit piece; the user decides (1) whether to accept the before-correction miss for this kit colour and (2) whether hoops stay mid warm grey or group toward Blackened Iron."
+}

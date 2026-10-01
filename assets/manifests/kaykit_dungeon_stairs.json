@@ -941,7 +941,7 @@
     "sha256": "48735cb35af7ba2d256b1a8ddcc44f00e6a6946d558379a12c45d1cb42b4030b"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-09-30T06:27:08+00:00",
+  "updated_at": "2026-10-01T00:58:34+00:00",
   "judgments": [
     {
       "kind": "verdict",
@@ -1122,6 +1122,94 @@
       "revise": null,
       "escalation_reason": null,
       "summary": "The KayKit stairs piece matches the brief's straight stone staircase with side walls. It is well under budget, every assertion passes, and there are no visible holes or loose fragments.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-10-01T00:58:34+00:00",
+      "packet": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-3/packet.json",
+      "packet_sha256": "7df682f06474054bfbc210697f3f7b507564033d1bf95bc70626f221704eb6b9",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/kaykit_dungeon_stairs.glb",
+        "sha256": "fd9526c98cc4f7d1313b8a1b7b18f444342f195f8929d76436a48557e2ba289c",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-3/01_front.png",
+          "sha256": "70d8664321a1ec7d5e28bf5dbf3f6357e54013b74dbca3897a0007c559751b02",
+          "source": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-3/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-3/02_right.png",
+          "sha256": "87fafab87323e8ef5b17be2ea0b4be0549373cb5defff143f0ff15cd1936814a",
+          "source": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-3/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-3/03_back.png",
+          "sha256": "e5ac1edb815967c646f94bd5b03d86aeb3a91f6c3008893c92222257379267f0",
+          "source": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-3/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-3/04_top.png",
+          "sha256": "e64d669a2ee875d2de8ee9d0b8f221fae91596afc72a38251e033450e23108be",
+          "source": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-3/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-3/05_clay_front.png",
+          "sha256": "da2e832ef3a156c3354edacd3342b26b3bf00e68932a2e9f04f7793e64d3321d",
+          "source": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-3/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-3/06_wireframe_front.png",
+          "sha256": "3cf9c864c4721d8d9998d5ea144fed8e5cfaf8acc5962abb786920ca5c934faa",
+          "source": "assets/manifests/kaykit_dungeon_stairs/judge/mesh-3/work/views/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/kaykit_dungeon_stairs/judge/mesh-3/01_front.png",
+        "assets/manifests/kaykit_dungeon_stairs/judge/mesh-3/02_right.png",
+        "assets/manifests/kaykit_dungeon_stairs/judge/mesh-3/03_back.png",
+        "assets/manifests/kaykit_dungeon_stairs/judge/mesh-3/04_top.png",
+        "assets/manifests/kaykit_dungeon_stairs/judge/mesh-3/05_clay_front.png",
+        "assets/manifests/kaykit_dungeon_stairs/judge/mesh-3/06_wireframe_front.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "concept_match",
+          "severity": "minor",
+          "observation": "Side walls are full-height sloped walls, not low; posts at the top end only.",
+          "evidence": "02_right.png, 01_front.png"
+        },
+        {
+          "check": "other",
+          "severity": "minor",
+          "observation": "Extra dark base slab around the bottom, part of the kit piece.",
+          "evidence": "01_front.png, 03_back.png, 05_clay_front.png"
+        },
+        {
+          "check": "malformed",
+          "severity": "minor",
+          "observation": "Small dark notch on one raised brick on the right wall, visible only up close.",
+          "evidence": "02_right.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The KayKit stairs match the brief's prompt (grey stone steps between two side walls ending in square posts), and every budget, texture, hole and palette assertion passes; the only findings are minor.",
       "next": "proceed to the next stage"
     }
   ]

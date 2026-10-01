@@ -721,7 +721,7 @@
     "sha256": "4ef708c068c965dcd5d097662c6438025e58abbb3ad9dde92c46b91721be8cbe"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-09-30T06:26:49+00:00",
+  "updated_at": "2026-10-01T00:58:34+00:00",
   "judgments": [
     {
       "kind": "verdict",
@@ -889,6 +889,88 @@
       "revise": null,
       "escalation_reason": null,
       "summary": "The KayKit large barrel matches the brief: bulging reddish-brown staves, two dark iron hoops, a lid with a bung. It is well within budget, every assertion passes, and none of its open loops shows in any view.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-10-01T00:58:34+00:00",
+      "packet": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-3/packet.json",
+      "packet_sha256": "1107956a7c550f8c76d40025689bbd6c8fb25f514d7ff65b7c60296b40fab354",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/kaykit_dungeon_barrel_large.glb",
+        "sha256": "8027d8bca13712e2e6cdd2e96f845489b6308bf512b24db93e626db7246aae13",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-3/01_front.png",
+          "sha256": "d4515a0407ffb8071d1d66c3d38ddd25a4917987683a5b76b2f77bd51d312beb",
+          "source": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-3/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-3/02_right.png",
+          "sha256": "ca4af9aa0e811178a21e77a416de9abb7e73099058719920b544e5d55009ac3f",
+          "source": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-3/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-3/03_back.png",
+          "sha256": "ab13924776261ac8b47d4d2c23f74d5562475b1aaff3dc804725cf3313ef6115",
+          "source": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-3/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-3/04_top.png",
+          "sha256": "367ff7d9b83a162ee2fae27ab86b05f88c979982524888df9729213a19f991f5",
+          "source": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-3/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-3/05_clay_front.png",
+          "sha256": "7e146d6b6b1b1160d50f9e3e8f08127dcf817d4fee438dbd1313769bfaed486a",
+          "source": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-3/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-3/06_wireframe_front.png",
+          "sha256": "03ba93451ff5320362ecc73b45263ca6869a19f7337ae1d31622d4c412375977",
+          "source": "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-3/work/views/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-3/01_front.png",
+        "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-3/02_right.png",
+        "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-3/03_back.png",
+        "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-3/04_top.png",
+        "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-3/05_clay_front.png",
+        "assets/manifests/kaykit_dungeon_barrel_large/judge/mesh-3/06_wireframe_front.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "color",
+          "severity": "minor",
+          "observation": "Hoops read mid charcoal grey (Wet Slate #6B655F), not near-black Blackened Iron; still contrast with the wood.",
+          "evidence": "01_front.png-03_back.png; Blackened Iron share 0.0"
+        },
+        {
+          "check": "other",
+          "severity": "minor",
+          "observation": "No underside view; body reports 0 boundary loops, so likely closed.",
+          "evidence": "metrics.mesh.parts[0].boundary_loops = 0"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The KayKit large barrel matches the brief: bulging brown staves, two iron hoops and a lid with a bung. It is well under budget, every assertion passes, and no open boundary loop shows in any view.",
       "next": "proceed to the next stage"
     }
   ]

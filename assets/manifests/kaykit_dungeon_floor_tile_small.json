@@ -658,5 +658,95 @@
     "sha256": "ea7ffeb282aa00613ca0e2388467792f126f8f45e693cd0da7802e482aad9557"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-09-30T06:27:04+00:00"
+  "updated_at": "2026-10-01T00:58:34+00:00",
+  "judgments": [
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-10-01T00:58:34+00:00",
+      "packet": "assets/manifests/kaykit_dungeon_floor_tile_small/judge/mesh-1/packet.json",
+      "packet_sha256": "ee3f64c0cc2396196d4c3deaee074bdf4038cd2b592d21274b2e114d6be8a0c3",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/kaykit_dungeon_floor_tile_small.glb",
+        "sha256": "00eec0aa54a81089a1555bf739efafe9a93df551e2ba2c43b53fd5744bd645c0",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_small/judge/mesh-1/01_front.png",
+          "sha256": "2785ff96f9e6b7760a41b9692ef494052f2816d921d143cc68a90386c75347e8",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_small/judge/mesh-1/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_small/judge/mesh-1/02_right.png",
+          "sha256": "d055282aad65078520462ee655ec61de208ffca7ac7197832ea45aa4889ec5a7",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_small/judge/mesh-1/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_small/judge/mesh-1/03_back.png",
+          "sha256": "9eea097d8d604d0f0ef982b3ed20ba3ec48aa3360884124ec466c385367ca73d",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_small/judge/mesh-1/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_small/judge/mesh-1/04_top.png",
+          "sha256": "a60268a26e6966fe0b0eef897c77592297a1dce85d0287f997f79b53c06e9446",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_small/judge/mesh-1/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_small/judge/mesh-1/05_clay_front.png",
+          "sha256": "37130917b30e93e54e6e88293d920c8e790498ef02d5c448f49e9129cba6e62f",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_small/judge/mesh-1/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_small/judge/mesh-1/06_wireframe_front.png",
+          "sha256": "3721e51163f8852b69310b89071c07f357c6ede76ab444b502897e1587dc9488",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_small/judge/mesh-1/work/views/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/kaykit_dungeon_floor_tile_small/judge/mesh-1/01_front.png",
+        "assets/manifests/kaykit_dungeon_floor_tile_small/judge/mesh-1/02_right.png",
+        "assets/manifests/kaykit_dungeon_floor_tile_small/judge/mesh-1/03_back.png",
+        "assets/manifests/kaykit_dungeon_floor_tile_small/judge/mesh-1/04_top.png",
+        "assets/manifests/kaykit_dungeon_floor_tile_small/judge/mesh-1/05_clay_front.png",
+        "assets/manifests/kaykit_dungeon_floor_tile_small/judge/mesh-1/06_wireframe_front.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "color",
+          "severity": "minor",
+          "observation": "Renders warm brown, not grey; correction moved it slightly further from Wet Slate (9.3 -> 10.1, limit 12) over only 107 texels.",
+          "evidence": "04_top.png, 01_front.png vs 05_clay_front.png"
+        },
+        {
+          "check": "concept_match",
+          "severity": "minor",
+          "observation": "Joints read mainly as bevel shading, only slightly darker in albedo.",
+          "evidence": "04_top.png"
+        },
+        {
+          "check": "malformed",
+          "severity": "minor",
+          "observation": "1 open loop, not visible; likely the underside.",
+          "evidence": "01_front.png-03_back.png; holes per part"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The tile matches the prompt: a 2 m by 2 m, 0.15 m flagstone slab with recessed joints, 66 of 1320 triangles, 128 px texture, and every assertion passes. The corrected color leans brown, not grey.",
+      "next": "proceed to the next stage"
+    }
+  ]
 }

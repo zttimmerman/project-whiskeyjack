@@ -1,0 +1,27 @@
+{
+  "verdict": "pass",
+  "summary": "The KayKit box_small is a clean, closed 1 m crate with brown plank panels inside bevelled edge battens. It is well within budget and every assertion passes; the only note is that the battens are grey rather than a darker brown.",
+  "findings": [
+    {
+      "check": "concept_match",
+      "severity": "minor",
+      "observation": "Edge battens are mid warm grey (Wet Slate, #766F6A after correction), not darker wood, and close in value to the planks; the prompt says 'darker edge battens'. Still reads as a crate.",
+      "evidence": "01_front.png-04_top.png; Wet Slate share 0.4775"
+    }
+  ],
+  "questions_answered": [
+    "1 m cube with brown planks present; battens changed to grey frame.",
+    "One welded part, 0 boundary loops, 0 non-manifold edges.",
+    "188/1320, 128 px, 1.0 m.",
+    "Wet Slate 15.6 -> 1.6, Barrow Oak 10.2 -> 0.9.",
+    "Not applicable."
+  ],
+  "images_seen": [
+    "01_front.png",
+    "02_right.png",
+    "03_back.png",
+    "04_top.png",
+    "05_clay_front.png",
+    "06_wireframe_front.png"
+  ]
+}

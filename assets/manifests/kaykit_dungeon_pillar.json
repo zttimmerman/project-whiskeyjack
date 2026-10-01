@@ -661,5 +661,89 @@
     "sha256": "712d172a133fb33e4ada3407eaeb11aca3fc1f25009e1add9b3080c7f89e8e23"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-09-30T06:27:06+00:00"
+  "updated_at": "2026-10-01T00:58:34+00:00",
+  "judgments": [
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-10-01T00:58:34+00:00",
+      "packet": "assets/manifests/kaykit_dungeon_pillar/judge/mesh-1/packet.json",
+      "packet_sha256": "26f6551b60f97f80b04dacac33a03b0be59c4bcc42112ddaed7705989d0a2475",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/kaykit_dungeon_pillar.glb",
+        "sha256": "59ce541262e168a89cebf76817fd200c66d918daed86062a40bb68c37c23e7cd",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/kaykit_dungeon_pillar/judge/mesh-1/01_front.png",
+          "sha256": "4659164a3d6ad7c10e885c4dda66b82f861c96d91b50827a41fa697dbc9988b3",
+          "source": "assets/manifests/kaykit_dungeon_pillar/judge/mesh-1/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/kaykit_dungeon_pillar/judge/mesh-1/02_right.png",
+          "sha256": "2b7006878ddbc15785dbddcb11d0db9e36b883accb76e995a22dcf373f580703",
+          "source": "assets/manifests/kaykit_dungeon_pillar/judge/mesh-1/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/kaykit_dungeon_pillar/judge/mesh-1/03_back.png",
+          "sha256": "78cdd1a9c56f5684dc58668bf0895f09916c3c4971a58abda7653d174c7ad7ea",
+          "source": "assets/manifests/kaykit_dungeon_pillar/judge/mesh-1/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/kaykit_dungeon_pillar/judge/mesh-1/04_top.png",
+          "sha256": "5ed44bcecfe130fd33831f4657c57c51221420f95794288ca751a6055f049283",
+          "source": "assets/manifests/kaykit_dungeon_pillar/judge/mesh-1/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/kaykit_dungeon_pillar/judge/mesh-1/05_clay_front.png",
+          "sha256": "ac9d88a1a5dc49d49fd59dff106b015683cdf3a6d5dce1c7733c341a12cb58ec",
+          "source": "assets/manifests/kaykit_dungeon_pillar/judge/mesh-1/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/kaykit_dungeon_pillar/judge/mesh-1/06_wireframe_front.png",
+          "sha256": "57fdf61890f07ab7137e61f823298b3cff4f69ff66f7b575fdc11f356135c390",
+          "source": "assets/manifests/kaykit_dungeon_pillar/judge/mesh-1/work/views/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/kaykit_dungeon_pillar/judge/mesh-1/01_front.png",
+        "assets/manifests/kaykit_dungeon_pillar/judge/mesh-1/02_right.png",
+        "assets/manifests/kaykit_dungeon_pillar/judge/mesh-1/03_back.png",
+        "assets/manifests/kaykit_dungeon_pillar/judge/mesh-1/04_top.png",
+        "assets/manifests/kaykit_dungeon_pillar/judge/mesh-1/05_clay_front.png",
+        "assets/manifests/kaykit_dungeon_pillar/judge/mesh-1/06_wireframe_front.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "concept_match",
+          "severity": "minor",
+          "observation": "Octagonal in plan (a square with heavily cut corners), not square; still reads as a squared stone pillar. The prompt wording is what to fix for a sourced piece.",
+          "evidence": "04_top.png, 01_front.png, 06_wireframe_front.png"
+        },
+        {
+          "check": "color",
+          "severity": "minor",
+          "observation": "Renders darker than the corrected Wet Slate median #6C645F, closer to Rain Stone; assertions pass, likely render lighting.",
+          "evidence": "01_front.png-03_back.png; Wet Slate delta_e_after 2.7"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The KayKit pillar matches the brief's pillar with plinth and capital, is well under budget, and passes every color and hole assertion; the only gap is that the cross-section is a chamfered octagon where the prompt says square.",
+      "next": "proceed to the next stage"
+    }
+  ]
 }

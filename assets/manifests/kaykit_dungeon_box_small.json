@@ -657,5 +657,83 @@
     "sha256": "14a012ec6bd19230d5564de0e85c735f532cba11b2803e01866b862a79e81db6"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-09-30T06:26:59+00:00"
+  "updated_at": "2026-10-01T00:58:34+00:00",
+  "judgments": [
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-10-01T00:58:34+00:00",
+      "packet": "assets/manifests/kaykit_dungeon_box_small/judge/mesh-1/packet.json",
+      "packet_sha256": "bc5663ba6ef8fe1eacb00b7085cc8ddd91dadd06c9664955da4b07f6f83963b9",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/kaykit_dungeon_box_small.glb",
+        "sha256": "6649d7407ba9f2d631b5ec0307eab6e20c7c0e98ee2bfa5854fcfe0f0d6fa13a",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/kaykit_dungeon_box_small/judge/mesh-1/01_front.png",
+          "sha256": "1498d3c5c11de00bac17f16983e8a5f5f2e42f6e41fe5cef099704d6c5ee30ed",
+          "source": "assets/manifests/kaykit_dungeon_box_small/judge/mesh-1/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/kaykit_dungeon_box_small/judge/mesh-1/02_right.png",
+          "sha256": "0f5b69c9bff39a23d1837a775e328bfdeff8af650a4c7120de65ab6aecafe57d",
+          "source": "assets/manifests/kaykit_dungeon_box_small/judge/mesh-1/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/kaykit_dungeon_box_small/judge/mesh-1/03_back.png",
+          "sha256": "5e2ecb1a7e289895d90852d967cbb8cfb2658abcafba7940d3874fc63c0a15a3",
+          "source": "assets/manifests/kaykit_dungeon_box_small/judge/mesh-1/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/kaykit_dungeon_box_small/judge/mesh-1/04_top.png",
+          "sha256": "d7cf4ddc4fbb76a6865a52469c82c847e317334e3d15a5e8697bc270f588dc16",
+          "source": "assets/manifests/kaykit_dungeon_box_small/judge/mesh-1/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/kaykit_dungeon_box_small/judge/mesh-1/05_clay_front.png",
+          "sha256": "c3dde8be7d581b9f10517c33e9eeb52d0f31a88aef32c9451a296a472d092dc2",
+          "source": "assets/manifests/kaykit_dungeon_box_small/judge/mesh-1/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/kaykit_dungeon_box_small/judge/mesh-1/06_wireframe_front.png",
+          "sha256": "c829b7c66f53c963eef058440b4cd39814bc87070a76ce4c882a3de733e0e1a1",
+          "source": "assets/manifests/kaykit_dungeon_box_small/judge/mesh-1/work/views/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/kaykit_dungeon_box_small/judge/mesh-1/01_front.png",
+        "assets/manifests/kaykit_dungeon_box_small/judge/mesh-1/02_right.png",
+        "assets/manifests/kaykit_dungeon_box_small/judge/mesh-1/03_back.png",
+        "assets/manifests/kaykit_dungeon_box_small/judge/mesh-1/04_top.png",
+        "assets/manifests/kaykit_dungeon_box_small/judge/mesh-1/05_clay_front.png",
+        "assets/manifests/kaykit_dungeon_box_small/judge/mesh-1/06_wireframe_front.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "concept_match",
+          "severity": "minor",
+          "observation": "Edge battens are mid warm grey (Wet Slate, #766F6A after correction), not darker wood, and close in value to the planks; the prompt says 'darker edge battens'. Still reads as a crate.",
+          "evidence": "01_front.png-04_top.png; Wet Slate share 0.4775"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The KayKit box_small is a clean, closed 1 m crate with brown plank panels inside bevelled edge battens. It is well within budget and every assertion passes; the only note is that the battens are grey rather than a darker brown.",
+      "next": "proceed to the next stage"
+    }
+  ]
 }

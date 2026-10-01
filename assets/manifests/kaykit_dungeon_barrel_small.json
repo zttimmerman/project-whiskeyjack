@@ -681,5 +681,97 @@
     "sha256": "67e5db8d8507d1499bba4a2808ac94ea2efe6f61c78784a4dfc69fa4277feb21"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-09-30T06:26:52+00:00"
+  "updated_at": "2026-10-01T01:00:14+00:00",
+  "judgments": [
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-10-01T00:58:34+00:00",
+      "packet": "assets/manifests/kaykit_dungeon_barrel_small/judge/mesh-1/packet.json",
+      "packet_sha256": "9fe957adafe513c5884627450853d3fc4e03a8737be2e7d2506b49cf32153ce0",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/kaykit_dungeon_barrel_small.glb",
+        "sha256": "8d68d0e62d900102028ecc96b6c2255d2b899cfd158e936a795d717a55af924c",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/kaykit_dungeon_barrel_small/judge/mesh-1/01_front.png",
+          "sha256": "52df49ce91b8f23567ceff8f9e5a0c7b6cbca90b696039f70907193fa24f24c8",
+          "source": "assets/manifests/kaykit_dungeon_barrel_small/judge/mesh-1/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/kaykit_dungeon_barrel_small/judge/mesh-1/02_right.png",
+          "sha256": "8ccb124aee6fadb4352ae71d6a82d83b4a7725fbd1b49c924e8f591cbbcde371",
+          "source": "assets/manifests/kaykit_dungeon_barrel_small/judge/mesh-1/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/kaykit_dungeon_barrel_small/judge/mesh-1/03_back.png",
+          "sha256": "e3faf2a9dc061454347d20d71772088cd8e1e2b85db32e1cf9cfd909a128ed3d",
+          "source": "assets/manifests/kaykit_dungeon_barrel_small/judge/mesh-1/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/kaykit_dungeon_barrel_small/judge/mesh-1/04_top.png",
+          "sha256": "ec9ae6a72bb95ff63f5cb6f3a2c8553af57fe4a48af358540419ed5fed84786e",
+          "source": "assets/manifests/kaykit_dungeon_barrel_small/judge/mesh-1/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/kaykit_dungeon_barrel_small/judge/mesh-1/05_clay_front.png",
+          "sha256": "e18f81a0ab74590946ecfe9e7e213fc87e58c225e20b16a1d0cd78311e105fd0",
+          "source": "assets/manifests/kaykit_dungeon_barrel_small/judge/mesh-1/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/kaykit_dungeon_barrel_small/judge/mesh-1/06_wireframe_front.png",
+          "sha256": "667f1f6409b3f1bbd82cf45cabe7100067fba5a8a240ec0eef86873eb9e1e02c",
+          "source": "assets/manifests/kaykit_dungeon_barrel_small/judge/mesh-1/work/views/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/kaykit_dungeon_barrel_small/judge/mesh-1/01_front.png",
+        "assets/manifests/kaykit_dungeon_barrel_small/judge/mesh-1/02_right.png",
+        "assets/manifests/kaykit_dungeon_barrel_small/judge/mesh-1/03_back.png",
+        "assets/manifests/kaykit_dungeon_barrel_small/judge/mesh-1/04_top.png",
+        "assets/manifests/kaykit_dungeon_barrel_small/judge/mesh-1/05_clay_front.png",
+        "assets/manifests/kaykit_dungeon_barrel_small/judge/mesh-1/06_wireframe_front.png"
+      ],
+      "assertions_failed": [
+        "palette color Wet Slate close before correction"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "color",
+          "severity": "major",
+          "observation": "The kit's hoops are cool blue-grey (#96A2A7, 45% of the footprint), 22.3 dE from Wet Slate before correction (limit 20); after correction #89827D at 9.1 dE passes, and they still read as plain grey metal bands.",
+          "evidence": "assertion 'palette color Wet Slate close before correction'; 01_front.png, 04_top.png"
+        },
+        {
+          "check": "concept_match",
+          "severity": "minor",
+          "observation": "Prompt asks for dark iron hoops; they render mid warm grey (grouped under Wet Slate, not Blackened Iron).",
+          "evidence": "01_front.png, 02_right.png; Blackened Iron share 0.0"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "Only the before-correction Wet Slate assertion fails (22.3 > 20) and the views show it is misleading. No revise action fits a sourced kit piece; the user decides (1) whether to accept the before-correction miss for this kit colour and (2) whether hoops stay mid warm grey or group toward Blackened Iron.",
+      "summary": "The KayKit small barrel matches the brief's shape, scale and budget and has no visible holes, but one palette assertion fails: Wet Slate before correction is 22.3 against a limit of 20. The failure looks misleading, and whether the hoops should be dark iron rather than mid grey is a palette call for the user.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "resolution",
+      "stage": "mesh",
+      "recorded_at": "2026-10-01T01:00:14+00:00",
+      "decision": "User 2026-09-30: accept; the before-correction Wet Slate miss (22.3 > 20) is the kit's cool-grey hoops, corrected to warm mid grey and passing after (9.1); hoops stay mid grey rather than Blackened Iron"
+    }
+  ]
 }

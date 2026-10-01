@@ -1,0 +1,27 @@
+{
+  "verdict": "pass",
+  "summary": "The KayKit wall_doorway matches the brief's prompt element by element, every assertion passes, and none of the open boundary loops shows in any view; one minor color note.",
+  "findings": [
+    {
+      "check": "color",
+      "severity": "minor",
+      "observation": "Iron ring handle and mount render mid grey close to the wall stone, not near-black Blackened Iron (0% share). Not visible at gameplay distance.",
+      "evidence": "01_front.png, 03_back.png; Blackened Iron share 0.0"
+    }
+  ],
+  "questions_answered": [
+    "All prompt elements present: 4 m wall, arched doorway, separate plank door, two battens, iron ring on both faces.",
+    "15 open loops, at most 2 per part, none visible.",
+    "1068/1320, 128 px, 4.0 x 1.0 x 4.0 m.",
+    "Wet Slate 2.2, Rain Stone 0.9, Barrow Oak 1.2 after correction.",
+    "Not applicable."
+  ],
+  "images_seen": [
+    "01_front.png",
+    "02_right.png",
+    "03_back.png",
+    "04_top.png",
+    "05_clay_front.png",
+    "06_wireframe_front.png"
+  ]
+}

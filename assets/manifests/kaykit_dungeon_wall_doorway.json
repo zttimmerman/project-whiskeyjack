@@ -1080,7 +1080,7 @@
     "sha256": "05579f0293fd603c4fea47aaf50438288ab960a13b81dd929cdeccdae36aa053"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-09-30T06:27:13+00:00",
+  "updated_at": "2026-10-01T00:58:34+00:00",
   "judgments": [
     {
       "kind": "verdict",
@@ -1255,6 +1255,82 @@
       "revise": null,
       "escalation_reason": null,
       "summary": "The KayKit wall_doorway matches the brief's prompt: a 4 m grey stone wall with an arched doorway and a separate plank door with two battens and an iron ring. It is in budget, its colors are in tolerance, no open loop is visible in any view, and every assertion passes.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-10-01T00:58:34+00:00",
+      "packet": "assets/manifests/kaykit_dungeon_wall_doorway/judge/mesh-3/packet.json",
+      "packet_sha256": "6389be2c3ae278f02fc1e4aeb9c21e2a6a4a62c0268fbe4310b4a402b1db896a",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/kaykit_dungeon_wall_doorway.glb",
+        "sha256": "b7e5d536b29ebccd28ad412498844c07e6e643eeceb69e9ffbfc6115f3f5b7ea",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/kaykit_dungeon_wall_doorway/judge/mesh-3/01_front.png",
+          "sha256": "fd5408a261ec72ededcc569ce25de79b974472bd56d9a66d1a782439aa0ee33c",
+          "source": "assets/manifests/kaykit_dungeon_wall_doorway/judge/mesh-3/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/kaykit_dungeon_wall_doorway/judge/mesh-3/02_right.png",
+          "sha256": "bd2b07ce3405763c5096b96ec2424f8a5406e6b4487b8f063957b88975ceec3a",
+          "source": "assets/manifests/kaykit_dungeon_wall_doorway/judge/mesh-3/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/kaykit_dungeon_wall_doorway/judge/mesh-3/03_back.png",
+          "sha256": "40c9e64387b0105468699ef24671e223a47ea1aa86cfea0c63b1c2b3459f7192",
+          "source": "assets/manifests/kaykit_dungeon_wall_doorway/judge/mesh-3/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/kaykit_dungeon_wall_doorway/judge/mesh-3/04_top.png",
+          "sha256": "5b9adc176bd07cc18f05b451b8d61cf33cbe933159844e521defbcda04ece9d8",
+          "source": "assets/manifests/kaykit_dungeon_wall_doorway/judge/mesh-3/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/kaykit_dungeon_wall_doorway/judge/mesh-3/05_clay_front.png",
+          "sha256": "0831e0d3be24817c3d4e809d49953361f38ed9085c97952134b041522e66668d",
+          "source": "assets/manifests/kaykit_dungeon_wall_doorway/judge/mesh-3/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/kaykit_dungeon_wall_doorway/judge/mesh-3/06_wireframe_front.png",
+          "sha256": "c3fc25f8a41b176f17657ff58619b2f65d8e4e6cd6296f638fcff6cf488aec6a",
+          "source": "assets/manifests/kaykit_dungeon_wall_doorway/judge/mesh-3/work/views/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/kaykit_dungeon_wall_doorway/judge/mesh-3/01_front.png",
+        "assets/manifests/kaykit_dungeon_wall_doorway/judge/mesh-3/02_right.png",
+        "assets/manifests/kaykit_dungeon_wall_doorway/judge/mesh-3/03_back.png",
+        "assets/manifests/kaykit_dungeon_wall_doorway/judge/mesh-3/04_top.png",
+        "assets/manifests/kaykit_dungeon_wall_doorway/judge/mesh-3/05_clay_front.png",
+        "assets/manifests/kaykit_dungeon_wall_doorway/judge/mesh-3/06_wireframe_front.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "color",
+          "severity": "minor",
+          "observation": "Iron ring handle and mount render mid grey close to the wall stone, not near-black Blackened Iron (0% share). Not visible at gameplay distance.",
+          "evidence": "01_front.png, 03_back.png; Blackened Iron share 0.0"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The KayKit wall_doorway matches the brief's prompt element by element, every assertion passes, and none of the open boundary loops shows in any view; one minor color note.",
       "next": "proceed to the next stage"
     }
   ]

@@ -1,0 +1,39 @@
+{
+  "verdict": "pass",
+  "summary": "The tile matches the prompt: a 2 m by 2 m, 0.15 m flagstone slab with recessed joints, 66 of 1320 triangles, 128 px texture, and every assertion passes. The corrected color leans brown, not grey.",
+  "findings": [
+    {
+      "check": "color",
+      "severity": "minor",
+      "observation": "Renders warm brown, not grey; correction moved it slightly further from Wet Slate (9.3 -> 10.1, limit 12) over only 107 texels.",
+      "evidence": "04_top.png, 01_front.png vs 05_clay_front.png"
+    },
+    {
+      "check": "concept_match",
+      "severity": "minor",
+      "observation": "Joints read mainly as bevel shading, only slightly darker in albedo.",
+      "evidence": "04_top.png"
+    },
+    {
+      "check": "malformed",
+      "severity": "minor",
+      "observation": "1 open loop, not visible; likely the underside.",
+      "evidence": "01_front.png-03_back.png; holes per part"
+    }
+  ],
+  "questions_answered": [
+    "2 x 2 x 0.15 m flagstones present; grey reads brown; joints subtle.",
+    "One part, 0 non-manifold edges.",
+    "66/1320, 128 px.",
+    "Wet Slate 9.3 -> 10.1.",
+    "Not applicable."
+  ],
+  "images_seen": [
+    "01_front.png",
+    "02_right.png",
+    "03_back.png",
+    "04_top.png",
+    "05_clay_front.png",
+    "06_wireframe_front.png"
+  ]
+}

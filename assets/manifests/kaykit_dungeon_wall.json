@@ -1101,7 +1101,7 @@
     "sha256": "ac51d3ee007623e2749957d92227e6fb8fffa688bd3fa5c14bcc11d574253348"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-09-30T06:27:11+00:00",
+  "updated_at": "2026-10-01T00:58:34+00:00",
   "judgments": [
     {
       "kind": "verdict",
@@ -1276,6 +1276,82 @@
       "revise": null,
       "escalation_reason": null,
       "summary": "The KayKit wall matches the brief's prompt (4 x 4 x 1 m grey stone wall with raised blocks on both faces and a darker band along top and base), uses 494 of its 1320 triangles, passes every colour assertion, and no open loop shows in any view.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-10-01T00:58:34+00:00",
+      "packet": "assets/manifests/kaykit_dungeon_wall/judge/mesh-3/packet.json",
+      "packet_sha256": "795b2269c0159ffe8e9932697883ffee4369719aafb074f1ecb55bf75bebb6c2",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/kaykit_dungeon_wall.glb",
+        "sha256": "c8dc3256dfe6b98220eab6870762e0681af5686534095a1add1d663cdadec486",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-3/01_front.png",
+          "sha256": "af095044ddbb40af4f36141a400e6a898778f183f50211155af987939371a32e",
+          "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-3/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-3/02_right.png",
+          "sha256": "5d8621353c6e1ed05a36961b4341ff8bf6db17510ae444a30c5e4fa4409a227c",
+          "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-3/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-3/03_back.png",
+          "sha256": "4b5cd88e54ad88d3a3e983a79582fd44c2739887c3266c9c5b4545db4c90c7b9",
+          "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-3/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-3/04_top.png",
+          "sha256": "8c0aa6b2325fad954dfc3580cdd3fbf53b87d8ecc71bec83bcd24a8e14e151b1",
+          "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-3/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-3/05_clay_front.png",
+          "sha256": "63212b3528791694bd2c4af65252f5b22b417f9ccea43b66c076eff678173f05",
+          "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-3/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/kaykit_dungeon_wall/judge/mesh-3/06_wireframe_front.png",
+          "sha256": "06d833dc342261fe738817a273679ecaabe69779a68b68bb906dde4a2f650f14",
+          "source": "assets/manifests/kaykit_dungeon_wall/judge/mesh-3/work/views/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/kaykit_dungeon_wall/judge/mesh-3/01_front.png",
+        "assets/manifests/kaykit_dungeon_wall/judge/mesh-3/02_right.png",
+        "assets/manifests/kaykit_dungeon_wall/judge/mesh-3/03_back.png",
+        "assets/manifests/kaykit_dungeon_wall/judge/mesh-3/04_top.png",
+        "assets/manifests/kaykit_dungeon_wall/judge/mesh-3/05_clay_front.png",
+        "assets/manifests/kaykit_dungeon_wall/judge/mesh-3/06_wireframe_front.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "malformed",
+          "severity": "minor",
+          "observation": "Two raised blocks show a small lighter triangular facet where neighbouring blocks overlap; visible only up close.",
+          "evidence": "01_front.png, 03_back.png, 05_clay_front.png, 06_wireframe_front.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The KayKit wall matches the brief's prompt: a 4 x 1 x 4 m grey stone wall with raised blocks on both faces and darker bands at the top and base. It is well within budget, every assertion passes, and no open boundary loop shows in any view.",
       "next": "proceed to the next stage"
     }
   ]

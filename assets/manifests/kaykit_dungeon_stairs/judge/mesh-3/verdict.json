@@ -1,0 +1,39 @@
+{
+  "verdict": "pass",
+  "summary": "The KayKit stairs match the brief's prompt (grey stone steps between two side walls ending in square posts), and every budget, texture, hole and palette assertion passes; the only findings are minor.",
+  "findings": [
+    {
+      "check": "concept_match",
+      "severity": "minor",
+      "observation": "Side walls are full-height sloped walls, not low; posts at the top end only.",
+      "evidence": "02_right.png, 01_front.png"
+    },
+    {
+      "check": "other",
+      "severity": "minor",
+      "observation": "Extra dark base slab around the bottom, part of the kit piece.",
+      "evidence": "01_front.png, 03_back.png, 05_clay_front.png"
+    },
+    {
+      "check": "malformed",
+      "severity": "minor",
+      "observation": "Small dark notch on one raised brick on the right wall, visible only up close.",
+      "evidence": "02_right.png"
+    }
+  ],
+  "questions_answered": [
+    "Straight staircase, 8 treads, side walls and posts present (walls full-height).",
+    "15 parts, one loop each, none visible.",
+    "358/1320, 128 px.",
+    "Wet Slate 12.4 -> 2.7, Rain Stone 9.7 -> 0.5.",
+    "Not applicable."
+  ],
+  "images_seen": [
+    "01_front.png",
+    "02_right.png",
+    "03_back.png",
+    "04_top.png",
+    "05_clay_front.png",
+    "06_wireframe_front.png"
+  ]
+}

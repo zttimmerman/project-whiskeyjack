@@ -1,0 +1,33 @@
+{
+  "verdict": "pass",
+  "summary": "The KayKit box_large matches the brief: a 1.5 m cube with brown plank panels set in a grey bevelled frame on every face shown. It is well within budget, has no holes, and every assertion passes.",
+  "findings": [
+    {
+      "check": "missing",
+      "severity": "minor",
+      "observation": "No view shows the bottom face; closure is checked only by metrics (0 boundary loops, 0 non-manifold edges). Never seen in play.",
+      "evidence": "images 01-04; metrics.mesh.holes_boundary_loops = 0"
+    },
+    {
+      "check": "color",
+      "severity": "minor",
+      "observation": "Planks read warm mid-brown rather than clearly reddish-brown; Barrow Oak dE 0.9 after correction, within tolerance.",
+      "evidence": "01_front.png, 04_top.png"
+    }
+  ],
+  "questions_answered": [
+    "All prompt elements present, 1.5 m cube.",
+    "1 part, 0 boundary loops, 0 non-manifold edges.",
+    "188/1320, 128 px, 1.5 m.",
+    "Wet Slate 15.6 -> 1.6, Barrow Oak 10.2 -> 0.9, 100% of UV area.",
+    "Not applicable."
+  ],
+  "images_seen": [
+    "01_front.png",
+    "02_right.png",
+    "03_back.png",
+    "04_top.png",
+    "05_clay_front.png",
+    "06_wireframe_front.png"
+  ]
+}

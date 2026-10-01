@@ -761,5 +761,89 @@
     "sha256": "1cffd1efa5a4a3dcac1771e5bae7fa4e8ba4863bbe3e080cebe350699fc97e5a"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-09-30T06:26:54+00:00"
+  "updated_at": "2026-10-01T00:58:34+00:00",
+  "judgments": [
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-10-01T00:58:34+00:00",
+      "packet": "assets/manifests/kaykit_dungeon_barrel_small_stack/judge/mesh-1/packet.json",
+      "packet_sha256": "fb8053efb754eb806f3855f1f0acfb1f48824e45b109d5008f7e95bf23b1f565",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/kaykit_dungeon_barrel_small_stack.glb",
+        "sha256": "01ae707799207639da7de69b8d29c4323ac439da845c9d200b7af4ce01d87784",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/kaykit_dungeon_barrel_small_stack/judge/mesh-1/01_front.png",
+          "sha256": "ecee7b4ed6b27e64484a287142424152483949eb63370a25e2a11b3eee21b798",
+          "source": "assets/manifests/kaykit_dungeon_barrel_small_stack/judge/mesh-1/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/kaykit_dungeon_barrel_small_stack/judge/mesh-1/02_right.png",
+          "sha256": "97b5b8966988a6fc170f23cd26ad197e6ca5929c317a6c7fb502222019d0b239",
+          "source": "assets/manifests/kaykit_dungeon_barrel_small_stack/judge/mesh-1/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/kaykit_dungeon_barrel_small_stack/judge/mesh-1/03_back.png",
+          "sha256": "4c3baeca67f59672453cdcdb57d2b4195f25d5d1c0fa229fb2d72d92afd0385c",
+          "source": "assets/manifests/kaykit_dungeon_barrel_small_stack/judge/mesh-1/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/kaykit_dungeon_barrel_small_stack/judge/mesh-1/04_top.png",
+          "sha256": "1bec50fad1a1e9563e4daa35b88a8c66fc1191cbed8c7b3e7d69a28308bdf417",
+          "source": "assets/manifests/kaykit_dungeon_barrel_small_stack/judge/mesh-1/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/kaykit_dungeon_barrel_small_stack/judge/mesh-1/05_clay_front.png",
+          "sha256": "ac28c716846dbf7020881de4f7fdab1abc1036bad1ed31d428bb9a41cf18fc4f",
+          "source": "assets/manifests/kaykit_dungeon_barrel_small_stack/judge/mesh-1/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/kaykit_dungeon_barrel_small_stack/judge/mesh-1/06_wireframe_front.png",
+          "sha256": "f9c7a1c7635963670a79d7dec9b04a1cd44f7ede99a49656f7a665da24d95642",
+          "source": "assets/manifests/kaykit_dungeon_barrel_small_stack/judge/mesh-1/work/views/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/kaykit_dungeon_barrel_small_stack/judge/mesh-1/01_front.png",
+        "assets/manifests/kaykit_dungeon_barrel_small_stack/judge/mesh-1/02_right.png",
+        "assets/manifests/kaykit_dungeon_barrel_small_stack/judge/mesh-1/03_back.png",
+        "assets/manifests/kaykit_dungeon_barrel_small_stack/judge/mesh-1/04_top.png",
+        "assets/manifests/kaykit_dungeon_barrel_small_stack/judge/mesh-1/05_clay_front.png",
+        "assets/manifests/kaykit_dungeon_barrel_small_stack/judge/mesh-1/06_wireframe_front.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "color",
+          "severity": "minor",
+          "observation": "Hoops and lid rims mid warm grey (#827B76, Wet Slate) rather than near-black Blackened Iron; still read as metal bands.",
+          "evidence": "02_right.png, 04_top.png; Blackened Iron share 0.0"
+        },
+        {
+          "check": "other",
+          "severity": "minor",
+          "observation": "Three 15-triangle bung parts with one open loop each on the front lids; no visible gap; none on the back lids.",
+          "evidence": "01_front.png, 06_wireframe_front.png, 03_back.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The KayKit barrel_small_stack matches the brief: three wooden barrels lying on their sides in a pyramid (two on the floor, one on top), brown staves with iron hoops, within budget, every assertion passing and no visible holes.",
+      "next": "proceed to the next stage"
+    }
+  ]
 }

@@ -658,7 +658,7 @@
     "sha256": "41a64032b8b34fba1ab31bad38b3dce27deb295af58fbd729110f8e0e9209aea"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-09-30T06:27:01+00:00",
+  "updated_at": "2026-10-01T00:58:34+00:00",
   "judgments": [
     {
       "kind": "verdict",
@@ -832,6 +832,88 @@
       "revise": null,
       "escalation_reason": null,
       "summary": "The KayKit large floor tile matches the brief: a 4 x 4 x 0.15 m slab of octagon flags with diamond flags between them, 188 of 1320 triangles, one 128 px albedo texture, and every assertion passes.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-10-01T00:58:34+00:00",
+      "packet": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-3/packet.json",
+      "packet_sha256": "ef37b53ecd1d5d41099d432ef7bce0dfe1c6ffc986cd1dd7f66a6ed4d2868b59",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/kaykit_dungeon_floor_tile_large.glb",
+        "sha256": "3d19db4d9c2bc071102da85b07e2ee4b8dad70579fa58b7a4ef51fb30117fa37",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-3/01_front.png",
+          "sha256": "78361288e0c728e051b0456cf9ca3afa606b5360aa406f052e03b9ca7560022c",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-3/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-3/02_right.png",
+          "sha256": "3987f99ab8860a42c3081218533244c3c96967892570f4af02d5864c2fdb4e2e",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-3/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-3/03_back.png",
+          "sha256": "103dce6c6a7dfba386c8bc46fb663fbb234f55a6c88e46784156bb29d2389cde",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-3/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-3/04_top.png",
+          "sha256": "b36c1893032127dd157f97afaa13cd2eeaffd0606f38001c1b02f20fcf2cf757",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-3/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-3/05_clay_front.png",
+          "sha256": "76d0e76de5245dfdf4543f676fa0d08c4969db421e42ca8b075189a821e167fc",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-3/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-3/06_wireframe_front.png",
+          "sha256": "dcb70fc6ff38adb2cdb5133e0fdb778bff6cd1d55f151df77fce0d25774dc500",
+          "source": "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-3/work/views/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-3/01_front.png",
+        "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-3/02_right.png",
+        "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-3/03_back.png",
+        "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-3/04_top.png",
+        "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-3/05_clay_front.png",
+        "assets/manifests/kaykit_dungeon_floor_tile_large/judge/mesh-3/06_wireframe_front.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "color",
+          "severity": "minor",
+          "observation": "After correction the stone reads warm mid-brown (#7C6554) rather than dark brownish grey; within tolerance (dE 10.1 vs 12).",
+          "evidence": "04_top.png; Wet Slate delta_e_after 10.1"
+        },
+        {
+          "check": "other",
+          "severity": "minor",
+          "observation": "1 open loop on the single part, not visible; likely the open underside.",
+          "evidence": "holes per part 1 vs 2"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The floor tile matches the prompt: a 4 x 4 x 0.15 m slab with an octagon and diamond flag pattern. It is 188 of 1320 triangles with one 128 texture, all assertions pass, and only a slight warm-brown color shift is noted.",
       "next": "proceed to the next stage"
     }
   ]
