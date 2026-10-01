@@ -134,15 +134,15 @@ For each clip it writes a timestamped 14-frame strip (side and three-quarter, or
 | `idle` | player | `Sword_Idle` (UAL1) | loop | sword-ready stance |
 | `run` | player | `Jog_Fwd_Loop` (UAL1) | 0.93×, loop | native 5.36 m/s; the player moves at 5.0 |
 | `dodge_roll` | player | `Roll` (UAL1) | trim 0.20–1.10 s, 1.8× → 0.5 s | dodge raised to 0.5 s at 8.4 m/s (the same 4.2 m) |
-| `attack_light` | player | `Sword_Regular_A` (UAL2) | | all 3 combo hits use A. **Future code change:** per-hit names for `_A`, `_B`, `_C` |
+| `attack_light` | player | `Sword_Regular_A` (UAL2) | markers tell 0.17, contact 0.25 | all 3 combo hits use A. **Future code change:** per-hit names for `_A`, `_B`, `_C` |
 | `attack_heavy` | player | `Sword_Regular_C` (UAL2) | | a spinning slash |
 | `death` | player | `Death01` (UAL1) | in place | Hips/Root horizontal travel held at the first frame (the clip falls about 0.5 m backward) |
 | `idle` | Front-file | `Sword_Idle` (UAL1) | loop | reads hunched and forward, the art bible's Front-file posture |
 | `run` | Front-file | `Jog_Fwd_Loop` (UAL1) | 0.75×, loop | 4.6 m/s: **chase speed raised from 3.0 to 4.0, then to 4.6** (the levy's size; slid 0.80 m/s at 4.0) |
-| `attack` | Front-file | `Sword_Regular_A` (UAL2) | markers tell 0.17, contact 0.25 | the windup (`BaseEnemy.MELEE_WINDUP`, 0.6 s) eases into `tell`, holds it, and lands `contact` as the hitbox opens |
+| `attack` | Front-file | `Sword_Attack` (UAL1) | markers tell 0.32, contact 0.38 | was `Sword_Regular_A` (0.17 s lead-in, a low wind-back); `Sword_Attack` raises the blade overhead, the longest readable lead-in in either Standard pack. The windup (`BaseEnemy.MELEE_WINDUP`, 0.6 s) eases into `tell`, holds it, and lands `contact` as the hitbox opens |
 | `idle` | Back-file | `Idle_Loop` (UAL1) | loop | upright, the art bible's Back-file posture |
 | `run` | Back-file | `Walk_Loop` (UAL1) | 1.44×, loop | 1.5 m/s: **speed lowered from 2.5 to 1.4, then raised to 1.5** (the levy's size). Not `Walk_Formal_Loop`, which clasps the hands behind the back |
-| `attack` | Back-file | `OverhandThrow` (UAL2) | markers tell 0.27, contact 0.37 (release) | the draw (`ArcherEnemy.DRAW_TIME`, 0.9 s) is fitted the same way; a bow clip replaces it by re-measuring its markers, not the draw time. **STAND-IN for a bow draw.** No bow clip in either Standard pack; Quaternius's setup sheet shows `Bow_Aim_*` / `Bow_Notch` in a non-Standard UAL2 tier (not bought yet) |
+| `attack` | Back-file | `Spell_Simple_Enter` (UAL1) | markers tell 0.47, contact 0.53 (release) | raises the bow arm and aims (was `OverhandThrow`, which swung the bow down and away); the draw (`ArcherEnemy.DRAW_TIME`, 0.9 s) is fitted the same way; a bow clip replaces it by re-measuring its markers, not the draw time. **STAND-IN for a bow draw.** No bow clip in either Standard pack; Quaternius's setup sheet shows `Bow_Aim_*` / `Bow_Notch` in a non-Standard UAL2 tier (not bought yet) |
 | `stagger` | both levies | `Hit_Chest` (UAL1) | | 0.33 s for the 0.4 s stagger |
 | `death` | both levies | `Death01` (UAL1) | in place | the enemy's velocity and navigation stop the frame death starts; it's freed after the clip (2.4 s), fading over the last 0.3 s through material alpha |
 

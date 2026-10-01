@@ -59,7 +59,8 @@ const LIBRARIES := {
 	{
 		"idle": ["UAL1", "Sword_Idle", {"loop": true}],
 		"run": ["UAL1", "Jog_Fwd_Loop", {"loop": true, "speed": 0.75}],  # levy feet at 4.6 m/s: BaseEnemy speed
-		"attack": ["UAL2", "Sword_Regular_A", {}],
+		# the longest readable lead-in in the Standard packs: the blade rises overhead for 0.32 s
+		"attack": ["UAL1", "Sword_Attack", {}],
 		"stagger": ["UAL1", "Hit_Chest", {}],
 		"death": ["UAL1", "Death01", {"in_place": true}],
 	},
@@ -68,7 +69,8 @@ const LIBRARIES := {
 		"idle": ["UAL1", "Idle_Loop", {"loop": true}],
 		# levy feet at 1.5 m/s: ArcherEnemy speed matches (Walk_Formal clasps the hands behind the back)
 		"run": ["UAL1", "Walk_Loop", {"loop": true, "speed": 1.44}],
-		"attack": ["UAL2", "OverhandThrow", {}],  # STAND-IN: no bow-draw clip in either Standard pack
+		# STAND-IN: no bow-draw clip in either Standard pack; this raises the bow arm to aim
+		"attack": ["UAL1", "Spell_Simple_Enter", {}],
 		"stagger": ["UAL1", "Hit_Chest", {}],
 		"death": ["UAL1", "Death01", {"in_place": true}],
 	},
@@ -80,8 +82,9 @@ const LIBRARIES := {
 # from RightHand speed: the wind-back ends where the hand starts to accelerate, contact is the peak.
 # A clip swap re-measures them here; the windup lengths are gameplay constants and don't move with it.
 const MARKERS := {
-	"Sword_Regular_A": {"tell": 0.17, "contact": 0.25},
-	"OverhandThrow": {"tell": 0.27, "contact": 0.37},  # STAND-IN draw: the arm is back, then the throw
+	"Sword_Regular_A": {"tell": 0.17, "contact": 0.25},  # the player's light attack (for atk_hitbox_sync)
+	"Sword_Attack": {"tell": 0.32, "contact": 0.38},  # blade overhead, then the downward cut
+	"Spell_Simple_Enter": {"tell": 0.47, "contact": 0.53},  # STAND-IN draw: bow arm raised and aimed
 }
 
 var _sources := {}
