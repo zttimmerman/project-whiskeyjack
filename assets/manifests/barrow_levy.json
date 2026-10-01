@@ -2232,7 +2232,7 @@
     "sha256": "e3c912c2d51344044c0821f976f228a9e696dd91507c20577536912144ece15a"
   },
   "total_cost_credits": 155,
-  "updated_at": "2026-10-01T00:56:41+00:00",
+  "updated_at": "2026-10-01T20:50:52+00:00",
   "concept_approval": {
     "attempt": "concept-3",
     "image": {
@@ -2422,6 +2422,124 @@
       "revise": null,
       "escalation_reason": null,
       "summary": "The Back-file run clip (Walk_Loop) stays in place, its planted feet hold, and it shows no broken poses or stretching; all four assertions pass.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:attack",
+      "recorded_at": "2026-10-01T20:50:52+00:00",
+      "packet": "assets/manifests/barrow_levy/judge/motion-attack-1/packet.json",
+      "packet_sha256": "fa115ca1bff7d4c0361d71061d9d63b77fd546edf16bfd2523b2c6f6f94b21ca",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "attack",
+        "source": "res://data/animations/levy_frontfile_library.tres:attack",
+        "model": "res://assets/meshes/barrow_levy.glb",
+        "metrics_file": {
+          "path": ".tripo-out/barrow_levy/motion/frontfile_attack/attack_metrics.json",
+          "sha256": "667e923c290264f85fdbe63a6b7ad1772a21e78d6b41afcaccc089696328d096"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/barrow_levy/judge/motion-attack-1/01_frame_strip.png",
+          "sha256": "dafac78ddaae5b76cb61b90c60acb6a9097f94e18e8140009e4084760acdeca7",
+          "source": ".tripo-out/barrow_levy/motion/frontfile_attack/attack_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/barrow_levy/judge/motion-attack-1/02_onion_skin.png",
+          "sha256": "21938cac15b23b7f05222b1bd5f2e9bc0164160e5ea439c76683a400555e09ce",
+          "source": ".tripo-out/barrow_levy/motion/frontfile_attack/attack_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/barrow_levy/judge/motion-attack-1/03_plots.png",
+          "sha256": "8074862652ea15c99446c17355f14b362a548a2cf38a94444388a04257ed59e3",
+          "source": ".tripo-out/barrow_levy/motion/frontfile_attack/attack_plots.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/barrow_levy/judge/motion-attack-1/01_frame_strip.png",
+        "assets/manifests/barrow_levy/judge/motion-attack-1/02_onion_skin.png",
+        "assets/manifests/barrow_levy/judge/motion-attack-1/03_plots.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "During recovery (about 0.92-1.3 s) the right foot slides back into stance at about 1.4-1.5 m/s while flagged planted, driving foot-slide p90 1.277 m/s (reported only for action clips). It reads as the lunge recovery dragging the back foot in, not a retarget fault. The left-foot spike (~8 m/s at 0.31 s) is a contact-detection edge as the foot lifts into the lunge.",
+          "evidence": "03_plots.png; foot_slide_p90_mps 1.277, foot_slide_max_mps 8.145; 01_frame_strip.png frames 9-12"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The Front-file attack (Sword_Attack) stays in place, has no broken poses, and passes both numeric assertions. The only issue is a right-foot drag during the recovery, which is minor and comes from the source clip.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:attack",
+      "recorded_at": "2026-10-01T20:50:52+00:00",
+      "packet": "assets/manifests/barrow_levy/judge/motion-attack-2/packet.json",
+      "packet_sha256": "9f66e4055624a9befca18b65dba279f3b4647d305d5a8df361364ddd96ccb13e",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "attack",
+        "source": "res://data/animations/levy_backfile_library.tres:attack",
+        "model": "res://assets/meshes/barrow_levy.glb",
+        "metrics_file": {
+          "path": ".tripo-out/barrow_levy/motion/backfile_attack/attack_metrics.json",
+          "sha256": "45969b571c2481aec024dd7302ea0775ceebb5ff8dda7e30492e4e23b84ff33e"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/barrow_levy/judge/motion-attack-2/01_frame_strip.png",
+          "sha256": "2db74d8fa182fb6f75f9eb4134dd94b38234bd3a5b0ce0dda6d14c54ced39304",
+          "source": ".tripo-out/barrow_levy/motion/backfile_attack/attack_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/barrow_levy/judge/motion-attack-2/02_onion_skin.png",
+          "sha256": "a58fb25201f2f54af1b101e830105ce9b16aa9bf71a7d80b2bb11d855e74433e",
+          "source": ".tripo-out/barrow_levy/motion/backfile_attack/attack_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/barrow_levy/judge/motion-attack-2/03_plots.png",
+          "sha256": "d0b2c35502ca100afa1d740ee835cdbe91e5f963657a9f357a425433de74db4d",
+          "source": ".tripo-out/barrow_levy/motion/backfile_attack/attack_plots.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/barrow_levy/judge/motion-attack-2/01_frame_strip.png",
+        "assets/manifests/barrow_levy/judge/motion-attack-2/02_onion_skin.png",
+        "assets/manifests/barrow_levy/judge/motion-attack-2/03_plots.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "other",
+          "severity": "minor",
+          "observation": "From the side and top views it's unclear which arm is raised; the bow is socketed to hand_l, so it should be the left. Confirm in-game with the bow attached; not a motion defect. (Orchestrator: the g1_cmp_ranged comparison sheet, rendered with the bow attached, shows the bow arm raised and aimed.)",
+          "evidence": "01_frame_strip.png, 02_onion_skin.png (top view)"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The Back-file attack clip (the Spell_Simple_Enter stand-in) stays in place with planted feet and no broken poses, and both assertions pass.",
       "next": "proceed to the next stage"
     }
   ]
