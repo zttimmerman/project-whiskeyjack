@@ -357,6 +357,9 @@ func get_line(resource: DialogueResource, key: String, extra_game_states: Array)
 			data.id = key
 
 	# Set up a line object.
+	# [whiskeyjack patch] On a copy: writing the resource into its own lines dictionary is a
+	# reference cycle, and every dialogue that ran is reported "still in use at exit".
+	data = data.duplicate()
 	data.resource = resource
 	var line: DialogueLine = await create_dialogue_line(data, extra_game_states)
 

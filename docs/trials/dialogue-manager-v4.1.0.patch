@@ -1,5 +1,5 @@
 diff --git a/addons/dialogue_manager/dialogue_manager.gd b/addons/dialogue_manager/dialogue_manager.gd
-index 4f34b4f..2cb705e 100644
+index 4f34b4f..c3d1c18 100644
 --- a/addons/dialogue_manager/dialogue_manager.gd
 +++ b/addons/dialogue_manager/dialogue_manager.gd
 @@ -122,6 +122,13 @@ func _ready() -> void:
@@ -16,6 +16,16 @@ index 4f34b4f..2cb705e 100644
  ## Set a random seed.
  func reseed_randomizer(next_seed: int) -> void:
  	_rng.seed = next_seed
+@@ -350,6 +357,9 @@ func get_line(resource: DialogueResource, key: String, extra_game_states: Array)
+ 			data.id = key
+ 
+ 	# Set up a line object.
++	# [whiskeyjack patch] On a copy: writing the resource into its own lines dictionary is a
++	# reference cycle, and every dialogue that ran is reported "still in use at exit".
++	data = data.duplicate()
+ 	data.resource = resource
+ 	var line: DialogueLine = await create_dialogue_line(data, extra_game_states)
+ 
 diff --git a/addons/dialogue_manager/plugin.gd b/addons/dialogue_manager/plugin.gd
 index e06b2b6..2507be8 100644
 --- a/addons/dialogue_manager/plugin.gd
