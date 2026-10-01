@@ -1,8 +1,8 @@
 # Trial B2: func_godot and Quake `.map` crypt interiors
 
-Phase B, step 6 of `docs/tools-review-2026-09.md`. **The question:** should crypt interiors be built as `.map` brushwork (func_godot), alongside the KayKit pieces or instead of them? **This is evidence, not the decision.** The user decides.
+Phase B, step 6 of `docs/tools-review-2026-09.md`. **The question:** should crypt interiors be built as `.map` brushwork (func_godot), alongside the KayKit pieces or instead of them?
 
-**Recommendation: keep, with changes.** Build each interior's **shell** from brushes: floors, walls, ceilings, steps, daises, niches and clip collision. Keep **kit pieces** for modelled detail (pillars, door frames, dressing). The changes needed are listed under "If kept".
+**Outcome: adopted (user, 2026-10-01): brush shell + kit detail.** Each interior's **shell** is built from brushes: floors, walls, ceilings, steps, daises, niches and clip collision. **Kit pieces** stay for modelled detail (pillars, door frames, dressing). The brush budget in the art bible is approved as written. The addon stays disabled and is used only by the build tool. The trial recommended keep-with-changes; what's done and what's left is under "If kept".
 
 ## What was built
 
@@ -71,7 +71,7 @@ The stills come from `godot --path . res://scripts/review/level1_stills.tscn -- 
 ## Authoring and review
 
 - **What an agent writes and diffs:** the `.map`. A box brush is six plane lines, and `//` comments name each brush. **The built scene is base64 mesh data and isn't reviewable**; CI proves it matches the `.map`. A kit level's `.tscn` is diffable transforms, but it has to place about 90 pieces where brushes need 32, and it still has no ceiling.
-- **Writing planes by hand is error-prone.** I wrote the boxes in metres and used a scratch helper of about 190 lines to emit the plane triples, with the winding checked against the brush centre. **A committed "boxes to brushes" helper would make agent authoring routine** (a follow-up).
+- **Writing planes by hand is error-prone,** so agents write boxes in metres instead. `scripts/tools/brush_boxes.py` turns a layout (`scripts/tools/brush_layouts/<map>.py`) into the `.map`, winding each plane against the brush centre. `tests/tools/test_brush_boxes.py` checks the winding, and checks that every committed `.map` matches its layout (in CI's validate job). Once a map is edited in TrenchBroom, the `.map` becomes the source and its layout is deleted.
 - **TrenchBroom wasn't tested** because it isn't installed here. The map uses the Standard format with a `// Game:` header, and TrenchBroom should open it. On save, TrenchBroom rewrites comments as `// brush N`, so the names are lost; TrenchBroom layers and groups are how names survive.
 - **Iterations it took:**
   - func_godot points a node's −Z along `angle`, so the torch scene faces −Z.
@@ -101,10 +101,14 @@ The stills come from `godot --path . res://scripts/review/level1_stills.tscn -- 
 
 ## If kept (the "changes")
 
-1. Add the proposed budget line to the art bible. It is in this PR as "proposed": ≤ 2,000 triangles per brush entity, albedo 128×128 per tileable. The number is the user's call; the test reads it from the art bible.
-2. Commit a small box-to-brush helper for agent-written maps, and keep TrenchBroom for the human. Test the TrenchBroom round-trip, including the `clip`/`skip` textures it needs to display.
-3. Replace the placeholder tileables with the chosen texture source (B3), keeping the albedo-only template.
-4. Brush shells get kit detail: pillars, door frames and dressing as kit pieces, which the baker already reads.
-5. Report the cyclic preload upstream.
+Done:
+1. The budget line is in the art bible and approved: ≤ 2,000 triangles per brush entity, albedo 128×128 per tileable. The test reads the number from it.
+2. The box-to-brush helper is committed (`scripts/tools/brush_boxes.py`), with tests.
 
-**If the decision is drop:** delete `addons/func_godot/`, `data/maps/`, `scenes/world/trials/`, the brush textures, the generator and its CI step. The baker's concave-shape and `nav_ignore` support is harmless to keep. This note stays as the record.
+Follow-ups for the user:
+3. Set up TrenchBroom and test the round-trip, including the `clip`/`skip` textures it needs to display.
+4. Replace the placeholder tileables with Material Maker output (PR #30, kept), through the same albedo-only template.
+5. Brush shells get kit detail: pillars, door frames and dressing as kit pieces, which the baker already reads.
+6. Upstream issue, not filed: the cyclic preload (`func_godot_fgd_file.gd` → … → `func_godot_fgd.tres`).
+
+**To remove it later:** delete `addons/func_godot/`, `data/maps/`, `scenes/world/trials/`, the brush textures, the generators and their CI steps. The baker's concave-shape and `nav_ignore` support is harmless to keep. This note stays as the record.
