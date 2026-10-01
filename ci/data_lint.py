@@ -6,7 +6,7 @@
 Structure (always fails; never baselined):
   dialogues (data/dialogues/*.dialogue, Dialogue Manager scripts; syntax is checked by its own
   compiler at import and by ci/check_dialogue.gd): a `~ start` cue (where DialogueRunner begins),
-  every jump (`=> cue`) to a cue in the file or END, every QuestManager call naming a quest in
+  every jump (`=> cue`) to a cue in the file or END, every other cue jumped to from somewhere, every QuestManager call naming a quest in
   data/quests/ (and a stage of it, in `get_quest_stage("q") == "stage"`), and every flag a
   dialogue reads (`get_flag`/`has_flag`) set somewhere (`set_flag` in a dialogue or a script).
   Legacy JSON dialogues (data/dialogues/*.json), if any come back: a list of nodes with unique
@@ -183,6 +183,8 @@ def lint_dialogue_script(path, quests, flags_set, errors, limits):
     for n, target in jumps:
         if target not in cues and target not in ("END", "END!") and "/" not in target:
             errors.append(f"{where}:{n}: jump to unknown cue '{target}'")
+    for c in sorted(cues - {"start"} - {t for _, t in jumps}):
+        errors.append(f"{where}: cue '{c}' is never jumped to (unreachable from 'start')")
 
 
 def lint_quest(path, errors, limits):
