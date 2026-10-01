@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://318fsosadpkf"]
+
+[ext_resource type="PackedScene" uid="uid://dfgbi6m0l1gel" path="res://assets/meshes/kaykit_dungeon_pillar.glb" id="1_mesh"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_Shaft"]
+size = Vector3(1.1, 4, 1.1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_Capital"]
+size = Vector3(1.5, 0.8, 1.5)
+
+[node name="KitPillar" type="StaticBody3D"]
+
+[node name="Mesh" parent="." instance=ExtResource("1_mesh")]
+
+[node name="Shaft" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+shape = SubResource("BoxShape3D_Shaft")
+
+[node name="Capital" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.6, 0)
+shape = SubResource("BoxShape3D_Capital")

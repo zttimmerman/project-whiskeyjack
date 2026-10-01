@@ -1,0 +1,27 @@
+{
+  "verdict": "pass",
+  "summary": "The KayKit wall matches the brief's prompt: a 4 x 1 x 4 m grey stone wall with raised blocks on both faces and darker bands at the top and base. It is well within budget, every assertion passes, and no open boundary loop shows in any view.",
+  "findings": [
+    {
+      "check": "malformed",
+      "severity": "minor",
+      "observation": "Two raised blocks show a small lighter triangular facet where neighbouring blocks overlap; visible only up close.",
+      "evidence": "01_front.png, 03_back.png, 05_clay_front.png, 06_wireframe_front.png"
+    }
+  ],
+  "questions_answered": [
+    "All prompt elements present, 4 x 1 x 4 m.",
+    "23 parts, 1 open loop each, none visible.",
+    "494/1320, 128 px.",
+    "Wet Slate 12.4 -> 2.7, Rain Stone 9.2 -> 1.3.",
+    "Not applicable."
+  ],
+  "images_seen": [
+    "01_front.png",
+    "02_right.png",
+    "03_back.png",
+    "04_top.png",
+    "05_clay_front.png",
+    "06_wireframe_front.png"
+  ]
+}

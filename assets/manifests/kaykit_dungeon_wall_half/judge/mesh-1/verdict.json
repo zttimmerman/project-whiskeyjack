@@ -1,0 +1,33 @@
+{
+  "verdict": "pass",
+  "summary": "The KayKit wall_half matches the brief's prompt: a 2 x 1 x 4 m grey stone wall with raised blocks on both faces and darker bands at top and base. It is well under budget, the palette colors are within tolerance and no open boundary is visible in the views.",
+  "findings": [
+    {
+      "check": "malformed",
+      "severity": "minor",
+      "observation": "One raised block per face has a small triangular notch where a neighbouring block shell overlaps; from the source kit, visible only up close.",
+      "evidence": "01_front.png, 03_back.png, 05_clay_front.png, 06_wireframe_front.png"
+    },
+    {
+      "check": "missing",
+      "severity": "minor",
+      "observation": "12 open loops, at most 1 per part, none visible; body's is likely the open underside.",
+      "evidence": "holes per part; 01_front.png-04_top.png"
+    }
+  ],
+  "questions_answered": [
+    "All prompt elements present, 2.0 x 1.0 x 4.0 m.",
+    "No fused or floating parts; minor overlap notches.",
+    "272/1320, 128 px.",
+    "Wet Slate 12.9 -> 2.0, Rain Stone 9.0 -> 1.7.",
+    "Not applicable."
+  ],
+  "images_seen": [
+    "01_front.png",
+    "02_right.png",
+    "03_back.png",
+    "04_top.png",
+    "05_clay_front.png",
+    "06_wireframe_front.png"
+  ]
+}

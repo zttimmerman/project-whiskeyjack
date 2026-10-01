@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://by6hynjgeoa1g"]
+
+[ext_resource type="PackedScene" uid="uid://ds07wxty3d3rm" path="res://assets/meshes/kaykit_dungeon_floor_tile_small.glb" id="1_mesh"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_Floor"]
+size = Vector3(2, 0.15, 2)
+
+[node name="KitFloorSmall" type="StaticBody3D"]
+
+[node name="Mesh" parent="." instance=ExtResource("1_mesh")]
+
+[node name="Floor" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.025, 0)
+shape = SubResource("BoxShape3D_Floor")

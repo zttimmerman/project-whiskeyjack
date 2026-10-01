@@ -1,0 +1,20 @@
+# Written by scripts/tools/import_pack.py (pack kaykit_dungeon_remastered; provenance in assets/sources.json).
+# Budget from docs/art-bible.md, "Sourced props (kit dressing)": the art bible is the only source for these numbers.
+asset_id: kaykit_dungeon_pillar
+type: prop
+source: download
+pack: kaykit_dungeon_remastered
+source_url: "https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0/archive/b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07.zip"
+author: "Kay Lousberg"
+license: CC0-1.0
+source_file: .downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/pillar.gltf.glb
+brief: "Level dressing from KayKit Dungeon Remastered (CC0-1.0), piece 'pillar'. Keeps the kit's axes, origin and grid."
+prompt: "A square dungeon pillar, 1.5 m across and 4 m tall, of grey dressed stone with a wider plinth at the base and a capital at the top."
+triangle_budget: 1320
+texture_size: 128
+source_scale: 1.0
+pivot: source
+orientation: source
+palette: [Wet Slate, Rain Stone, Peat Black, Barrow Oak, Saddle Leather, Blackened Iron]
+atlas: assets/atlases/kaykit_dungeon_remastered/dungeon_texture_128.png
+atlas_source: .downloads/kaykit_dungeon_remastered/KayKit-Dungeon-Remastered-1.0-b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/texture/dungeon_texture.png
