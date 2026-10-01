@@ -6,8 +6,9 @@ extends GdUnitTestSuite
 # - the kit keeps one scale for the whole pack, set at import (assets/sources.json source_scale), so
 #   placed pieces are never scaled;
 # - lvl_dressing_density: 1–3 dressing props per 10 m² in each room;
-# - lvl_light_spacing: a visible light source every 8–12 m along the critical path, and every local
-#   light sits on a visible source (art bible → Rendering).
+# - lvl_light_spacing: no stretch of the critical path longer than 12 m without a visible light source
+#   (the user accepted denser spacing than the band's 8 m, 2026-09-30), and every local light sits on a
+#   visible source (art bible → Rendering).
 # The level is instanced without entering the tree, so no gameplay script runs; transforms are composed
 # up to the level root by hand.
 
