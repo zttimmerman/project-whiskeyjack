@@ -19,6 +19,8 @@ extends Node3D
 enum Mode { OVER_SHOULDER, LOCK_ON }
 
 const BODY_HALF_HEIGHT := 0.9  # the player's and the levy's capsules: origin to top
+const BODY_RADIUS := 0.4
+const TORSO_HEIGHT := 0.45  # above the body origin: the middle of his head and torso
 const FRAME_MARGIN_DEG := 3.0
 const LOCK_SWING_STEP := 0.3  # radians
 const LOCK_SWING_STEPS := 5
@@ -30,7 +32,7 @@ const LOCK_SWING_MAX := 1.5
 @export var fov: float = 72.0
 @export var look_down: float = 0.1  # radians the look tilts below the arm, so a wall ahead leaves floor in view
 @export var probe_radius: float = 0.3
-@export var ease_out_speed: float = 3.0  # 1/s, the arm growing back after a squeeze
+@export var ease_out_speed: float = 5.0  # 1/s, the arm growing back after a squeeze
 @export var squeeze_length: float = 1.5  # below this arm length the camera rises
 @export var squeeze_rise: float = 1.0  # metres at an arm of zero
 @export var lock_separation: float = 1.1  # metres the target should stand off the player's line of sight
@@ -83,7 +85,9 @@ func update_view(delta: float, yaw: float, pitch: float, target: Node3D) -> void
 		want_angle = _roomiest_angle(
 			pivot, yaw, pitch, clampf(asin(minf(lock_separation / dist, 1.0)), lock_angle_min, lock_angle_max)
 		)
-	_lock_angle = lerpf(_lock_angle, want_angle, 1.0 - exp(-lock_angle_speed * delta)) if delta > 0.0 else want_angle
+	# Swings faster while the arm is squeezed, so a lock with his back to a wall finds room quickly
+	var swing_speed := lock_angle_speed * (1.0 + 3.0 * clampf(1.0 - _length / squeeze_length, 0.0, 1.0))
+	_lock_angle = lerpf(_lock_angle, want_angle, 1.0 - exp(-swing_speed * delta)) if delta > 0.0 else want_angle
 
 	# Positive yaw turns left, so the view looks left of the target and the target sits right of centre
 	var view_yaw := yaw + _lock_angle
@@ -95,13 +99,22 @@ func update_view(delta: float, yaw: float, pitch: float, target: Node3D) -> void
 		_length = lerpf(_length, reach, 1.0 - exp(-ease_out_speed * delta))
 	var cam_pos: Vector3 = arm[0] + arm[2] * _length
 
-	# Squeezed: come in off the shoulder (back along the probed offset) and rise; the tilt below keeps him in view
+	# Squeezed: rise, and turn the look from the heading toward his torso, so he stays whole in view from above
+	# his shoulder; the tilt below then keeps his head and torso, and the target, inside the vertical FOV
 	var squeeze := clampf(1.0 - _length / squeeze_length, 0.0, 1.0)
+	var look_yaw := view_yaw
+	var look_pitch := pitch - look_down
 	if squeeze > 0.0:
-		var inward: Vector3 = (pivot - arm[0]) * squeeze
-		cam_pos += inward * _cast(cam_pos, cam_pos + inward)
 		var up := Vector3.UP * squeeze_rise * squeeze
 		cam_pos += up * _cast(cam_pos, cam_pos + up)
+		var ahead := Basis(Vector3.UP, view_yaw) * Basis(Vector3.RIGHT, look_pitch) * Vector3.FORWARD
+		var aim := (_body.global_position + Vector3.UP * TORSO_HEIGHT - cam_pos).normalized()
+		if mode == Mode.LOCK_ON:
+			# Between him and the target by angle, weighted to him: his framing is the stricter target
+			aim = (aim * 2.0 + (target.global_position - cam_pos).normalized()).normalized()
+		var look := ahead.slerp(aim, minf(squeeze * 2.0, 1.0))
+		look_yaw = atan2(-look.x, -look.z)
+		look_pitch = asin(clampf(look.y, -1.0, 1.0))
 	var spans := [[_body.global_position + Vector3.UP * BODY_HALF_HEIGHT, _body.global_position]]
 	if mode == Mode.LOCK_ON:
 		spans.append(
@@ -110,8 +123,8 @@ func update_view(delta: float, yaw: float, pitch: float, target: Node3D) -> void
 				target.global_position - Vector3.UP * BODY_HALF_HEIGHT
 			]
 		)
-	var look_pitch := _framed_pitch(cam_pos, view_yaw, pitch - look_down, spans)
-	camera.global_transform = Transform3D(Basis(Vector3.UP, view_yaw) * Basis(Vector3.RIGHT, look_pitch), cam_pos)
+	look_pitch = _framed_pitch(cam_pos, look_yaw, look_pitch, spans)
+	camera.global_transform = Transform3D(Basis(Vector3.UP, look_yaw) * Basis(Vector3.RIGHT, look_pitch), cam_pos)
 	_apply_shake(delta)
 
 
@@ -138,16 +151,20 @@ func _roomiest_angle(pivot: Vector3, yaw: float, pitch: float, angle: float) -> 
 	return best
 
 
-# The look pitch nearest `pitch` that keeps each span (a body's [top, bottom]) inside the vertical FOV, the
-# player's first; a target that can't fit with him is left out
+# The look pitch nearest `pitch` that keeps each span (a body's [top, bottom] on its axis, taken a capsule
+# radius nearer and further) inside the vertical FOV, the player's first; a target that can't fit with him is
+# left out
 func _framed_pitch(cam_pos: Vector3, view_yaw: float, pitch: float, spans: Array) -> float:
 	var half := deg_to_rad(fov * 0.5 - FRAME_MARGIN_DEG)
 	var forward := Basis(Vector3.UP, view_yaw) * Vector3.FORWARD
 	var lo := -PI * 0.5
 	var hi := PI * 0.5
 	for i in spans.size():
-		var top := _elevation(cam_pos, spans[i][0], forward)
-		var bottom := _elevation(cam_pos, spans[i][1], forward)
+		var top := -PI
+		var bottom := PI
+		for depth: float in [-BODY_RADIUS, BODY_RADIUS]:
+			top = maxf(top, _elevation(cam_pos, spans[i][0] + forward * depth, forward))
+			bottom = minf(bottom, _elevation(cam_pos, spans[i][1] + forward * depth, forward))
 		if maxf(lo, top - half) > minf(hi, bottom + half):
 			if i == 0:
 				return (top + bottom) * 0.5

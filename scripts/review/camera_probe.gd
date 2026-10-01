@@ -7,8 +7,8 @@ extends RefCounted
 ## scripts/review/replay_metrics.py turns them into the targets.
 ##
 ## A sample:
-##   player_in_view     the head and torso (capsule centre to top, capsule-wide, on the plane through the
-##                      axis facing the camera) project fully inside the viewport, in front of the near plane
+##   player_in_view     the head and torso (capsule centre to top: a box the capsule's width and depth, turned
+##                      to the camera's heading) project fully inside the viewport, in front of the near plane
 ##   player_visible     fraction of rays to a grid on that region not stopped by world geometry first
 ##   camera_in_player   the camera is inside the player's capsule (plus the near distance)
 ##   camera_in_world    the camera is inside world geometry (it would see through a wall)
@@ -99,17 +99,20 @@ static func wall_fill(camera: Camera3D, space: PhysicsDirectSpaceState3D) -> flo
 	return float(best) / float(WALL_GRID.x * WALL_GRID.y)
 
 
-# The corners of a body's region (a capsule-wide rectangle through its axis, facing the camera) all project
-# inside the viewport, in front of the near plane
+# The eight corners of a body's region (a box the capsule's width and depth around its axis, upright and turned
+# to the camera's heading) all project inside the viewport, in front of the near plane
 static func _in_view(camera: Camera3D, cap: Dictionary, bottom: float, top: float) -> bool:
 	var rect := camera.get_viewport().get_visible_rect()
-	var right := _flat_right(camera) * float(cap["radius"])
+	var r := float(cap["radius"])
+	var right := _flat_right(camera) * r
+	var ahead := Vector3.UP.cross(right)
 	var c: Vector3 = cap["center"]
 	for y: float in [bottom, top]:
 		for side: float in [-1.0, 1.0]:
-			var p := Vector3(c.x, y, c.z) + right * side
-			if camera.is_position_behind(p) or not rect.has_point(camera.unproject_position(p)):
-				return false
+			for depth: float in [-1.0, 1.0]:
+				var p := Vector3(c.x, y, c.z) + right * side + ahead * depth
+				if camera.is_position_behind(p) or not rect.has_point(camera.unproject_position(p)):
+					return false
 	return true
 
 
