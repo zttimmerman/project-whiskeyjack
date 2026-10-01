@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://bggqi8686hpmo"
+path="res://.godot/imported/runner_fixture.dialogue-d42334dbbc20a26f60a00ccc71ffe2b0.tres"
+
+[deps]
+
+source_file="res://tests/fixtures/dialogue/runner_fixture.dialogue"
+dest_files=["res://.godot/imported/runner_fixture.dialogue-d42334dbbc20a26f60a00ccc71ffe2b0.tres"]
+
+[params]
+
+defaults=true
