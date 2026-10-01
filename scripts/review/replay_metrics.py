@@ -134,6 +134,28 @@ def _melee_telegraph(check, events):
             "with_windup_event": sum(w["has_windup"] for w in windups)}}
 
 
+def _ranged_telegraph(check, events):
+    """Draw start (attack_windup) to release (attack_release), per ranged attack that released."""
+    draws = []
+    for start in of(events, "attack_started", kind="ranged"):
+        actor = start["actor"]
+        later_starts = [e["frame"] for e in of(events, "attack_started", actor=actor, kind="ranged")
+                        if e["frame"] > start["frame"]]
+        until = later_starts[0] if later_starts else math.inf
+        releases = [e["frame"] for e in of(events, "attack_release", actor=actor)
+                    if start["frame"] <= e["frame"] < until]
+        if not releases:
+            continue  # cancelled (staggered) before release
+        earlier = [e["frame"] for e in of(events, "attack_release", actor=actor) if e["frame"] < start["frame"]]
+        since = earlier[-1] if earlier else -1
+        tells = [e["frame"] for e in of(events, "attack_windup", actor=actor) if since < e["frame"] <= start["frame"]]
+        tell_frame = tells[-1] if tells else start["frame"]
+        draws.append({"actor": actor, "frame": start["frame"], "draw_s": (releases[0] - tell_frame) / FPS})
+    if not draws:
+        return {"value": None, "detail": {"note": "no released ranged attacks", "attacks": 0}}
+    return {"value": min(d["draw_s"] for d in draws), "detail": {"attacks": len(draws)}}
+
+
 def _hitbox_sync(check, events):
     contact_frames = check.get("contact_frames") or {}
     swings = []
@@ -212,6 +234,7 @@ METRICS = {
     "ttk_player_backfile": _hits_to_kill,
     "ttk_levy_player": _levy_hits_to_kill_player,
     "enemy_melee_telegraph": _melee_telegraph,
+    "enemy_ranged_telegraph": _ranged_telegraph,
     "atk_hitbox_sync": _hitbox_sync,
     "enc_first_fight_hp_cost": _hp_cost,
     "enemy_attackers_max": _attackers_max,
