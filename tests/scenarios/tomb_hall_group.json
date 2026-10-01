@@ -1,0 +1,17 @@
+{
+  "name": "tomb_hall_group",
+  "description": "The scripted group fight for enemy_attackers_max (design bible §3, §9): from Level 2's spawn (its Corridor A levy already dealt with), walk into the tomb hall and stand while its two levies and two archers engage. Two archers in sight of the player test the ranged window (one archer fires in any 2 s); the three-levy case is in tests/unit/test_attack_tokens.gd, since no room here holds three melee enemies the player can reach. The player is meant to lose.",
+  "scene": "res://scenes/world/Level2.tscn",
+  "seed": 1,
+  "player": {"position": [0, 1, -4], "yaw_deg": 180, "pitch": -0.2},
+  "remove": ["EnemyCorridorA"],
+  "duration_frames": 600,
+  "steps": [
+    {"frame": 0, "action": "move_forward", "pressed": true},
+    {"frame": 260, "action": "move_forward", "pressed": false}
+  ],
+  "checks": [
+    {"id": "enemy_attackers_max", "target": {"melee": [null, 2], "ranged": [null, 1]}, "baseline": {"melee": 2, "ranged": 1}},
+    {"id": "detect_through_walls", "target": [null, 0], "baseline": 0}
+  ]
+}
