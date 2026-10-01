@@ -1,0 +1,405 @@
+{
+ "connections": [
+  {
+   "from": "stain",
+   "from_port": 0,
+   "to": "stain_amt",
+   "to_port": 0
+  },
+  {
+   "from": "fine",
+   "from_port": 0,
+   "to": "fine_amt",
+   "to_port": 0
+  },
+  {
+   "from": "stain_amt",
+   "from_port": 0,
+   "to": "wash",
+   "to_port": 0
+  },
+  {
+   "from": "fine_amt",
+   "from_port": 0,
+   "to": "wash",
+   "to_port": 1
+  },
+  {
+   "from": "wash",
+   "from_port": 0,
+   "to": "base",
+   "to_port": 0
+  },
+  {
+   "from": "cracks",
+   "from_port": 1,
+   "to": "crack_width",
+   "to_port": 0
+  },
+  {
+   "from": "crack_width",
+   "from_port": 0,
+   "to": "crack_soft",
+   "to_port": 0
+  },
+  {
+   "from": "crack_soft",
+   "from_port": 0,
+   "to": "crack_line",
+   "to_port": 1
+  },
+  {
+   "from": "crack_patches",
+   "from_port": 0,
+   "to": "patch_lo",
+   "to_port": 0
+  },
+  {
+   "from": "patch_lo",
+   "from_port": 0,
+   "to": "patch_mask",
+   "to_port": 0
+  },
+  {
+   "from": "crack_line",
+   "from_port": 0,
+   "to": "crack_masked",
+   "to_port": 0
+  },
+  {
+   "from": "patch_mask",
+   "from_port": 0,
+   "to": "crack_masked",
+   "to_port": 1
+  },
+  {
+   "from": "crack_masked",
+   "from_port": 0,
+   "to": "crack_depth",
+   "to_port": 0
+  },
+  {
+   "from": "base",
+   "from_port": 0,
+   "to": "plaster",
+   "to_port": 0
+  },
+  {
+   "from": "crack_depth",
+   "from_port": 0,
+   "to": "plaster",
+   "to_port": 1
+  },
+  {
+   "from": "plaster",
+   "from_port": 0,
+   "to": "colorize",
+   "to_port": 0
+  },
+  {
+   "from": "colorize",
+   "from_port": 0,
+   "to": "export",
+   "to_port": 0
+  }
+ ],
+ "label": "Graph",
+ "name": "plaster",
+ "node_position": {
+  "x": 0,
+  "y": 0
+ },
+ "nodes": [
+  {
+   "name": "stain",
+   "node_position": {
+    "x": 150,
+    "y": 0
+   },
+   "parameters": {
+    "folds": 0,
+    "iterations": 4,
+    "noise": 1,
+    "offset": 0,
+    "persistence": 0.5,
+    "scale_x": 2,
+    "scale_y": 2
+   },
+   "seed_int": 2201,
+   "type": "fbm2"
+  },
+  {
+   "name": "fine",
+   "node_position": {
+    "x": 300,
+    "y": 0
+   },
+   "parameters": {
+    "folds": 0,
+    "iterations": 2,
+    "noise": 0,
+    "offset": 0,
+    "persistence": 0.5,
+    "scale_x": 32,
+    "scale_y": 32
+   },
+   "seed_int": 2202,
+   "type": "fbm2"
+  },
+  {
+   "name": "crack_patches",
+   "node_position": {
+    "x": 450,
+    "y": 0
+   },
+   "parameters": {
+    "folds": 0,
+    "iterations": 3,
+    "noise": 1,
+    "offset": 0,
+    "persistence": 0.5,
+    "scale_x": 3,
+    "scale_y": 3
+   },
+   "seed_int": 2204,
+   "type": "fbm2"
+  },
+  {
+   "name": "cracks",
+   "node_position": {
+    "x": 600,
+    "y": 0
+   },
+   "parameters": {
+    "intensity": 1,
+    "randomness": 0.9,
+    "scale_x": 4,
+    "scale_y": 4,
+    "stretch_x": 1,
+    "stretch_y": 1
+   },
+   "seed_int": 2203,
+   "type": "voronoi"
+  },
+  {
+   "name": "stain_amt",
+   "node_position": {
+    "x": 750,
+    "y": 0
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0,
+    "default_in2": 0.2,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "fine_amt",
+   "node_position": {
+    "x": 900,
+    "y": 0
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0,
+    "default_in2": 0.04,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "wash",
+   "node_position": {
+    "x": 1050,
+    "y": 0
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0.0,
+    "default_in2": 0.0,
+    "op": 0
+   },
+   "type": "math"
+  },
+  {
+   "name": "base",
+   "node_position": {
+    "x": 1200,
+    "y": 0
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0,
+    "default_in2": 0.72,
+    "op": 0
+   },
+   "type": "math"
+  },
+  {
+   "name": "crack_width",
+   "node_position": {
+    "x": 1350,
+    "y": 0
+   },
+   "parameters": {
+    "clamp": true,
+    "default_in1": 0,
+    "default_in2": 45.0,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "crack_soft",
+   "node_position": {
+    "x": 0,
+    "y": 200
+   },
+   "parameters": {
+    "clamp": true,
+    "default_in1": 0.0,
+    "default_in2": 0.0,
+    "op": 20
+   },
+   "type": "math"
+  },
+  {
+   "name": "crack_line",
+   "node_position": {
+    "x": 150,
+    "y": 200
+   },
+   "parameters": {
+    "clamp": true,
+    "default_in1": 1.0,
+    "default_in2": 0,
+    "op": 1
+   },
+   "type": "math"
+  },
+  {
+   "name": "patch_lo",
+   "node_position": {
+    "x": 300,
+    "y": 200
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0,
+    "default_in2": 0.5,
+    "op": 1
+   },
+   "type": "math"
+  },
+  {
+   "name": "patch_mask",
+   "node_position": {
+    "x": 450,
+    "y": 200
+   },
+   "parameters": {
+    "clamp": true,
+    "default_in1": 0,
+    "default_in2": 3.0,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "crack_masked",
+   "node_position": {
+    "x": 600,
+    "y": 200
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0.0,
+    "default_in2": 0.0,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "crack_depth",
+   "node_position": {
+    "x": 750,
+    "y": 200
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0,
+    "default_in2": 0.3,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "plaster",
+   "node_position": {
+    "x": 900,
+    "y": 200
+   },
+   "parameters": {
+    "clamp": true,
+    "default_in1": 0,
+    "default_in2": 0,
+    "op": 1
+   },
+   "type": "math"
+  },
+  {
+   "name": "colorize",
+   "node_position": {
+    "x": 1050,
+    "y": 200
+   },
+   "parameters": {
+    "gradient": {
+     "interpolation": 1,
+     "points": [
+      {
+       "a": 1,
+       "b": 0.25098,
+       "g": 0.278431,
+       "pos": 0.0,
+       "r": 0.301961
+      },
+      {
+       "a": 1,
+       "b": 0.4,
+       "g": 0.419608,
+       "pos": 0.4,
+       "r": 0.45098
+      },
+      {
+       "a": 1,
+       "b": 0.517647,
+       "g": 0.705882,
+       "pos": 0.9,
+       "r": 0.8
+      }
+     ],
+     "type": "Gradient"
+    }
+   },
+   "type": "colorize"
+  },
+  {
+   "name": "export",
+   "node_position": {
+    "x": 1200,
+    "y": 200
+   },
+   "parameters": {
+    "format": 0,
+    "size": 11,
+    "suffix": "albedo"
+   },
+   "type": "export"
+  }
+ ],
+ "parameters": {},
+ "type": "graph"
+}

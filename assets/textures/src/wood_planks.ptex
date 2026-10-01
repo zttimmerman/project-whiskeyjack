@@ -1,0 +1,243 @@
+{
+ "connections": [
+  {
+   "from": "planks",
+   "from_port": 1,
+   "to": "board_tone",
+   "to_port": 0
+  },
+  {
+   "from": "board_tone",
+   "from_port": 0,
+   "to": "tone_amt",
+   "to_port": 0
+  },
+  {
+   "from": "grain",
+   "from_port": 0,
+   "to": "grain_amt",
+   "to_port": 0
+  },
+  {
+   "from": "tone_amt",
+   "from_port": 0,
+   "to": "sum",
+   "to_port": 0
+  },
+  {
+   "from": "grain_amt",
+   "from_port": 0,
+   "to": "sum",
+   "to_port": 1
+  },
+  {
+   "from": "sum",
+   "from_port": 0,
+   "to": "base",
+   "to_port": 0
+  },
+  {
+   "from": "base",
+   "from_port": 0,
+   "to": "masked",
+   "to_port": 0
+  },
+  {
+   "from": "planks",
+   "from_port": 0,
+   "to": "masked",
+   "to_port": 1
+  },
+  {
+   "from": "masked",
+   "from_port": 0,
+   "to": "colorize",
+   "to_port": 0
+  },
+  {
+   "from": "colorize",
+   "from_port": 0,
+   "to": "export",
+   "to_port": 0
+  }
+ ],
+ "label": "Graph",
+ "name": "wood_planks",
+ "node_position": {
+  "x": 0,
+  "y": 0
+ },
+ "nodes": [
+  {
+   "name": "planks",
+   "node_position": {
+    "x": 0,
+    "y": 0
+   },
+   "parameters": {
+    "bevel": 0.05,
+    "columns": 1,
+    "corner": 0.0,
+    "mortar": 0.03,
+    "pattern": 0,
+    "repeat": 1,
+    "round": 0.0,
+    "row_offset": 0.5,
+    "rows": 6
+   },
+   "type": "bricks2"
+  },
+  {
+   "name": "board_tone",
+   "node_position": {
+    "x": 250,
+    "y": 100
+   },
+   "parameters": {
+    "edgecolor": 0.0
+   },
+   "seed_int": 4201,
+   "type": "fill_to_random_grey"
+  },
+  {
+   "name": "grain",
+   "node_position": {
+    "x": 0,
+    "y": 250
+   },
+   "parameters": {
+    "folds": 0,
+    "iterations": 4,
+    "noise": 1,
+    "offset": 0,
+    "persistence": 0.6,
+    "scale_x": 2,
+    "scale_y": 32
+   },
+   "seed_int": 4202,
+   "type": "fbm2"
+  },
+  {
+   "name": "tone_amt",
+   "node_position": {
+    "x": 500,
+    "y": 100
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0.0,
+    "default_in2": 0.35,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "grain_amt",
+   "node_position": {
+    "x": 500,
+    "y": 250
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0.0,
+    "default_in2": 0.3,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "sum",
+   "node_position": {
+    "x": 700,
+    "y": 150
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0.0,
+    "default_in2": 0.0,
+    "op": 0
+   },
+   "type": "math"
+  },
+  {
+   "name": "base",
+   "node_position": {
+    "x": 900,
+    "y": 150
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0.0,
+    "default_in2": 0.35,
+    "op": 0
+   },
+   "type": "math"
+  },
+  {
+   "name": "masked",
+   "node_position": {
+    "x": 1100,
+    "y": 50
+   },
+   "parameters": {
+    "clamp": true,
+    "default_in1": 0.0,
+    "default_in2": 0.0,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "colorize",
+   "node_position": {
+    "x": 1250,
+    "y": 50
+   },
+   "parameters": {
+    "gradient": {
+     "interpolation": 1,
+     "points": [
+      {
+       "a": 1,
+       "b": 0.14902,
+       "g": 0.160784,
+       "pos": 0.0,
+       "r": 0.180392
+      },
+      {
+       "a": 1,
+       "b": 0.062745,
+       "g": 0.164706,
+       "pos": 0.45,
+       "r": 0.290196
+      },
+      {
+       "a": 1,
+       "b": 0.2,
+       "g": 0.34902,
+       "pos": 0.9,
+       "r": 0.54902
+      }
+     ],
+     "type": "Gradient"
+    }
+   },
+   "type": "colorize"
+  },
+  {
+   "name": "export",
+   "node_position": {
+    "x": 1400,
+    "y": 0
+   },
+   "parameters": {
+    "format": 0,
+    "size": 11,
+    "suffix": "albedo"
+   },
+   "type": "export"
+  }
+ ],
+ "parameters": {},
+ "type": "graph"
+}

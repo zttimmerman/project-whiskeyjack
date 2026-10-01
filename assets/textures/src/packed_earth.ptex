@@ -1,0 +1,385 @@
+{
+ "connections": [
+  {
+   "from": "broad",
+   "from_port": 0,
+   "to": "broad_amt",
+   "to_port": 0
+  },
+  {
+   "from": "grit",
+   "from_port": 0,
+   "to": "grit_amt",
+   "to_port": 0
+  },
+  {
+   "from": "broad_amt",
+   "from_port": 0,
+   "to": "ground",
+   "to_port": 0
+  },
+  {
+   "from": "grit_amt",
+   "from_port": 0,
+   "to": "ground",
+   "to_port": 1
+  },
+  {
+   "from": "ground",
+   "from_port": 0,
+   "to": "base",
+   "to_port": 0
+  },
+  {
+   "from": "stones",
+   "from_port": 0,
+   "to": "stone_r",
+   "to_port": 1
+  },
+  {
+   "from": "stone_r",
+   "from_port": 0,
+   "to": "stone_disc",
+   "to_port": 0
+  },
+  {
+   "from": "stones_sparse",
+   "from_port": 0,
+   "to": "sparse_lo",
+   "to_port": 0
+  },
+  {
+   "from": "sparse_lo",
+   "from_port": 0,
+   "to": "sparse_mask",
+   "to_port": 0
+  },
+  {
+   "from": "stone_disc",
+   "from_port": 0,
+   "to": "stone_masked",
+   "to_port": 0
+  },
+  {
+   "from": "sparse_mask",
+   "from_port": 0,
+   "to": "stone_masked",
+   "to_port": 1
+  },
+  {
+   "from": "stone_masked",
+   "from_port": 0,
+   "to": "stone_amt",
+   "to_port": 0
+  },
+  {
+   "from": "base",
+   "from_port": 0,
+   "to": "earth",
+   "to_port": 0
+  },
+  {
+   "from": "stone_amt",
+   "from_port": 0,
+   "to": "earth",
+   "to_port": 1
+  },
+  {
+   "from": "earth",
+   "from_port": 0,
+   "to": "colorize",
+   "to_port": 0
+  },
+  {
+   "from": "colorize",
+   "from_port": 0,
+   "to": "export",
+   "to_port": 0
+  }
+ ],
+ "label": "Graph",
+ "name": "packed_earth",
+ "node_position": {
+  "x": 0,
+  "y": 0
+ },
+ "nodes": [
+  {
+   "name": "broad",
+   "node_position": {
+    "x": 150,
+    "y": 0
+   },
+   "parameters": {
+    "folds": 0,
+    "iterations": 4,
+    "noise": 1,
+    "offset": 0,
+    "persistence": 0.5,
+    "scale_x": 4,
+    "scale_y": 4
+   },
+   "seed_int": 3201,
+   "type": "fbm2"
+  },
+  {
+   "name": "grit",
+   "node_position": {
+    "x": 300,
+    "y": 0
+   },
+   "parameters": {
+    "folds": 0,
+    "iterations": 2,
+    "noise": 0,
+    "offset": 0,
+    "persistence": 0.6,
+    "scale_x": 64,
+    "scale_y": 64
+   },
+   "seed_int": 3202,
+   "type": "fbm2"
+  },
+  {
+   "name": "stones",
+   "node_position": {
+    "x": 450,
+    "y": 0
+   },
+   "parameters": {
+    "intensity": 1,
+    "randomness": 1,
+    "scale_x": 16,
+    "scale_y": 16,
+    "stretch_x": 1,
+    "stretch_y": 1
+   },
+   "seed_int": 3203,
+   "type": "voronoi"
+  },
+  {
+   "name": "stones_sparse",
+   "node_position": {
+    "x": 600,
+    "y": 0
+   },
+   "parameters": {
+    "folds": 0,
+    "iterations": 1,
+    "noise": 0,
+    "offset": 0,
+    "persistence": 0.5,
+    "scale_x": 16,
+    "scale_y": 16
+   },
+   "seed_int": 3204,
+   "type": "fbm2"
+  },
+  {
+   "name": "broad_amt",
+   "node_position": {
+    "x": 750,
+    "y": 0
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0,
+    "default_in2": 0.12,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "grit_amt",
+   "node_position": {
+    "x": 900,
+    "y": 0
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0,
+    "default_in2": 0.2,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "ground",
+   "node_position": {
+    "x": 1050,
+    "y": 0
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0.0,
+    "default_in2": 0.0,
+    "op": 0
+   },
+   "type": "math"
+  },
+  {
+   "name": "base",
+   "node_position": {
+    "x": 1200,
+    "y": 0
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0,
+    "default_in2": 0.46,
+    "op": 0
+   },
+   "type": "math"
+  },
+  {
+   "name": "stone_r",
+   "node_position": {
+    "x": 1350,
+    "y": 0
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0.22,
+    "default_in2": 0,
+    "op": 1
+   },
+   "type": "math"
+  },
+  {
+   "name": "stone_disc",
+   "node_position": {
+    "x": 0,
+    "y": 200
+   },
+   "parameters": {
+    "clamp": true,
+    "default_in1": 0,
+    "default_in2": 10.0,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "sparse_lo",
+   "node_position": {
+    "x": 150,
+    "y": 200
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0,
+    "default_in2": 0.45,
+    "op": 1
+   },
+   "type": "math"
+  },
+  {
+   "name": "sparse_mask",
+   "node_position": {
+    "x": 300,
+    "y": 200
+   },
+   "parameters": {
+    "clamp": true,
+    "default_in1": 0,
+    "default_in2": 4.0,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "stone_masked",
+   "node_position": {
+    "x": 450,
+    "y": 200
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0.0,
+    "default_in2": 0.0,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "stone_amt",
+   "node_position": {
+    "x": 600,
+    "y": 200
+   },
+   "parameters": {
+    "clamp": false,
+    "default_in1": 0,
+    "default_in2": 0.2,
+    "op": 2
+   },
+   "type": "math"
+  },
+  {
+   "name": "earth",
+   "node_position": {
+    "x": 750,
+    "y": 200
+   },
+   "parameters": {
+    "clamp": true,
+    "default_in1": 0,
+    "default_in2": 0,
+    "op": 0
+   },
+   "type": "math"
+  },
+  {
+   "name": "colorize",
+   "node_position": {
+    "x": 900,
+    "y": 200
+   },
+   "parameters": {
+    "gradient": {
+     "interpolation": 1,
+     "points": [
+      {
+       "a": 1,
+       "b": 0.14902,
+       "g": 0.160784,
+       "pos": 0.0,
+       "r": 0.180392
+      },
+      {
+       "a": 1,
+       "b": 0.062745,
+       "g": 0.164706,
+       "pos": 0.35,
+       "r": 0.290196
+      },
+      {
+       "a": 1,
+       "b": 0.25098,
+       "g": 0.278431,
+       "pos": 0.8,
+       "r": 0.301961
+      }
+     ],
+     "type": "Gradient"
+    }
+   },
+   "type": "colorize"
+  },
+  {
+   "name": "export",
+   "node_position": {
+    "x": 1050,
+    "y": 200
+   },
+   "parameters": {
+    "format": 0,
+    "size": 11,
+    "suffix": "albedo"
+   },
+   "type": "export"
+  }
+ ],
+ "parameters": {},
+ "type": "graph"
+}

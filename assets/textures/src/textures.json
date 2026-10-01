@@ -1,0 +1,15 @@
+{
+  "material_maker": {
+    "release": "1.5p1",
+    "commit": "b57f878bcc6dadb9784375e076a60efdbdcf0686",
+    "asset": "material_maker_1_5p1.dmg",
+    "asset_sha256": "7e817100611b4f22cf7fc755faef389a7a4838cd264861e8a92e5f32503bb673",
+    "pck_sha256": "e33a839077ce6c784f35b6e711154acbf3a717be0e3c748332fb3914d6039a8a"
+  },
+  "textures": {
+    "stone_dressed": {"graph": "stone_dressed.ptex", "ramp": ["Peat Black", "Rain Stone", "Wet Slate"], "size": 128, "ramp_steps": 8},
+    "plaster": {"graph": "plaster.ptex", "ramp": ["Rain Stone", "Wet Slate", "Old Bone"], "size": 128, "ramp_steps": 16},
+    "packed_earth": {"graph": "packed_earth.ptex", "ramp": ["Peat Black", "Saddle Leather", "Rain Stone"], "size": 128, "ramp_steps": 16},
+    "wood_planks": {"graph": "wood_planks.ptex", "ramp": ["Peat Black", "Saddle Leather", "Barrow Oak"], "size": 128, "ramp_steps": 8}
+  }
+}

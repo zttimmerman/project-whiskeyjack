@@ -1,0 +1,247 @@
+{
+ "textures": {
+  "packed_earth": {
+   "graph": "assets/textures/src/packed_earth.ptex",
+   "graph_sha256": "9ad4f485a45a3b781dc2c34a76741d0ee85dd81721869972739b1791a12e3252",
+   "ramp": {
+    "Peat Black": "#2E2926",
+    "Saddle Leather": "#4A2A10",
+    "Rain Stone": "#4D4740"
+   },
+   "ramp_steps": 16,
+   "size": 128,
+   "png": "assets/textures/surfaces/packed_earth.png",
+   "png_sha256": "9ad73757c00f2f21f094a1d806aefba680ba287aef1767a0829dc190a655b723",
+   "pixels_sha256": "1601e09995f72ee4d2e7d5f26ada865eb0ae7c727b80fb2bf9e665ef4857f28c",
+   "material_maker_export_sha256": "cbae968900b33f4b233920da2e898719ce819fdcab8be86bcba695e6cdf7da4f",
+   "distinct_colours": 12,
+   "ramp_entries": 33,
+   "de_before_lock": {
+    "ramp_de_median": 0.62,
+    "ramp_de_p95": 0.82,
+    "ramp_de_max": 1.32,
+    "groups": [
+     {
+      "palette": "Peat Black",
+      "share": 0.0
+     },
+     {
+      "palette": "Saddle Leather",
+      "share": 0.062,
+      "median_de": 10.94
+     },
+     {
+      "palette": "Rain Stone",
+      "share": 0.938,
+      "median_de": 7.91
+     }
+    ]
+   },
+   "de_after_lock": {
+    "ramp_de_median": 0.0,
+    "ramp_de_p95": 0.0,
+    "ramp_de_max": 0.0,
+    "groups": [
+     {
+      "palette": "Peat Black",
+      "share": 0.0
+     },
+     {
+      "palette": "Saddle Leather",
+      "share": 0.065,
+      "median_de": 10.84
+     },
+     {
+      "palette": "Rain Stone",
+      "share": 0.935,
+      "median_de": 8.14
+     }
+    ]
+   }
+  },
+  "plaster": {
+   "graph": "assets/textures/src/plaster.ptex",
+   "graph_sha256": "0bbda9df44c7a2c6780d5b77060eccf7e6a28dff357f06c6a37124ce2342d915",
+   "ramp": {
+    "Rain Stone": "#4D4740",
+    "Wet Slate": "#736B66",
+    "Old Bone": "#CCB484"
+   },
+   "ramp_steps": 16,
+   "size": 128,
+   "png": "assets/textures/surfaces/plaster.png",
+   "png_sha256": "5e68a3df56ee312e2714e950f9f0a9c7e8e50b8872d7199516072433dc73965f",
+   "pixels_sha256": "640a068c39bde72fb1b638b7788d2b90694895b7b8f1855976bf8a11c6b79049",
+   "material_maker_export_sha256": "fec66f010b84a96c43a1c698dbc334829bc7f834c4de7a93b979667bfe701366",
+   "distinct_colours": 10,
+   "ramp_entries": 33,
+   "de_before_lock": {
+    "ramp_de_median": 0.62,
+    "ramp_de_p95": 1.04,
+    "ramp_de_max": 1.29,
+    "groups": [
+     {
+      "palette": "Rain Stone",
+      "share": 0.0
+     },
+     {
+      "palette": "Wet Slate",
+      "share": 0.0,
+      "median_de": 16.85
+     },
+     {
+      "palette": "Old Bone",
+      "share": 1.0,
+      "median_de": 4.27
+     }
+    ]
+   },
+   "de_after_lock": {
+    "ramp_de_median": 0.0,
+    "ramp_de_p95": 0.0,
+    "ramp_de_max": 0.0,
+    "groups": [
+     {
+      "palette": "Rain Stone",
+      "share": 0.0
+     },
+     {
+      "palette": "Wet Slate",
+      "share": 0.0,
+      "median_de": 16.86
+     },
+     {
+      "palette": "Old Bone",
+      "share": 1.0,
+      "median_de": 4.27
+     }
+    ]
+   }
+  },
+  "stone_dressed": {
+   "graph": "assets/textures/src/stone_dressed.ptex",
+   "graph_sha256": "ccc13107dd2910cc351d387ffa36c7d6ce7be7e7b5d893c0a10fc17a718c30f8",
+   "ramp": {
+    "Peat Black": "#2E2926",
+    "Rain Stone": "#4D4740",
+    "Wet Slate": "#736B66"
+   },
+   "ramp_steps": 8,
+   "size": 128,
+   "png": "assets/textures/surfaces/stone_dressed.png",
+   "png_sha256": "d2d06ed7527b4505e330e70da7bc6e3c3f22c6719e0d8841b4d973e91e75f73e",
+   "pixels_sha256": "168ce6ad393e44df6c86595a49ff69d70f008c2a8c0d90d7630c560d9dff621e",
+   "material_maker_export_sha256": "e99e84acf62963a4ddb872699b96a4c15865bc8993f40b659c3ce41579018cfe",
+   "distinct_colours": 16,
+   "ramp_entries": 17,
+   "de_before_lock": {
+    "ramp_de_median": 0.47,
+    "ramp_de_p95": 1.0,
+    "ramp_de_max": 1.35,
+    "groups": [
+     {
+      "palette": "Peat Black",
+      "share": 0.264,
+      "median_de": 0.47
+     },
+     {
+      "palette": "Rain Stone",
+      "share": 0.342,
+      "median_de": 3.9
+     },
+     {
+      "palette": "Wet Slate",
+      "share": 0.395,
+      "median_de": 1.21
+     }
+    ]
+   },
+   "de_after_lock": {
+    "ramp_de_median": 0.0,
+    "ramp_de_p95": 0.0,
+    "ramp_de_max": 0.0,
+    "groups": [
+     {
+      "palette": "Peat Black",
+      "share": 0.261,
+      "median_de": 0.0
+     },
+     {
+      "palette": "Rain Stone",
+      "share": 0.315,
+      "median_de": 4.02
+     },
+     {
+      "palette": "Wet Slate",
+      "share": 0.424,
+      "median_de": 1.74
+     }
+    ]
+   }
+  },
+  "wood_planks": {
+   "graph": "assets/textures/src/wood_planks.ptex",
+   "graph_sha256": "504adff64b17a5201e1a813f81577d1e1f69a74449fa3f53731eb3b11a6376ee",
+   "ramp": {
+    "Peat Black": "#2E2926",
+    "Saddle Leather": "#4A2A10",
+    "Barrow Oak": "#8C5933"
+   },
+   "ramp_steps": 8,
+   "size": 128,
+   "png": "assets/textures/surfaces/wood_planks.png",
+   "png_sha256": "98754bd9297f9d099596f5157123fab64f917b57b5ff389698aa1487ae905275",
+   "pixels_sha256": "fd5c6355381139c21b1262313f78da2ca58a4c6bc884f1e6687184ffc0535008",
+   "material_maker_export_sha256": "41638ea6016afc89e3fe69b4f98dacb925308adf658d3d00bd67b891975e3365",
+   "distinct_colours": 15,
+   "ramp_entries": 17,
+   "de_before_lock": {
+    "ramp_de_median": 0.93,
+    "ramp_de_p95": 1.59,
+    "ramp_de_max": 3.04,
+    "groups": [
+     {
+      "palette": "Peat Black",
+      "share": 0.108,
+      "median_de": 1.77
+     },
+     {
+      "palette": "Saddle Leather",
+      "share": 0.515,
+      "median_de": 9.32
+     },
+     {
+      "palette": "Barrow Oak",
+      "share": 0.377,
+      "median_de": 8.51
+     }
+    ]
+   },
+   "de_after_lock": {
+    "ramp_de_median": 0.0,
+    "ramp_de_p95": 0.0,
+    "ramp_de_max": 0.0,
+    "groups": [
+     {
+      "palette": "Peat Black",
+      "share": 0.109,
+      "median_de": 3.03
+     },
+     {
+      "palette": "Saddle Leather",
+      "share": 0.43,
+      "median_de": 9.43
+     },
+     {
+      "palette": "Barrow Oak",
+      "share": 0.461,
+      "median_de": 8.83
+     }
+    ]
+   }
+  }
+ },
+ "generator": "scripts/tools/make_textures.py",
+ "material_maker": "1.5p1",
+ "lock_script_sha256": "413e9bb2d026cfc4948eaec021971bd52314a209a490a92e13a68d1b3e523b9f"
+}
