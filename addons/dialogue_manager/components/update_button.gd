@@ -51,6 +51,9 @@ func apply_theme() -> void:
 
 
 func check_for_update() -> void:
+	# [whiskeyjack patch] The addon is pinned (docs/trials/dialogue-manager.md): no update check
+	# against GitHub and no one-click in-place update, which would also drop these patches.
+	return
 	if DMSettings.get_user_value("check_for_updates", true):
 		http_request.request(REMOTE_RELEASES_URL)
 
