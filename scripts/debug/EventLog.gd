@@ -24,14 +24,16 @@ extends Node
 ##   lock_off        actor
 ##   detected        actor, target, distance, line_of_sight   (enemy spotted the player)
 ##   disengaged      actor, distance          (enemy leashed back to idle)
+##   lost_sight      actor, distance          (a chasing enemy lost sight and starts searching)
+##   search_end      actor, outcome (regained | gave_up)   (regained: a detected event follows)
 ##   quest           kind (started | updated | completed), quest_id, stage
 ## The replay runner adds scenario_start, input and scenario_end.
 
 const ARG := "--event-log"
 const ENV := "WHISKEYJACK_EVENT_LOG"
-## Physics layer the line-of-sight probe collides with (layer 1, "world")
-const WORLD_MASK := 1
+## The line-of-sight probe's height above both bodies' origins; it collides with layer 1, "world"
 const EYE_HEIGHT := 0.8
+const WorldRay := preload("res://scripts/combat/WorldRay.gd")
 
 var enabled: bool = false
 var path: String = ""
@@ -117,19 +119,21 @@ func round3(value: float) -> float:
 	return snappedf(value, 0.001)
 
 
-## Whether nothing on the world layer lies between two bodies, at eye height
+## Whether nothing on the world layer lies between two bodies, at eye height. Characters (the player and
+## enemies share layer 1 with the level) don't count, as in enemy sight (scripts/combat/WorldRay.gd).
 func line_of_sight(from: Node3D, to: Node3D) -> bool:
 	if not is_instance_valid(from) or not is_instance_valid(to) or not from.is_inside_tree():
 		return false
-	var query := PhysicsRayQueryParameters3D.create(
-		from.global_position + Vector3.UP * EYE_HEIGHT, to.global_position + Vector3.UP * EYE_HEIGHT, WORLD_MASK
-	)
 	var exclude: Array[RID] = []
 	for body in [from, to]:
 		if body is CollisionObject3D:
 			exclude.append((body as CollisionObject3D).get_rid())
-	query.exclude = exclude
-	return from.get_world_3d().direct_space_state.intersect_ray(query).is_empty()
+	return WorldRay.is_clear(
+		from.get_world_3d().direct_space_state,
+		WorldRay.make_query(exclude),
+		from.global_position + Vector3.UP * EYE_HEIGHT,
+		to.global_position + Vector3.UP * EYE_HEIGHT
+	)
 
 
 func _connect_quests(on: bool) -> void:
