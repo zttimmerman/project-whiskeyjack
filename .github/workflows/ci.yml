@@ -77,6 +77,9 @@ jobs:
         run: python3 ci/test_sources.py
       - name: Run scripts/godot_validate.gd on every asset with a brief, plus the assets/sources.json check (no Blender renders)
         run: python3 ci/validate_assets.py
+      - name: Check the generated surface textures against their graphs, ramps and manifest (scripts/tools/make_textures.py --check)
+        # Verify only: regenerating needs Material Maker on a Mac. Fails on hand-edited or stale textures.
+        run: python3 scripts/tools/make_textures.py --check
 
   data-lint:
     name: data-lint (dialogues and quests)
