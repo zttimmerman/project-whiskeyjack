@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://bl1gc0cq86ar6"
+path="res://.godot/imported/village_elder.dialogue-0ca325ce78fd8e45137f471af4ed3b8e.tres"
+
+[deps]
+
+source_file="res://data/dialogues/village_elder.dialogue"
+dest_files=["res://.godot/imported/village_elder.dialogue-0ca325ce78fd8e45137f471af4ed3b8e.tres"]
+
+[params]
+
+defaults=true

@@ -1,0 +1,39 @@
+# Keeper Idrenna of Oskett (docs/world/07-mvp-slice.md). One conversation for the whole quest:
+# the opening depends on the Eastern Road quest's state and on whether she was turned down before.
+~ start
+if QuestManager.is_quest_complete("clear_eastern_road")
+	=> farewell
+elif QuestManager.get_quest_stage("clear_eastern_road") == "return_to_keeper"
+	=> report
+elif QuestManager.is_quest_active("clear_eastern_road")
+	Idrenna: Still walking, are they? Then so should you.
+	=> END
+elif QuestManager.get_flag("idrenna_turned_down")
+	Idrenna: Orders change, soldier?
+	=> offer
+Idrenna: They sent one of you, then. One.
+- What's the trouble? => offer
+- Just on patrol. => farewell
+
+~ offer
+Idrenna: The dead are walking your road again. Will you put them down?
+- I'll see to it.
+	$> QuestManager.start_quest("clear_eastern_road")
+	Idrenna: Walk soft past the barrows. They listen.
+- Not in my orders.
+	$> QuestManager.set_flag("idrenna_turned_down")
+	=> farewell
+=> END
+
+~ farewell
+Idrenna: Keep your feet dry, soldier.
+=> END
+
+~ report
+Idrenna: You came back. More than most.
+- The road's quiet.
+- For now.
+$> QuestManager.complete_quest("clear_eastern_road")
+Idrenna: This was my son's. Your Throne paid him and sent him south. It should keep someone dry.
+Idrenna: The Choir's louder since they opened it. Don't go down there alone.
+=> END

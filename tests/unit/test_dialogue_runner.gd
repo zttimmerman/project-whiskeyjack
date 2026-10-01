@@ -181,7 +181,7 @@ func test_elder_report_completes_the_quest() -> void:
 	runner.advance(0)
 	await _wait_for_events(3)
 	assert_bool(quests.is_quest_complete(QUEST)).is_true()
-	assert_str(events[2][2]).begins_with("This was my son's.")
+	assert_str(events[2][2]).starts_with("This was my son's.")
 
 
 func test_elder_mid_quest_and_after_quest_lines_differ() -> void:
