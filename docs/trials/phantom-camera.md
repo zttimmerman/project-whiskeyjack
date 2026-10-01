@@ -148,3 +148,21 @@ Code paths read for the audit: `plugin.gd`, the updater (`scripts/panel/updater/
 - His whole visible body is unchanged by the new pivot, since the fill light keeps its place relative to the pivot.
 - The 0.133 in `docs/decisions.md` came from a different region of his back that isn't in the repo. This method gives 0.146 for the same old setup, so the two aren't directly comparable, but the change between framings is about 0.
 - The art bible doesn't quote the 0.133, so it isn't edited.
+
+## Retune after the user's playtest (2026-10-01): Witcher-like framing
+
+The playtest read A as a zoomed-out third person. The user chose Witcher-like framing: pivot about 1.6 m, about 0.9 m right, a 2.5 m arm. A now uses pivot 1.6 m, shoulder 0.9 m, arm 2.5 m (3.0 m locked on, eased between modes) and 72° FOV, with the free look turned 4° right so he sits in the left third (`test_cam_player_in_the_left_third`).
+- **New:** a horizontal framing constraint. Close in, the wide shoulder offset pushed his near side off the left edge, so the look yaw now turns only as far as it must to keep his box in view.
+- **New:** a lock swing that only speeds up while opening to find room, so unlocking doesn't jump.
+- **New:** the lock-on reticle (`scenes/ui/LockOnReticle.tscn`, in the HUD), which design bible §2 already specified.
+
+| Scenario | in frame | wall fill | melee occlusion | both locked |
+|---|---|---|---|---|
+| levy_1v1_passive | 1.0 | 0.003 | 0.112 | 1.0 |
+| levy_1v1_sensible | 1.0 | 0.413 | 0.021 | 1.0 |
+| central_room_pull | 1.0 | 0.370 | – | – |
+| tomb_hall_group | 1.0 | 0.368 | – | – |
+| crypt_trial_walk | 1.0 | 0.368 | – | – |
+| camera_stress | 1.0 | 0.470 | 0.015 | 1.0 |
+
+**Wall bounce.** There's no oscillation. I counted reversals of the camera-to-player distance (more than 1 cm per frame, flipping back within 6 frames): 0 in five scenarios, and 1 in `levy_1v1_sensible` (frame 419, during the fight). The arm still snaps in at once when the view sweeps into a wall, the "bounce" the user liked: up to 1.85 m in one frame in `camera_stress` frame 578, as the post-kill view swings into Corridor A's north wall. That's a single settle, not a wobble.

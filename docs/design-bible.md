@@ -32,7 +32,7 @@ The third-person camera behind the player is the lens for everything else. Most 
 
 - **Modes, not one camera (settled):** the rig supports swappable modes: third-person over-the-shoulder now, first person later, as in Skyrim or Fallout 4. Aiming, lock-on and interaction use the **camera's** forward ray, never the character's facing, so they work in either mode.
   - First person is post-slice. It needs a first-person viewmodel (arms and weapon), and assets that hold up much closer than the 256 px texture budget assumes.
-- **Framing (settled):** the camera sits over the shoulder, offset 0.5–0.7 m to the side, with a pivot about 1.6–1.8 m above the floor (head height), 3.5–4.5 m behind, and a 70–75° FOV. **Current:** 0.6 m right, pivot 1.7 m, 4 m behind, FOV 72° (`scenes/player/CameraRig.gd`, trial B1).
+- **Framing (settled; Witcher-like, decided by the user 2026-10-01):** the camera sits over the right shoulder, offset about 0.9 m to the side, with a pivot about 1.6 m above the floor, an arm of about 2.5 m, and a 70–75° FOV, so the player sits in the left third of the frame with a clear view past his right shoulder. Locked on, the arm may pull back a little to fit both. **Current:** 0.9 m right, pivot 1.6 m, 2.5 m arm (3.0 m locked), FOV 72°, look turned 4° right (`scenes/player/CameraRig.gd`).
   - An over-the-shoulder offset is what stops the player model hiding the enemy at melee range (`cam_melee_occlusion`).
 - **Collision:** the spring arm uses a sphere probe with a margin, not a ray, and eases in and out.
   - The player must stay fully in frame (`cam_player_in_frame`), and wall must never fill the frame (`cam_wall_fill`).
@@ -43,7 +43,7 @@ The third-person camera behind the player is the lens for everything else. Most 
   - Cycling picks the next-nearest to screen centre.
   - The camera keeps both the player and the target in frame (`cam_lock_both_in_frame`).
   - Lock releases on target death, on losing line of sight for 2 s, or beyond 1.5× range.
-  - **Current:** no reticle and no line-of-sight filter; camera input is disabled while locked. When the target dies, the lock moves at once to the nearest living enemy in range, or releases (decided 2026-10-01).
+  - **Current:** a Signal Red ring reticle on the target (`scenes/ui/LockOnReticle.tscn`, in the HUD); no line-of-sight filter; camera input is disabled while locked. When the target dies, the lock moves at once to the nearest living enemy in range, or releases (decided 2026-10-01).
 - **Respawn and loads** restore the saved view heading, so the same input moves the same way (fixed in #6).
 - **Bindings:** one action per key. **Current:** E is bound to both `interact` and `camera_right`. Gameplay actions are polled in the physics step, so automated input can frame-time them.
 
@@ -187,10 +187,10 @@ Units are metres; the player is 1.8 m tall.
 
 | ID | Target | How measured | Current (2026-10-01) |
 |---|---|---|---|
-| `cam_melee_occlusion` | ≤ 0.25 | locked on, target within 3 m: fraction of the target's screen box covered by the player (replay: mean over those frames) | 0.02–0.12 (was 0.60–0.87, trial B1) |
+| `cam_melee_occlusion` | ≤ 0.25 | locked on, target within 3 m: fraction of the target's screen box covered by the player (replay: mean over those frames) | 0.01–0.11 (was 0.60–0.87, trial B1) |
 | `cam_player_in_frame` | 1.0 | fraction of sampled frames with the player's head and torso fully in frame | 1.0 in every scenario (was 0.58 in `camera_stress`) |
-| `cam_wall_fill` | ≤ 0.6 | the largest fraction of the frame covered by one wall surface, counting only wall between the camera and the player or beside him (no deeper along the view than his axis), so a wall he deliberately faces close up doesn't count (user, 2026-10-01) | 0.04–0.41 (was 0.01–0.57) |
-| `cam_lock_both_in_frame` | ≥ 0.95 | while locked, fraction of frames with both player and target in frame | 0.97–1.0 (was 0.36–1.0) |
+| `cam_wall_fill` | ≤ 0.6 | the largest fraction of the frame covered by one wall surface, counting only wall between the camera and the player or beside him (no deeper along the view than his axis), so a wall he deliberately faces close up doesn't count (user, 2026-10-01) | 0.00–0.47 (was 0.01–0.57) |
+| `cam_lock_both_in_frame` | ≥ 0.95 | while locked, fraction of frames with both player and target in frame | 1.0 (was 0.36–1.0) |
 | `atk_hitbox_sync` | ±2 frames | hitbox open frame vs the clip's contact frame | hitbox opens on the press |
 | `enemy_melee_telegraph` | ≥ 0.5 s | windup from the tell's start to the hitbox opening | 0.6 s |
 | `enemy_ranged_telegraph` | ≥ 0.8 s | draw start to release | 0.9 s |
