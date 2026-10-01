@@ -1,6 +1,6 @@
 {
   "name": "central_room_pull",
-  "description": "Walk from Corridor A (its levy already dealt with, as after levy_1v1_sensible) into Level 1's central room and bear right toward the Corridor B mouth, then stand, recording who engages. It's the baseline for detection through walls (design bible §3: detection needs line of sight; §4: an encounter never pulls enemies from another room): today the Corridor B archer detects the player through the room's south wall.",
+  "description": "Walk from Corridor A (its levy already dealt with, as after levy_1v1_sensible) into Level 1's central room and bear right toward the Corridor B mouth, then stand, recording who engages. It checks that detection needs line of sight (design bible §3) and that an encounter never pulls enemies from another room (§4): before sight rays, the Corridor B archer detected the player through the room's south wall.",
   "scene": "res://scenes/world/Level1.tscn",
   "seed": 1,
   "player": {"position": [8, 1, 0], "yaw_deg": -90, "pitch": -0.2},
@@ -13,11 +13,9 @@
     {"frame": 170, "action": "move_right", "pressed": false}
   ],
   "checks": [
-    {"id": "enc_group_max_first_area", "target": [null, 3], "baseline": 4,
-     "pending": "detection by line of sight (design bible §3, §4)"},
-    {"id": "detect_through_walls", "target": [null, 0], "baseline": 1,
-     "pending": "detection by line of sight (design bible §3)"},
-    {"id": "enemy_attackers_max", "target": {"melee": [null, 2], "ranged": [null, 1]}, "baseline": {"melee": 2, "ranged": 2},
+    {"id": "enc_group_max_first_area", "target": [null, 3], "baseline": 3},
+    {"id": "detect_through_walls", "target": [null, 0], "baseline": 0},
+    {"id": "enemy_attackers_max", "target": {"melee": [null, 2], "ranged": [null, 1]}, "baseline": {"melee": 2, "ranged": 1},
      "pending": "attack tokens (design bible §3)"},
     {"id": "enemy_melee_telegraph", "target": [0.5, null], "baseline": 0.0,
      "pending": "enemy melee windups (design bible §3)"}

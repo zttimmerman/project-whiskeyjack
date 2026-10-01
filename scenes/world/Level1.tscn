@@ -613,16 +613,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 1.5, 0)
 shape = SubResource("BoxShape3D_questadvance")
 
 [node name="EnemyCorridorA" parent="." unique_id=901347502 instance=ExtResource("3_baseenemy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 1, 0)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 11, 1, 0)
 
 [node name="EnemyCentral1" parent="." unique_id=629519474 instance=ExtResource("3_baseenemy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 1, -2)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 20, 1, -2)
 
 [node name="EnemyCentral2" parent="." unique_id=2039610038 instance=ExtResource("3_baseenemy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 1, 2)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 28, 1, 2)
 
 [node name="ArcherCentral" parent="." unique_id=357974950 instance=ExtResource("4_archer")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 1, 5)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 24, 1, 5)
 
 [node name="ArcherCorridorB" parent="." unique_id=392966725 instance=ExtResource("4_archer")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 1, 15)

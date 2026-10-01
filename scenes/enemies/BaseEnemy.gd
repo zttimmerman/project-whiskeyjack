@@ -7,6 +7,10 @@ enum State { IDLE, PATROL, CHASE, ATTACK, STAGGER, DEAD }
 @export var stats: CharacterStats
 @export var xp_reward: int = 10
 @export var detection_range: float = 10.0
+## Sight (design bible §3): the player is seen within detection_range inside this cone around the facing,
+## and heard within hearing_radius in any direction; both need a clear line of sight to the world layer
+@export var view_cone_deg: float = 120.0
+@export var hearing_radius: float = 4.0
 @export var attack_range: float = 1.5
 @export var gravity: float = 20.0
 ## Bone names for this model's rig; the only place socket bones are named
@@ -19,18 +23,30 @@ const ATTACK_ACTIVE_TIME: float = 0.3
 const DEATH_FADE_TIME: float = 0.3
 const DEATH_FALLBACK_TIME: float = 2.4  # Death01's length, if the model has no death clip
 const ATTACK_COOLDOWN: float = 1.5
+## Sight rays run at most this often per enemy (the cheap range and cone tests run every frame)
+const SIGHT_INTERVAL: float = 0.1
+## Ray ends above the body origin (the capsule centre, 0.9 m above the feet): enemy eyes, player chest
+const EYE_HEIGHT: float = 0.7
+const CHEST_HEIGHT: float = 0.4
 
 var state: State = State.IDLE
 var _player: CharacterBody3D = null
 var _nav_agent: NavigationAgent3D = null
 var _hitbox: HitboxComponent = null
 const HeldProps := preload("res://scripts/combat/HeldProps.gd")
+const WorldRay := preload("res://scripts/combat/WorldRay.gd")
 
 var _anim_player: AnimationPlayer = null
 
 var _stagger_timer: float = 0.0
 var _attack_timer: float = 0.0
 var _attack_cooldown_timer: float = 0.0
+
+var _sight_query: PhysicsRayQueryParameters3D = null
+var _sight_timer: float = 0.0  # until the next sight ray may run
+## The last sight ray's answer while chasing (archers fire only with it)
+var _can_see_player: bool = false
+var _cone_cos: float = 0.0
 
 
 func _ready() -> void:
@@ -41,6 +57,8 @@ func _ready() -> void:
 	_nav_agent = $NavigationAgent3D
 	_hitbox = $HitboxComponent
 	_player = get_tree().get_first_node_in_group("player")
+	_sight_query = WorldRay.make_query([get_rid()])
+	_cone_cos = cos(deg_to_rad(view_cone_deg * 0.5))
 	# Grab AnimationPlayer from the model sub-scene (SkeletonModel/AnimationPlayer)
 	var model_node: Node = get_node_or_null("SkeletonModel")
 	if model_node:
@@ -80,18 +98,67 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 
-func _tick_idle(_delta: float) -> void:
+func _tick_idle(delta: float) -> void:
 	velocity.x = 0.0
 	velocity.z = 0.0
-	if _player and global_position.distance_to(_player.global_position) <= detection_range:
+	if _notices_player(delta):
 		_change_state(State.CHASE)
 
 
-func _tick_patrol(_delta: float) -> void:
+func _tick_patrol(delta: float) -> void:
 	velocity.x = 0.0
 	velocity.z = 0.0
-	if _player and global_position.distance_to(_player.global_position) <= detection_range:
+	if _notices_player(delta):
 		_change_state(State.CHASE)
+
+
+# Detection (design bible §3): in range and in the view cone, or within hearing; then a sight ray to the
+# player's chest. The range and cone tests are cheap and run every frame; a blocked candidate re-casts its
+# ray every SIGHT_INTERVAL, and a fresh candidate casts at once, so detection never lags a clear view.
+func _notices_player(delta: float) -> bool:
+	if not is_instance_valid(_player):
+		return false
+	var to_player := _player.global_position - global_position
+	to_player.y = 0.0
+	var dist := to_player.length()
+	var heard := dist <= hearing_radius
+	if dist > detection_range or (not heard and not _in_view_cone(to_player, dist)):
+		_sight_timer = 0.0
+		return false
+	_sight_timer -= delta
+	if _sight_timer > 0.0:
+		return false
+	_sight_timer = SIGHT_INTERVAL
+	return has_line_of_sight()
+
+
+func _in_view_cone(to_player: Vector3, dist: float) -> bool:
+	if dist < 0.001:
+		return true
+	var forward := -global_basis.z
+	forward.y = 0.0
+	return forward.normalized().dot(to_player / dist) >= _cone_cos
+
+
+## Whether world geometry (not characters) lies between this enemy's eyes and the player's chest
+func has_line_of_sight() -> bool:
+	if not is_instance_valid(_player) or not is_inside_tree():
+		return false
+	return WorldRay.is_clear(
+		get_world_3d().direct_space_state,
+		_sight_query,
+		global_position + Vector3.UP * EYE_HEIGHT,
+		_player.global_position + Vector3.UP * CHEST_HEIGHT
+	)
+
+
+# While chasing, the sight answer is refreshed every SIGHT_INTERVAL (archers fire only with sight)
+func _refresh_sight(delta: float) -> void:
+	_sight_timer -= delta
+	if _sight_timer > 0.0:
+		return
+	_sight_timer = SIGHT_INTERVAL
+	_can_see_player = has_line_of_sight()
 
 
 func _tick_chase(delta: float) -> void:
@@ -100,6 +167,7 @@ func _tick_chase(delta: float) -> void:
 	if not _player:
 		_change_state(State.IDLE)
 		return
+	_refresh_sight(delta)
 
 	var dist: float = global_position.distance_to(_player.global_position)
 
@@ -166,11 +234,16 @@ func _get_next_action() -> void:
 func _change_state(new_state: State) -> void:
 	if EventLog.enabled:
 		_log_state_change(new_state)
+	var old_state := state
 	state = new_state
 	match new_state:
 		State.IDLE:
 			_play_anim("idle")
 		State.CHASE:
+			if old_state == State.IDLE or old_state == State.PATROL:
+				# Usually it has just seen the player, but a hit or a script can start a chase too
+				_can_see_player = has_line_of_sight()
+				_sight_timer = SIGHT_INTERVAL
 			_update_locomotion_anim()
 		State.ATTACK:
 			_face_player()

@@ -16,6 +16,7 @@ const PILLAR_CENTER := Vector3(24, 0, 0)
 const ENEMY_START := Vector3(21.8, 1, 0)
 const PLAYER_AT := Vector3(26.2, 1, 0)
 const CHASE_TIMEOUT_S := 6.0
+const CHASE_STATE := 2  # BaseEnemy.State.CHASE
 const LEVEL2_SPAWN := Vector3(0, 0, -4)
 const LEVEL2_END := Vector3(0, 0, 72.5)
 
@@ -78,6 +79,9 @@ func _check_chase(level: Node) -> void:
 	player.global_position = PLAYER_AT
 	enemy.global_position = ENEMY_START
 	enemy.velocity = Vector3.ZERO
+	# The pillar blocks its sight of the player, so start the chase as if it had seen them earlier:
+	# this checks pathfinding, not detection (tests/unit/test_enemy_awareness.gd covers that)
+	enemy._change_state(CHASE_STATE)
 	await _physics_frames(2)
 	var agent: NavigationAgent3D = enemy.get_node("NavigationAgent3D")
 	var reach: float = enemy.attack_range + 0.3

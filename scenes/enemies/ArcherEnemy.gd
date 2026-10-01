@@ -43,8 +43,8 @@ func _get_next_action() -> void:
 
 	var dist: float = global_position.distance_to(_player.global_position)
 
-	# Fire when in range and cooldown has expired
-	if dist <= FIRE_RANGE and _attack_cooldown_timer <= 0.0:
+	# Fire when in range, with line of sight (design bible §3), and cooldown has expired
+	if dist <= FIRE_RANGE and _attack_cooldown_timer <= 0.0 and _can_see_player:
 		_change_state(State.ATTACK)
 		return
 
