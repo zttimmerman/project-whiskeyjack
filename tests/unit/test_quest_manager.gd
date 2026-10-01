@@ -81,3 +81,29 @@ func test_quest_without_a_data_file_starts_as_a_stub() -> void:
 	# A stub has no stages, so one advance completes it
 	quests.advance_quest("no_such_quest")
 	assert_bool(quests.is_quest_complete("no_such_quest")).is_true()
+
+
+# World flags: named story facts set by dialogue (or game code) and read by dialogue conditions.
+
+
+func test_flag_defaults_until_set() -> void:
+	assert_bool(quests.get_flag("idrenna_turned_down")).is_false()
+	assert_str(str(quests.get_flag("door_state", "shut"))).is_equal("shut")
+	assert_bool(quests.has_flag("idrenna_turned_down")).is_false()
+
+
+func test_set_flag_stores_the_value_and_emits() -> void:
+	var monitor := monitor_signals(quests)
+	quests.set_flag("idrenna_turned_down")
+	assert_bool(quests.get_flag("idrenna_turned_down")).is_true()
+	assert_bool(quests.has_flag("idrenna_turned_down")).is_true()
+	await assert_signal(monitor).is_emitted("flag_changed", "idrenna_turned_down", true)
+	quests.set_flag("barrow_count", 3)
+	assert_int(quests.get_flag("barrow_count")).is_equal(3)
+
+
+func test_setting_a_flag_to_its_value_does_not_emit() -> void:
+	quests.set_flag("idrenna_turned_down")
+	var monitor := monitor_signals(quests)
+	quests.set_flag("idrenna_turned_down", true)
+	await assert_signal(monitor).wait_until(100).is_not_emitted("flag_changed")

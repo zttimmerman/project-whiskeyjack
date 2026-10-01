@@ -1,8 +1,0 @@
-[
-  { "id": "start", "speaker": "Idrenna", "text": "You came back. More than most.", "choices": [
-    { "text": "The road's quiet.", "next_id": "grateful" },
-    { "text": "For now.", "next_id": "grateful" }
-  ]},
-  { "id": "grateful", "speaker": "Idrenna", "text": "This was my son's. Your Throne paid him and sent him south. It should keep someone dry.", "next_id": "reward" },
-  { "id": "reward", "speaker": "Idrenna", "text": "The Choir's louder since they opened it. Don't go down there alone.", "next_id": null }
-]

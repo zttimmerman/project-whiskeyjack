@@ -1,90 +1,87 @@
 extends Node
 
+## Runs conversations written as Dialogue Manager `.dialogue` files (data/dialogues/<id>.dialogue)
+## and exposes them through the same signals and methods as the old JSON runner, so DialogueUI and
+## NPCs don't depend on the addon. Conditions and mutations in the files call the autoloads
+## directly (QuestManager.start_quest, QuestManager.set_flag, ...).
+
 signal dialogue_started(dialogue_id: String)
 signal line_ready(speaker: String, text: String, choices: Array)
 signal dialogue_ended
 
-# Currently loaded dialogue nodes keyed by id
-var _dialogue_data: Dictionary = {}
-var _current_node_id: String = ""
+## Every conversation starts at this cue (`~ start`)
+const START_CUE := "start"
+
+## Where start() looks for <dialogue_id>.dialogue (tests point it at their fixtures)
+var dialogue_dir: String = "res://data/dialogues/"
+## Extra state for dialogue expressions, checked before the autoloads. Tests pass
+## [{"QuestManager": <a fresh QuestManager>}] so the real autoload is never touched.
+var game_states: Array = []
+
+var _resource: DialogueResource = null
+var _line: DialogueLine = null
+# The responses the player can pick, in the order line_ready listed them
+var _choices: Array[DialogueResponse] = []
 var _active: bool = false
+# True while Dialogue Manager resolves the next line (mutations take at least a frame)
+var _busy: bool = false
 
 
 func start(dialogue_id: String) -> void:
 	if _active:
 		return
-	if not _load_dialogue(dialogue_id):
+	var path := dialogue_dir.path_join("%s.dialogue" % dialogue_id)
+	var resource: DialogueResource = load(path) as DialogueResource if ResourceLoader.exists(path) else null
+	if resource == null:
 		push_error("DialogueRunner: failed to load dialogue '%s'" % dialogue_id)
 		return
+	_resource = resource
 	_active = true
-	emit_signal("dialogue_started", dialogue_id)
-	_show_node("start")
+	dialogue_started.emit(dialogue_id)
+	await _show(START_CUE)
 
 
+## Continues the conversation: with choices on screen, picks choice_index; otherwise the next line.
 func advance(choice_index: int = 0) -> void:
+	if not _active or _busy or _line == null:
+		return
+	if _choices.is_empty():
+		await _show(_line.next_id)
+	elif choice_index >= 0 and choice_index < _choices.size():
+		await _show(_choices[choice_index].next_id)
+	else:
+		_end()
+
+
+func is_active() -> bool:
+	return _active
+
+
+# Asks Dialogue Manager for the next spoken line from `key`, running any mutations on the way.
+func _show(key: String) -> void:
+	_busy = true
+	# A copy: Dialogue Manager inserts {"self": resource} into the array it's given
+	var states := game_states.duplicate()
+	var line: DialogueLine = await DialogueManager.get_next_dialogue_line(_resource, key, states)
+	_busy = false
 	if not _active:
 		return
-	var node: Dictionary = _dialogue_data.get(_current_node_id, {})
-	if node.is_empty():
+	if line == null:
 		_end()
 		return
-
-	var choices: Array = node.get("choices", [])
-	var next_id = null
-	if choices.size() > 0:
-		if choice_index < choices.size():
-			next_id = choices[choice_index].get("next_id", null)
-	else:
-		next_id = node.get("next_id", null)
-
-	if next_id == null or next_id == "":
-		_end()
-	else:
-		_show_node(next_id)
-
-
-func _load_dialogue(dialogue_id: String) -> bool:
-	var path := "res://data/dialogues/%s.json" % dialogue_id
-	if not FileAccess.file_exists(path):
-		return false
-	var file := FileAccess.open(path, FileAccess.READ)
-	if not file:
-		return false
-	var json := JSON.new()
-	var parse_result := json.parse(file.get_as_text())
-	file.close()
-	if parse_result != OK:
-		push_error("DialogueRunner: JSON parse error in '%s'" % path)
-		return false
-	var data = json.get_data()
-	if not data is Array:
-		return false
-	_dialogue_data.clear()
-	for entry in data:
-		if entry is Dictionary and entry.has("id"):
-			_dialogue_data[entry["id"]] = entry
-	return not _dialogue_data.is_empty()
-
-
-func _show_node(node_id: String) -> void:
-	var node: Dictionary = _dialogue_data.get(node_id, {})
-	if node.is_empty():
-		_end()
-		return
-	_current_node_id = node_id
-	# Trigger quest before emitting so QuestManager state is updated first
-	if node.has("set_quest"):
-		var quest_id: String = node["set_quest"]
-		if quest_id != "":
-			QuestManager.start_quest(quest_id)
-	var speaker: String = node.get("speaker", "")
-	var text: String = node.get("text", "")
-	var choices: Array = node.get("choices", [])
-	emit_signal("line_ready", speaker, text, choices)
+	_line = line
+	_choices.clear()
+	var choices: Array = []
+	for response: DialogueResponse in line.responses:
+		if response.is_allowed:
+			_choices.append(response)
+			choices.append({"text": response.text})
+	line_ready.emit(line.character, line.text, choices)
 
 
 func _end() -> void:
 	_active = false
-	_current_node_id = ""
-	_dialogue_data.clear()
-	emit_signal("dialogue_ended")
+	_resource = null
+	_line = null
+	_choices.clear()
+	dialogue_ended.emit()
