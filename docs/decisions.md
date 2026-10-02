@@ -4,8 +4,15 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 
 ## Session handoff (update at the end of every session)
 
-- **Main** is on Godot 4.7.2. The last session ended 2026-10-01. It ran **Phase A** (PRs #14–#22) and a **gameplay batch** (PRs #23–#28), and every package is merged. **Phase B's four trials were started** (branches `feature/camera-trial`, `feature/func-godot-trial`, `feature/material-maker-trial`, `feature/dialogue-manager-trial`); check their PRs first.
-- **Next, in the order the user set (2026-09-30):** finish Phase B, then the camera rework (built on whichever B1 picks). The user buys UAL2 Source ($14.99) now that the batch is done; swap the archer's draw and the bow markers when it lands.
+- **Main** is on Godot 4.7.2. The last session ended 2026-10-01. It ran **Phase A** (PRs #14–#22), a **gameplay batch** (#23–#28), **Phase B** (#30–#33) and the **camera rework** (#33), plus #34. Everything is merged; no branches or worktrees are open.
+- **Next:** Phase C content (more CC0 kits; UAL2 Source once the user buys it: real bow clips, maybe a strafe clip so waiting levies circle), dressing the crypt trial with Material Maker tileables and kit detail, then the backlog below. Research Tripo P2.0 before any generation.
+- **Phase B and the camera, done (2026-10-01):**
+  - **Dialogue Manager** (#32), kept: v4.1.0 (`a719088`) with 4 local patches (`docs/trials/dialogue-manager-v4.1.0.patch`; never use its in-editor updater). `DialogueRunner` wraps it with the old signals; `data/dialogues/village_elder.dialogue` has five openings; world flags live in `QuestManager` and save with it. `ci/check_dialogue.gd` compiles every file. Fixed: the quest reward was paid again after loading a save.
+  - **Material Maker** (#30), kept: 1.5p1 (`b57f878`) in the gitignored `.tools/`; `scripts/tools/make_textures.py` regenerates `assets/textures/surfaces/` from `.ptex` graphs (Mac only: its renderer needs Vulkan), CI runs `--check`. Dark floors are fixed level-side.
+  - **func_godot** (#31), kept as **brush shell + kit detail**: 2025.12 (`169f2dd`), disabled, build-tool only (`scripts/tools/build_brush_maps.gd`, headless; CI fails a stale build). `scripts/tools/brush_boxes.py` writes brushes from box layouts. Budget: 2,000 triangles per brush entity (art bible). Trial room: `scenes/world/trials/CryptTrial.tscn`.
+  - **Camera** (#33): our own `scenes/player/CameraRig`, Phantom Camera rejected (evidence in `docs/trials/phantom-camera.md`). Framing A, picked by the user after two playtests: 1.6 m arm (2.2 locked), 0.7 m right, lens about 1.55 m, 65°. Mouse pitch turns the look; the lens stays within ±0.35 m. Lock-on: living enemies in sight only, drops after 1 s hidden, jumps to the next enemy when the target dies, with a red reticle. Every `cam_*` check passes in every scenario (`scripts/review/camera_probe.gd`, `tests/scenarios/camera_stress.json`). Other framings stay selectable through `CameraRig.framing`.
+  - **#34:** pressing interact on a conversation's last line no longer reopens it (`DialogueRunner.accepts_interact()`); the playtest review copy is labelled "REVIEW <ref>" and has its own `user://`.
+- **Playtest lesson (2026-10-01):** open playtests with `playtest-branch.sh <ref>` (default `--play`). With `--editor`, the user pressed F5 in their own editor on `main` twice and reported "nothing changed". A no-input capture also hid a mouse-pitch bug, so camera evidence must include camera input.
 - **Gameplay batch, done (2026-09-30 – 10-01):**
   - **Damage** (#23): `CharacterStats.mitigated_damage` (the ratio), `level_scale` and `scaled_stat` (round to nearest, not yet wired into spawning: no per-area level bands). Enemy attack 14 for both levy variants and arrows (9 HP per hit); `ttk_levy_player` 12.
   - **Skating** (#24): the levy is about 13% larger than the Quaternius mannequin, so its clips cover more ground. Front-file chase 4.0 → 4.6 m/s (the user kept it; the player's escape margin is 0.4 m/s), Back-file 1.4 → 1.5. Foot slide 0.21 / 0.17 m/s, enforced by `test_locomotion_foot_slide`. The motion review's foot-slide measurement had a Foot→Toes switching bug, now fixed.
@@ -30,15 +37,13 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
   - Sourced props budget: 1,320 triangles, 128 px from the kit's shared atlas (art bible). Kit scale stays 1.0 until pieces are first placed; any rescale is one factor per pack.
   - The per-footprint colour measurement stays for sourced assets only. The floor tile's slight brown drift is accepted.
 - **Backlog, as design-bible targets:**
-  - `cam_melee_occlusion`, `cam_player_in_frame`, `cam_wall_fill` and `cam_lock_both_in_frame`: the camera rework and a lock-on reticle (B1 adds the measurements).
+  - Camera follow-ups: first-person mode later; the arm still snaps in at once when the view swings into a wall.
   - `atk_hitbox_sync` (the `contact` markers now exist; wire the check), player attack commitment and the 0.15 s recovery; stagger should start the enemy's cooldown (§3).
   - A "reasonable player" scenario (reacts late to some tells) for `enc_first_fight_hp_cost`; a two-fight route for `enc_spacing_s`; a pillar or doorway replay for the SEARCH state.
-  - The `lvl_*` targets and `read_*`: ceilings (the kit has none; B2 trials brush ceilings), `lvl_bare_wall_run_max`, the kit doorway's 2.0 m opening (under 2.2 m) once doors are walk-through.
+  - The `lvl_*` targets and `read_*`: ceilings (brush shells now provide them; Level 1 still has none), `lvl_bare_wall_run_max`, the kit doorway's 2.0 m opening (under 2.2 m) once doors are walk-through.
   - Stability: the 13 invalid hand-written UIDs, the 10 GDScript warnings, and the E key's double binding.
   - Small: the attack-token hand-off on death is immediate (a 2 s window can briefly count 3); the replay harness stamps first-frame events 1–2 frames early; `import_pack.py` should write `compress/mode=2` for new kit textures; the pre-push hook ran `tests/run.sh` to exit 100 once (not reproduced; watch for a flaky test).
 - **Next:**
-  - **Phase B, trials (running):** B1 camera (Phantom Camera vs our rig), B2 func_godot `.map` crypts, B3 Material Maker textures, B4 Dialogue Manager. Each PR recommends keep / drop; adopting is the user's call.
-  - **Then the camera rework,** on B1's winner.
   - **Phase C, content:** more CC0 kits through the import path, plus UAL2 Source (the user buys it): real bow clips and possibly a strafe clip for waiting levies.
 - **Open questions:**
   - Is Level 2's 0.5 m burial platform meant to be walkable? It's above the 0.25 m climb limit, so enemies path around it. (The user hasn't been there in a while; ask when Level 2 is next worked on.)
