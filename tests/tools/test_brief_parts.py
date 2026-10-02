@@ -11,9 +11,11 @@ in `parts`, one inline mapping per line:
       - {select: rank 3-4, bind: transfer, offset_mm: 4}
       - {select: rank 6-9, bind: rigid:Head}
 
-`select` picks welded shells by size rank (1 = most triangles), `bind` is `transfer` (weights copied
-from the continuous proxy, CLAUDE.md's fourth animation exception) or `rigid:<bone>` (weight 1.0 on
-that bone), and `offset_mm` (garments only, 0-10) pushes the shell out along its normals.
+`select` picks welded shells by size rank (1 = most triangles), `bind` is `keep` (the rig's own
+weights stay, and the shell is the weight source), `transfer` (weights copied from the source: the
+keep shells, or with none a continuous voxel proxy of the transfer shells; CLAUDE.md's fourth
+animation exception) or `rigid:<bone>` (weight 1.0 on that bone), `offset_mm` (garments only, 0-10) pushes the shell out along its normals, and `skirt: true`
+marks the shells `skirt_reweight` may grade (without it, a flared boot cuff above the knee counts as skirt).
 """
 import os
 import sys
@@ -69,6 +71,9 @@ class PartsErrors(unittest.TestCase):
     def test_valid(self):
         self.assertEqual(self.errors(pipeline.parse_brief_yaml(BRIEF, "x.yaml")["parts"]), [])
 
+    def test_keep_is_a_bind(self):
+        self.assertEqual(self.errors([{"select": "rank 1", "bind": "keep"}, {"select": "rank 2", "bind": "transfer"}]), [])
+
     def test_bad_bind(self):
         self.assertTrue(self.errors([{"select": "rank 1", "bind": "glue"}]))
 
@@ -81,6 +86,11 @@ class PartsErrors(unittest.TestCase):
     def test_offset_range(self):
         self.assertTrue(self.errors([{"select": "rank 1", "bind": "transfer", "offset_mm": 12}]))
         self.assertTrue(self.errors([{"select": "rank 1", "bind": "transfer", "offset_mm": -1}]))
+
+    def test_skirt_needs_skirt_reweight(self):
+        part = {"select": "rank 1", "bind": "transfer", "skirt": True}
+        self.assertTrue(self.errors([part]))
+        self.assertEqual(self.errors([part], skirt_reweight=True), [])
 
     def test_unknown_key(self):
         self.assertTrue(self.errors([{"select": "rank 1", "bind": "transfer", "weld": True}]))
