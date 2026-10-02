@@ -305,8 +305,8 @@ func _tick_attack(delta: float) -> void:
 		# A small epsilon so float accumulation can't push the release a frame late
 		if _windup_elapsed >= _windup_time() - 0.0001:
 			_winding_up = false
-			if _anim_player:
-				_anim_player.play()  # resumes the attack clip from its contact marker
+			if _anim_player and _anim_player.assigned_animation == "attack":
+				windup_release(_anim_player, "attack")  # plays on from its contact marker
 			_release_attack()
 		return
 	_attack_timer -= delta
@@ -335,30 +335,51 @@ func _finish_attack() -> void:
 func _begin_windup() -> void:
 	_winding_up = true
 	_windup_elapsed = 0.0
-	_play_anim("attack")
-	if _anim_player and _anim_player.current_animation == "attack":
-		_anim_player.pause()  # posed by _pose_windup() each physics frame until the release
+	if _anim_player and _anim_player.has_animation("attack"):
+		windup_begin(_anim_player, "attack")  # posed by _pose_windup() each physics frame until the release
 		_pose_windup()
 
 
-# The tell: the attack clip eases into its "tell" marker pose (the wind-back), holds it, then plays
-# on so its "contact" marker lands as the windup ends. A clip without both markers plays as it is.
 func _pose_windup() -> void:
 	if not _anim_player or _anim_player.assigned_animation != "attack":
 		return
-	var clip := _anim_player.get_animation("attack")
-	if not (clip.has_marker("tell") and clip.has_marker("contact")):
-		return
+	var pos := windup_position(_anim_player.get_animation("attack"), _windup_time(), _windup_elapsed)
+	if pos >= 0.0:
+		_anim_player.seek(pos, true)
+
+
+# The windup's clip handling, static so the motion review's game-path pass (scripts/review/game_path.gd)
+# drives a windup exactly as the game does.
+# The tell: the attack clip eases into its "tell" marker pose (the wind-back), holds it, then plays on
+# so its "contact" marker lands as the windup ends. While posed it plays at speed 0 rather than paused:
+# a paused AnimationPlayer freezes its crossfade, and the previous clip would hold through the tell.
+# A clip without both markers plays as it is.
+static func windup_begin(anim_player: AnimationPlayer, clip_name: String) -> void:
+	anim_player.play(clip_name, -1.0, 0.0 if _has_tell(anim_player.get_animation(clip_name)) else 1.0)
+
+
+## The clip position `elapsed` seconds into a `windup`-second windup, or -1 when the clip has no tell
+static func windup_position(clip: Animation, windup: float, elapsed: float) -> float:
+	if not _has_tell(clip):
+		return -1.0
 	var tell := clip.get_marker_time("tell")
-	var strike_start := maxf(_windup_time() - (clip.get_marker_time("contact") - tell), 0.0)
+	var strike_start := maxf(windup - (clip.get_marker_time("contact") - tell), 0.0)
 	var windback := clampf(strike_start * TELL_WINDBACK_SHARE, minf(tell, strike_start), strike_start)
-	var t := _windup_elapsed
-	var pos := tell
-	if t < windback:
-		pos = tell * t / windback
-	elif t >= strike_start:
-		pos = tell + (t - strike_start)
-	_anim_player.seek(pos, true)
+	if elapsed < windback:
+		return tell * elapsed / windback
+	if elapsed >= strike_start:
+		return tell + (elapsed - strike_start)
+	return tell
+
+
+## The windup is over: the clip plays on at its own speed from where it was posed (no new blend)
+static func windup_release(anim_player: AnimationPlayer, clip_name: String) -> void:
+	if _has_tell(anim_player.get_animation(clip_name)):
+		anim_player.play(clip_name, 0.0, 1.0)
+
+
+static func _has_tell(clip: Animation) -> bool:
+	return clip != null and clip.has_marker("tell") and clip.has_marker("contact")
 
 
 func _tick_stagger(delta: float) -> void:
