@@ -145,6 +145,19 @@ jobs:
           path: |
             reports/
             gdunit4.log
+      - name: Summarise the results on the run page and annotate failing tests (JUnit)
+        # Parity with godot-gdunit-labs/gdUnit4-action's report, keeping tests/run.sh as the one runner.
+        # annotate_only: annotations and the job summary need no extra token permissions.
+        # require_tests: fails the step if no results parsed, so a runner that silently ran nothing fails.
+        if: ${{ !cancelled() }}
+        uses: mikepenz/action-junit-report@a9170d5795813c01ab4901ffb045b52bab4ab09d # v6.5.0
+        with:
+          report_paths: reports/report_*/results.xml
+          annotate_only: true
+          detailed_summary: true
+          require_tests: true
+          fail_on_parse_error: true
+          check_name: gdUnit4
 
   navmesh:
     name: navmesh (stale bake, pathfinding, path clearance)
