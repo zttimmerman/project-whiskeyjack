@@ -21,8 +21,8 @@ extends RefCounted
 # as the game does, unless the game cuts it short (CUTS: a stagger, dodge or death mid-attack, a levy's
 # swing handed back to the chase when its active time ends), which is measured at the loop phases.
 # An enemy's windup (the scene's _windup_time(), BaseEnemy) is driven as BaseEnemy drives it, through
-# its static windup_begin / windup_position / windup_release: posed by seek() at speed 0 through the
-# tell, then played on from the contact marker; the window covers the whole windup.
+# scripts/combat/AttackWindup.gd: posed by seek() at speed 0 through the tell, then played on from the
+# contact marker; the window covers the whole windup.
 # Ideas after htdt/godogen asset-gen/motion.md pitfalls 16 and 18 (MIT; no code copied).
 
 const LIMBS := {"left_hand": "LeftHand", "right_hand": "RightHand", "left_foot": "LeftFoot", "right_foot": "RightFoot"}
@@ -82,7 +82,7 @@ const LOOP_PHASES := [0.25, 0.5, 0.75, 1.0]
 const AFTER_BLEND_FRAMES := 3
 const SETTLE_FRAMES := 3
 const SKIP_SETTINGS := ["libraries", "root_node", "script"]
-const BaseEnemy := preload("res://scenes/enemies/BaseEnemy.gd")
+const AttackWindup := preload("res://scripts/combat/AttackWindup.gd")
 
 
 # The HANDOVERS whose two clips are both in the library
@@ -268,7 +268,7 @@ static func _blend_time(ap: AnimationPlayer, from: String, to: String) -> float:
 
 
 # phase < 0: `from` is a one-shot and hands over when it finishes. With a windup, `to` (when it has
-# tell and contact markers) is posed through it as BaseEnemy does, from a phased handover.
+# tell and contact markers) is posed through it as BaseEnemy does (AttackWindup), from a phased handover.
 static func _handover(
 	holder: Node,
 	model: PackedScene,
@@ -287,7 +287,7 @@ static func _handover(
 	var from_len := lib.get_animation(from).length
 	var to_clip := lib.get_animation(to)
 	var to_len := to_clip.length
-	var winding := phase >= 0.0 and windup > 0.0 and BaseEnemy.windup_position(to_clip, windup, 0.0) >= 0.0
+	var winding := phase >= 0.0 and windup > 0.0 and AttackWindup.position(to_clip, windup, 0.0) >= 0.0
 	var elapsed := 0.0
 	var handed := [false]
 	if phase < 0.0:
@@ -315,8 +315,8 @@ static func _handover(
 		h = samples.size()
 		# The game's state change, in its physics step
 		if winding:
-			BaseEnemy.windup_begin(ap, to)
-			ap.seek(BaseEnemy.windup_position(to_clip, windup, 0.0), true)
+			AttackWindup.begin(ap, to)
+			ap.seek(AttackWindup.position(to_clip, windup, 0.0), true)
 		else:
 			ap.play(to)
 	var span := blend
@@ -331,18 +331,18 @@ static func _handover(
 		if winding and samples.size() > h:
 			# BaseEnemy._tick_attack: the windup's clock, its pose, and the release at its end
 			elapsed = minf(elapsed + 1.0 / fps, windup)
-			posed = BaseEnemy.windup_position(to_clip, windup, elapsed)
+			posed = AttackWindup.position(to_clip, windup, elapsed)
 			ap.seek(posed, true)
 			if elapsed >= windup - 0.0001:
 				winding = false
-				posed = -1.0
-				BaseEnemy.windup_release(ap, to)
+				AttackWindup.release(ap, to, 1.0 / fps)  # the next advance lands on contact itself
 		elif winding:
-			posed = BaseEnemy.windup_position(to_clip, windup, 0.0)
+			posed = AttackWindup.position(to_clip, windup, 0.0)
 		ap.advance(1.0 / fps)
 		var s := _sample(inst)
 		if posed >= 0.0:
 			s["expected"] = posed
+		posed = -1.0
 		samples.append(s)
 	# The snap: limb speed above either clip's own top speed, across the handover
 	var best := {"excess": 0.0, "speed": 0.0, "limb": "", "frame": -1}

@@ -28,8 +28,6 @@ const ATTACK_COOLDOWN: float = 1.5
 ## enemy_melee_telegraph (design bible §3, at least 0.5 s): the tell, from the attack starting to its
 ## hitbox opening. A gameplay constant: the attack clip is fitted to it through its markers.
 const MELEE_WINDUP: float = 0.6
-## Share of the windup before the strike spent easing into the clip's "tell" pose; it's held after
-const TELL_WINDBACK_SHARE: float = 0.6
 ## Sight rays run at most this often per enemy (the cheap range and cone tests run every frame)
 const SIGHT_INTERVAL: float = 0.1
 ## Ray ends above the body origin (the capsule centre, 0.9 m above the feet): enemy eyes, player chest
@@ -53,6 +51,7 @@ var _hitbox: HitboxComponent = null
 const HeldProps := preload("res://scripts/combat/HeldProps.gd")
 const WorldRay := preload("res://scripts/combat/WorldRay.gd")
 const AttackTokens := preload("res://scripts/combat/AttackTokens.gd")
+const AttackWindup := preload("res://scripts/combat/AttackWindup.gd")
 
 var _anim_player: AnimationPlayer = null
 
@@ -306,7 +305,7 @@ func _tick_attack(delta: float) -> void:
 		if _windup_elapsed >= _windup_time() - 0.0001:
 			_winding_up = false
 			if _anim_player and _anim_player.assigned_animation == "attack":
-				windup_release(_anim_player, "attack")  # plays on from its contact marker
+				AttackWindup.release(_anim_player, "attack", delta)  # plays on from its contact marker
 			_release_attack()
 		return
 	_attack_timer -= delta
@@ -336,50 +335,18 @@ func _begin_windup() -> void:
 	_winding_up = true
 	_windup_elapsed = 0.0
 	if _anim_player and _anim_player.has_animation("attack"):
-		windup_begin(_anim_player, "attack")  # posed by _pose_windup() each physics frame until the release
+		AttackWindup.begin(_anim_player, "attack")  # posed by _pose_windup() each physics frame until the release
 		_pose_windup()
 
 
+# The tell (scripts/combat/AttackWindup.gd): eased into the clip's "tell" pose, held, then played on so
+# "contact" lands as the hitbox opens
 func _pose_windup() -> void:
 	if not _anim_player or _anim_player.assigned_animation != "attack":
 		return
-	var pos := windup_position(_anim_player.get_animation("attack"), _windup_time(), _windup_elapsed)
+	var pos := AttackWindup.position(_anim_player.get_animation("attack"), _windup_time(), _windup_elapsed)
 	if pos >= 0.0:
 		_anim_player.seek(pos, true)
-
-
-# The windup's clip handling, static so the motion review's game-path pass (scripts/review/game_path.gd)
-# drives a windup exactly as the game does.
-# The tell: the attack clip eases into its "tell" marker pose (the wind-back), holds it, then plays on
-# so its "contact" marker lands as the windup ends. While posed it plays at speed 0 rather than paused:
-# a paused AnimationPlayer freezes its crossfade, and the previous clip would hold through the tell.
-# A clip without both markers plays as it is.
-static func windup_begin(anim_player: AnimationPlayer, clip_name: String) -> void:
-	anim_player.play(clip_name, -1.0, 0.0 if _has_tell(anim_player.get_animation(clip_name)) else 1.0)
-
-
-## The clip position `elapsed` seconds into a `windup`-second windup, or -1 when the clip has no tell
-static func windup_position(clip: Animation, windup: float, elapsed: float) -> float:
-	if not _has_tell(clip):
-		return -1.0
-	var tell := clip.get_marker_time("tell")
-	var strike_start := maxf(windup - (clip.get_marker_time("contact") - tell), 0.0)
-	var windback := clampf(strike_start * TELL_WINDBACK_SHARE, minf(tell, strike_start), strike_start)
-	if elapsed < windback:
-		return tell * elapsed / windback
-	if elapsed >= strike_start:
-		return tell + (elapsed - strike_start)
-	return tell
-
-
-## The windup is over: the clip plays on at its own speed from where it was posed (no new blend)
-static func windup_release(anim_player: AnimationPlayer, clip_name: String) -> void:
-	if _has_tell(anim_player.get_animation(clip_name)):
-		anim_player.play(clip_name, 0.0, 1.0)
-
-
-static func _has_tell(clip: Animation) -> bool:
-	return clip != null and clip.has_marker("tell") and clip.has_marker("contact")
 
 
 func _tick_stagger(delta: float) -> void:
