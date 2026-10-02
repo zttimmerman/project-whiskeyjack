@@ -1,7 +1,7 @@
 ---
 id: import-pack-compress-mode
 title: "Have import_pack.py write compress/mode=2 for new kit textures"
-status: in-review
+status: done
 kind: fix
 targets: []
 after: []
@@ -25,3 +25,7 @@ New kit textures should import as the editor detects them (VRAM compressed, `com
 ## Serves
 
 `kit-texture-import`; Phase C kits.
+
+## Outcome
+
+Merged in PR #45: scripts/tools/texture_imports.py settles generated 3D textures' .import at generation (GLB-extracted and brush textures VRAM as the editor detects them, surface textures lossless); pipeline validate settles GLBs; CI --check fails a texture still awaiting detection.
