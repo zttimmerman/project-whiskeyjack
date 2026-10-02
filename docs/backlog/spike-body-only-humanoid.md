@@ -1,13 +1,13 @@
 ---
 id: spike-body-only-humanoid
 title: "Spike: body plus separate clothing shells, with weight transfer"
-status: ready
+status: in-review
 kind: spike
 targets: []
 after: []
 phase: C
-branch: null
-pr: null
+branch: spike/body-only-humanoid
+pr: 47
 updated: 2026-10-02
 ---
 ## Goal
@@ -46,3 +46,16 @@ Commit the code if it works and the findings (a `docs/trials/` note) if it doesn
 ## Serves
 
 `player-model-rework`; the skin-stretch metric (3–5× on the player today).
+
+## Outcome
+
+**Phase 0 partly works, but not by the planned route** (`docs/trials/body-only-humanoid.md`; 0 credits). The P2 player was built as the separate asset `player_p2parts`, and the shipped P1 player is untouched.
+- **The planned voxel proxy fails.** It closes the seams, but it fuses the legs at the crotch: stretch 21–40×, with either Data Transfer or the reimplemented inpainting (numpy CG, no scipy).
+- **What works is keep + transfer.** The body, head and legs keep the rig's weights and the harness copies from them, 4 mm out.
+- **Results:**
+  - seam gap 0.52–0.71 cm in every clip (6.7–14.9 cm before);
+  - stretch 1.60–4.38, below P1's in 5 of 6 clips (dodge_roll 4.38 against 3.88);
+  - 4,437 triangles and one texture.
+- **Failing:** poke-through (4–7 vertices, the collar under the head shell → `parts-contact-blend`). The mesh packet has two failing assertions (17 holes, the dark-navy share), so the judge will escalate.
+- **The A/B's tearing** was mostly `skirt_reweight` catching the boot cuffs. The real tear was the harness.
+- **Phase 1** isn't recommended yet (`decide-player-p2parts`). `tripo mesh segment` has no `--dry-run`, so there's no free price.
