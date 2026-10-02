@@ -89,11 +89,14 @@ const MARKERS := {
 
 var _sources := {}
 var _built := {}
+var _failed := false
+var _scenes: Array[Node] = []
 
 
 func _init() -> void:
 	for pack in SOURCES:
 		var scene: Node = (load(SOURCES[pack]) as PackedScene).instantiate()
+		_scenes.append(scene)
 		_sources[pack] = scene.find_children("*", "AnimationPlayer", true, false)[0]
 	DirAccess.make_dir_recursive_absolute("res://data/animations/clips")
 	for lib_name in LIBRARIES:
@@ -102,8 +105,47 @@ func _init() -> void:
 			var spec: Array = LIBRARIES[lib_name][code_name]
 			lib.add_animation(code_name, _clip(spec[0], spec[1], spec[2]))
 		var path := "res://data/animations/%s_library.tres" % lib_name
-		print("LIBRARY ", path, " ", lib.get_animation_list(), " err ", ResourceSaver.save(lib, path))
-	quit()
+		var err := ResourceSaver.save(lib, path)
+		print("LIBRARY ", path, " ", lib.get_animation_list(), " err ", err)
+		if err != OK:
+			_fail("build_animation_library: couldn't save %s (%s)" % [path, error_string(err)])
+		else:
+			_check_saved(lib, path)
+	for scene: Node in _scenes:
+		scene.free()  # the source packs, so nothing leaks at exit
+	quit(1 if _failed else 0)
+
+
+func _fail(message: String) -> void:
+	push_error(message)
+	_failed = true
+
+
+# The saved library, read back from disk, must hold the clips that were built: same names, lengths,
+# loop modes, track paths and markers (a silently dropped clip or track would otherwise ship).
+func _check_saved(lib: AnimationLibrary, path: String) -> void:
+	var back := ResourceLoader.load(path, "", ResourceLoader.CACHE_MODE_IGNORE_DEEP) as AnimationLibrary
+	if back == null:
+		_fail("build_animation_library: %s doesn't load back" % path)
+		return
+	if back.get_animation_list() != lib.get_animation_list():
+		_fail(
+			(
+				"build_animation_library: %s holds %s, built %s"
+				% [path, back.get_animation_list(), lib.get_animation_list()]
+			)
+		)
+		return
+	for clip_name in lib.get_animation_list():
+		if _clip_signature(back.get_animation(clip_name)) != _clip_signature(lib.get_animation(clip_name)):
+			_fail("build_animation_library: %s: clip %s differs after saving" % [path, clip_name])
+
+
+static func _clip_signature(clip: Animation) -> String:
+	var tracks := []
+	for t in clip.get_track_count():
+		tracks.append("%s:%d:%d" % [clip.track_get_path(t), clip.track_get_type(t), clip.track_get_key_count(t)])
+	return "%.4f|%d|%s|%s" % [clip.length, clip.loop_mode, ",".join(tracks), ",".join(clip.get_marker_names())]
 
 
 func _clip(pack: String, clip: String, opts: Dictionary) -> Animation:
@@ -181,11 +223,10 @@ func _clip(pack: String, clip: String, opts: Dictionary) -> Animation:
 		if at >= 0.0 and at <= out.length:
 			out.add_marker(mark, at)
 	var file := "res://data/animations/clips/%s.res" % key
-	print(
-		"CLIP ",
-		file,
-		" length %.2f s, %d tracks, err %d" % [out.length, out.get_track_count(), ResourceSaver.save(out, file)]
-	)
+	var err := ResourceSaver.save(out, file)
+	print("CLIP ", file, " length %.2f s, %d tracks, err %d" % [out.length, out.get_track_count(), err])
+	if err != OK:
+		_fail("build_animation_library: couldn't save %s (%s)" % [file, error_string(err)])
 	out.take_over_path(file)
 	_built[key] = out
 	return out
