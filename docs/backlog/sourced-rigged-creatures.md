@@ -10,6 +10,10 @@ branch: null
 pr: null
 updated: 2026-10-02
 ---
+## Goal
+
+Decide how downloaded, already-rigged creatures (the Gobkit boar, PR #46) enter the pipeline; sourced characters were refused, so the boar came in as a prop.
+
 ## Question
 
 `pipeline.py` refuses sourced characters ("rigging a downloaded character is the user's call"), so the spike's Gobkit boar came in as `type: prop`. It keeps its own rig and clips, but validate warns "prop has a Skeleton3D" and the brief can't carry character fields (`socket_map`, animations). How should downloaded creatures that are already rigged come in?
