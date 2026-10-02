@@ -68,19 +68,20 @@ func _camera(player: Node) -> Camera3D:
 
 
 func test_cam_framing_over_the_shoulder() -> void:
-	# §2 Framing (user, 2026-10-01, Witcher-like): pivot about 1.6 m above the floor, about 0.9 m to the right,
-	# an arm of about 2.5 m, FOV 70–75°
+	# §2 Framing (user, 2026-10-01: variant A): lens about 1.55 m above the floor, about 0.7 m to the right,
+	# an arm of about 1.6 m, FOV 65°
 	_floor()
 	var player := _player_at(Vector3(0, BODY_Y, 0))
+	player.apply_view_state({"facing": 0.0, "camera_yaw": 0.0, "camera_pitch": 0.0})
 	await _physics_frames(SETTLE_FRAMES)
 	var cam := _camera(player)
 	var rig: Node3D = player.get_node("CameraRig")
-	var pivot: Vector3 = rig.call("get_pivot")
-	assert_float(pivot.y - FEET_Y).is_between(1.5, 1.7)
-	var local := cam.global_position - pivot
-	assert_float(absf(local.x)).override_failure_message("shoulder offset %.2f" % local.x).is_between(0.8, 1.0)
-	assert_float(local.z).override_failure_message("behind %.2f" % local.z).is_between(2.2, 2.8)
-	assert_float(cam.fov).is_between(70.0, 75.0)
+	var local := cam.global_position - Vector3(player.global_position.x, FEET_Y, player.global_position.z)
+	assert_float(local.y).override_failure_message("lens %.2f m" % local.y).is_between(1.45, 1.65)
+	assert_float(absf(local.x)).override_failure_message("shoulder offset %.2f" % local.x).is_between(0.6, 0.8)
+	assert_float(local.z).override_failure_message("behind %.2f" % local.z).is_between(1.4, 1.8)
+	assert_float(cam.fov).is_equal_approx(65.0, 0.5)
+	assert_int(rig.get("framing")).is_equal(1)  # Framing.A_MEDIUM
 
 
 func test_cam_player_in_the_left_third() -> void:
