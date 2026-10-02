@@ -118,7 +118,7 @@ func _poll_gameplay_actions() -> void:
 	if Input.is_action_just_pressed("dodge") and not _is_dodging:
 		_dodge()
 
-	if Input.is_action_just_pressed("interact"):
+	if Input.is_action_just_pressed("interact") and DialogueRunner.accepts_interact():
 		interact()
 
 	if Input.is_action_just_pressed("attack_light") and not _is_dodging and _attack_timer <= 0.0:
