@@ -1,7 +1,7 @@
 ---
 id: backlog-system
 title: "Home-grown backlog: docs/backlog, backlog.py, package-worker agent"
-status: in-review
+status: done
 kind: chore
 targets: []
 after: [decide-backlog-system]
