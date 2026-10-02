@@ -230,11 +230,11 @@ func test_enemy_attackers_max_melee_when_holder_dies() -> void:
 			killed.take_damage(9999)
 	var best := 0
 	for s in starts:
-		var actors := {}
+		var in_window := {}
 		for e in starts:
 			if s.frame - 120 < e.frame and e.frame <= s.frame:
-				actors[e.actor] = true
-		best = maxi(best, actors.size())
+				in_window[e.actor] = true
+		best = maxi(best, in_window.size())
 	(
 		assert_int(best)
 		. override_failure_message("%d melee attackers started within 2 s (target: at most 2)" % best)
