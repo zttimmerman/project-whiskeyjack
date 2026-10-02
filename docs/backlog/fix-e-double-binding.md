@@ -1,13 +1,13 @@
 ---
 id: fix-e-double-binding
 title: "Resolve the E key's double binding"
-status: ready
+status: done
 kind: fix
 targets: []
 after: []
 phase: gameplay-2
-branch: null
-pr: null
+branch: fix/e-double-binding
+pr: 44
 updated: 2026-10-02
 ---
 ## Goal
@@ -25,3 +25,11 @@ E (physical keycode 69) is bound to both `camera_right` and `interact` in `proje
 ## Serves
 
 §2 controls; §8 stability.
+
+## Decision
+
+User, 2026-10-02: E = `camera_right`; E is removed from `interact`, so F is the only keyboard interact key (interact keeps joypad button 3).
+
+## Outcome
+
+Merged in PR #44: E is camera_right only and F is the only keyboard interact key (user, 2026-10-02); test_input_bindings.gd enforces one action per key.

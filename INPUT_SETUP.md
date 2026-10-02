@@ -1,6 +1,6 @@
 # Input Map Setup
 
-Add the following actions in **Project > Project Settings > Input Map**.
+The input map below is already configured in `project.godot` (**Project > Project Settings > Input Map**). One action per key: no key drives two gameplay actions (`tests/unit/test_input_bindings.gd`).
 
 Each action should have at least one keyboard binding and, where noted, a
 recommended controller (joypad) binding as well.
@@ -37,7 +37,7 @@ recommended controller (joypad) binding as well.
 
 | Action           | Keyboard        | Controller (suggested)  |
 |------------------|-----------------|-------------------------|
-| `interact`       | F / E           | Joypad Button 3 (Y/Triangle) |
+| `interact`       | F               | Joypad Button 3 (Y/Triangle) |
 | `lock_on`        | Tab / Middle Click | Joypad Button 8 (R3) |
 | `open_inventory`  | I               | Joypad Button 4 (Back/Select) |
 | `open_quest_log`  | L               | Joypad Button 9 (L1/LB) |
