@@ -20,6 +20,8 @@ GODOT="${GODOT_BIN:-/Applications/Godot.app/Contents/MacOS/Godot}"
 FFMPEG="${FFMPEG:-/opt/homebrew/bin/ffmpeg}"
 test -x "$GODOT" || { echo "capture_evidence.sh: Godot not found at $GODOT (set GODOT_BIN)" >&2; exit 2; }
 test -x "$FFMPEG" || FFMPEG="$(command -v ffmpeg)" || { echo "capture_evidence.sh: ffmpeg not found (set FFMPEG)" >&2; exit 2; }
+# The windowed run is under GODOT_TIMEOUT_CAPTURE (scripts/tools/godot_timeout.sh): a hung run fails with 124
+source "$ROOT/scripts/tools/godot_timeout.sh" || exit 2
 
 scenario=""
 events="hit,dodge_start,stagger"
@@ -45,7 +47,8 @@ for f in /System/Library/Fonts/Supplemental/Arial.ttf /System/Library/Fonts/Helv
 done
 
 echo "== $name: rendering (Movie Maker)"
-"$GODOT" --always-on-top --fixed-fps 60 --write-movie "$out/frames/frame.png" --path "$ROOT" res://scripts/review/replay.tscn -- \
+with_timeout GODOT_TIMEOUT_CAPTURE 1200 "capture_evidence.sh: $name rendered run" \
+	"$GODOT" --always-on-top --fixed-fps 60 --write-movie "$out/frames/frame.png" --path "$ROOT" res://scripts/review/replay.tscn -- \
 	--scenario "$scenario_abs" --event-log "$out/capture.jsonl" --save-slot=replay < /dev/null > "$out/capture.log" 2>&1
 code=$?
 if [ $code -ne 0 ] || ! grep -q '"event":"scenario_end"' "$out/capture.jsonl" 2> /dev/null; then

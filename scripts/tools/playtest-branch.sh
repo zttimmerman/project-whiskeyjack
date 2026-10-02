@@ -13,6 +13,9 @@
 set -euo pipefail
 
 die() { echo "playtest: $*" >&2; exit 1; }
+# The version probes and the import run under a limit (a hung Godot fails instead of idling forever);
+# the launched game or editor does not.
+source "$(dirname "${BASH_SOURCE[0]}")/godot_timeout.sh" || die "missing scripts/tools/godot_timeout.sh"
 
 COMMON_DIR=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null) \
   || die "run this from inside the project repo"
@@ -98,18 +101,20 @@ else
   G=""
   for cand in /Applications/Godot.app /Applications/Godot-"$VER"*.app "$HOME"/Applications/godot-"$VER"*/Godot.app; do
     bin="$cand/Contents/MacOS/Godot"
-    if [ -x "$bin" ] && "$bin" --version 2>/dev/null | grep -q "^$VER\."; then G=$bin; break; fi
+    if [ -x "$bin" ] && with_timeout GODOT_TIMEOUT_RUN 60 "playtest: $bin --version" "$bin" --version 2>/dev/null | grep -q "^$VER\."; then G=$bin; break; fi
   done
   [ -n "$G" ] || die "no installed Godot $VER found (looked in /Applications and ~/Applications); set GODOT=/path/to/Godot"
 fi
 [ -x "$G" ] || die "Godot binary not found or not executable: $G"
 export GODOT_AI_DISABLE_TELEMETRY=true
-GVER=$("$G" --version 2>/dev/null | head -1 || echo unknown)
+GVER=$(with_timeout GODOT_TIMEOUT_RUN 60 "playtest: $G --version" "$G" --version 2>/dev/null | head -1 || echo unknown)
 
 # 3. Headless import so the first launch doesn't stall.
 echo "playtest: importing (first run can take a minute)..."
 LOG=$(mktemp -t playtest-import)
-"$G" --headless --path "$REVIEW" --import >"$LOG" 2>&1 || echo "playtest: import exited non-zero (see $LOG)"
+if with_timeout GODOT_TIMEOUT_IMPORT 900 "playtest: import" "$G" --headless --path "$REVIEW" --import </dev/null >"$LOG" 2>&1; then :
+elif [ $? -eq 124 ]; then die "$(tail -1 "$LOG")"
+else echo "playtest: import exited non-zero (see $LOG)"; fi
 errors=$(grep -c 'ERROR' "$LOG" || true)
 echo "playtest: import done, $errors ERROR line(s) (log: $LOG)"
 

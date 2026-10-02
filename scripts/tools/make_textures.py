@@ -34,6 +34,9 @@ import sys
 import time
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import godot_timeout  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[2]
 SRC = ROOT / "assets/textures/src"
 OUT = ROOT / "assets/textures/surfaces"
@@ -46,6 +49,14 @@ PALETTE_HEX = re.compile(r"^\| ([A-Z][A-Za-z ]+?) \| `(#[0-9A-Fa-f]{6})` \|", re
 
 class Fail(Exception):
     pass
+
+
+def run_limited(cmd, label, **kwargs):
+    """Material Maker (a Godot app) and the palette lock under GODOT_TIMEOUT_RUN (scripts/tools/godot_timeout.py)."""
+    try:
+        return godot_timeout.run(cmd, label, "GODOT_TIMEOUT_RUN", 600, **kwargs)
+    except godot_timeout.ToolTimeout as e:
+        raise Fail(str(e)) from None
 
 
 def sha256(path):
@@ -117,8 +128,8 @@ def regenerate(cfg, names):
     graphs = [str(SRC / cfg["textures"][n]["graph"]) for n in names]
     log = WORK / "material_maker.log"
     with log.open("w") as fh:
-        code = subprocess.run([str(mm), "--export", "-o", str(WORK), *graphs], stdout=fh, stderr=subprocess.STDOUT,
-                              stdin=subprocess.DEVNULL, timeout=600).returncode
+        code = run_limited([mm, "--export", "-o", WORK, *graphs], "Material Maker export", stdout=fh,
+                           stderr=subprocess.STDOUT).returncode
     timings["material_maker_s"] = round(time.monotonic() - t0, 2)
     missing = [n for n in names if not (WORK / f"{Path(cfg['textures'][n]['graph']).stem}_albedo.png").exists()]
     if code != 0 or missing:
@@ -133,8 +144,8 @@ def regenerate(cfg, names):
     job_path, report_path = WORK / "job.json", WORK / "report.json"
     job_path.write_text(json.dumps({"textures": jobs, "report": str(report_path)}, indent=1))
     t0 = time.monotonic()
-    proc = subprocess.run([godot, "--headless", "--path", str(ROOT), "-s", LOCK_SCRIPT, "--", "--job", str(job_path)],
-                          capture_output=True, text=True, stdin=subprocess.DEVNULL, timeout=600)
+    proc = run_limited([godot, "--headless", "--path", ROOT, "-s", LOCK_SCRIPT, "--", "--job", job_path], "palette lock",
+                       capture_output=True, text=True)
     timings["palette_lock_s"] = round(time.monotonic() - t0, 2)
     if proc.returncode != 0 or not report_path.exists():
         raise Fail(f"palette lock failed (exit {proc.returncode}):\n{proc.stdout[-2000:]}{proc.stderr[-2000:]}")

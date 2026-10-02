@@ -44,6 +44,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "scripts" / "tools"))
+import godot_timeout  # noqa: E402  (every Godot and Blender call runs under a limit)
 BRIEFS = ROOT / "assets" / "briefs"
 MANIFESTS = ROOT / "assets" / "manifests"
 MESHES = ROOT / "assets" / "meshes"
@@ -835,7 +837,13 @@ def run_tool(cmd, report_path, dry_run, label):
     report_path.parent.mkdir(parents=True, exist_ok=True)
     if report_path.exists():
         report_path.unlink()
-    proc = subprocess.run([str(c) for c in cmd], capture_output=True, text=True)
+    # A hung Godot or Blender (on macOS a fatal error waits at a modal alert) fails the stage, naming it
+    blender = str(cmd[0]) == str(BLENDER)
+    try:
+        proc = godot_timeout.run(cmd, label, "BLENDER_TIMEOUT" if blender else "GODOT_TIMEOUT_RUN", 1800 if blender else 600,
+                                 capture_output=True, text=True)
+    except godot_timeout.ToolTimeout as e:
+        raise PipelineError(str(e)) from None
     log = report_path.with_suffix(".log")
     log.write_text(proc.stdout + "\n--- stderr ---\n" + proc.stderr)
     if not report_path.exists():

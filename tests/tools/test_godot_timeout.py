@@ -8,6 +8,7 @@ The expiry path runs a stand-in that sleeps past a 1 s limit, the way a hung God
 """
 import importlib.util
 import os
+import re
 import subprocess
 import sys
 import time
@@ -57,6 +58,34 @@ class BashHelper(unittest.TestCase):
                            text=True, stdin=subprocess.DEVNULL, timeout=60, env={k: v for k, v in os.environ.items() if k != "TEST_TIMEOUT"})
         self.assertEqual(p.returncode, 124)
         self.assertIn("as command: timed out after 1s", p.stderr)
+
+
+class EveryCallIsLimited(unittest.TestCase):
+    """Every Godot call in the shell scripts and the CI workflow goes through the helper."""
+    FILES = [".githooks/pre-push", ".github/workflows/ci.yml", "tests/run.sh", "scripts/review/run_scenario.sh",
+             "scripts/review/capture_evidence.sh", "scripts/tools/playtest-branch.sh"]
+    CALL = re.compile(r'("\$GODOT"|"\$G"|"\$bin"|(^|[\s;|&(])godot) -')
+    # The playtest's detached game or editor is the human's to close, so it never gets a limit
+    ALLOWED = re.compile(r"^\s*(#|echo\b|test -x|\[ -x|nohup \"\$G\")|::error::|GODOT_BIN=")
+
+    def test_no_unlimited_godot_call(self):
+        bare = []
+        for name in self.FILES:
+            text = open(os.path.join(ROOT, name)).read().replace("\\\n", " ")
+            for line in text.splitlines():
+                if self.CALL.search(line) and not self.ALLOWED.search(line) \
+                        and not re.search(r"\b(GODOT_TIMEOUT_[A-Z]+|BLENDER_TIMEOUT)\b", line):
+                    bare.append(f"{name}: {line.strip()}")
+        self.maxDiff = None
+        self.assertEqual(bare, [], "Godot calls without a limit (use scripts/tools/godot_timeout.sh)")
+
+    def test_no_unlimited_python_call(self):
+        bare = []
+        for name in ["scripts/pipeline.py", "scripts/judge.py", "ci/validate_assets.py", "scripts/tools/make_textures.py"]:
+            for n, line in enumerate(open(os.path.join(ROOT, name)), 1):
+                if "subprocess.run(" in line and "timeout=" not in line:
+                    bare.append(f"{name}:{n}: {line.strip()}")
+        self.assertEqual(bare, [], "subprocess.run without a timeout (use godot_timeout.run)")
 
 
 class PythonHelper(unittest.TestCase):

@@ -23,6 +23,8 @@ if [ -z "$GODOT" ]; then
 	fi
 fi
 test -x "$GODOT" || { echo "run_scenario.sh: Godot not found at $GODOT (set GODOT_BIN)" >&2; exit 2; }
+# Each run is under GODOT_TIMEOUT_RUN (scripts/tools/godot_timeout.sh): a hung run fails with 124
+source "$ROOT/scripts/tools/godot_timeout.sh" || exit 2
 
 RUNS=2
 if [ "${1:-}" = "--runs" ]; then
@@ -41,7 +43,8 @@ for scenario in "$@"; do
 	echo "== $name"
 	for i in $(seq 1 "$RUNS"); do
 		# stdin from /dev/null: a script error never waits at the debugger prompt
-		"$GODOT" --headless --fixed-fps 60 --path "$ROOT" res://scripts/review/replay.tscn -- \
+		with_timeout GODOT_TIMEOUT_RUN 600 "run_scenario.sh: $name run $i" \
+			"$GODOT" --headless --fixed-fps 60 --path "$ROOT" res://scripts/review/replay.tscn -- \
 			--scenario "$scenario_abs" --event-log "$out/run$i.jsonl" --save-slot=replay \
 			< /dev/null > "$out/run$i.log" 2>&1
 		code=$?
