@@ -139,10 +139,12 @@ func test_handovers_follow_the_game_and_the_library() -> void:
 
 
 func test_the_game_scenes_animation_player_settings_are_read() -> void:
-	# Player.tscn's AnimationPlayer sets no blend times today; the pass must read them, not assume them
+	# The pass reads the scene's own blend settings, never assumes them
 	var settings := GamePath.game_settings("res://scenes/player/Player.tscn")
 	assert_bool(settings.has("libraries")).is_false()
 	assert_bool(settings.has("root_node")).is_false()
+	assert_bool(settings.has("playback_default_blend_time")).is_true()
+	assert_bool(settings.has("blend_times")).is_true()
 	assert_str(GamePath.scene_for_library("res://data/animations/levy_backfile_library.tres")).is_equal(
 		"res://scenes/enemies/ArcherEnemy.tscn"
 	)
