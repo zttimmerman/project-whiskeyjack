@@ -104,7 +104,9 @@ func _game_path(lib: AnimationLibrary) -> void:
 	var fps := float(Engine.physics_ticks_per_second)
 	var holder := Node3D.new()
 	add_child(holder)
-	var results := GamePath.measure_all(holder, model_scene, lib, settings, fps)
+	# The whole character library when there is one: --clips picks what's reviewed, not what the game plays
+	var game_lib: AnimationLibrary = load(args["library"]) if args.has("library") else lib
+	var results := GamePath.measure_all(holder, model_scene, game_lib, settings, fps)
 	holder.queue_free()
 	game_path = {
 		"scene": scene if scene != "" else null,
