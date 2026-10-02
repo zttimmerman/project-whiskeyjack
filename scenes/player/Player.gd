@@ -4,6 +4,8 @@ signal died
 signal inventory_toggled
 
 const HeldProps := preload("res://scripts/combat/HeldProps.gd")
+const WorldRay := preload("res://scripts/combat/WorldRay.gd")
+const SIGHT_HEIGHT := 0.8  # lock-on sight runs between both bodies at this height, as EventLog.line_of_sight
 const CHARACTER_LIGHT_LAYER := 2  # render layer of CameraRig/FillLight's cull mask (value 2 = layer 2)
 
 @export var stats: CharacterStats
@@ -21,6 +23,7 @@ const CHARACTER_LIGHT_LAYER := 2  # render layer of CameraRig/FillLight's cull m
 @export var camera_pitch_min: float = -0.4  # ~-23 degrees
 @export var camera_pitch_max: float = 0.8  # ~46 degrees
 @export var lock_on_range: float = 15.0
+@export var lock_lost_sight_time: float = 1.0  # hidden by world geometry this long, the lock ends (user, 2026-10-01)
 @export var lock_on_pitch: float = -0.2  # the arm's tilt locked on a target level with him (as free look starts)
 @export var combo_window: float = 0.6  # seconds before light combo resets
 @export var attack_active_time: float = 0.2  # light hitbox active duration (seconds)
@@ -42,6 +45,8 @@ var _dodge_dir: Vector3 = Vector3.FORWARD
 var _lock_on_target: Node3D = null
 var _lock_on_candidates: Array[Node3D] = []
 var _lock_on_index: int = 0
+var _lock_hidden_time: float = 0.0
+var _sight_query := WorldRay.make_query()
 
 # Stored separately so lock-on can drive them independently of input
 var _cam_yaw: float = 0.0
@@ -296,6 +301,7 @@ func _release_lock_on() -> void:
 	if EventLog.enabled and _lock_on_target != null:
 		EventLog.log_event("lock_off", {"actor": EventLog.label(self)})
 	_lock_on_target = null
+	_lock_hidden_time = 0.0
 	_lock_on_index = 0
 	_lock_on_candidates.clear()
 
@@ -308,6 +314,13 @@ func _validate_lock_on() -> void:
 		_lock_on_next_after_death()
 	elif global_position.distance_to(_lock_on_target.global_position) > lock_on_range * 1.5:
 		_release_lock_on()
+	elif _in_sight(_lock_on_target):
+		_lock_hidden_time = 0.0
+	else:
+		# Circling a pillar hides it for a moment; behind cover for longer, the lock ends
+		_lock_hidden_time += get_physics_process_delta_time()
+		if _lock_hidden_time > lock_lost_sight_time:
+			_release_lock_on()
 
 
 # The locked target died (or was freed): lock the nearest living enemy in range at once, else release
@@ -316,7 +329,7 @@ func _lock_on_next_after_death() -> void:
 	var next: Node3D = null
 	var best := INF
 	for enemy in get_tree().get_nodes_in_group("enemy"):
-		if not enemy is Node3D or enemy == gone or _is_dead(enemy):
+		if not _lockable(enemy) or enemy == gone:
 			continue
 		var d := global_position.distance_to((enemy as Node3D).global_position)
 		if d <= lock_on_range and d < best:
@@ -336,16 +349,31 @@ static func _is_dead(node: Node) -> bool:
 	return node.has_method("is_dead") and bool(node.call("is_dead"))
 
 
+# Lock-on candidates: living enemies (BaseEnemy and its subclasses, which have is_dead) in line of sight
+func _lockable(node: Node) -> bool:
+	return node is Node3D and node.has_method("is_dead") and not _is_dead(node) and _in_sight(node as Node3D)
+
+
+# Nothing on the world layer between him and `target` (characters don't block), as enemy sight
+func _in_sight(target: Node3D) -> bool:
+	var exclude: Array[RID] = [get_rid()]
+	if target is CollisionObject3D:
+		exclude.append((target as CollisionObject3D).get_rid())
+	_sight_query.exclude = exclude
+	return WorldRay.is_clear(
+		get_world_3d().direct_space_state,
+		_sight_query,
+		global_position + Vector3.UP * SIGHT_HEIGHT,
+		target.global_position + Vector3.UP * SIGHT_HEIGHT
+	)
+
+
 func _find_lock_on_target() -> Node3D:
 	_lock_on_candidates.clear()
 	_lock_on_index = 0
 
 	for enemy in get_tree().get_nodes_in_group("enemy"):
-		if (
-			enemy is Node3D
-			and not _is_dead(enemy)
-			and global_position.distance_to(enemy.global_position) <= lock_on_range
-		):
+		if _lockable(enemy) and global_position.distance_to(enemy.global_position) <= lock_on_range:
 			_lock_on_candidates.append(enemy as Node3D)
 
 	if _lock_on_candidates.is_empty():

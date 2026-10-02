@@ -172,10 +172,10 @@ func test_lock_ends_after_a_second_behind_cover() -> void:
 
 func test_lock_moves_only_to_an_enemy_in_sight() -> void:
 	_arena()
-	var first := _enemy("First", Vector3(0, BODY_Y, 3))
-	_wall_at(-3.0)
-	_enemy("Hidden", Vector3(0, BODY_Y, -5))
-	var seen := _enemy("Seen", Vector3(8, BODY_Y, 2))
+	var first := _enemy("First", Vector3(0, BODY_Y, -3))
+	_wall_at(3.0)
+	_enemy("Hidden", Vector3(0, BODY_Y, 5))  # nearer than Seen, but behind the wall
+	var seen := _enemy("Seen", Vector3(8, BODY_Y, -2))
 	await _frames(2)
 	_lock(first)
 	first.dead = true
