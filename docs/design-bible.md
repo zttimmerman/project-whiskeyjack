@@ -47,7 +47,7 @@ The third-person camera behind the player is the lens for everything else. Most 
   - Lock releases when the target stays hidden behind world geometry for more than about 1 s (user, 2026-10-01; a moment behind a pillar keeps it), or beyond 1.5× range.
   - **Current:** all of the above, with a Signal Red ring reticle on the target (`scenes/ui/LockOnReticle.tscn`, in the HUD); camera input is disabled while locked.
 - **Respawn and loads** restore the saved view heading, so the same input moves the same way (fixed in #6).
-- **Bindings:** one action per key. **Current:** E is bound to both `interact` and `camera_right`. Gameplay actions are polled in the physics step, so automated input can frame-time them.
+- **Bindings:** one action per key. **Current:** E is `camera_right` and F is the only interact key (user, 2026-10-02; pinned by `test_input_bindings.gd`). Gameplay actions are polled in the physics step, so automated input can frame-time them.
 
 ---
 
