@@ -30,3 +30,7 @@ Track work as one file per item, pick the next item mechanically, and shrink the
 ## Serves
 
 Orchestration; `decide-backlog-system`.
+
+## Outcome
+
+Merged in PR #42 (2026-10-02): 72 items seeded from the old handoff, `scripts/tools/backlog.py` (next, status, show, lint) checked in CI, the `package-worker` agent, a six-line handoff, and the third and fourth CLAUDE.md exceptions.
