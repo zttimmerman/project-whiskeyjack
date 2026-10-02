@@ -188,3 +188,20 @@ The playtest read A as a zoomed-out third person. The user chose Witcher-like fr
 
 - At its extremes, A's full look-up and C's full look-down fail `cam_player_in_frame`: his whole head and torso don't fit that close. If a tight variant is chosen, the target may need redefining (head and shoulders only?).
 - In the locked shots, the levy is about 11 m off; at that range all four keep both in frame.
+
+## Variant A adopted (user, 2026-10-01)
+
+`CameraRig.framing` now defaults to A_MEDIUM: lens about 1.55 m, 0.7 m right, 1.6 m arm (2.2 m locked), FOV 65°. CURRENT, B and C stay selectable for comparison in play.
+- A's close arm needed four changes, and with them every target holds, so `cam_player_in_frame` keeps its head-and-torso meaning and the pitch range is unchanged:
+  - the horizontal framing is worked out in camera space at the final pitch (a pitched look brings near corners in sideways);
+  - a short arm tucks the shoulder offset in, up to 60% of it;
+  - the squeeze starts at 80% of the arm;
+  - the arm eases back out at 10/s.
+- Results (in frame / wall fill / occlusion / both locked):
+  - `levy_1v1_passive`: 1.0 / 0.000 / 0.112 / 1.0
+  - `levy_1v1_sensible`: 1.0 / 0.389 / 0.036 / 0.971
+  - `central_room_pull`: 1.0 / 0.188
+  - `tomb_hall_group`: 1.0 / 0.188
+  - `crypt_trial_walk`: 1.0 / 0.293
+  - `camera_stress`: 1.0 / 0.427 / 0.016 / 1.0 (its full look-up and look-down stay in frame)
+- The contact sheet `phantom-camera/camera_stress_A-own-rig.jpg` is re-rendered with A.
