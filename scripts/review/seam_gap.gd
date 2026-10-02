@@ -47,7 +47,7 @@ func _init(root: Node3D, sk: Skeleton3D) -> void:
 			var arr := mi.mesh.surface_get_arrays(s)
 			var verts: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
 			var base := _verts.size()
-			var stride: int = (arr[Mesh.ARRAY_BONES] as PackedInt32Array).size() / maxi(verts.size(), 1)
+			var stride: int = roundi(float((arr[Mesh.ARRAY_BONES] as PackedInt32Array).size()) / maxi(verts.size(), 1))
 			_surfaces.append([bind_bones, bind_poses, base, stride, _bones.size()])
 			_verts.append_array(verts)
 			_normals.append_array(arr[Mesh.ARRAY_NORMAL])
@@ -122,12 +122,12 @@ func sample(sk: Skeleton3D, t: float) -> void:
 func result() -> Dictionary:
 	return {
 		"shells": _shell_count,
-		"seam_pairs": _pairs.size() / 2,
+		"seam_pairs": _pairs.size() >> 1,
 		"seam_touch_m": TOUCH_M,
 		"seam_gap_max_m": snappedf(_gap[0], 0.0001),
 		"seam_gap_worst_t": _gap[1],
 		"seam_gap_worst_at": [snappedf(_gap[2].x, 0.001), snappedf(_gap[2].y, 0.001), snappedf(_gap[2].z, 0.001)],
-		"covered_vertices": _covered.size() / 2,
+		"covered_vertices": _covered.size() >> 1,
 		"cover_m": COVER_M,
 		"poke_through_vertices": _poked.size(),
 		"poke_through_max_m": snappedf(_poke_max[0], 0.0001),
