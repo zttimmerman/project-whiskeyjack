@@ -93,13 +93,19 @@ jobs:
         run: python3 scripts/tools/make_textures.py --check
 
   data-lint:
-    name: data-lint (dialogues and quests)
+    name: data-lint (dialogues, quests and the backlog)
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Lint data/dialogues (.dialogue) and data/quests (baseline ci/data-lint-baseline.txt)
         run: python3 ci/data_lint.py
+      - name: Test the backlog tool (scripts/tools/backlog.py)
+        run: python3 tests/tools/test_backlog.py
+      - name: Lint docs/backlog (schema, after links and cycles, design-bible target IDs, PRs on finished items)
+        run: |
+          python3 scripts/tools/backlog.py lint
+          { echo '### Backlog'; python3 scripts/tools/backlog.py status; } >> "$GITHUB_STEP_SUMMARY"
 
   lint:
     name: lint (gdformat and gdlint, as .githooks/pre-commit)

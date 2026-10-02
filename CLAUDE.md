@@ -76,7 +76,7 @@ res://
 │   ├── quests/              # JSON quest definitions
 │   ├── rigs/                # BoneMaps and per-rig SocketMaps
 │   └── animations/          # per-character AnimationLibraries and shared clips (built, don't hand-edit)
-├── docs/                    # design-bible.md (gameplay targets), art-bible.md (budgets, palette, briefs, judge tolerances), decisions.md (handoff), world/,
+├── docs/                    # design-bible.md (gameplay targets), art-bible.md (budgets, palette, briefs, judge tolerances), decisions.md (handoff, decisions), backlog/ (work items), world/,
 │                            # playtests/ (briefs and reports), godot-ai-integration.md (MCP research and permission table)
 └── assets/
     ├── briefs/              # per-asset brief YAML (copied from the art bible)
@@ -90,7 +90,7 @@ res://
     ├── fonts/
     └── sources.json         # provenance of every downloaded asset (CC0 only)
 ```
-Outside `res://`: `.claude/skills/` (asset-pipeline, tripo, playtest-branch), `.claude/agents/` (asset-judge), `.claude/hooks/` (the Godot MCP guard), `.mcp.json` (the Godot MCP server), `.github/workflows/ci.yml` and `ci/` (CI and its baselines), `.githooks/` (pre-commit and pre-push), `tests/` (gdUnit4 suites, replay scenarios, critical paths), and the gitignored `.tripo-out/` (raw Tripo downloads, spend records, scratch work), `.downloads/` (CC0 packs) and `.replay-out/` and `reports/` (replay and test output).
+Outside `res://`: `.claude/skills/` (asset-pipeline, tripo, playtest-branch), `.claude/agents/` (asset-judge, package-worker), `.claude/hooks/` (the Godot MCP guard), `.mcp.json` (the Godot MCP server), `.github/workflows/ci.yml` and `ci/` (CI and its baselines), `.githooks/` (pre-commit and pre-push), `tests/` (gdUnit4 suites, replay scenarios, critical paths), and the gitignored `.tripo-out/` (raw Tripo downloads, spend records, scratch work), `.downloads/` (CC0 packs) and `.replay-out/` and `reports/` (replay and test output).
 
 ---
 
@@ -150,15 +150,10 @@ Outside `res://`: `.claude/skills/` (asset-pipeline, tripo, playtest-branch), `.
 - Called by GameManager on scene transitions and from pause menu
 
 ### Audio System (autoloads/AudioManager.gd)
-- Three buses created programmatically at startup: **Music**, **SFX**, **UI** — all route to Master
-- `play_music(stream)` — assigns stream, enables OGG looping, starts playback on the Music bus
-- `stop_music()` — stops the music player
-- `play_ui(stream)` — one-shot playback on the UI bus (stings, UI feedback)
-- `play_sfx_at(stream, world_position)` — spawns a temporary `AudioStreamPlayer3D` at a world position on the SFX bus; auto-frees on finish
-- Audio files live in `assets/audio/` as `.ogg`; assign streams via `.tscn` ext_resource references
-- Music is started per-level in the world scene's `_ready()` via `AudioManager.play_music(preload(...))`
-- Footsteps: timer-based in Player (0.4 s interval), only fires when `is_on_floor()` and lateral velocity > 0.5
-- Sword swing: fires at `hitbox.activate()` in both `_attack_light()` and `_attack_heavy()`
+- Three buses created at startup, **Music**, **SFX** and **UI**, all routed to Master
+- `play_music(stream)` (looping OGG on Music, started in each world scene's `_ready()`), `stop_music()`, `play_ui(stream)` (one-shot on UI), `play_sfx_at(stream, world_position)` (a temporary, self-freeing `AudioStreamPlayer3D` on SFX)
+- Audio files are `.ogg` in `assets/audio/`, assigned through `.tscn` ext_resources
+- Footsteps are timer-based in Player (0.4 s, on the floor, lateral speed > 0.5); the sword swing fires at `hitbox.activate()` in `_attack_light()` and `_attack_heavy()`
 
 ---
 
@@ -232,7 +227,12 @@ See the file itself: one `~ start` cue branching on quest state and world flags,
 - **Name the branch right before opening its PR.** Renaming a PR's head branch on GitHub closes the PR (PR #2 was lost that way and replaced by #3).
 - **Parallel agents** each get their own worktree and branch; clean both up when done.
 - **Worktree commands never depend on a `cd`.** Use `git -C <absolute path>` and absolute paths, and fail closed if the directory is missing (`test -d <dir> || exit 1`). A failed `cd` in a chained command once ran the rest in the human's checkout and switched its branch.
-- **Refresh the session handoff** in `docs/decisions.md` before opening a PR.
+- **Refresh the session handoff** in `docs/decisions.md` and the item's status before opening a PR, and again at merge.
+
+### Backlog
+- **Work is tracked in `docs/backlog/`,** one file per item, through `scripts/tools/backlog.py` (`next`, `status`, `show`, `lint`; CI lints it). Schema and workflow: `docs/backlog/README.md`.
+- **Open questions are `needs-user` items,** never only chat. Found work becomes a `proposed` item.
+- **Every PR body names its item** (`Backlog: <id>`); package subagents run as `package-worker` (`.claude/agents/package-worker.md`).
 
 ### Commits
 - **Commit atomically:** one logical change per commit (a new system, a bug fix, a scene setup); don't bundle unrelated changes.
@@ -260,7 +260,7 @@ The `addons/godot_ai` editor plugin (pinned v4.2.3, signature-verified; research
 
 **One editor per worktree.** The agent works in its own worktree with its own Godot editor, so the human can keep building in theirs:
 - **One server, one session per editor.** Every editor connects to the same local server as a session (`<worktree-dir>@<hex>`). Pass the agent's `session_id` on every call. Never use `session_activate`, which moves the server-global default and can point calls at the human's editor.
-- **Launch the agent's editor** from its worktree: `GODOT_AI_DISABLE_TELEMETRY=true GODOT_AI_TELEMETRY_ENDPOINT=invalid WHISKEYJACK_SAVE_SLOT=agent /Applications/Godot.app/Contents/MacOS/Godot --path . -e &`. The save slot keeps its playtests off the human's `save.json`, which every checkout shares (`user://` is keyed by the project name). It takes effect once the save-slot fix lands.
+- **Launch the agent's editor** from its worktree: `GODOT_AI_DISABLE_TELEMETRY=true GODOT_AI_TELEMETRY_ENDPOINT=invalid WHISKEYJACK_SAVE_SLOT=agent /Applications/Godot.app/Contents/MacOS/Godot --path . -e &`. The save slot keeps its playtests off the human's `save.json`, which every checkout shares (`user://` is keyed by the project name).
 - **Keep the editor's hands off the setup.** Never press the plugin dock's Configure or Update, which rewrite client configs or the addon. Editor settings for 4.7 (shared by every 4.7 editor on the machine) keep telemetry off, the domain exclusions, and `save_before_running = false`.
 
 **The guard.** `.claude/settings.json` plus `.claude/hooks/godot_ai_guard.py` (fail-closed, with tests) enforce:
@@ -308,11 +308,7 @@ All meshes live in `assets/meshes/` as `.glb` files. There are two tools:
 - **Tripo auth:** `tripo login` (browser device flow) saves the API key to `~/.tripo/config.json`. Never paste keys into chat, code, docs or logs.
 - **Tripo credits:** buy API credits in the console at https://platform.tripo3d.ai (API credits are separate from studio.tripo3d.ai). `tripo topup` opens a stale page.
 - **Blender MCP install:** `claude mcp add blender uvx blender-mcp` (user-level, one-time)
-- **Every Blender session:** Blender must be open with the BlenderMCP addon active and the server started (sidebar → BlenderMCP → "Start Server"). If the `mcp__blender__*` tools are missing, remind the user to:
-  1. Open Blender
-  2. Enable the BlenderMCP addon (Edit → Preferences → Add-ons)
-  3. Click "Start Server" in the BlenderMCP sidebar panel
-  4. Restart the Claude Code session if the MCP was just installed
+- **Every Blender session:** if the `mcp__blender__*` tools are missing, ask the user to open Blender, enable the BlenderMCP addon (Edit → Preferences → Add-ons), click "Start Server" in its sidebar panel, and restart the Claude Code session if the MCP was just installed
 
 ### AI Model Generation (Tripo CLI)
 
@@ -328,11 +324,7 @@ Base meshes should be **AI-generated** whenever possible, then brought within th
 
 **Sourced CC0 kits (KayKit, Quaternius, Kenney):** download with curl into the gitignored `.downloads/<pack>/`, then import with `scripts/tools/import_pack.py` (asset-pipeline skill → Sourced assets). They skip generation and run clean and validate like any asset; `assets/sources.json` is committed, and only CC0 passes validate.
 
-**Sketchfab (for sourcing pre-made assets):**
-- Search for CC0/free-license low-poly models when AI generation isn't the right fit; sourced models follow the same budget and albedo-only rules
-- Requires a free Sketchfab API key
-- Enable in BlenderMCP sidebar → "Use assets from Sketchfab" + enter API key
-- Workflow: `search_sketchfab_models` → `get_sketchfab_model_preview` → `download_sketchfab_model`
+**Sourced assets** (when generation isn't the right fit) go through `scripts/tools/import_pack.py` with provenance in `assets/sources.json` (CC0 only) and follow the same budget and albedo-only rules. Sketchfab search needs a free API key in the BlenderMCP sidebar ("Use assets from Sketchfab"): `search_sketchfab_models` → `get_sketchfab_model_preview` → `download_sketchfab_model`.
 
 ### API Spend Safeguards
 
@@ -355,9 +347,11 @@ Every generated or sourced mesh goes through `python3 scripts/pipeline.py <asset
 
 ### Rigging & Animation
 
-- **Do not build armatures, paint weights, or keyframe animations via MCP scripting.** Animation comes from a shared animation library that is retargeted onto each character; it is not authored per model. **For any animation work (a new character's clips, a clip swap, a speed or trim change), use the asset-pipeline skill → Animation library, then judge the clips with the motion review. To fix a bad clip, follow that skill's fix ladder; Quaternius stays the source.** There's no hand-keyframing skill or agent; the old `blender-animation` skill and `blender-animator` agent were removed
-- **One exception: rigid rebinding.** For characters built from rigid, disconnected parts (brief `rigid_parts: true`, e.g. the Barrow-levy skeleton), the clean stage binds each part at weight 1.0 to its nearest weighted bone. That's a deterministic algorithm, not hand-painted weights; the rule above exists to prevent unreproducible hand-tuning, and this is the opposite. It never applies to continuous-skin characters such as the player
-- **Second exception: skirt reweighting.** For characters with a skirt (brief `skirt_reweight: true`, e.g. the player's tunic), the clean stage identifies the skirt as the region between knee and waist further than a trouser radius from both thigh bones, and grades it from Hips at the waist to the thighs at the hem, with zero shin weight. Auto-riggers bind skirts to the legs, so they stretch when walking. It's the same kind of deterministic algorithm on an identified region, not hand-painted weights. Separate skirt bones aren't used, because the Quaternius clips wouldn't drive them
+- **Do not build armatures, paint weights, or keyframe animations via MCP scripting.** Animation comes from a shared animation library that is retargeted onto each character; it is not authored per model. **For any animation work (a new character's clips, a clip swap, a speed or trim change), use the asset-pipeline skill → Animation library, then judge the clips with the motion review. To fix a bad clip, follow that skill's fix ladder; Quaternius stays the source.** The exceptions below are deterministic algorithms or committed scripts, never unreproducible hand-tuning
+- **One exception: rigid rebinding.** For characters built from rigid, disconnected parts (brief `rigid_parts: true`, e.g. the Barrow-levy skeleton), the clean stage binds each part at weight 1.0 to its nearest weighted bone. It never applies to continuous-skin characters such as the player
+- **Second exception: skirt reweighting.** For characters with a skirt (brief `skirt_reweight: true`, e.g. the player's tunic), the clean stage identifies the skirt as the region between knee and waist further than a trouser radius from both thigh bones, and grades it from Hips at the waist to the thighs at the hem, with zero shin weight. Auto-riggers bind skirts to the legs, so they stretch when walking. Separate skirt bones aren't used, because the Quaternius clips wouldn't drive them
+- **Third exception: scripted keyframe clips.** For motions the shared library can't supply (non-humanoid body plans first), an agent may author a clip as a committed keyframe script (`scripts/tools/keyframe_clips/<asset>_<clip>.py`) that headless Blender re-runs to produce the clip. Live MCP keyframing is never the source of record. Clips are generated only by their scripts, carry reference provenance (reference video hash, prompt, model) in the manifest, and pass the same motion gates as library clips. Weights still come from the rigger or a deterministic clean step, never hand-painted
+- **Fourth exception: weight transfer onto clothing shells.** For characters built as a body plus separate garment shells (brief `parts`), the clean stage copies skin weights from one continuous body (or a body proxy) onto each shell with a deterministic transfer (nearest-face interpolation, or weight inpainting), and hides body faces fully covered by a garment. It's an algorithm applied to identified parts, not hand-painted weights; rigid pieces keep the rigid-rebind rule
 - **Animation library:** Quaternius UAL1 and UAL2 (CC0) in `assets/animations/quaternius/`, retargeted through `data/rigs/*_bone_map.tres` in the GLBs' import settings; per-character AnimationLibraries in `data/animations/`, built by `scripts/tools/build_animation_library.gd` (the mapping table is in the asset-pipeline skill). Retargeted bones use SkeletonProfileHumanoid names, so socket maps do too
 - **Bone geometry in scripts:** measure a bone as its joint span (head to its child's head), never head to tail; Blender's glTF importer invents display tails, and they differ between files
 - **Rig model follows body plan, not recency:** Tripo rig `v1.0-20240301` (server default) is the humanoid rigger and the pipeline default; `v2.5-20260210` is the creature rigger (quadruped, hexapod, octopod, serpentine, aquatic, avian), passed with `--rig-model` (e.g. for the Sett-boar)
@@ -375,19 +369,16 @@ Use direct bmesh/Python scripting via MCP for:
 **Do NOT** hand-code complex organic meshes (characters, creatures, weapons with curves). Generate those via AI instead. Make geometry edits **before** a mesh is skinned; don't edit geometry on a rigged mesh via MCP.
 
 Editing workflow:
-1. **Import:** clear the Blender scene, then `import_scene.gltf(filepath=...)` to load the existing `.glb`
-2. **Inspect first:** use `get_scene_info` and `get_viewport_screenshot` to understand the current model before making changes
-3. **Analyze mesh data** before modifying — check color attributes, material setup, vertex count and bounding boxes via bmesh so edits land in the right place
-4. **Preserve vertex colors:** set the color attribute on every loop of every new face — missing colors will render black
-5. **Validate coverage:** for geometry meant to cover other geometry (hair over a skull, armor over a body), check the actual Z/position of the underlying mesh vertices — don't assume; the model may extend higher than expected
-6. **Stay within budget:** re-check the summed triangle count after edits
-7. **Screenshot from multiple angles** after changes — top-down, front, back, side — to catch gaps or artifacts before exporting
-8. **Export:** `export_scene.gltf(filepath=..., export_format='GLB', export_animations=True, export_skins=True, export_yup=True)` — note that `export_colors` is not a valid parameter in Blender 5.x; vertex colors export automatically
+1. **Import** into a cleared scene (`import_scene.gltf(filepath=...)`), then **inspect** before changing anything: `get_scene_info`, `get_viewport_screenshot`, and bmesh (color attributes, materials, counts, bounding boxes)
+2. **Preserve vertex colors:** set the color attribute on every loop of every new face, or it renders black
+3. **Check coverage against real positions:** for geometry that covers other geometry (hair over a skull, armor over a body), read the underlying vertices' Z; the model may extend higher than expected
+4. **After edits:** re-check the summed triangle count, and screenshot top, front, back and side for gaps
+5. **Export:** `export_scene.gltf(filepath=..., export_format='GLB', export_animations=True, export_skins=True, export_yup=True)`; Blender 5.x has no `export_colors` (vertex colors export automatically)
 
 ### Blender → Godot Integration Gotchas
-- **Facing direction:** Models face -Y in Blender. After GLB export with `export_yup=True`, this becomes +Z in Godot. Godot's forward is -Z, so the model appears to face backward. **Fix:** add a 180° Y rotation on the model node in the `.tscn`: `Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0)`
-- **Model grounding:** CharacterBody3D collision capsule (height 1.8) centers at the node origin, so the capsule bottom is at Y=-0.9. The model's feet (at local Y=0) must be offset to match: set model node Y translation to -0.9. Example: `Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, -0.9, 0)`
-- **Axis conversion:** Blender Z-up → Godot Y-up. Blender (X, Y, Z) → Godot (X, -Z, Y) approximately. Bone positions and mesh data both get converted by the GLB exporter
+- **Facing direction:** models face −Y in Blender, which exports (`export_yup=True`) as +Z in Godot, backward against Godot's −Z forward. **Fix:** a 180° Y rotation on the model node: `Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0)`
+- **Model grounding:** the 1.8 m collision capsule centres on the node origin, so the model node sits at Y = −0.9 to put the feet on the capsule bottom: `Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, -0.9, 0)`
+- **Axis conversion:** Blender (X, Y, Z) → Godot (X, −Z, Y), approximately; the exporter converts bones and mesh data alike
 
 ### Other MCP Gotchas
 - Hair/accessory geometry is typically disconnected from the body mesh (no shared vertices), making it safe to delete and rebuild independently
