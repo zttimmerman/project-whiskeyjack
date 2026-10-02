@@ -46,6 +46,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts" / "tools"))
 import godot_timeout  # noqa: E402  (every Godot and Blender call runs under a limit)
+import texture_imports  # noqa: E402  (GLB textures get the editor's import settings)
 BRIEFS = ROOT / "assets" / "briefs"
 MANIFESTS = ROOT / "assets" / "manifests"
 MESHES = ROOT / "assets" / "meshes"
@@ -1101,6 +1102,11 @@ def stage_validate(brief, m, args):
         f"; welded pieces: {views.get('pieces_welded')}")
     for w in report.get("warnings", []):
         print(f"validate: warning: {w}")
+    if passed:
+        # Godot extracts the GLB's texture on import; give it the import settings the editor's 3D
+        # detection would, so opening the editor doesn't rewrite the .import (texture_imports.py)
+        for png in texture_imports.settle_glb(glb, GODOT, ROOT):
+            print(f"validate: {rel(png)}.import: VRAM compressed with mipmaps, as the editor detects it")
     record(m, "validate", "ok" if passed else "failed", inputs, [p for p in view_pngs if p.exists()], msg,
            params=params, report=report)
     return EXIT_OK if passed else EXIT_CHECK_FAILED

@@ -11,11 +11,19 @@ so two runs write identical files. Stdlib only (zlib PNG writer), so it runs any
 GENERATED FILES: the PNGs are written only by this script. They are stand-ins until a texture source
 is chosen (Material Maker is trial B3); the materials next to them (<name>.tres) reference them by path,
 so a replacement texture of the same name drops in.
+
+Each PNG's .import is seeded with the settings the editor's 3D detection gives it (VRAM compressed, mipmaps,
+detection off; scripts/tools/texture_imports.py), and a headless import completes any it changed, so the
+editor never rewrites them. Godot comes from $GODOT_BIN, else /Applications/Godot.app; it runs only then.
 """
 import os
 import random
 import struct
+import sys
 import zlib
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import texture_imports  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUT_DIR = os.path.join(ROOT, "assets", "textures", "brush")
@@ -84,6 +92,10 @@ def main():
         with open(path, "wb") as f:
             f.write(make(name, *spec))
         print("wrote", os.path.relpath(path, ROOT))
+    seeded = [n for n in TEXTURES if texture_imports.seed(os.path.join(OUT_DIR, n + ".png"), "vram")]
+    if seeded:
+        texture_imports.godot_import(os.environ.get("GODOT_BIN", texture_imports.GODOT), ROOT)
+        print("imported", ", ".join(seeded), "VRAM compressed, as the editor detects them")
 
 
 if __name__ == "__main__":
