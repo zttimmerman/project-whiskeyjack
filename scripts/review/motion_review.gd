@@ -29,7 +29,8 @@ extends Node
 # - foot slide: ground-relative horizontal speed of each foot's planted contact point, at --ground-speed
 #   (scripts/review/foot_slide.gd, shared with the locomotion test);
 # - bind deviation: each vertex's displacement from its bind-pose position, both in the Hips frame;
-# - edge stretch: |length / bind length - 1| over the mesh's edges of at least MIN_EDGE.
+# - edge stretch: |length / bind length - 1| over the mesh's edges of at least MIN_EDGE;
+# - seam gap and poke-through between separate shells (scripts/review/seam_gap.gd).
 # Everything above scrubs the clip with seek(). The game-path pass (scripts/review/game_path.gd) plays
 # each handover the game makes between the library's clips the way the game does, play() and a
 # per-physics-frame advance with the game scene's blend settings, and adds to each clip's metrics
@@ -39,6 +40,7 @@ extends Node
 
 const FootSlide := preload("res://scripts/review/foot_slide.gd")
 const GamePath := preload("res://scripts/review/game_path.gd")
+const SeamGap := preload("res://scripts/review/seam_gap.gd")
 const FPS := 30.0
 const STRETCH_EDGES := 12
 const MIN_EDGE := 0.01  # m: shorter edges (crotch and seam slivers) turn millimetre moves into huge ratios
@@ -298,6 +300,7 @@ func _measure(lib: AnimationLibrary, clip: String, ground_speed: float) -> Dicti
 	var meshes := _mesh_data(sk, inst["root"])
 	var dom := _dominant_bones(sk, meshes)
 	var edges := _edges(meshes)
+	var seam := SeamGap.new(inst["root"], sk)
 	# Bind pose: the mesh's own vertices (skin binds map mesh space into each bone's space). Resetting
 	# the skeleton to rest doesn't reproduce it on retargeted models: the rest fixer moves the rests
 	# (13 cm off on the player). The Hips bind frame is the inverse of the Hips bind pose.
@@ -341,6 +344,7 @@ func _measure(lib: AnimationLibrary, clip: String, ground_speed: float) -> Dicti
 		ap.seek(t, true)
 		var hips := sk.global_transform * sk.get_bone_global_pose(sk.find_bone("Hips"))
 		var pos := _skin(sk, meshes)
+		seam.sample(sk, t)
 		var inv := hips.affine_inverse()
 		var fdev := 0.0
 		for v in pos.size():
@@ -406,7 +410,8 @@ func _measure(lib: AnimationLibrary, clip: String, ground_speed: float) -> Dicti
 		"edge_stretch_worst_bone": stretch_worst[1],
 		"edge_stretch_worst_t": stretch_worst_t,
 		"vertices": rest.size(),
-		"edges": edges.size() / 2
+		"edges": edges.size() / 2,
+		"seam_gap": seam.result()
 	}
 
 
@@ -901,6 +906,8 @@ func _review(clip: String, lib: AnimationLibrary, source: String) -> void:
 	]:
 		out[k] = m[k]
 	out["game_path"] = _game_path_for(clip)
+	out["seam_gap"] = m["seam_gap"]
+	print("SEAM %s %s" % [clip, JSON.stringify(m["seam_gap"])])
 	out["series"] = {
 		"t": s["t"],
 		"hips": s["hips"].map(func(p): return [snappedf(p.x, 0.001), snappedf(p.y, 0.001), snappedf(p.z, 0.001)])
