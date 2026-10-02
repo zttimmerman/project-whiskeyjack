@@ -35,6 +35,7 @@ func _soles(root: Node3D, sk: Skeleton3D) -> Dictionary:
 		var verts: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
 		var bones: PackedInt32Array = arr[Mesh.ARRAY_BONES]
 		var weights: PackedFloat32Array = arr[Mesh.ARRAY_WEIGHTS]
+		@warning_ignore("integer_division")
 		var stride := bones.size() / verts.size()
 		for v in verts.size():
 			var best := 0
