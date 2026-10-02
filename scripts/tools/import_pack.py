@@ -12,6 +12,8 @@
 (--archive). For each piece it finds <name>.<format> in the pack, writes assets/briefs/<prefix><name>.yaml and
 the piece's assets/sources.json entry (URL, author, licence, pack version, SHA-256 of the source file), then
 runs `scripts/pipeline.py <id> --stage all`, and reports the triangle count and any budget failure per piece.
+The validate stage gives each piece's extracted texture the editor's import settings (VRAM compressed;
+scripts/tools/texture_imports.py), so the .import files it leaves are the ones to commit.
 
 Numbers come only from docs/art-bible.md: --budget names the art-bible budget line (**<label>:**) or the
 section whose **Budget:** line gives the triangle budget and texture size. Idempotent: the same inputs write the same briefs and entries,

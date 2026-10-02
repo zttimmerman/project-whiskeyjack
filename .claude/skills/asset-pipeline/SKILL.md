@@ -90,6 +90,8 @@ The Tripo chain is **text-to-image → (optional refine) → image-to-multiview 
    - material transparency;
    - animations against the brief (missing ones only warn, since they'll come from the shared library).
 
+   Once validate passes, it runs a headless editor import (Godot extracts the GLB's texture to `assets/meshes/<id>_<image>.png`) and gives that texture's `.import` what the editor's 3D detection would (VRAM compressed, mipmaps, detection off; `scripts/tools/texture_imports.py`), so opening the editor doesn't rewrite it. Commit the GLB's and the texture's `.import` files with the GLB. CI's `texture_imports.py --check` fails a committed 3D texture still awaiting detection.
+
 ## Judge (after every stage)
 
 A fresh-context subagent rules on each stage's output from an evidence packet: `pass`, `revise` (with a concrete edit), or `escalate` (to the user). **Checkable questions only:** does it match the concept (or, with no concept, the brief's prompt), are the colors within tolerance, is anything missing or malformed, is it in budget, does the motion drift, slide, stretch or break. Style and taste always escalate.

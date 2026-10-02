@@ -14,6 +14,9 @@ and ramp_steps, plus the pinned Material Maker release. Regenerating:
      texel to the ramp, then measures CIE76 dE before and after.
   3. This script writes assets/textures/surfaces/<name>.png (GENERATED: only this script writes them) and
      assets/textures/surfaces/manifest.json (hashes of the graph, ramp, output file and pixels, plus the dE stats).
+  4. Each PNG's .import is seeded lossless, with mipmaps and 3D detection off (scripts/tools/texture_imports.py,
+     docs/trials/material-maker.md decision 6), and a headless import completes any it changed, so the
+     editor never rewrites them.
 
 --check needs neither tool: the graphs, the ramp colours in docs/art-bible.md and the PNGs must still match
 the manifest, and every colorize stop in a graph must be one of its ramp's palette colours.
@@ -36,6 +39,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import godot_timeout  # noqa: E402
+import texture_imports  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 SRC = ROOT / "assets/textures/src"
@@ -167,6 +171,10 @@ def regenerate(cfg, names):
         }
     manifest["textures"] = dict(sorted(manifest["textures"].items()))
     MANIFEST.write_text(json.dumps(manifest, indent=1) + "\n")
+    if [n for n in names if texture_imports.seed(OUT / f"{n}.png", "lossless")]:
+        t0 = time.monotonic()
+        texture_imports.godot_import(godot, ROOT)
+        timings["import_s"] = round(time.monotonic() - t0, 2)
     timings["total_s"] = round(sum(timings.values()), 2)
     for n in names:
         m = manifest["textures"][n]
