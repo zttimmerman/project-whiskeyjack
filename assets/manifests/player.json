@@ -1153,7 +1153,7 @@
     "sha256": "ee9664699c8771285f584c5351ad7868007de99a1ab2bf7385fca6d4ebcc849b"
   },
   "total_cost_credits": 100,
-  "updated_at": "2026-10-02T04:07:57+00:00",
+  "updated_at": "2026-10-02T04:22:42+00:00",
   "concept_approval": {
     "attempt": "concept-1",
     "image": {
@@ -1817,6 +1817,42 @@
       "escalation_reason": "Only skin stretch fails, from the skirt_reweight region (tunic graded to Hips next to thigh/shin-weighted trouser vertices). No library change fixes it; the clean stage's skirt reweight needs changing, or the user accepts a stretch hidden under the hem at gameplay distance.",
       "summary": "The run stays in place with planted feet and clean handovers, but skin stretch fails at 4.56x (limit 1.0); the stretched edges sit where the skirt reweight meets the thighs, so the fix is in the clean stage's weights, not in the animation library.",
       "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-idle",
+      "recorded_at": "2026-10-02T04:22:42+00:00",
+      "decision": "User 2026-10-02: accept the skirt stretch for now (pre-existing skirt_reweight tunic/thigh boundary, mostly hidden at gameplay distance); the player model gets reworked after the Tripo P2.0 research"
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-run",
+      "recorded_at": "2026-10-02T04:22:42+00:00",
+      "decision": "User 2026-10-02: accept the skirt stretch for now (pre-existing skirt_reweight tunic/thigh boundary, mostly hidden at gameplay distance); the player model gets reworked after the Tripo P2.0 research"
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-dodge_roll",
+      "recorded_at": "2026-10-02T04:22:42+00:00",
+      "decision": "User 2026-10-02: accept the skirt stretch for now (pre-existing skirt_reweight tunic/thigh boundary, mostly hidden at gameplay distance); the player model gets reworked after the Tripo P2.0 research"
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-attack_light",
+      "recorded_at": "2026-10-02T04:22:42+00:00",
+      "decision": "User 2026-10-02: accept the skirt stretch for now (pre-existing skirt_reweight tunic/thigh boundary, mostly hidden at gameplay distance); the player model gets reworked after the Tripo P2.0 research"
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-attack_heavy",
+      "recorded_at": "2026-10-02T04:22:42+00:00",
+      "decision": "User 2026-10-02: accept the skirt stretch for now (pre-existing skirt_reweight tunic/thigh boundary, mostly hidden at gameplay distance); the player model gets reworked after the Tripo P2.0 research"
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-death",
+      "recorded_at": "2026-10-02T04:22:42+00:00",
+      "decision": "User 2026-10-02: accept the skirt stretch for now (pre-existing skirt_reweight tunic/thigh boundary, mostly hidden at gameplay distance); the player model gets reworked after the Tripo P2.0 research"
     }
   ]
 }
