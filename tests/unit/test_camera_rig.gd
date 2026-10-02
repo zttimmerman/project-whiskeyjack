@@ -181,3 +181,79 @@ func test_fill_light_stays_on_the_camera_side_and_player_only() -> void:
 	var rig: Node3D = player.get_node("CameraRig")
 	var pivot: Vector3 = rig.call("get_pivot")
 	assert_float(light.global_position.y - pivot.y).is_equal_approx(0.6, 0.05)
+
+
+# Level 1's start-room north-west corner: two kit walls and the corner crate the player can stand on
+func _corner() -> void:
+	var north: Node3D = (load(WALL_SCENE) as PackedScene).instantiate()
+	north.position = Vector3(-4, 0, -6.25)
+	add_child(auto_free(north))
+	var west: Node3D = (load(WALL_SCENE) as PackedScene).instantiate()
+	west.transform = Transform3D(Basis(Vector3.UP, PI / 2), Vector3(-6.25, 0, -4))
+	add_child(auto_free(west))
+	var crate: Node3D = (load("res://scenes/world/kit/KitBoxSmall.tscn") as PackedScene).instantiate()
+	crate.position = Vector3(-5.2, 0, -5.2)
+	add_child(auto_free(crate))
+
+
+func _inside_world(cam: Camera3D, player: Node) -> bool:
+	var space := cam.get_world_3d().direct_space_state
+	var shape := PhysicsShapeQueryParameters3D.new()
+	var ball := SphereShape3D.new()
+	ball.radius = 0.1
+	shape.shape = ball
+	shape.transform = Transform3D(Basis(), cam.global_position)
+	shape.exclude = [(player as CollisionObject3D).get_rid()]
+	if not space.intersect_shape(shape, 1).is_empty():
+		return true
+	var point := PhysicsPointQueryParameters3D.new()
+	var vp := cam.get_viewport().get_visible_rect().size
+	for corner: Vector2 in [Vector2.ZERO, Vector2(vp.x, 0), Vector2(0, vp.y), vp]:
+		point.position = cam.project_position(corner, cam.near)
+		for hit in space.intersect_point(point, 4):
+			if not hit["collider"] is CharacterBody3D:
+				return true
+	return false
+
+
+func test_cam_never_clips_into_walls_in_a_corner() -> void:
+	# The user saw the camera clip into walls (2026-10-01): a sphere cast that starts touching a wall passes
+	# through it. Tucked into a corner and turned all the way round at every pitch, the lens keeps clear.
+	_floor()
+	_corner()
+	var player := _player_at(Vector3(-5.5, BODY_Y + 1.2, -5.5))  # dropped onto the corner crate
+	await _physics_frames(30)
+	var cam := _camera(player)
+	var clipped: Array[String] = []
+	for i in 16:
+		for pitch: float in [-0.4, 0.0, 0.8]:
+			player.apply_view_state({"facing": i * TAU / 16, "camera_yaw": i * TAU / 16, "camera_pitch": pitch})
+			await _physics_frames(3)
+			if _inside_world(cam, player):
+				clipped.append("yaw %.2f pitch %.1f at %s" % [i * TAU / 16, pitch, cam.global_position])
+	assert_array(clipped).is_empty()
+
+
+func test_cam_pitch_turns_the_look_not_the_arm() -> void:
+	# The user's playtest (2026-10-01): mouse pitch swung the whole arm, lifting the lens to about 3.4 m.
+	# Looking from full down to full up, the lens stays within 0.4 m of its resting height and he stays in frame.
+	_floor()
+	var player := _player_at(Vector3(0, BODY_Y, 0))
+	player.apply_view_state({"facing": 0.0, "camera_yaw": 0.0, "camera_pitch": 0.0})
+	await _physics_frames(SETTLE_FRAMES)
+	var cam := _camera(player)
+	var rest := cam.global_position.y
+	var lows: Array[float] = []
+	for pitch: float in [player.camera_pitch_min, -0.2, 0.2, 0.5, player.camera_pitch_max]:
+		player.apply_view_state({"facing": 0.0, "camera_yaw": 0.0, "camera_pitch": pitch})
+		await _physics_frames(30)
+		var s := CameraProbe.sample(cam, player, null)
+		(
+			assert_float(absf(cam.global_position.y - rest))
+			. override_failure_message("pitch %.1f: lens at %.2f m, rest %.2f m" % [pitch, cam.global_position.y, rest])
+			. is_less_equal(0.4)
+		)
+		assert_bool(s["player_in_view"]).override_failure_message("pitch %.1f: out of view" % pitch).is_true()
+		lows.append(cam.global_basis.z.y)
+	# and the look does turn: full up and full down look different ways
+	assert_float(lows[0] - lows[-1]).is_greater(0.3)

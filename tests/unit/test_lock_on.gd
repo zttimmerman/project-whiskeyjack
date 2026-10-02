@@ -5,6 +5,8 @@ extends GdUnitTestSuite
 # logged as today (lock_on with the new target, lock_off). Real Player scene, stand-in enemies.
 
 const PLAYER_SCENE := "res://scenes/player/Player.tscn"
+const NPC_SCENE := "res://scenes/npcs/NPC.tscn"
+const WALL_SCENE := "res://scenes/world/kit/KitWall.tscn"  # 4 m wide along x, 4 m tall, 0.5 m thick
 const FakeEnemy := preload("res://tests/doubles/fake_enemy.gd")
 const LOG_PATH := "user://test_lock_on.jsonl"
 const BODY_Y := 0.9
@@ -114,3 +116,68 @@ func test_the_switch_and_the_release_are_logged() -> void:
 		if String(e["event"]).begins_with("lock_"):
 			events.append("%s %s" % [e["event"], e.get("target", "")])
 	assert_array(events).is_equal(["lock_on Second", "lock_off "])
+
+
+func _wall_at(z: float) -> Node3D:
+	var wall: Node3D = (load(WALL_SCENE) as PackedScene).instantiate()
+	wall.position = Vector3(0, 0, z)
+	add_child(auto_free(wall))
+	return wall
+
+
+func test_lock_on_ignores_enemies_behind_walls() -> void:
+	# Design bible §2: only living enemies in line of sight are candidates (the playtest locked on through walls)
+	_arena()
+	_wall_at(-3.0)
+	_enemy("Hidden", Vector3(0, BODY_Y, -6))
+	await _frames(2)
+	_player.call("_toggle_lock_on")
+	assert_object(_player.get_lock_on_target()).is_null()
+
+
+func test_lock_on_never_picks_an_npc() -> void:
+	# The playtest locked onto the quest giver: only enemies are candidates
+	_arena()
+	var npc: Node3D = (load(NPC_SCENE) as PackedScene).instantiate()
+	npc.position = Vector3(0, BODY_Y, -3)
+	add_child(auto_free(npc))
+	await _frames(2)
+	_player.call("_toggle_lock_on")
+	assert_object(_player.get_lock_on_target()).is_null()
+
+
+func test_lock_survives_a_brief_occlusion() -> void:
+	# User's rule (2026-10-01): circling a pillar hides the target for a moment; the lock holds
+	_arena()
+	var target := _enemy("Target", Vector3(0, BODY_Y, -6))
+	await _frames(2)
+	_lock(target)
+	var wall := _wall_at(-3.0)
+	await _frames(30)  # 0.5 s hidden
+	wall.free()
+	await _frames(2)
+	assert_object(_player.get_lock_on_target()).is_same(target)
+
+
+func test_lock_ends_after_a_second_behind_cover() -> void:
+	# User's rule (2026-10-01): hidden by world geometry for more than about 1 s, the lock ends
+	_arena()
+	var target := _enemy("Target", Vector3(0, BODY_Y, -6))
+	await _frames(2)
+	_lock(target)
+	_wall_at(-3.0)
+	await _frames(75)  # 1.25 s hidden
+	assert_object(_player.get_lock_on_target()).is_null()
+
+
+func test_lock_moves_only_to_an_enemy_in_sight() -> void:
+	_arena()
+	var first := _enemy("First", Vector3(0, BODY_Y, 3))
+	_wall_at(-3.0)
+	_enemy("Hidden", Vector3(0, BODY_Y, -5))
+	var seen := _enemy("Seen", Vector3(8, BODY_Y, 2))
+	await _frames(2)
+	_lock(first)
+	first.dead = true
+	await _frames(1)
+	assert_object(_player.get_lock_on_target()).is_same(seen)
