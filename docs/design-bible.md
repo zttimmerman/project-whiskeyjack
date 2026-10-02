@@ -32,18 +32,20 @@ The third-person camera behind the player is the lens for everything else. Most 
 
 - **Modes, not one camera (settled):** the rig supports swappable modes: third-person over-the-shoulder now, first person later, as in Skyrim or Fallout 4. Aiming, lock-on and interaction use the **camera's** forward ray, never the character's facing, so they work in either mode.
   - First person is post-slice. It needs a first-person viewmodel (arms and weapon), and assets that hold up much closer than the 256 px texture budget assumes.
-- **Framing (settled; Witcher-like, decided by the user 2026-10-01):** the camera sits over the right shoulder, offset about 0.9 m to the side, with a pivot about 1.6 m above the floor, an arm of about 2.5 m, and a 70–75° FOV, so the player sits in the left third of the frame with a clear view past his right shoulder. Locked on, the arm may pull back a little to fit both. **Current:** 0.9 m right, pivot 1.6 m, 2.5 m arm (3.0 m locked), FOV 72°, look turned 4° right (`scenes/player/CameraRig.gd`).
+- **Framing (settled; Witcher-like, decided by the user 2026-10-01):** the camera sits over the right shoulder, offset about 0.9 m to the side, with a pivot about 1.6 m above the floor, an arm of about 2.5 m, and a 70–75° FOV, so the player sits in the left third of the frame with a clear view past his right shoulder. Locked on, the arm may pull back a little to fit both. Looking up and down turns the **look**; the lens stays near shoulder height, within about 0.35 m of rest. **Under review (2026-10-01 playtest):** the user found this still reads as behind-and-above, not over the shoulder; three closer variants are rendered for the user to choose (`CameraRig.framing`, trial doc). **Current:** 0.9 m right, pivot and resting lens 1.6 m, 2.5 m arm (3.0 m locked), FOV 72°, look turned 4° right; pitch moves the lens 0.6 m per radian, capped at ±0.35 m (`scenes/player/CameraRig.gd`).
   - An over-the-shoulder offset is what stops the player model hiding the enemy at melee range (`cam_melee_occlusion`).
 - **Collision:** the spring arm uses a sphere probe with a margin, not a ray, and eases in and out.
   - The player must stay fully in frame (`cam_player_in_frame`), and wall must never fill the frame (`cam_wall_fill`).
-  - When the arm is squeezed shorter than 1.5 m, the camera may rise, but not clip into the player.
+  - When the arm is squeezed shorter than 60% of its length, the camera may rise, but not clip into the player.
+  - **Current:** a 0.3 m sphere probe. A probe that starts touching a wall doesn't move, and each move stops 5 cm short of its hit (fixed 2026-10-01: a touching start passed through walls).
 - **Lock-on (Witcher model):**
   - A reticle on the target, always visible while locked.
   - Only living enemies in line of sight are candidates.
   - Cycling picks the next-nearest to screen centre.
   - The camera keeps both the player and the target in frame (`cam_lock_both_in_frame`).
-  - Lock releases on target death, on losing line of sight for 2 s, or beyond 1.5× range.
-  - **Current:** a Signal Red ring reticle on the target (`scenes/ui/LockOnReticle.tscn`, in the HUD); no line-of-sight filter; camera input is disabled while locked. When the target dies, the lock moves at once to the nearest living enemy in range, or releases (decided 2026-10-01).
+  - When the target dies, the lock moves at once to the nearest living enemy in range and in sight, or releases (user, 2026-10-01).
+  - Lock releases when the target stays hidden behind world geometry for more than about 1 s (user, 2026-10-01; a moment behind a pillar keeps it), or beyond 1.5× range.
+  - **Current:** all of the above, with a Signal Red ring reticle on the target (`scenes/ui/LockOnReticle.tscn`, in the HUD); camera input is disabled while locked.
 - **Respawn and loads** restore the saved view heading, so the same input moves the same way (fixed in #6).
 - **Bindings:** one action per key. **Current:** E is bound to both `interact` and `camera_right`. Gameplay actions are polled in the physics step, so automated input can frame-time them.
 
