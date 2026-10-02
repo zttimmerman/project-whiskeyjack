@@ -45,7 +45,9 @@ res://
 ├── addons/
 │   ├── stylized_materials/  # glTF import extension: specular 0 on every imported material
 │   ├── godot_ai/            # Godot MCP editor plugin, pinned v4.2.3 (see Godot MCP); never updated in place
-│   └── gdUnit4/             # test framework, pinned v6.2.1; never updated in place
+│   ├── gdUnit4/             # test framework, pinned v6.2.1; never updated in place
+│   ├── dialogue_manager/    # Dialogue Manager, pinned v4.1.0 + local patches; never updated in place
+│   └── func_godot/          # .map brush builder, pinned 2025.12; disabled, used only by build_brush_maps.gd
 ├── scenes/
 │   ├── player/              # Player.tscn / Player.gd
 │   ├── enemies/             # BaseEnemy, ArcherEnemy, Projectile
@@ -126,9 +128,10 @@ Outside `res://`: `.claude/skills/` (asset-pipeline, tripo, playtest-branch), `.
 - Item data stored as `.tres` files in res://data/items/ — use Godot's native Resource format, not JSON, so items load directly via `load()` with no custom parser
 
 ### Dialogue System (scripts/dialogue/DialogueRunner.gd)
-- Dialogue trees stored as JSON in res://data/dialogues/
-- Format: array of dialogue nodes, each with: id, speaker, text, choices (optional array of {text, next_id})
-- DialogueRunner autoload reads a dialogue file, steps through nodes, emits `dialogue_started`, `line_ready(speaker, text, choices)`, `dialogue_ended`
+- Dialogue lives in `data/dialogues/<id>.dialogue` (Dialogue Manager v4.1.0 in `addons/dialogue_manager/`, pinned, with 4 local patches in `docs/trials/dialogue-manager-v4.1.0.patch`; never use its in-editor updater). Every file starts at `~ start`
+- Conditions and mutations call `QuestManager.start_quest/advance_quest/complete_quest("id")` and `set_flag/get_flag("name")`; world flags live in QuestManager and are saved with it
+- DialogueRunner autoload wraps the addon with the original API: `start(id)`, `advance(choice)`, `is_active()`, `accepts_interact()`; emits `dialogue_started`, `line_ready(speaker, text, choices)`, `dialogue_ended`
+- CI compiles every file (`ci/check_dialogue.gd`) and lints its text limits (`ci/data_lint.py`)
 - DialogueUI listens to DialogueRunner signals and renders text box + choices
 - NPCs trigger dialogue via their interact() method calling DialogueRunner.start(dialogue_id)
 - Dialogue can set quest flags via QuestManager
@@ -203,22 +206,8 @@ stats_modifier = {"attack": 5}
 `type` is the Item.Type enum index: WEAPON=0, ARMOR=1, CONSUMABLE=2, KEY=3.
 For consumables, use `stats_modifier = {"heal": 30}` — the `use()` method reads this key.
 
-### Dialogue JSON (res://data/dialogues/village_elder.json)
-```json
-[
-  { "id": "start", "speaker": "Elder", "text": "Traveler, you've arrived at last.", "choices": [
-    { "text": "What do you need from me?", "next_id": "quest_offer" },
-    { "text": "Just passing through.", "next_id": "farewell" }
-  ]},
-  { "id": "quest_offer", "speaker": "Elder", "text": "Monsters have taken the eastern road. Will you help?", "choices": [
-    { "text": "I'll do it.", "next_id": "quest_accept" },
-    { "text": "Not my problem.", "next_id": "farewell" }
-  ]},
-  { "id": "quest_accept", "speaker": "Elder", "text": "Thank you. Be safe.", "set_quest": "clear_eastern_road", "next_id": null },
-  { "id": "farewell", "speaker": "Elder", "text": "Safe travels.", "next_id": null }
-]
-```
-
+### Dialogue (res://data/dialogues/village_elder.dialogue)
+See the file itself: one `~ start` cue branching on quest state and world flags, speaker lines (`Idrenna: ...`), choices (`- text`), mutations (`$> QuestManager.start_quest("clear_eastern_road")`) and jumps (`=> cue`, `=> END`). Each line keeps the world bible's limit of 2 sentences.
 ---
 
 ## Scene Files (.tscn)
@@ -267,7 +256,7 @@ The `addons/godot_ai` editor plugin (pinned v4.2.3, signature-verified; research
 **Which route for which work (every skill states its own Execution):**
 - **Scripted and headless, never the MCP:** anything that must reproduce exactly: the asset pipeline, the judge, the motion review, the animation library build, validation and imports. These run without an open editor.
 - **The Godot MCP:** live work in the editor or game: playtests (input, screenshots, the live scene tree, logs), diagnosing a running editor or game, and hand-authored scene, UI-layout and signal edits.
-- **Generated files are changed only by their generators**, whatever the tool (`data/animations/`, `data/rigs/`, `assets/meshes/`, `scenes/props/Held*.tscn`, and `scenes/world/*_navmesh.tres`, written only by `scripts/tools/bake_navmeshes.gd`: rerun it after changing level geometry and commit the result; CI fails a stale bake).
+- **Generated files are changed only by their generators**, whatever the tool (`data/animations/`, `data/rigs/`, `assets/meshes/`, `scenes/props/Held*.tscn`, `scenes/world/*_navmesh.tres`, written only by `scripts/tools/bake_navmeshes.gd`: rerun it after changing level geometry and commit the result; CI fails a stale bake; `scenes/world/trials/*_brushes.tscn`, built from `.map` files by `scripts/tools/build_brush_maps.gd`; and `assets/textures/surfaces/`, written only by `scripts/tools/make_textures.py` from the `.ptex` graphs and ramps in `assets/textures/src/` with Material Maker 1.5p1 in the gitignored `.tools/`, Mac only; CI runs `--check`).
 
 **One editor per worktree.** The agent works in its own worktree with its own Godot editor, so the human can keep building in theirs:
 - **One server, one session per editor.** Every editor connects to the same local server as a session (`<worktree-dir>@<hex>`). Pass the agent's `session_id` on every call. Never use `session_activate`, which moves the server-global default and can point calls at the human's editor.
