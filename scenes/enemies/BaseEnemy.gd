@@ -364,7 +364,7 @@ func _may_close_in(dist: float) -> bool:
 	if attack_range <= 0.0 or dist > HOLD_MAX_DISTANCE:
 		return true
 	var tokens := _attack_tokens()
-	return tokens == null or tokens.try_acquire_melee(self)
+	return tokens == null or tokens.try_acquire_melee(self, _physics_time_s())
 
 
 # Without a token: back off inside HOLD_MIN_DISTANCE, otherwise stand and face the player
@@ -389,6 +389,13 @@ func _attack_tokens() -> AttackTokens:
 	if not _player.has_meta(AttackTokens.META):
 		_player.set_meta(AttackTokens.META, AttackTokens.new())
 	return _player.get_meta(AttackTokens.META) as AttackTokens
+
+
+# A holder's attack start keeps its token reserved for the window after it goes (AttackTokens)
+func _note_melee_attack() -> void:
+	var tokens := _attack_tokens()
+	if tokens and tokens.holds_melee(self):
+		tokens.note_melee_attack(self, _physics_time_s())
 
 
 func _release_attack_tokens() -> void:
@@ -432,6 +439,7 @@ func _change_state(new_state: State) -> void:
 			_update_locomotion_anim()
 		State.ATTACK:
 			_face_player()  # aimed once, at the windup's start
+			_note_melee_attack()
 			_begin_windup()
 		State.STAGGER:
 			_winding_up = false
