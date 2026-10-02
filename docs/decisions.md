@@ -37,7 +37,7 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
   - Sourced props budget: 1,320 triangles, 128 px from the kit's shared atlas (art bible). Kit scale stays 1.0 until pieces are first placed; any rescale is one factor per pack.
   - The per-footprint colour measurement stays for sourced assets only. The floor tile's slight brown drift is accepted.
 - **Backlog, as design-bible targets:**
-  - Camera follow-ups: first-person mode later; the arm still snaps in at once when the view swings into a wall.
+  - Camera follow-ups: first-person mode later; the arm still snaps in at once when the view swings into a wall. Bouncing off tight pillars is accepted as a camera-system limit (2026-10-01): level layout keeps pillars clear of the play space instead.
   - `atk_hitbox_sync` (the `contact` markers now exist; wire the check), player attack commitment and the 0.15 s recovery; stagger should start the enemy's cooldown (§3).
   - A "reasonable player" scenario (reacts late to some tells) for `enc_first_fight_hp_cost`; a two-fight route for `enc_spacing_s`; a pillar or doorway replay for the SEARCH state.
   - The `lvl_*` targets and `read_*`: ceilings (brush shells now provide them; Level 1 still has none), `lvl_bare_wall_run_max`, the kit doorway's 2.0 m opening (under 2.2 m) once doors are walk-through.
@@ -45,9 +45,11 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
   - Small: the attack-token hand-off on death is immediate (a 2 s window can briefly count 3); the replay harness stamps first-frame events 1–2 frames early; `import_pack.py` should write `compress/mode=2` for new kit textures; the pre-push hook ran `tests/run.sh` to exit 100 once (not reproduced; watch for a flaky test).
 - **Next:**
   - **Phase C, content:** more CC0 kits through the import path, plus UAL2 Source (the user buys it): real bow clips and possibly a strafe clip for waiting levies.
+- **From the godogen review (2026-10-01; MIT, ideas from its docs):** timeouts on Godot calls, a game-path motion review and scene-generator checks are in progress (`chore/tooling-hardening`). Still to do: hit timing at the blade's furthest reach for `atk_hitbox_sync` (measure our clips; don't copy their frame counts), a held-prop tip-alignment check before the player's sword, and optionally generating hero concepts on two image models for the judge to pick.
+- **CI:** the gdunit4 job posts a JUnit summary (`mikepenz/action-junit-report`, #36). Failure annotations haven't been seen yet (the pre-push hook stops a failing test reaching CI); the first real failure will show them.
 - **Open questions:**
   - Is Level 2's 0.5 m burial platform meant to be walkable? It's above the 0.25 m climb limit, so enemies path around it. (The user hasn't been there in a while; ask when Level 2 is next worked on.)
-  - Research Tripo P2.0 before any new generation (the player's sword is waiting on it).
+  - Research Tripo P2.0 before any new generation (the player's sword is waiting on it). Backup to compare: TRELLIS.2 (open image-to-3D) on a rented CUDA GPU; it won't run on the Mac, and the weights' licence must be checked first.
 - **Before any Tripo spend:** read the tripo skill. The cap is 500 per session, starting at 0. The balance is 590. Costs: concept 15, multiview 10, model 50, rig 25.
 - **Tools:**
   - `scripts/pipeline.py <id> --stage all`, `scripts/judge.py packet|record|resolve|log`, and `scripts/tools/import_pack.py` for kits;
