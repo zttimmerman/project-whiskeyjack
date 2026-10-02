@@ -4,64 +4,12 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 
 ## Session handoff (update at the end of every session)
 
-- **Main** is on Godot 4.7.2. The last session ended 2026-10-01. It ran **Phase A** (PRs #14–#22), a **gameplay batch** (#23–#28), **Phase B** (#30–#33) and the **camera rework** (#33), plus #34. Everything is merged; no branches or worktrees are open.
-- **Next:** Phase C content (more CC0 kits; UAL2 Source once the user buys it: real bow clips, maybe a strafe clip so waiting levies circle), dressing the crypt trial with Material Maker tileables and kit detail, then the backlog below. Research Tripo P2.0 before any generation.
-- **Phase B and the camera, done (2026-10-01):**
-  - **Dialogue Manager** (#32), kept: v4.1.0 (`a719088`) with 4 local patches (`docs/trials/dialogue-manager-v4.1.0.patch`; never use its in-editor updater). `DialogueRunner` wraps it with the old signals; `data/dialogues/village_elder.dialogue` has five openings; world flags live in `QuestManager` and save with it. `ci/check_dialogue.gd` compiles every file. Fixed: the quest reward was paid again after loading a save.
-  - **Material Maker** (#30), kept: 1.5p1 (`b57f878`) in the gitignored `.tools/`; `scripts/tools/make_textures.py` regenerates `assets/textures/surfaces/` from `.ptex` graphs (Mac only: its renderer needs Vulkan), CI runs `--check`. Dark floors are fixed level-side.
-  - **func_godot** (#31), kept as **brush shell + kit detail**: 2025.12 (`169f2dd`), disabled, build-tool only (`scripts/tools/build_brush_maps.gd`, headless; CI fails a stale build). `scripts/tools/brush_boxes.py` writes brushes from box layouts. Budget: 2,000 triangles per brush entity (art bible). Trial room: `scenes/world/trials/CryptTrial.tscn`.
-  - **Camera** (#33): our own `scenes/player/CameraRig`, Phantom Camera rejected (evidence in `docs/trials/phantom-camera.md`). Framing A, picked by the user after two playtests: 1.6 m arm (2.2 locked), 0.7 m right, lens about 1.55 m, 65°. Mouse pitch turns the look; the lens stays within ±0.35 m. Lock-on: living enemies in sight only, drops after 1 s hidden, jumps to the next enemy when the target dies, with a red reticle. Every `cam_*` check passes in every scenario (`scripts/review/camera_probe.gd`, `tests/scenarios/camera_stress.json`). Other framings stay selectable through `CameraRig.framing`.
-  - **#34:** pressing interact on a conversation's last line no longer reopens it (`DialogueRunner.accepts_interact()`); the playtest review copy is labelled "REVIEW <ref>" and has its own `user://`.
-- **Playtest lesson (2026-10-01):** open playtests with `playtest-branch.sh <ref>` (default `--play`). With `--editor`, the user pressed F5 in their own editor on `main` twice and reported "nothing changed". A no-input capture also hid a mouse-pitch bug, so camera evidence must include camera input.
-- **Gameplay batch, done (2026-09-30 – 10-01):**
-  - **Damage** (#23): `CharacterStats.mitigated_damage` (the ratio), `level_scale` and `scaled_stat` (round to nearest, not yet wired into spawning: no per-area level bands). Enemy attack 14 for both levy variants and arrows (9 HP per hit); `ttk_levy_player` 12.
-  - **Skating** (#24): the levy is about 13% larger than the Quaternius mannequin, so its clips cover more ground. Front-file chase 4.0 → 4.6 m/s (the user kept it; the player's escape margin is 0.4 m/s), Back-file 1.4 → 1.5. Foot slide 0.21 / 0.17 m/s, enforced by `test_locomotion_foot_slide`. The motion review's foot-slide measurement had a Foot→Toes switching bug, now fixed.
-  - **Level 1 in KayKit** (#25): 12 kit pieces at scale 1.0, wrapped in `scenes/world/kit/Kit*.tscn` (StaticBody3D + box/cylinder; the baker reads them), small crates and barrel stacks only, 13 torches. Skirting and plinths are visual-only collision; denser torch spacing accepted.
-  - **Line of sight** (#26): a 120° cone plus 4 m hearing, both needing a clear ray (`scripts/combat/WorldRay.gd`); a SEARCH state (last-seen spot, 3.5 s, back to post); `AttackTokens` (2 melee, 1 archer per 2 s); arrows stop at walls. New scenario `tomb_hall_group`.
-  - **Telegraphs** (#27): melee 0.6 s (`Sword_Attack`, short hold on the raised blade), archer 0.9 s (`Spell_Simple_Enter`). The timings are constants; clips fit them through `tell`/`contact` MARKERS in `build_animation_library.gd`. A dying enemy's hit no longer lands. `levy_1v1_sensible` is a perfect dodger (0% HP is the skilled ceiling); `ttk_levy_player` lives in `levy_1v1_passive`.
-  - **Kit texture imports** (#28): committed as the editor detects them (VRAM compressed), so checkouts stay clean.
-- **Decided 2026-09-30 – 10-01:** the user approved every default above. Hearing needs sight; no alerting of nearby enemies; waiting levies hold until a strafe clip exists; short pose holds allowed; tell sounds wait for the audio pass. The player's own sword waits until Tripo P2.0 is researched (don't spend on the P1 model).
-- **Phase A, done:**
-  - **CI** (#14): `.github/workflows/ci.yml` runs import, validate, data-lint, lint, hooks, gdunit4, navmesh and replays on every PR. `ci/warnings-baseline.txt` (23 lines) and `ci/data-lint-baseline.txt` (1) are burn-down lists: new warnings fail, and a fixed warning's line is deleted.
-  - **gdUnit4** (#17): v6.2.1 (commit 08ffc7c), pinned. `tests/run.sh` runs every suite (about 5 s). Characterization tests cover stats, inventory, quests and saves. Pending tests (the damage ratio, enemy damage share, `ttk_levy_player`, level bands) flip on in the PRs that implement them.
-  - **Navmeshes bake at edit time** (#18): `scripts/tools/bake_navmeshes.gd` (collision faces, whole-cell agent 2.0/0.5 m); levels no longer bake at runtime. `check_path_clearance.gd` reports `lvl_path_clearance_min` from `tests/critical_paths/*.json`. Every segment passes; the narrowest is Level 2 vault → corridor C at 1.5 m.
-  - **Downloaded-asset import** (#16, #19): CC0 kits go through `scripts/tools/import_pack.py` into the gitignored `.downloads/`, with provenance in `assets/sources.json` (CC0 only, checked by validate). Six KayKit Dungeon Remastered pieces pass the judge. For sourced kits, colour is measured over each piece's UV footprint and may be darkened, the shared atlas is corrected once from the pack's combined footprints (adding a piece re-cleans the pack), and holes use `mesh_kit_max_loops_per_part` (2).
-  - **Replay harness** (#20): the `EventLog` autoload (off by default; `WHISKEYJACK_EVENT_LOG` or `--event-log`), `scripts/review/replay.tscn`, `replay_metrics.py`, and the scenarios `levy_1v1_sensible` and `central_room_pull`. Runs are deterministic; same-frame event order may vary (Jolt), which `--compare` accepts. Baselines match the design bible §9 Current column: `ttk_player_frontfile` 4, `ttk_levy_player` 34, telegraph 0 s, first-fight HP cost 6%, first-area group 4 (all since moved by the gameplay batch; see the bible's §9).
-  - **Git hooks** (#21): `.githooks/` (enable with `git config core.hooksPath .githooks`; needs `pipx install gdtoolkit==4.5.0`). pre-commit runs gdformat/gdlint/data-lint, pre-push runs the warnings check and the tests. All scripts are gdformatted at 120 columns.
-  - Also: `Player.tscn`'s script path case (#15).
-- **Decided this session (2026-09-30):**
-  - Tool-script warnings count against §8: fix the 10 GDScript warnings in the baseline in a `chore/` PR.
-  - Level scaling is a static `CharacterStats.level_scale(level)`; scaled integer stats round to nearest.
-  - Enemy attack stats get raised to meet the 8–10% enemy-damage target; the target stays.
-  - The clearance check goes `--strict` once the level fixes land.
-  - Sourced props budget: 1,320 triangles, 128 px from the kit's shared atlas (art bible). Kit scale stays 1.0 until pieces are first placed; any rescale is one factor per pack.
-  - The per-footprint colour measurement stays for sourced assets only. The floor tile's slight brown drift is accepted.
-- **Backlog, as design-bible targets:**
-  - Camera follow-ups: first-person mode later; the arm still snaps in at once when the view swings into a wall. Bouncing off tight pillars is accepted as a camera-system limit (2026-10-01): level layout keeps pillars clear of the play space instead.
-  - `atk_hitbox_sync` (the `contact` markers now exist; wire the check), player attack commitment and the 0.15 s recovery; stagger should start the enemy's cooldown (§3).
-  - A "reasonable player" scenario (reacts late to some tells) for `enc_first_fight_hp_cost`; a two-fight route for `enc_spacing_s`; a pillar or doorway replay for the SEARCH state.
-  - The `lvl_*` targets and `read_*`: ceilings (brush shells now provide them; Level 1 still has none), `lvl_bare_wall_run_max`, the kit doorway's 2.0 m opening (under 2.2 m) once doors are walk-through.
-  - Stability: the 13 invalid hand-written UIDs, the 10 GDScript warnings, and the E key's double binding.
-  - Small: the attack-token hand-off on death is immediate (a 2 s window can briefly count 3); the replay harness stamps first-frame events 1–2 frames early; `import_pack.py` should write `compress/mode=2` for new kit textures; the pre-push hook ran `tests/run.sh` to exit 100 once (not reproduced; watch for a flaky test).
-- **Next:**
-  - **Phase C, content:** more CC0 kits through the import path, plus UAL2 Source (the user buys it): real bow clips and possibly a strafe clip for waiting levies.
-- **From the godogen review (2026-10-01; MIT, ideas from its docs):** timeouts on Godot calls, a game-path motion review and scene-generator checks are in progress (`chore/tooling-hardening`). Still to do: hit timing at the blade's furthest reach for `atk_hitbox_sync` (measure our clips; don't copy their frame counts), a held-prop tip-alignment check before the player's sword, and optionally generating hero concepts on two image models for the judge to pick.
-- **Since the handoff above (2026-10-01 – 10-02):** tooling hardening from the godogen review (#38: timeouts on every Godot/Blender call, a game-path motion review, generator checks; the held-prop generator was non-deterministic and now isn't) and animation blend times (#39: every handover under `motion_handover_snap_mps` = 5 m/s, adopted; the user playtested: "way better"). The player's skirt skin stretch (3–5× in every clip, pre-existing) is accepted for now: the user finds the player model weak up close with the new camera and wants it reworked after the Tripo P2.0 research.
-- **Tripo P2.0 A/B (2026-10-02, 135 credits):** P1 stays for the player. P2's raw mesh is slightly tidier, but it comes back as separate shells and tears at every seam when rigged and animated (stretch 7–14× against P1's 3–5×). Details: `docs/trials/tripo-p2.md`. Spikes running: body-only humanoids with separate clothing, agent-made animation from video references (non-humanoids first), and an SDD framework choice for tracking the backlog.
-- **Licence (2026-10-02):** Quaternius's site moved to a no-redistribution licence on 2026-08-28; the UAL1/UAL2 packs we committed on 2026-09-27 ship a CC0 `License.txt`, and the user decided to rely on it and keep the repo public. A future UAL2 Source purchase will come under the new licence, so its source files stay out of the public repo.
+- **Last session (2026-10-01 – 10-02):** Phase B follow-ups (#34–#41: the dialogue interact fix, the JUnit summary, tooling hardening, animation blends, the Tripo P2.0 A/B, where P1 stays) and the home-grown backlog (`chore/backlog`). Main is on Godot 4.7.2.
+- **Running:** `backlog-system` (the backlog PR). Approved and ready to start: `spike-body-only-humanoid` Phase 0 (0 credits) and `spike-agent-animation`.
+- **Resume:** `python3 scripts/tools/backlog.py status`, then `next`. Spawn a `package-worker` per item and follow `docs/backlog/README.md`. Open questions are the `needs-user` items; ask them when their area comes up.
+- **Tripo:** the balance is 455 (545 spent on the project). The cap is 500 per session, starting at 0. Costs: concept 15, multiview 10, P1 model 50, P2 model 110, rig 25. Read the tripo skill before any spend.
 - **Permissions (2026-10-02):** in auto mode, ask only before spending credits or tearing down existing worlds or models wholesale.
-- **Playtest notes (2026-10-02):** the camera resets and bumps a lot near walls and pillars; the user reads it as mostly level design (tight geometry) rather than the camera. Track it when real crypt layouts are built; revisit the rig's snap-in if it persists in open layouts.
-- **CI:** the gdunit4 job posts a JUnit summary (`mikepenz/action-junit-report`, #36). Failure annotations haven't been seen yet (the pre-push hook stops a failing test reaching CI); the first real failure will show them.
-- **Open questions:**
-  - Is Level 2's 0.5 m burial platform meant to be walkable? It's above the 0.25 m climb limit, so enemies path around it. (The user hasn't been there in a while; ask when Level 2 is next worked on.)
-  - Research Tripo P2.0 before any new generation (the player's sword is waiting on it). Backup to compare: TRELLIS.2 (open image-to-3D) on a rented CUDA GPU; it won't run on the Mac, and the weights' licence must be checked first.
-- **Before any Tripo spend:** read the tripo skill. The cap is 500 per session, starting at 0. The balance is 590. Costs: concept 15, multiview 10, model 50, rig 25.
-- **Tools:**
-  - `scripts/pipeline.py <id> --stage all`, `scripts/judge.py packet|record|resolve|log`, and `scripts/tools/import_pack.py` for kits;
-  - `scripts/tools/build_animation_library.gd`, `make_bone_maps.gd`, `make_held_props.gd`, `bake_navmeshes.gd`, `check_path_clearance.gd` and `playtest-branch.sh`;
-  - `tests/run.sh` (gdUnit4), `scripts/review/run_scenario.sh <scenario>` (replay twice, compare, metrics) and `scripts/review/capture_evidence.sh <scenario>` (MP4, event frames, contact sheet);
-  - review scenes in `scripts/review/`: `motion_review`, `anim_sheet`, `level1_play_capture`, `level1_compare`, `replay`;
-  - the Godot MCP (CLAUDE.md → Godot MCP), and headless playtests with briefs in `docs/playtests/`.
+- **Where things are:** shipped work and its numbers are the `done` items in `docs/backlog/`; current target values are in the design bible's §9; rules are below (Settled, Decided, Learned); the tool list is under Tools.
 
 ## Settled
 
@@ -101,6 +49,37 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 - **Held props through one helper** (`scripts/combat/HeldProps.gd`), used by `BaseEnemy` and now the player (`data/rigs/player_sockets.tres`). Alignment lives in wrapper scenes (`scenes/props/Held*.tscn`, generated by `scripts/tools/make_held_props.gd`) in the hand bone's retargeted frame, which is the same on every character. The player reuses the Levy Blade for now.
 
 - **Levy Bow: concept-1 approved as a mild recurve** (not worth 15 credits to sharpen a curl that 1,320 triangles would smooth out). It came back at 1,192 triangles, with no holes and **the string intact as its own part** (1.4 cm × 86 cm, strung between the tip rings), so no cleanup string was needed. The prompt was rewritten to describe only what's there before generating (the old one had "no hands, no arrow" and "cracks"). It's held in the Back-file's `hand_l` via `scenes/props/HeldLevyBow.tscn`: limbs upright along the thumb side, string toward the archer.
+
+## Decided (dated, with the user)
+
+Moved from the session handoff on 2026-10-02. Each one-off item it created is named in brackets.
+
+- **2026-09-30:**
+  - Tool-script warnings count against §8: fix the 10 GDScript warnings in the baseline in a `chore/` PR (`fix-gdscript-warnings`).
+  - Level scaling is a static `CharacterStats.level_scale(level)`; scaled integer stats round to nearest.
+  - Enemy attack stats get raised to meet the 8–10% enemy-damage target; the target stays.
+  - The clearance check goes `--strict` once the level fixes land (`clearance-check-strict`).
+  - Sourced props have their own budget line in the art bible, textured from the kit's shared atlas. Kit scale stays 1.0 until pieces are first placed; any rescale is one factor per pack.
+  - The per-footprint colour measurement stays for sourced assets only. The floor tile's slight brown drift is accepted.
+- **2026-09-30 – 10-01 (gameplay batch):** the user approved every default in the batch: the Front-file chase at 4.6 m/s (the player's escape margin is 0.4 m/s), denser torch spacing, and visual-only collision on skirting and plinths. Hearing needs sight; no alerting of nearby enemies; waiting levies hold until a strafe clip exists (`strafe-clip`); short pose holds are allowed in telegraphs; tell sounds wait for the audio pass (`enemy-tell-sounds`). The player's own sword waits until Tripo P2.0 is researched (don't spend on the P1 model); that research is now done (`decide-player-sword`).
+- **2026-10-01 (Phase B):** Dialogue Manager kept (4 local patches; never its in-editor updater). Material Maker kept (1.5p1; dark floors are fixed level-side). func_godot kept as **brush shell + kit detail** (the addon stays disabled; build tool only). Our own camera rig, framing A, picked by the user after two playtests; Phantom Camera rejected. Bouncing off tight pillars is accepted as a camera-system limit: level layout keeps pillars clear of the play space instead. `cam_wall_fill` counts only wall between the camera and the player or beside him.
+- **2026-10-02:**
+  - Animation blend times adopted: every handover under `motion_handover_snap_mps` (5 m/s).
+  - The player's skirt skin stretch (3–5× in every clip) is accepted for now. The user finds the player model weak up close with the new camera, and it gets reworked (`player-model-rework`) after `spike-body-only-humanoid`.
+  - Tripo P2.0: P1 stays for the player (`docs/trials/tripo-p2.md`).
+  - **Licence:** Quaternius's site moved to a no-redistribution licence on 2026-08-28; the UAL1/UAL2 packs we committed on 2026-09-27 ship a CC0 `License.txt`, and the user decided to rely on it and keep the repo public. A future UAL2 Source purchase comes under the new licence, so its source files stay out of the public repo (`ual2-source-purchase`).
+  - **Permissions:** in auto mode, ask only before spending credits or tearing down existing worlds or models wholesale.
+  - The camera resetting and bumping near walls and pillars (playtest) reads to the user as mostly level design; track it as crypt layouts are built (`camera-wall-snap-in`).
+  - **Backlog:** home-grown, one file per item in `docs/backlog/`, with BMAD's ticket semantics (`decide-backlog-system`).
+  - **Scripted keyframe clips** for motions the library can't supply, non-humanoids first: CLAUDE.md's third animation exception (`spike-agent-animation`).
+  - **Weight transfer onto clothing shells:** CLAUDE.md's fourth animation exception; Phase 0 of `spike-body-only-humanoid` approved (0 credits).
+
+## Learned 2026-10-01 – 10-02
+
+- **Open playtests with `playtest-branch.sh <ref>`** (default `--play`). With `--editor`, the user pressed F5 in their own editor on `main` twice and reported "nothing changed". A no-input capture also hid a mouse-pitch bug, so camera evidence must include camera input.
+- **P2 hands the rigger separate shells.** Each is weighted on its own and tears at every seam when animated (stretch 7–14× against P1's 3–5×); `skirt_reweight` assumes one continuous body.
+- **The pre-push hook stops failing tests before CI,** so the JUnit failure annotations (#36) haven't been seen yet; the first real CI failure will show them.
+- **The held-prop generator was non-deterministic** until #38's generator checks caught it.
 
 ## Learned 2026-09-28
 
@@ -146,7 +125,8 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 - Tripo auto-rig (biped, `v2.5-20260210` requested): **25 credits**, matching the CLI (Barrow-levy rig-1). Rig-check is free (0 credits, twice).
 - P1 multiview-to-3D costs 50 at `face_limit` 1200 too (Levy Bow), so the price doesn't depend on `face_limit`. A generated prop costs about 75 in all (concept 15 + multiview 10 + model 50).
 - Not yet observed: seedream_v5. Add each to the tripo skill's table after its first run.
-- Project spend so far: 410 (80 on the blade; Barrow-levy 155; player 100; Levy Bow 75: concept 15, multiview 10, model 50); balance 590.
+- P2 multiview-to-3D (`P2-20260801`) at `face_limit` 5000: **110 credits**, matching the CLI (player attempt-2, the P2 A/B; plus rig v1.0 25).
+- Project spend so far: 545 (80 on the blade; Barrow-levy 155; player 100; Levy Bow 75: concept 15, multiview 10, model 50; the P2 A/B 135); balance 455.
 
 ## Open risks
 
@@ -169,7 +149,16 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 - **Player open questions, recorded not fixed:** skin showing through the tunic (probably near-coincident vest and body surfaces), and 2 open holes plus 13 non-manifold edges where the vest meets the tunic. In the Level 1 comparison at gameplay distance neither shows; judge them again with animation.
 - **Level 1 torchlight comparison** (`assets/manifests/comparison/`, made with `scripts/review/level1_compare.tscn`, the level's own ambient and torch energies): the two characters read as one set, with the same flat faceting and matte albedo, and no plastic sheen. The levy's pale bone pops against the dark corridor. **The player's dark teal, navy and dark boots sit close in value to the corridor from behind**, so the spiky hair and vest carry the read. If that's too dark in play, fix it level-side (ambient and torch energy), per the color-correction rule.
 - **Rigged meshes are now welded where coincident vertices share identical skin weights** (fixed; it was 13.2% → 24.4% faceted faces on the rigged Barrow-levy, and is back to 13.2%).
+## Tools
+
+- `scripts/pipeline.py <id> --stage all`, `scripts/judge.py packet|record|resolve|log`, and `scripts/tools/import_pack.py` for kits;
+- `scripts/tools/build_animation_library.gd`, `make_bone_maps.gd`, `make_held_props.gd`, `bake_navmeshes.gd`, `check_path_clearance.gd`, `build_brush_maps.gd`, `make_textures.py` and `playtest-branch.sh`;
+- `scripts/tools/backlog.py next|status|show|lint` for the backlog;
+- `tests/run.sh` (gdUnit4), `scripts/review/run_scenario.sh <scenario>` (replay twice, compare, metrics) and `scripts/review/capture_evidence.sh <scenario>` (MP4, event frames, contact sheet);
+- review scenes in `scripts/review/`: `motion_review`, `anim_sheet`, `level1_play_capture`, `level1_compare`, `replay`;
+- the Godot MCP (CLAUDE.md → Godot MCP), and headless playtests with briefs in `docs/playtests/`.
+
 ## Next
 
-- **Queued (after the weapons are in): a pipeline path for downloaded CC0 assets.** It skips stages 1–2 (concept, multiview, model) and runs an existing GLB through clean: facing, flat shading, palette correction (there's no concept, so the palette fallback applies), and the budget assert. Third-party props then land in the same color space and shading standard as generated ones. Principle recorded in the art bible: generate what carries identity, download the rest.
+Planned work lives in `docs/backlog/` (`python3 scripts/tools/backlog.py next`). The queued pipeline path for downloaded CC0 assets shipped as Phase A4 (#16, `a4-asset-import`).
 
