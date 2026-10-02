@@ -1,7 +1,7 @@
 ---
 id: attack-token-handoff-delay
 title: "Delay the attack-token hand-off when a holder dies"
-status: in-review
+status: done
 kind: fix
 targets: [enemy_attackers_max]
 after: []
@@ -25,3 +25,7 @@ The attack-token hand-off on death is immediate, so a 2 s window can briefly cou
 ## Serves
 
 `enemy_attackers_max`.
+
+## Outcome
+
+Merged in PR #43: a dead holder's melee token stays reserved until 2.0 s after its last attack start (MELEE_WINDOW_S), so a replacement can't start a swing inside the 2 s window; replays unchanged.
