@@ -7,6 +7,7 @@ extends GdUnitTestSuite
 const PLAYER_SCENE := "res://scenes/player/Player.tscn"
 const WALL_SCENE := "res://scenes/world/kit/KitWall.tscn"  # 4 m wide along x, 4 m tall, 0.5 m thick
 const CameraProbe := preload("res://scripts/review/camera_probe.gd")
+const FakeEnemy := preload("res://tests/doubles/fake_enemy.gd")
 
 # Body origins sit at the capsule centre, 0.9 m above the feet
 const BODY_Y := 0.9
@@ -49,17 +50,10 @@ func _player_at(pos: Vector3) -> CharacterBody3D:
 	return player
 
 
-# A stand-in enemy: a levy-sized capsule in the "enemy" group that never moves
+# A stand-in enemy: a levy-sized capsule in the "enemy" group with BaseEnemy's is_dead(), that never moves
 func _enemy_at(pos: Vector3) -> CharacterBody3D:
-	var body := CharacterBody3D.new()
-	var shape := CollisionShape3D.new()
-	var capsule := CapsuleShape3D.new()
-	capsule.radius = 0.4
-	capsule.height = 1.8
-	shape.shape = capsule
-	body.add_child(shape)
+	var body: CharacterBody3D = FakeEnemy.new()
 	body.position = pos
-	body.add_to_group("enemy")
 	add_child(auto_free(body))
 	return body
 
