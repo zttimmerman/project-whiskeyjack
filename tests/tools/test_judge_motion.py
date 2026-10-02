@@ -68,6 +68,10 @@ class GamePathAssertions(unittest.TestCase):
     def test_the_art_bible_has_the_handover_tolerance(self):
         self.assertIn(KEY, judge.tolerances())
 
+    def test_the_handover_tolerance_is_adopted(self):
+        # Adopted by the user on 2026-10-01: the judge fails a clip over it, no longer an advisory
+        self.assertNotIn(KEY, judge.proposed_tolerances())
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

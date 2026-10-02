@@ -1,0 +1,29 @@
+{
+  "verdict": "pass",
+  "summary": "Front-file Sword_Attack plays as a readable overhead lunge-and-recover: it returns to its origin, has no broken poses and passes every assertion; only minor foot-drag in the recovery remains.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "minor",
+      "observation": "In recovery (0.92-1.33 s) the right foot, flagged planted, slides back ~1.4 m/s as it settles: a drag rather than a step; reported only for actions.",
+      "evidence": "03_plots.png; foot_slide_p90_mps 1.277"
+    },
+    {
+      "check": "motion",
+      "severity": "minor",
+      "observation": "One-frame 8-10 m/s foot spikes at ~0.31 s as the feet leave for the lunge step; the strip shows an intentional lunge, not a pop.",
+      "evidence": "03_plots.png, 01_frame_strip.png frames 4-5"
+    }
+  ],
+  "questions_answered": [
+    "In place: Hips max 0.11 m in the lunge, final 0.00.",
+    "Feet hold in the windup; right foot drags in recovery (minor).",
+    "No broken poses; stretch 0.",
+    "All 4 pass: bind 1.264/1.8, stretch 0/1.0, wrong-clip 0, snap 1.39/5 (run>attack)."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png"
+  ]
+}

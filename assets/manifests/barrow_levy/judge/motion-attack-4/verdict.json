@@ -1,0 +1,23 @@
+{
+  "verdict": "pass",
+  "summary": "The Back-file attack (Spell_Simple_Enter stand-in) stays in place with planted feet and no broken poses, and every assertion passes.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "minor",
+      "observation": "attack>stagger peaks at 4.28 m/s snap excess (left hand 7.62 vs 3.34 m/s at a 0.15 s blend); close to but under the 5 m/s limit.",
+      "evidence": "assertion 'no pose snap at handovers (game play path)'"
+    }
+  ],
+  "questions_answered": [
+    "In place: Hips 0.026 m.",
+    "Feet planted: p90 0.069 m/s.",
+    "No broken pose; stretch 0.",
+    "All 4 pass: bind 0.973/1.8, stretch 0/1.0, wrong-clip 0, snap 4.28/5."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png"
+  ]
+}

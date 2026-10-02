@@ -1,0 +1,294 @@
+{
+  "asset_id": "barrow_levy",
+  "stage": "motion:stagger",
+  "created_at": "2026-10-02T03:59:48+00:00",
+  "replay": null,
+  "packet_dir": "assets/manifests/barrow_levy/judge/motion-stagger-2",
+  "brief": {
+    "type": "character",
+    "brief": "The slice's only enemy model, used for both Front-file (melee) and Back-file\n(archer) variants. Posture and the held prop carry the read; Back-file adds a\nSignal Red wrap material variant.",
+    "prompt": "A humanoid skeleton in Old Bone, stained peat-brown at the joints, with a clearly\nreadable skull and ribcage, wearing a rotted leather harness in Saddle Leather: a belt\nat the waist and two straps crossing the chest and back. Empty hands, T-pose.",
+    "face_limit": 5000,
+    "triangle_budget": 5500,
+    "texture_size": 256,
+    "target_size_m": 1.8,
+    "pivot": "base",
+    "tip_end": null,
+    "rigid_parts": true,
+    "skirt_reweight": null,
+    "source": null,
+    "source_scale": null,
+    "orientation": null
+  },
+  "brief_palette": {
+    "Old Bone": {
+      "hex": "#CCB484",
+      "plain": "pale yellowed beige"
+    },
+    "Saddle Leather": {
+      "hex": "#4A2A10",
+      "plain": "dark reddish-brown"
+    },
+    "Blackened Iron": {
+      "hex": "#242424",
+      "plain": "near-black charcoal"
+    },
+    "Signal Red": {
+      "hex": "#C71F14",
+      "plain": "vivid scarlet red"
+    }
+  },
+  "art_bible": {
+    "brief_section": "## Brief: Barrow-levy \u2014 skeleton (Front-file and Back-file)\n\n- **File / Source:** `assets/meshes/barrow_levy.glb`, **generated with Tripo from this brief**. This is the pilot for the Tripo path. It replaces the shipped Sketchfab `archer_enemy.glb` (1,277 vertices, a 28-bone rig with rest-pose defects; see `docs/audit.md`), which stays in the game until the new mesh passes the pipeline.\n- **Role:** the slice's only enemy model: Front-file melee (\u00d75) and Back-file archer (\u00d72).\n- **Silhouette:** Front-file hunched forward with a blade; Back-file upright with a bow. Posture and the held prop carry the read.\n- **Budget:** \u2264 5,500 triangles (Tripo `face_limit` 5,000 + 10%); albedo at 256\u00d7256.\n- **Palette:** Old Bone \u00b7 Saddle Leather harness scraps \u00b7 Blackened Iron (via props) \u00b7 **Back-file only:** Signal Red rag wraps on the forearms and brow.\n- **Back-file variant:** a second albedo, `barrow_levy_backfile_baseColor.png` (256\u00b2), identical except for the painted Signal Red wraps. It's applied as a material override in `ArcherEnemy.tscn`, so there's no second mesh.\n- **Materials & wear:** peat-stained joints, cracked bone and rotted leather, all painted in the albedo. The root tendrils and wool scraps are lore (`docs/world/05-bestiary.md`), not geometry, and are kept out of the prompt.\n- **Rig / attachment:** the new rig must map onto `SkeletonProfileHumanoid`; pipeline stage 4 proposes the `BoneMap`. Sockets `hand_r` (blade) and `hand_l` (bow) are mapped to bones **only** in `data/rigs/barrow_levy_sockets.tres`, which still names the Sketchfab bones: update that file for the new rig, and nothing else. Stage 4 fails until the sockets resolve.\n- **Rig order:** raw Tripo download \u2192 Tripo auto-rig (`v1.0-20240301`, humanoid) \u2192 clean (see the player brief). **Rigid rebind** (`rigid_parts: true`): each of the 35 separate bone pieces is bound at weight 1.0 to its nearest bone. **Known quirk:** Tripo puts the Foot bones at floor level, so the feet bind to ToeBase, which is Foot's child and follows it rigidly. Quaternius drives Foot, not the toes, so it doesn't read at gameplay distance.\n- **Scale & pivot:** 1.8 m tall, feet at origin, facing \u2212Y in Blender. The model node keeps `Transform3D(-1,0,0,0,1,0,0,0,-1,0,-0.9,0)`.\n- **Animation:** the code plays `idle`, `run`, `attack`, `stagger`, `death` for **both** variants. The library must provide a melee `attack` for Front-file and a bow-draw `attack` for Back-file, remapped per variant. Built: each variant has its own library over the shared clips (asset-pipeline skill \u2192 Animation library). Front-file: `Sword_Idle` (hunched), `Jog_Fwd_Loop`, `Sword_Attack` (an overhead cut, for its readable lead-in). Back-file: `Idle_Loop` and `Walk_Loop` (upright), plus **`Spell_Simple_Enter` (the bow arm raised to aim) as a stand-in for the bow draw**. Neither Standard pack has a bow clip; they're in a UAL2 tier not bought yet.\n- **Prompt:** FORM block + *\"A humanoid skeleton in Old Bone, stained peat-brown at the joints, with a clearly readable skull and ribcage, wearing a rotted leather harness in Saddle Leather: a belt at the waist and two straps crossing the chest and back. Empty hands, T-pose.\"*\n- **Accept when:** the retarget plays all 5 clips on both variants; Back-file is distinguishable from Front-file at 15 m in the Level 1 corridor with props hidden; budget still met.\n- **Cost:** 1 Tripo generation, plus one per rejected attempt. The Back-file texture and the bone map are manual or scripted work.",
+    "form_block": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art.",
+    "concept_lighting_block": "Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights.",
+    "tolerances": "## Judge tolerances\n\nThe numeric assertions the asset judge checks (`scripts/judge.py`, which reads this table; nothing else holds these numbers). \u0394E is CIE76 in Lab. Each value is set on principle and checked against the replays in `assets/manifests/judge_replays/`: the known-bad inputs fail, and where a shipped asset or clip fails too, it's a real finding recorded in `docs/decisions.md`, not a reason to loosen the limit.\n\n| Check | Limit | Applies to | Why |\n|---|---|---|---|\n| `concept_palette_de` | 25 | concept | A brief palette color counts as present when one of the concept's main colors (\u2265 3% of the figure) sits within this distance. Loose on purpose: the player's approved \"deep dark teal\" rendered as navy #14313F. |\n| `color_min_share` | 0.05 | model, mesh | Colors covering less of the concept (or texture) than this are details, not checked. |\n| `color_kept_ratio` | 0.33 | model, mesh | A concept color must keep at least this fraction of its concept share in the texture, or the model lost it. |\n| `color_dab_after` | 5 | model, mesh | Hue/saturation distance (Lab a, b) between a corrected texture cluster and its concept color. |\n| `palette_de_before` | 20 | model, mesh | Concept-less assets (sourced ones measured over their UV footprint): distance before correction for a palette group covering at least `color_min_share`. Correction can repaint a wrong color: blade attempt 1's olive-green blade grouped under Old Bone (27.5 \u0394E) and came out bone-colored. |\n| `palette_de_after` | 12 | model, mesh | Concept-less assets: distance between a corrected palette group's median and its palette color. |\n| `mesh_max_holes` | 10 | model, mesh (generated) | Open boundary loops after welding. Fewer are reported for the judge to weigh (the blade's 4 grip slits are recorded and accepted). |\n| `mesh_kit_max_loops_per_part` | 2 | mesh (**sourced kits**, the rule for them instead of `mesh_max_holes`) | Open boundary loops on any one welded part. Kit pieces are open-backed shells: a KayKit wall is a body plus 22 raised blocks set flush on its face, each open at the back (23 loops), and a barrel hoop is an open band (2). Allowed only where no loop is visible from the judge's views, which is the judge's call. |\n| `motion_root_travel_m` | 0.15 | death, in-place clips | Horizontal Hips travel from the first frame. The pre-fix `Death01` travelled 0.45\u20130.51 m; shipped idles and runs stay under 0.07. |\n| `motion_foot_slide_mps` | 0.5 | in-place clips | 90th-percentile ground-relative speed of a planted foot (near its lowest point and not moving vertically), at the clip's gameplay speed: 10% of the player's run. Reported only for action clips (attacks and rolls pivot on planted feet on purpose) and deaths (the feet kick out as the body collapses onto its pinned Hips; `Death01` can't meet both this and the travel limit, since keeping 30% of its travel still slid 0.80 m/s). |\n| `motion_bind_deviation_m` | 1.8 | every clip | Largest vertex displacement from the bind pose in the Hips frame; a character's height, because no attached vertex gets that far from the hips. Normal clips reach 0.5\u20131.6 (arms swinging from the T-pose). |\n| `motion_edge_stretch` | 1.0 | every clip | Largest relative length change of any mesh edge of at least 1 cm from the bind pose: an edge has doubled. Rigid-part characters read 0. |\n| `motion_handover_snap_mps` | 5 | every clip's game handovers (motion review game-path pass); adopted by the user 2026-10-01, asserted by the judge | Across a handover played the game's way (`play()` with the scene's blend settings, per physics frame, cut-short one-shots at four phases, enemy windups posed as `BaseEnemy` poses them), how much faster any hand or foot moves, in the character's own frame, than it ever moves in either clip on its own. 5 m/s is a one-frame pop of about 8 cm at 60 fps. Hard cuts (no blend time) read 16\u201369 m/s on most handovers; with the per-transition blend times in the character scenes every handover reads 4.3 or less (worst: Back-file attack to stagger). `tests/unit/test_anim_blends.gd` holds every game handover to this limit. |"
+  },
+  "design_notes": [],
+  "images": [
+    {
+      "role": "frame_strip",
+      "path": "assets/manifests/barrow_levy/judge/motion-stagger-2/01_frame_strip.png",
+      "sha256": "9563d2b9b30adec2c7a26672c498738666a791319e9022472d9c1ffd6445dc52",
+      "source": ".tripo-out/barrow_levy/motion/blends-backfile/stagger_strip.png",
+      "source_sha256": "998fe6696cb00ebeca0368592376174739eceffd52368eeadcd5685657a16eaa",
+      "size": [
+        2380,
+        500
+      ]
+    },
+    {
+      "role": "onion_skin",
+      "path": "assets/manifests/barrow_levy/judge/motion-stagger-2/02_onion_skin.png",
+      "sha256": "1c833043c0cf95d9caf7fb6d0afcbe85ebd5f4b2adbb8edb1ee76ebba32ca86f",
+      "source": ".tripo-out/barrow_levy/motion/blends-backfile/stagger_onion.png",
+      "source_sha256": "5f14a3370240351837e2c9c7a03286572015991ba223daedbc09606295808f38",
+      "size": [
+        1600,
+        707
+      ]
+    },
+    {
+      "role": "plots",
+      "path": "assets/manifests/barrow_levy/judge/motion-stagger-2/03_plots.png",
+      "sha256": "0146bcfb3ebb587df38bad4175e376b20aff5c8643c67fede5020b04363efa7c",
+      "source": ".tripo-out/barrow_levy/motion/blends-backfile/stagger_plots.png",
+      "source_sha256": "0fddf3925161f120554884688d35ab2f5f815da1134dba9bffebcb12c47f2341",
+      "size": [
+        1600,
+        1000
+      ]
+    }
+  ],
+  "metrics": {
+    "motion": {
+      "bind_deviation_max_m": 0.632,
+      "bind_deviation_p99_m": 0.544,
+      "bind_deviation_worst_bone": "RightHand",
+      "clip": "stagger",
+      "contact_frames": 24,
+      "contact_height_m": 0.03,
+      "edge_stretch_max": 0.0,
+      "edge_stretch_p99": 0.0,
+      "edge_stretch_worst_bone": "LeftUpperArm",
+      "edges": 11604,
+      "foot_slide_max_mps": 0.017,
+      "foot_slide_p90_mps": 0.016,
+      "fps": 30.0,
+      "frames_sampled": 12,
+      "game_path": {
+        "fps": 60.0,
+        "handover_snap_mps": 4.28,
+        "handover_snap_worst": "attack>stagger",
+        "handovers": [
+          {
+            "blend_s": 0.15,
+            "from": "idle",
+            "handover_at_s": 1.25,
+            "own_peak_mps": 1.39,
+            "peak_frame_after_handover": 5,
+            "peak_limb": "right_hand",
+            "peak_mps": 1.76,
+            "phases": 4,
+            "settle_error_m": 0.0,
+            "settle_frames_after_handover": 16,
+            "snap_excess_mps": 0.38,
+            "to": "stagger",
+            "windup_s": 0.0,
+            "wrong_clip_frames": 0
+          },
+          {
+            "blend_s": 0.15,
+            "from": "run",
+            "handover_at_s": 0.467,
+            "own_peak_mps": 3.3,
+            "peak_frame_after_handover": 1,
+            "peak_limb": "right_foot",
+            "peak_mps": 5.7,
+            "phases": 4,
+            "settle_error_m": 0.0,
+            "settle_frames_after_handover": 16,
+            "snap_excess_mps": 2.4,
+            "to": "stagger",
+            "windup_s": 0.0,
+            "wrong_clip_frames": 0
+          },
+          {
+            "blend_s": 0.2,
+            "from": "stagger",
+            "handover_at_s": 0.333,
+            "own_peak_mps": 0.04,
+            "peak_frame_after_handover": 8,
+            "peak_limb": "right_foot",
+            "peak_mps": 0.03,
+            "phases": 1,
+            "settle_error_m": 0.0,
+            "settle_frames_after_handover": 18,
+            "snap_excess_mps": 0.0,
+            "to": "idle",
+            "windup_s": 0.0,
+            "wrong_clip_frames": 0
+          },
+          {
+            "blend_s": 0.2,
+            "from": "stagger",
+            "handover_at_s": 0.333,
+            "own_peak_mps": 3.3,
+            "peak_frame_after_handover": 12,
+            "peak_limb": "right_foot",
+            "peak_mps": 4.45,
+            "phases": 1,
+            "settle_error_m": 0.0,
+            "settle_frames_after_handover": 18,
+            "snap_excess_mps": 1.15,
+            "to": "run",
+            "windup_s": 0.0,
+            "wrong_clip_frames": 0
+          },
+          {
+            "blend_s": 0.18,
+            "from": "stagger",
+            "handover_at_s": 0.083,
+            "own_peak_mps": 5.68,
+            "peak_frame_after_handover": 1,
+            "peak_limb": "left_hand",
+            "peak_mps": 1.93,
+            "phases": 4,
+            "settle_error_m": 0.0,
+            "settle_frames_after_handover": 17,
+            "snap_excess_mps": 0.0,
+            "to": "death",
+            "windup_s": 0.0,
+            "wrong_clip_frames": 0
+          },
+          {
+            "blend_s": 0.15,
+            "from": "attack",
+            "handover_at_s": 0.533,
+            "own_peak_mps": 3.34,
+            "peak_frame_after_handover": 1,
+            "peak_limb": "left_hand",
+            "peak_mps": 7.62,
+            "phases": 4,
+            "settle_error_m": 0.0,
+            "settle_frames_after_handover": 16,
+            "snap_excess_mps": 4.28,
+            "to": "stagger",
+            "windup_s": 0.0,
+            "wrong_clip_frames": 0
+          }
+        ],
+        "scene": "res://scenes/enemies/ArcherEnemy.tscn",
+        "settle_error_max_m": 0.0,
+        "wrong_clip_frames": 0
+      },
+      "ground_speed_mps": 0.0,
+      "kind": "action",
+      "length_s": 0.333,
+      "model": "res://assets/meshes/barrow_levy.glb",
+      "root_travel_final_m": 0.029,
+      "root_travel_max_m": 0.029,
+      "source": "res://data/animations/levy_backfile_library.tres:stagger",
+      "strip_times_s": [
+        0.0,
+        0.026,
+        0.051,
+        0.077,
+        0.103,
+        0.128,
+        0.154,
+        0.179,
+        0.205,
+        0.231,
+        0.256,
+        0.282,
+        0.308,
+        0.333
+      ],
+      "vertices": 8117
+    }
+  },
+  "assertions": [
+    {
+      "name": "vertex deviation from bind pose (Hips frame)",
+      "passed": true,
+      "value": 0.632,
+      "limit": 1.8,
+      "detail": "p99 0.544 m; worst vertex on RightHand"
+    },
+    {
+      "name": "skin stretch (edge length vs bind pose)",
+      "passed": true,
+      "value": 0.0,
+      "limit": 1.0,
+      "detail": "p99 0.0; worst edge on LeftUpperArm"
+    },
+    {
+      "name": "the expected clip plays through the game's play path",
+      "passed": true,
+      "value": 0,
+      "limit": 0,
+      "detail": "frames with another clip current or the clip not advancing, over 6 handovers (res://scenes/enemies/ArcherEnemy.tscn); settle error max 0.0 m"
+    },
+    {
+      "name": "no pose snap at handovers (game play path)",
+      "passed": true,
+      "value": 4.28,
+      "limit": 5.0,
+      "detail": "worst attack>stagger: left_hand at 7.62 m/s vs its own 3.34 m/s, blend 0.15 s"
+    }
+  ],
+  "questions": [
+    "Onion skin: does the body stay where the clip intends (in place for in-place and death clips), or does it drift, fling or slide?",
+    "Plots: do the planted feet hold still relative to the ground (foot speed near zero while the foot is in contact), and does the root follow the gameplay speed?",
+    "Frame strip: any broken pose: limbs through the body, arms behind the back where the clip doesn't intend it, twisted or collapsed joints, stretched skin?",
+    "Do the numeric assertions pass? Tie each failing one to what you see in the images."
+  ],
+  "escalate_rules": [
+    "Open style or taste questions (is it appealing, is the silhouette strong enough, is this the right design) are not yours: escalate them.",
+    "A deliberate, recorded design change (see design_notes) is not a defect: don't flag it again, but say so if the asset contradicts the note.",
+    "When the evidence can't settle a question (the view that would show it is missing), escalate rather than guess.",
+    "Revise only when one concrete edit would fix every blocker and major finding. Otherwise escalate."
+  ],
+  "refine_budget": {
+    "per_stage": 1,
+    "used": 0
+  },
+  "tool_versions": {
+    "python": "3.14.7",
+    "blender": "Blender 5.0.1",
+    "godot": "4.7.2.stable.official.ed1daf0bf",
+    "tripo": "0.5.1"
+  },
+  "subject": {
+    "kind": "animation clip",
+    "clip": "stagger",
+    "source": "res://data/animations/levy_backfile_library.tres:stagger",
+    "model": "res://assets/meshes/barrow_levy.glb",
+    "metrics_file": {
+      "path": ".tripo-out/barrow_levy/motion/blends-backfile/stagger_metrics.json",
+      "sha256": "cc764bf8b4d2780a206ffd609dbc8a466cb1e56dbda7ffba758b5b779f09d00e"
+    }
+  },
+  "assertions_failed": 0
+}

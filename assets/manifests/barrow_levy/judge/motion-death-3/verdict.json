@@ -1,0 +1,29 @@
+{
+  "verdict": "pass",
+  "summary": "The Back-file death clip holds its Hips exactly in place, collapses backward into a clean supine pose with no broken joints or stretch, and passes all five assertions, including the game-path handover checks.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "minor",
+      "observation": "Planted-foot slide 1.10 m/s p90 over the first ~0.2 s as the feet shuffle before the knees give; reported only for deaths, not visible at gameplay distance.",
+      "evidence": "03_plots.png; foot_slide_p90_mps"
+    },
+    {
+      "check": "motion",
+      "severity": "minor",
+      "observation": "Worst handover attack>death: left hand 7.62 vs 5.68 m/s, excess 1.94, well under 5.",
+      "evidence": "metrics.motion.game_path.handovers[attack>death]"
+    }
+  ],
+  "questions_answered": [
+    "In place: Hips 0.00 m; supine, arms overhead.",
+    "No planted feet after ~0.2 s; root ground speed 0.",
+    "No broken poses; stretch 0.",
+    "All 5 pass: travel 0.0/0.15, bind 1.285/1.8, stretch 0/1.0, wrong-clip 0, snap 1.94/5."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png"
+  ]
+}

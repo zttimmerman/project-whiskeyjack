@@ -106,11 +106,13 @@ func _game_path(lib: AnimationLibrary) -> void:
 	add_child(holder)
 	# The whole character library when there is one: --clips picks what's reviewed, not what the game plays
 	var game_lib: AnimationLibrary = load(args["library"]) if args.has("library") else lib
-	var results := GamePath.measure_all(holder, model_scene, game_lib, settings, fps)
+	var windup := GamePath.scene_windup(scene) if scene != "" else 0.0
+	var results := GamePath.measure_all(holder, model_scene, game_lib, settings, fps, windup)
 	holder.queue_free()
 	game_path = {
 		"scene": scene if scene != "" else null,
 		"settings": var_to_str(settings),
+		"windup_s": windup,
 		"fps": fps,
 		"handovers": results,
 	}

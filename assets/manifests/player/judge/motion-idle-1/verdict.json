@@ -1,0 +1,31 @@
+{
+  "verdict": "escalate",
+  "summary": "The idle stays in place, the feet stay planted and the handovers are clean, but skin stretch fails (3.03 against a 1.0 limit) at the knee and boot-top seam, and none of the revise actions fixes skin weights.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "major",
+      "observation": "Edges up to 4x at the knee/boot-top band where trousers meet boots and the tunic hem sits; worst LeftUpperLeg; ~2.9-3.0 all clip (held crouch).",
+      "evidence": "04_stretch_detail.png, 03_plots.png; skin stretch 3.033 vs 1.0"
+    },
+    {
+      "check": "pose",
+      "severity": "minor",
+      "observation": "A deep wide-kneed crouch with forward lean; knees and boot tops intact at strip scale.",
+      "evidence": "01_frame_strip.png"
+    }
+  ],
+  "escalation_reason": "Skin stretch at the edge of the skirt_reweight region where it meets the boot; fix in the clean stage's skirt reweighting or rig weights, or a less-crouched idle (a design choice). Barely visible at gameplay distance; user's call.",
+  "questions_answered": [
+    "In place: Hips 0.053 m.",
+    "Feet p90 0.014 m/s.",
+    "No broken pose.",
+    "5 of 6 pass; stretch 3.03 fails."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png",
+    "04_stretch_detail.png"
+  ]
+}

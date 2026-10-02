@@ -7,6 +7,8 @@ extends GdUnitTestSuite
 # Ideas after htdt/godogen asset-gen/motion.md pitfalls 16 and 18 (MIT; no code copied).
 
 const GamePath := preload("res://scripts/review/game_path.gd")
+const BaseEnemy := preload("res://scenes/enemies/BaseEnemy.gd")
+const ArcherEnemy := preload("res://scenes/enemies/ArcherEnemy.gd")
 const FPS := 60.0
 const JUMP := 0.3  # m: the left hand's offset between the two test clips
 
@@ -39,26 +41,31 @@ func _model() -> PackedScene:
 	return packed
 
 
-# idle (looping) holds the left hand at rest; attack (one-shot) holds it JUMP metres to the side
+# idle (looping) holds the left hand at rest; the one-shots (attack, which the game can cut short and
+# which has a tell, and attack_light) hold it JUMP metres to the side
 func _library() -> AnimationLibrary:
 	var lib := AnimationLibrary.new()
-	for clip_name in ["idle", "attack"]:
+	for clip_name in ["idle", "attack", "attack_light"]:
 		var a := Animation.new()
-		a.length = 0.5 if clip_name == "attack" else 1.0
-		a.loop_mode = Animation.LOOP_NONE if clip_name == "attack" else Animation.LOOP_LINEAR
+		var one_shot: bool = clip_name != "idle"
+		a.length = 0.5 if one_shot else 1.0
+		a.loop_mode = Animation.LOOP_NONE if one_shot else Animation.LOOP_LINEAR
 		var t := a.add_track(Animation.TYPE_POSITION_3D)
 		a.track_set_path(t, NodePath("Skeleton3D:LeftHand"))
-		var p := Vector3(0.4 + (JUMP if clip_name == "attack" else 0.0), 0.5, 0)
+		var p := Vector3(0.4 + (JUMP if one_shot else 0.0), 0.5, 0)
 		a.position_track_insert_key(t, 0.0, p)
 		a.position_track_insert_key(t, a.length, p)
+		if clip_name == "attack":
+			a.add_marker("tell", 0.2)
+			a.add_marker("contact", 0.3)
 		lib.add_animation(clip_name, a)
 	return lib
 
 
-func _pair(from: String, to: String, settings: Dictionary) -> Dictionary:
+func _pair(from: String, to: String, settings: Dictionary, windup := 0.0) -> Dictionary:
 	var holder: Node3D = auto_free(Node3D.new())
 	add_child(holder)
-	return GamePath.measure_pair(holder, _model(), _library(), from, to, settings, FPS)
+	return GamePath.measure_pair(holder, _model(), _library(), from, to, settings, FPS, {}, windup)
 
 
 func test_a_hard_cut_reads_as_a_snap_at_the_handover() -> void:
@@ -83,9 +90,34 @@ func test_the_expected_clip_plays_and_settles_on_its_own_pose() -> void:
 
 
 func test_a_one_shot_hands_over_when_it_finishes() -> void:
-	var r := _pair("attack", "idle", {})
+	var r := _pair("attack_light", "idle", {})
 	assert_float(r["snap_excess_mps"]).is_between(JUMP * FPS - 1.0, JUMP * FPS + 1.0)
 	assert_int(r["wrong_clip_frames"]).is_equal(0)
+	assert_int(r["phases"]).is_equal(1)
+
+
+func test_a_one_shot_the_game_cuts_short_hands_over_mid_clip() -> void:
+	# A levy's swing goes back to the chase when its active time ends, before the clip does
+	assert_array(GamePath.CUTS).contains([["attack", "idle"]])
+	var r := _pair("attack", "idle", {})
+	assert_int(r["phases"]).is_equal(GamePath.LOOP_PHASES.size())
+	assert_float(r["snap_excess_mps"]).is_between(JUMP * FPS - 1.0, JUMP * FPS + 1.0)
+	assert_int(r["wrong_clip_frames"]).is_equal(0)
+
+
+func test_a_windup_is_posed_as_the_game_poses_it() -> void:
+	# Eased into the tell, held, then played on from contact; the crossfade from idle runs meanwhile
+	var r := _pair("idle", "attack", {"playback_default_blend_time": 0.2}, 0.6)
+	assert_float(r["windup_s"]).is_equal_approx(0.6, 0.001)
+	assert_int(r["wrong_clip_frames"]).is_equal(0)
+	assert_float(r["snap_excess_mps"]).is_less(2.5)
+	assert_float(r["settle_error_m"]).is_less(0.005)
+
+
+func test_a_scenes_windup_is_its_scripts() -> void:
+	assert_float(GamePath.scene_windup("res://scenes/enemies/BaseEnemy.tscn")).is_equal(BaseEnemy.MELEE_WINDUP)
+	assert_float(GamePath.scene_windup("res://scenes/enemies/ArcherEnemy.tscn")).is_equal(ArcherEnemy.DRAW_TIME)
+	assert_float(GamePath.scene_windup("res://scenes/player/Player.tscn")).is_equal(0.0)
 
 
 func test_check_frames_counts_the_wrong_clip_and_a_frozen_clip() -> void:
@@ -107,10 +139,12 @@ func test_handovers_follow_the_game_and_the_library() -> void:
 
 
 func test_the_game_scenes_animation_player_settings_are_read() -> void:
-	# Player.tscn's AnimationPlayer sets no blend times today; the pass must read them, not assume them
+	# The pass reads the scene's own blend settings, never assumes them
 	var settings := GamePath.game_settings("res://scenes/player/Player.tscn")
 	assert_bool(settings.has("libraries")).is_false()
 	assert_bool(settings.has("root_node")).is_false()
+	assert_bool(settings.has("playback_default_blend_time")).is_true()
+	assert_bool(settings.has("blend_times")).is_true()
 	assert_str(GamePath.scene_for_library("res://data/animations/levy_backfile_library.tres")).is_equal(
 		"res://scenes/enemies/ArcherEnemy.tscn"
 	)

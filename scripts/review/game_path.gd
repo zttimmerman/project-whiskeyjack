@@ -18,8 +18,11 @@ extends RefCounted
 #   the same time (the previous move must be gone).
 # A looping "from" clip is handed over at four phases (a quarter, half, three quarters and all of its
 # length), the worst kept; a one-shot hands over when it finishes, from its animation_finished signal,
-# as the game does. Not modelled: BaseEnemy's windup pauses the attack clip and poses it by seek()
-# (continuous from its first frame), and an enemy's attack can be cut before its end.
+# as the game does, unless the game cuts it short (CUTS: a stagger, dodge or death mid-attack, a levy's
+# swing handed back to the chase when its active time ends), which is measured at the loop phases.
+# An enemy's windup (the scene's _windup_time(), BaseEnemy) is driven as BaseEnemy drives it, through
+# scripts/combat/AttackWindup.gd: posed by seek() at speed 0 through the tell, then played on from the
+# contact marker; the window covers the whole windup.
 # Ideas after htdt/godogen asset-gen/motion.md pitfalls 16 and 18 (MIT; no code copied).
 
 const LIMBS := {"left_hand": "LeftHand", "right_hand": "RightHand", "left_foot": "LeftFoot", "right_foot": "RightFoot"}
@@ -51,11 +54,35 @@ const HANDOVERS := [
 	["run", "dodge_roll"],
 	["dodge_roll", "idle"],
 	["dodge_roll", "run"],
+	["dodge_roll", "attack_light"],
+	["dodge_roll", "attack_heavy"],
+	["attack", "stagger"],
+	["attack_light", "dodge_roll"],
+	["attack_heavy", "dodge_roll"],
+	["attack_light", "attack_heavy"],
+	["attack_heavy", "attack_light"],
+	["attack_light", "death"],
+	["attack_heavy", "death"],
+]
+# One-shot handovers the game makes before the clip ends (measured at LOOP_PHASES, not at the finish)
+const CUTS := [
+	["attack", "idle"],
+	["attack", "run"],
+	["attack", "stagger"],
+	["attack", "death"],
+	["stagger", "death"],
+	["attack_light", "dodge_roll"],
+	["attack_heavy", "dodge_roll"],
+	["attack_light", "attack_heavy"],
+	["attack_heavy", "attack_light"],
+	["attack_light", "death"],
+	["attack_heavy", "death"],
 ]
 const LOOP_PHASES := [0.25, 0.5, 0.75, 1.0]
 const AFTER_BLEND_FRAMES := 3
 const SETTLE_FRAMES := 3
 const SKIP_SETTINGS := ["libraries", "root_node", "script"]
+const AttackWindup := preload("res://scripts/combat/AttackWindup.gd")
 
 
 # The HANDOVERS whose two clips are both in the library
@@ -79,6 +106,21 @@ static func game_settings(scene_path: String) -> Dictionary:
 	return out
 
 
+# The game scene's windup in seconds (its root script's _windup_time(): BaseEnemy and ArcherEnemy), 0
+# for a scene without one. The script is instanced on its own, outside the tree, so _ready() never runs.
+static func scene_windup(scene_path: String) -> float:
+	var state := (load(scene_path) as PackedScene).get_state()
+	for p in state.get_node_property_count(0):
+		if state.get_node_property_name(0, p) != "script":
+			continue
+		var script: Script = state.get_node_property_value(0, p)
+		var inst: Object = script.new()
+		var windup: float = inst.call("_windup_time") if inst.has_method("_windup_time") else 0.0
+		inst.free()
+		return windup
+	return 0.0
+
+
 # The first scene under res://scenes that loads the library (the scene whose AnimationPlayer plays it)
 static func scene_for_library(library_path: String) -> String:
 	var found := _scenes_with('path="%s"' % library_path, "res://scenes")
@@ -98,16 +140,17 @@ static func _scenes_with(needle: String, dir: String) -> Array:
 
 # Every handover in the library, each its worst phase
 static func measure_all(
-	holder: Node, model: PackedScene, lib: AnimationLibrary, settings: Dictionary, fps: float
+	holder: Node, model: PackedScene, lib: AnimationLibrary, settings: Dictionary, fps: float, windup := 0.0
 ) -> Array:
 	var steady := {}
 	var out := []
 	for pair in handovers(lib.get_animation_list()):
-		out.append(measure_pair(holder, model, lib, pair[0], pair[1], settings, fps, steady))
+		out.append(measure_pair(holder, model, lib, pair[0], pair[1], settings, fps, steady, windup))
 	return out
 
 
-# One handover, from `from` to `to`; `steady` caches each clip's own limb speeds between calls
+# One handover, from `from` to `to`; `steady` caches each clip's own limb speeds between calls, and
+# `windup` (seconds) drives a `to` clip with tell and contact markers through an enemy's windup
 static func measure_pair(
 	holder: Node,
 	model: PackedScene,
@@ -116,7 +159,8 @@ static func measure_pair(
 	to: String,
 	settings: Dictionary,
 	fps: float,
-	steady := {}
+	steady := {},
+	windup := 0.0
 ) -> Dictionary:
 	for clip in [from, to]:
 		if not steady.has(clip):
@@ -124,13 +168,13 @@ static func measure_pair(
 	var own := {}
 	for limb in LIMBS:
 		own[limb] = maxf(steady[from].get(limb, 0.0), steady[to].get(limb, 0.0))
-	var looping := lib.get_animation(from).loop_mode != Animation.LOOP_NONE
+	var phased := lib.get_animation(from).loop_mode != Animation.LOOP_NONE or [from, to] in CUTS
 	var worst := {}
-	for phase in LOOP_PHASES if looping else [1.0]:
-		var r := _handover(holder, model, lib, from, to, phase if looping else -1.0, settings, fps, own)
+	for phase in LOOP_PHASES if phased else [-1.0]:
+		var r := _handover(holder, model, lib, from, to, phase, settings, fps, own, windup)
 		if worst.is_empty() or r["snap_excess_mps"] > worst["snap_excess_mps"]:
 			worst = r
-	worst["phases"] = LOOP_PHASES.size() if looping else 1
+	worst["phases"] = LOOP_PHASES.size() if phased else 1
 	return worst
 
 
@@ -146,13 +190,15 @@ static func limb_points(root: Node3D, sk: Skeleton3D) -> Dictionary:
 
 
 # Frames where the clip isn't `to` or doesn't advance (a one-shot held at its end, and a loop wrapping,
-# are fine)
+# are fine). A sample with an "expected" position (a windup's posed frames) must be at it instead.
 static func check_frames(samples: Array, to: String, to_length: float) -> int:
 	var wrong := 0
 	var prev := -1.0
 	for s: Dictionary in samples:
 		var pos: float = s["position"]
 		var advancing: bool = prev < 0.0 or pos > prev or pos >= to_length - 0.0001 or pos < prev - to_length * 0.5
+		if s.has("expected"):
+			advancing = absf(pos - float(s["expected"])) < 0.001
 		if s["clip"] != to:
 			wrong += 1
 			continue  # advancing is judged between frames of `to` itself
@@ -221,7 +267,8 @@ static func _blend_time(ap: AnimationPlayer, from: String, to: String) -> float:
 	return pair if pair > 0.0 else ap.playback_default_blend_time
 
 
-# phase < 0: `from` is a one-shot and hands over when it finishes
+# phase < 0: `from` is a one-shot and hands over when it finishes. With a windup, `to` (when it has
+# tell and contact markers) is posed through it as BaseEnemy does (AttackWindup), from a phased handover.
 static func _handover(
 	holder: Node,
 	model: PackedScene,
@@ -231,13 +278,17 @@ static func _handover(
 	phase: float,
 	settings: Dictionary,
 	fps: float,
-	own: Dictionary
+	own: Dictionary,
+	windup := 0.0
 ) -> Dictionary:
 	var inst := _spawn(holder, model, lib, settings)
 	var ap: AnimationPlayer = inst["ap"]
 	var blend := _blend_time(ap, from, to)
 	var from_len := lib.get_animation(from).length
-	var to_len := lib.get_animation(to).length
+	var to_clip := lib.get_animation(to)
+	var to_len := to_clip.length
+	var winding := phase >= 0.0 and windup > 0.0 and AttackWindup.position(to_clip, windup, 0.0) >= 0.0
+	var elapsed := 0.0
 	var handed := [false]
 	if phase < 0.0:
 		# As Player/BaseEnemy _on_animation_finished: the next clip starts from the finished signal
@@ -261,13 +312,38 @@ static func _handover(
 		if phase < 0.0:
 			inst["root"].free()
 			return {"from": from, "to": to, "error": "%s never finished" % from, "snap_excess_mps": -1.0}
-		ap.play(to)  # the game's state change, in its physics step
 		h = samples.size()
-	var window_end := h + int(ceil(blend * fps)) + AFTER_BLEND_FRAMES
-	var stop := mini(window_end + SETTLE_FRAMES, h + maxi(int(ceil(to_len * fps)) - 1, 1))
+		# The game's state change, in its physics step
+		if winding:
+			AttackWindup.begin(ap, to)
+			ap.seek(AttackWindup.position(to_clip, windup, 0.0), true)
+		else:
+			ap.play(to)
+	var span := blend
+	var to_frames := int(ceil(to_len * fps)) - 1
+	if winding:
+		span = maxf(blend, windup)
+		to_frames = int(ceil((windup + to_len - to_clip.get_marker_time("contact")) * fps)) - 1
+	var window_end := h + int(ceil(span * fps)) + AFTER_BLEND_FRAMES
+	var stop := mini(window_end + SETTLE_FRAMES, h + maxi(to_frames, 1))
+	var posed := -1.0
 	while samples.size() <= maxi(stop, h):
+		if winding and samples.size() > h:
+			# BaseEnemy._tick_attack: the windup's clock, its pose, and the release at its end
+			elapsed = minf(elapsed + 1.0 / fps, windup)
+			posed = AttackWindup.position(to_clip, windup, elapsed)
+			ap.seek(posed, true)
+			if elapsed >= windup - 0.0001:
+				winding = false
+				AttackWindup.release(ap, to, 1.0 / fps)  # the next advance lands on contact itself
+		elif winding:
+			posed = AttackWindup.position(to_clip, windup, 0.0)
 		ap.advance(1.0 / fps)
-		samples.append(_sample(inst))
+		var s := _sample(inst)
+		if posed >= 0.0:
+			s["expected"] = posed
+		posed = -1.0
+		samples.append(s)
 	# The snap: limb speed above either clip's own top speed, across the handover
 	var best := {"excess": 0.0, "speed": 0.0, "limb": "", "frame": -1}
 	for i in range(maxi(h - 1, 1), mini(window_end, samples.size() - 1) + 1):
@@ -293,6 +369,7 @@ static func _handover(
 		"to": to,
 		"handover_at_s": snappedf((h if phase >= 0.0 else h + 1) / fps, 0.001),
 		"blend_s": snappedf(blend, 0.001),
+		"windup_s": snappedf(windup, 0.001) if span > blend else 0.0,
 		"snap_excess_mps": snappedf(maxf(best["excess"], 0.0), 0.01),
 		"peak_mps": snappedf(best["speed"], 0.01),
 		"peak_limb": best["limb"],

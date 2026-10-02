@@ -1153,7 +1153,7 @@
     "sha256": "ee9664699c8771285f584c5351ad7868007de99a1ab2bf7385fca6d4ebcc849b"
   },
   "total_cost_credits": 100,
-  "updated_at": "2026-09-29T20:38:50+00:00",
+  "updated_at": "2026-10-02T04:22:42+00:00",
   "concept_approval": {
     "attempt": "concept-1",
     "image": {
@@ -1343,6 +1343,516 @@
       "stage": "motion:run",
       "recorded_at": "2026-09-29T20:38:50+00:00",
       "decision": "Accepted for POC (user, 2026-09-29): knee-crease stretch, slight tunic hem clipping and flesh-colored tunic seams are visible up close but not at gameplay distance; no further player refinement until MVP. The 1.0 stretch limit stays."
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:attack_heavy",
+      "recorded_at": "2026-10-02T04:07:57+00:00",
+      "packet": "assets/manifests/player/judge/motion-attack_heavy-1/packet.json",
+      "packet_sha256": "8d0bf472c63985a14fcdf82717ea79fe9ab4103c47e031fc77eb0f678f6c846c",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "attack_heavy",
+        "source": "res://data/animations/player_library.tres:attack_heavy",
+        "model": "res://assets/meshes/player.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player/motion/blends-player/attack_heavy_metrics.json",
+          "sha256": "dffe4e4b9816ef15152cc4dcb6c1b4023130ffd61e69cca50c898640d28fa80c"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/player/judge/motion-attack_heavy-1/01_frame_strip.png",
+          "sha256": "ebb5d06cbf952a9d04cd811b56b3e593b34457458ba910aab95dea294c5a370b",
+          "source": ".tripo-out/player/motion/blends-player/attack_heavy_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/player/judge/motion-attack_heavy-1/02_onion_skin.png",
+          "sha256": "48f76658a05b4eabec71134d6e48cf803af116783eb5279d61256bd45b566700",
+          "source": ".tripo-out/player/motion/blends-player/attack_heavy_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/player/judge/motion-attack_heavy-1/03_plots.png",
+          "sha256": "206135fc1da97dce86c8930d4b72fc393e88d92a4a07ed0bc8356b63c5f484b9",
+          "source": ".tripo-out/player/motion/blends-player/attack_heavy_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/player/judge/motion-attack_heavy-1/04_stretch_detail.png",
+          "sha256": "74065598f2e33a15646662a28851454ed52597b069eb8c4e8b7df765ef4d0bfc",
+          "source": ".tripo-out/player/motion/blends-player/attack_heavy_stretch.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player/judge/motion-attack_heavy-1/01_frame_strip.png",
+        "assets/manifests/player/judge/motion-attack_heavy-1/02_onion_skin.png",
+        "assets/manifests/player/judge/motion-attack_heavy-1/03_plots.png",
+        "assets/manifests/player/judge/motion-attack_heavy-1/04_stretch_detail.png"
+      ],
+      "assertions_failed": [
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "Knee/boot-top edges on both legs, worst LeftUpperLeg, 3.0-6.0x in the opening crouch; above 1.0 the whole clip (~1.8 standing at 2.0 s).",
+          "evidence": "skin stretch 4.977; 04_stretch_detail.png; 03_plots.png"
+        },
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "Mostly hidden under the hem and boot tops; only a dark crease at the left boot top in the crouch.",
+          "evidence": "01_frame_strip.png frames 1, 6-8"
+        },
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "Hips up to 0.175 m in the lunge, back to 0.047; foot slide p90 1.875 during intended pivots (not asserted for actions).",
+          "evidence": "02_onion_skin.png; 03_plots.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "Skin stretch at the knee/boot-top, likely where skirt_reweight grading meets the leg bones; a clean-stage weighting issue, not a library change. User decides to accept or rework the skirt and knee weighting.",
+      "summary": "attack_heavy plays in place with a coherent pose and clean game handovers, but the skin-stretch assertion fails (4.98 vs 1.0) at the knee and boot-top seam, and that comes from the skin weights rather than anything a library change fixes.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:attack_light",
+      "recorded_at": "2026-10-02T04:07:57+00:00",
+      "packet": "assets/manifests/player/judge/motion-attack_light-1/packet.json",
+      "packet_sha256": "f672b5b852bc6da3b7cae74d609430413dd30a10485dd112fafe3609bee1d326",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "attack_light",
+        "source": "res://data/animations/player_library.tres:attack_light",
+        "model": "res://assets/meshes/player.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player/motion/blends-player/attack_light_metrics.json",
+          "sha256": "7326da3ccde3555d6fcce35e88f4e0172d00ef365f857a2b67ce4625a54cb839"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/player/judge/motion-attack_light-1/01_frame_strip.png",
+          "sha256": "37fa1e01280cfdeeb9e04e9bdc93e4051a0806e67a0e505bde396b5a2f6d0286",
+          "source": ".tripo-out/player/motion/blends-player/attack_light_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/player/judge/motion-attack_light-1/02_onion_skin.png",
+          "sha256": "f43c9644198c9aeab5e421aa38b7dd1770feb174d76f0b69f593bbffad193238",
+          "source": ".tripo-out/player/motion/blends-player/attack_light_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/player/judge/motion-attack_light-1/03_plots.png",
+          "sha256": "606413a70afcf088d4a802baca208ac50b155732186b12a9ed4b67c9c3559f22",
+          "source": ".tripo-out/player/motion/blends-player/attack_light_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/player/judge/motion-attack_light-1/04_stretch_detail.png",
+          "sha256": "53f66053ec5ced76ec0022c5cf098c0458aac99e94c9710e8fd3242dfa6184da",
+          "source": ".tripo-out/player/motion/blends-player/attack_light_stretch.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player/judge/motion-attack_light-1/01_frame_strip.png",
+        "assets/manifests/player/judge/motion-attack_light-1/02_onion_skin.png",
+        "assets/manifests/player/judge/motion-attack_light-1/03_plots.png",
+        "assets/manifests/player/judge/motion-attack_light-1/04_stretch_detail.png"
+      ],
+      "assertions_failed": [
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "Tunic-hem-to-thigh/knee edges up to 5.6x at t=0.30 s in a deep wide lunge (hips 0.80 -> 0.53 m); across the skirt-reweight boundary on both legs.",
+          "evidence": "04_stretch_detail.png, 03_plots.png; skin stretch 4.63, worst LeftUpperLeg"
+        },
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "Right foot moves 6.7 m/s early while flagged planted (p90 3.49); action clips are exempt and the strip shows a deliberate step.",
+          "evidence": "03_plots.png"
+        },
+        {
+          "check": "pose",
+          "severity": "minor",
+          "observation": "Crouches low and ends with the left arm high behind the head; whether this clip suits a quick light attack is a design question.",
+          "evidence": "01_frame_strip.png frames 5-14"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "Stretch from the skirt-reweighted tunic band pulled by a deep lunge; fix at the clean stage (skirt reweight radius/hem grading) or a shallower clip (a design call).",
+      "summary": "attack_light stays in place and its handovers pass, but skin stretch is 4.63 against a limit of 1.0, concentrated where the tunic hem meets the thighs and knees in the deep lunge, and no single library change clearly fixes that.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:death",
+      "recorded_at": "2026-10-02T04:07:57+00:00",
+      "packet": "assets/manifests/player/judge/motion-death-1/packet.json",
+      "packet_sha256": "898ae2286a675b26ac8d82852cd4b4813da5fb7f2951a81fce3867081dbb92f8",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "death",
+        "source": "res://data/animations/player_library.tres:death",
+        "model": "res://assets/meshes/player.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player/motion/blends-player/death_metrics.json",
+          "sha256": "65cfe3553e3f9ca22fa7968a01a1ae307b9f07a2ce10b559db333fd4d129d90e"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/player/judge/motion-death-1/01_frame_strip.png",
+          "sha256": "34998e65d6eb0c0673c51cdb0370c923dc72706c44a7b6fb82d57a869f1382eb",
+          "source": ".tripo-out/player/motion/blends-player/death_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/player/judge/motion-death-1/02_onion_skin.png",
+          "sha256": "4b7551a9e9b30aedf40a6614929c3828c033f7e529f6c3f85fbc8c26917cea91",
+          "source": ".tripo-out/player/motion/blends-player/death_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/player/judge/motion-death-1/03_plots.png",
+          "sha256": "f8e7f7143924bbb3e15677ada18e8b802f85a2975d56e0d73bd5b9879a68a39f",
+          "source": ".tripo-out/player/motion/blends-player/death_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/player/judge/motion-death-1/04_stretch_detail.png",
+          "sha256": "c70ea7516c96511c7dba4a7f0f0bc42d5aa3d5a3174b3e534790402f054cc916",
+          "source": ".tripo-out/player/motion/blends-player/death_stretch.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player/judge/motion-death-1/01_frame_strip.png",
+        "assets/manifests/player/judge/motion-death-1/02_onion_skin.png",
+        "assets/manifests/player/judge/motion-death-1/03_plots.png",
+        "assets/manifests/player/judge/motion-death-1/04_stretch_detail.png"
+      ],
+      "assertions_failed": [
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "Peak 3.61x, worst LeftUpperLeg; long edges thighs-to-tunic/vest hem 2.5-4.6x at t=0.93 s.",
+          "evidence": "04_stretch_detail.png; edge_stretch_max 3.608"
+        },
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "1.8x at t=0, ~3.2x through the crouch, ~1.8x lying down; never under the limit, pointing to weighting.",
+          "evidence": "03_plots.png"
+        },
+        {
+          "check": "other",
+          "severity": "minor",
+          "observation": "The stretch detail labels its worst edge 4.61x but metrics report 3.608; the two measurements disagree.",
+          "evidence": "04_stretch_detail.png header vs edge_stretch_max"
+        },
+        {
+          "check": "pose",
+          "severity": "minor",
+          "observation": "The collapse reads cleanly at strip scale.",
+          "evidence": "01_frame_strip.png frames 4-7"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "Stretch present from frame 0 around tunic and thighs points to mesh weights (skirt_reweight or auto-rig), outside the motion stage. The user decides whether to fix weights in the clean stage or accept it as hidden; also check the 4.61 vs 3.608 discrepancy.",
+      "summary": "The death clip stays in place and its feet hold still, but skin stretch is 3.6x against a limit of 1.0, already over the limit in the first frame, centred on the tunic and thigh region, so the cause looks like the skin weights rather than the clip.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:dodge_roll",
+      "recorded_at": "2026-10-02T04:07:57+00:00",
+      "packet": "assets/manifests/player/judge/motion-dodge_roll-1/packet.json",
+      "packet_sha256": "fbd32d99ccd9c7e90cda80945965e66a61d68f1614ccbeb0f20c583474803e43",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "dodge_roll",
+        "source": "res://data/animations/player_library.tres:dodge_roll",
+        "model": "res://assets/meshes/player.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player/motion/blends-player/dodge_roll_metrics.json",
+          "sha256": "4d83ae325b78caefe5cb283de906e5b178cb748c85f3bdc82d9ad87febf90ad6"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/player/judge/motion-dodge_roll-1/01_frame_strip.png",
+          "sha256": "d8d0f70134e79e7dbdb58bbb75f4187fbc5a73c12f1ab7cd2c76013765a6f405",
+          "source": ".tripo-out/player/motion/blends-player/dodge_roll_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/player/judge/motion-dodge_roll-1/02_onion_skin.png",
+          "sha256": "f722e37f1a46a5101f6ee075854b81fed515b7285dd8c9d3a59a6d762a7aebe2",
+          "source": ".tripo-out/player/motion/blends-player/dodge_roll_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/player/judge/motion-dodge_roll-1/03_plots.png",
+          "sha256": "0962dad96b969a15d6c68e16594667b3c33c78999a76131c8960b485b36132fa",
+          "source": ".tripo-out/player/motion/blends-player/dodge_roll_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/player/judge/motion-dodge_roll-1/04_stretch_detail.png",
+          "sha256": "5dee8e2dc2374f4bad70f354a5d759faa9996842855f1be850d3a8154f503dda",
+          "source": ".tripo-out/player/motion/blends-player/dodge_roll_stretch.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player/judge/motion-dodge_roll-1/01_frame_strip.png",
+        "assets/manifests/player/judge/motion-dodge_roll-1/02_onion_skin.png",
+        "assets/manifests/player/judge/motion-dodge_roll-1/03_plots.png",
+        "assets/manifests/player/judge/motion-dodge_roll-1/04_stretch_detail.png"
+      ],
+      "assertions_failed": [
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "Skirt edges between hips and raised left thigh stretch 2.7-4.9x in the recovery crouch (t=0.31-0.50, worst 0.40 s); the skirt panel is visibly taut and sheared over the lifted knee, visible at gameplay distance coming out of every roll.",
+          "evidence": "skin stretch 3.876; 04_stretch_detail.png; 03_plots.png; 01_frame_strip.png frames 9-14"
+        },
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "Hips peak 0.194 m mid-roll, end 0.036 (limit applies only to death/in-place).",
+          "evidence": "03_plots.png; 02_onion_skin.png"
+        },
+        {
+          "check": "pose",
+          "severity": "minor",
+          "observation": "At ~0.27 s the curled body dips slightly to or below the floor line.",
+          "evidence": "01_frame_strip.png bottom row frame 8"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "Failing stretch in the skirt_reweight region during the deep recovery crouch; fix by changing the clean stage's skirt reweight grading (less thigh weight near the waist) or a roll clip with a shallower recovery. User picks; check other deep-crouch clips too.",
+      "summary": "The dodge_roll stays in place, and its pose and handovers look clean, but skin stretch fails at 3.88x against a 1.0 limit, in the tunic skirt between the hips and the raised thighs during the crouch recovery. The likely fix is in the skirt reweight at the clean stage.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:idle",
+      "recorded_at": "2026-10-02T04:07:57+00:00",
+      "packet": "assets/manifests/player/judge/motion-idle-1/packet.json",
+      "packet_sha256": "ef5edfcb5ad70ff36ff755d6dad7db393166d44c471a4f50bf19cfd916ffadb7",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "idle",
+        "source": "res://data/animations/player_library.tres:idle",
+        "model": "res://assets/meshes/player.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player/motion/blends-player/idle_metrics.json",
+          "sha256": "025af8795a3ab3e047abbf7764a0bcafcc53f552915aeba1f15e45870cea0390"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/player/judge/motion-idle-1/01_frame_strip.png",
+          "sha256": "f97745888ee90d7bfc13956bb05fccd3ce0bbd35018febe17a461da199f861e6",
+          "source": ".tripo-out/player/motion/blends-player/idle_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/player/judge/motion-idle-1/02_onion_skin.png",
+          "sha256": "056032400378eb6dc93cfb3a3356e148d842c30da346dddf59900c093caa1696",
+          "source": ".tripo-out/player/motion/blends-player/idle_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/player/judge/motion-idle-1/03_plots.png",
+          "sha256": "3d95644a460b66b963ad18cc0becefb7dbb2ee1a4d799098b11a441dd85961f7",
+          "source": ".tripo-out/player/motion/blends-player/idle_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/player/judge/motion-idle-1/04_stretch_detail.png",
+          "sha256": "14ccdcc76eca2415623a08bc7eb97e11df62e4ae33bd2d46ce58a2d9032a3b31",
+          "source": ".tripo-out/player/motion/blends-player/idle_stretch.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player/judge/motion-idle-1/01_frame_strip.png",
+        "assets/manifests/player/judge/motion-idle-1/02_onion_skin.png",
+        "assets/manifests/player/judge/motion-idle-1/03_plots.png",
+        "assets/manifests/player/judge/motion-idle-1/04_stretch_detail.png"
+      ],
+      "assertions_failed": [
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "Edges up to 4x at the knee/boot-top band where trousers meet boots and the tunic hem sits; worst LeftUpperLeg; ~2.9-3.0 all clip (held crouch).",
+          "evidence": "04_stretch_detail.png, 03_plots.png; skin stretch 3.033 vs 1.0"
+        },
+        {
+          "check": "pose",
+          "severity": "minor",
+          "observation": "A deep wide-kneed crouch with forward lean; knees and boot tops intact at strip scale.",
+          "evidence": "01_frame_strip.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "Skin stretch at the edge of the skirt_reweight region where it meets the boot; fix in the clean stage's skirt reweighting or rig weights, or a less-crouched idle (a design choice). Barely visible at gameplay distance; user's call.",
+      "summary": "The idle stays in place, the feet stay planted and the handovers are clean, but skin stretch fails (3.03 against a 1.0 limit) at the knee and boot-top seam, and none of the revise actions fixes skin weights.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:run",
+      "recorded_at": "2026-10-02T04:07:57+00:00",
+      "packet": "assets/manifests/player/judge/motion-run-2/packet.json",
+      "packet_sha256": "b37289ff22ceddec02c2fdf1b36dec4a1bb7cb75e391f90c4b883b758cbab60a",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "run",
+        "source": "res://data/animations/player_library.tres:run",
+        "model": "res://assets/meshes/player.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player/motion/blends-player/run_metrics.json",
+          "sha256": "7ac74d246457c81804ad4573ff974af5be4afdbe682285dc17de5ad916bdb239"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/player/judge/motion-run-2/01_frame_strip.png",
+          "sha256": "768ed9559ddf6de2f6ee296e81ea49efdfca6900fa95c21734848f2979b416c1",
+          "source": ".tripo-out/player/motion/blends-player/run_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/player/judge/motion-run-2/02_onion_skin.png",
+          "sha256": "6942e0456b077c8f411580e02b2689c77282674e18f0e0695f091782facd99dd",
+          "source": ".tripo-out/player/motion/blends-player/run_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/player/judge/motion-run-2/03_plots.png",
+          "sha256": "fa32db1f86212cfa61dff710e00f378d6f82c4467f65deadda44e9fd3068751f",
+          "source": ".tripo-out/player/motion/blends-player/run_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/player/judge/motion-run-2/04_stretch_detail.png",
+          "sha256": "9fa9f2a45447ad63c9e389e946e302151924b038ef71eb9da37455e8fd73b08a",
+          "source": ".tripo-out/player/motion/blends-player/run_stretch.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player/judge/motion-run-2/01_frame_strip.png",
+        "assets/manifests/player/judge/motion-run-2/02_onion_skin.png",
+        "assets/manifests/player/judge/motion-run-2/03_plots.png",
+        "assets/manifests/player/judge/motion-run-2/04_stretch_detail.png"
+      ],
+      "assertions_failed": [
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "Skin stretch reaches 4.56x on LeftUpperLeg; the worst edges (2.7-5.6x) are at the inner tunic hem and inner thigh/knee where tunic meets trousers, above 1.0 the whole cycle (1.4-4.6): structural, not a spike.",
+          "evidence": "04_stretch_detail.png, 03_plots.png; assertion 'skin stretch'"
+        },
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "Not visible at strip scale; tunic and legs read intact.",
+          "evidence": "01_frame_strip.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "Only skin stretch fails, from the skirt_reweight region (tunic graded to Hips next to thigh/shin-weighted trouser vertices). No library change fixes it; the clean stage's skirt reweight needs changing, or the user accepts a stretch hidden under the hem at gameplay distance.",
+      "summary": "The run stays in place with planted feet and clean handovers, but skin stretch fails at 4.56x (limit 1.0); the stretched edges sit where the skirt reweight meets the thighs, so the fix is in the clean stage's weights, not in the animation library.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-idle",
+      "recorded_at": "2026-10-02T04:22:42+00:00",
+      "decision": "User 2026-10-02: accept the skirt stretch for now (pre-existing skirt_reweight tunic/thigh boundary, mostly hidden at gameplay distance); the player model gets reworked after the Tripo P2.0 research"
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-run",
+      "recorded_at": "2026-10-02T04:22:42+00:00",
+      "decision": "User 2026-10-02: accept the skirt stretch for now (pre-existing skirt_reweight tunic/thigh boundary, mostly hidden at gameplay distance); the player model gets reworked after the Tripo P2.0 research"
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-dodge_roll",
+      "recorded_at": "2026-10-02T04:22:42+00:00",
+      "decision": "User 2026-10-02: accept the skirt stretch for now (pre-existing skirt_reweight tunic/thigh boundary, mostly hidden at gameplay distance); the player model gets reworked after the Tripo P2.0 research"
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-attack_light",
+      "recorded_at": "2026-10-02T04:22:42+00:00",
+      "decision": "User 2026-10-02: accept the skirt stretch for now (pre-existing skirt_reweight tunic/thigh boundary, mostly hidden at gameplay distance); the player model gets reworked after the Tripo P2.0 research"
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-attack_heavy",
+      "recorded_at": "2026-10-02T04:22:42+00:00",
+      "decision": "User 2026-10-02: accept the skirt stretch for now (pre-existing skirt_reweight tunic/thigh boundary, mostly hidden at gameplay distance); the player model gets reworked after the Tripo P2.0 research"
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-death",
+      "recorded_at": "2026-10-02T04:22:42+00:00",
+      "decision": "User 2026-10-02: accept the skirt stretch for now (pre-existing skirt_reweight tunic/thigh boundary, mostly hidden at gameplay distance); the player model gets reworked after the Tripo P2.0 research"
     }
   ]
 }

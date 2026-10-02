@@ -1,0 +1,31 @@
+{
+  "verdict": "escalate",
+  "summary": "The run stays in place with planted feet and clean handovers, but skin stretch fails at 4.56x (limit 1.0); the stretched edges sit where the skirt reweight meets the thighs, so the fix is in the clean stage's weights, not in the animation library.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "major",
+      "observation": "Skin stretch reaches 4.56x on LeftUpperLeg; the worst edges (2.7-5.6x) are at the inner tunic hem and inner thigh/knee where tunic meets trousers, above 1.0 the whole cycle (1.4-4.6): structural, not a spike.",
+      "evidence": "04_stretch_detail.png, 03_plots.png; assertion 'skin stretch'"
+    },
+    {
+      "check": "motion",
+      "severity": "minor",
+      "observation": "Not visible at strip scale; tunic and legs read intact.",
+      "evidence": "01_frame_strip.png"
+    }
+  ],
+  "escalation_reason": "Only skin stretch fails, from the skirt_reweight region (tunic graded to Hips next to thigh/shin-weighted trouser vertices). No library change fixes it; the clean stage's skirt reweight needs changing, or the user accepts a stretch hidden under the hem at gameplay distance.",
+  "questions_answered": [
+    "In place: Hips max 0.033 m.",
+    "Feet hold: p90 0.345 m/s.",
+    "No broken poses; stretch only in close-up.",
+    "5 of 6 pass (snap 3.85/5); skin stretch 4.558 fails."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png",
+    "04_stretch_detail.png"
+  ]
+}

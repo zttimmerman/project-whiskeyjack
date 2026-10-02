@@ -93,7 +93,8 @@ func test_enemy_melee_telegraph() -> void:
 
 
 # The tell is the attack clip's anticipation pose: the clip is held at its "tell" marker during the
-# windup, and released so its "contact" marker plays as the hitbox opens
+# windup, and released so its "contact" marker plays as the hitbox opens. It's held at speed 0 rather
+# than paused, so the crossfade into it from the previous clip runs
 func test_enemy_melee_telegraph_holds_the_tell_pose() -> void:
 	var levy := _spawn(LEVY_SCENE, Vector3(0, 0, -1.2))
 	var anim_player: AnimationPlayer = levy.get_node("SkeletonModel/AnimationPlayer")
@@ -103,7 +104,10 @@ func test_enemy_melee_telegraph_holds_the_tell_pose() -> void:
 	var contact := clip.get_marker_time("contact")
 	levy._change_state(BaseEnemy.State.ATTACK)
 	_step(levy, int(MELEE_TELEGRAPH_MIN_S / 2.0 / DT) + 6)
-	assert_str(anim_player.assigned_animation).is_equal("attack")  # paused while posed
+	assert_str(anim_player.assigned_animation).is_equal("attack")
+	# Posed at speed 0, not paused: a paused AnimationPlayer freezes its crossfade from the previous clip
+	assert_bool(anim_player.is_playing()).override_failure_message("the attack clip is paused").is_true()
+	assert_float(anim_player.get_playing_speed()).is_equal(0.0)
 	assert_float(anim_player.current_animation_position).is_equal_approx(tell, 0.001)
 	_frames_until_open(levy)
 	# Contact lands with the hitbox, within the ±2 frames atk_hitbox_sync allows the player

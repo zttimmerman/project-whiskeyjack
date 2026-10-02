@@ -1,0 +1,29 @@
+{
+  "verdict": "pass",
+  "summary": "Back-file run (Walk_Loop per brief) stays in place, feet hold when planted, no broken poses, and every assertion passes including the game-path handovers.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "minor",
+      "observation": "attack>run left hand 6.75 vs 3.34 m/s (excess 3.41) and run>stagger right foot 5.7 (excess 2.4); within tolerance, not visible as a pop.",
+      "evidence": "metrics.motion.game_path.handovers"
+    },
+    {
+      "check": "motion",
+      "severity": "minor",
+      "observation": "Foot-slide max 0.769 m/s vs p90 0.172 comes from contact-edge frames, not mid-plant sliding.",
+      "evidence": "03_plots.png"
+    }
+  ],
+  "questions_answered": [
+    "In place: Hips max 0.06 m, final 0.00.",
+    "Planted feet near 0 m/s; root steady 1.5 m/s.",
+    "No broken poses; stretch 0.",
+    "All 6 pass: travel 0.061/0.15, slide 0.172/0.5, bind 0.758/1.8, stretch 0/1.0, wrong-clip 0, snap 3.41/5."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png"
+  ]
+}
