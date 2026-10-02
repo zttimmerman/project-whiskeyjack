@@ -166,3 +166,25 @@ The playtest read A as a zoomed-out third person. The user chose Witcher-like fr
 | camera_stress | 1.0 | 0.470 | 0.015 | 1.0 |
 
 **Wall bounce.** There's no oscillation. I counted reversals of the camera-to-player distance (more than 1 cm per frame, flipping back within 6 frames): 0 in five scenarios, and 1 in `levy_1v1_sensible` (frame 419, during the fight). The arm still snaps in at once when the view sweeps into a wall, the "bounce" the user liked: up to 1.85 m in one frame in `camera_stress` frame 578, as the post-kill view swings into Corridor A's north wall. That's a single settle, not a wobble.
+
+## Second playtest (2026-10-01): pitch, wall clipping, lock-on sight, framing variants
+
+**Pitch swung the arm.** Mouse look tilted the whole 2.5 m arm, so looking down lifted the lens to about 3.4 m, behind and above his back. That's the "not over the shoulder" the user saw in play; replays and captures never moved the mouse. Pitch now turns the **look**: the lens moves 0.6 m per radian, capped at ±0.35 m of its rest height, and the framing tilt keeps him in view (`test_cam_pitch_turns_the_look_not_the_arm`). `camera_stress` now ends looking fully up and fully down (camera_up/camera_down take the mouse's pitch path). There, the lens runs 1.30 to 1.89 m above the feet and he stays in frame. Saved pitch is still clamped to `camera_pitch_min`/`max` on load.
+
+**Wall clipping.** `cast_motion` ignores a sphere's initial contact. The shoulder probe stops in contact with a wall, so the arm probe that started there passed straight through. Reproduced in Level 1's start-room corner, standing on the corner crate: the lens ended 3.59 m up, inside the wall (`test_cam_never_clips_into_walls_in_a_corner`). Now a probe that starts touching doesn't move, and every probe move stops 5 cm short of its hit. Wall fill stays 0.002 to 0.446.
+
+**Lock-on.**
+- Candidates are living enemies with BaseEnemy's `is_dead`, in line of sight (`WorldRay` at 0.8 m, as enemy sight). A target hidden behind world geometry for more than 1 s drops the lock; a moment behind a pillar keeps it.
+- NPCs were never candidates (only the "enemy" group, now also requiring `is_dead`), and a test pins it. I couldn't reproduce a lock on the quest giver. From the spawn, Tab locks the Corridor A levy 11 m away, through the doorway, so the reticle is small and far away. That's the likely cause.
+
+**Framing variants** (`CameraRig.framing`: CURRENT is the default, plus A_MEDIUM, B_WIDE, C_TIGHT; exports only). They were rendered in the real game through `scripts/review/scenarios/camera_variants.json` and `capture_evidence.sh`: at rest facing north, full look-up, full look-down, the levy in view, and locked on. Sheet: `phantom-camera/camera_variants_sheet.jpg`. Lens height is above the feet, and pitch is the look's tilt (negative is down).
+
+| Variant | Arm (locked) | Offset | FOV | Rest | Look up | Look down | Locked on |
+|---|---|---|---|---|---|---|---|
+| CURRENT | 2.5 m (3.0) | 0.9 m | 72° | 1.60 m, −6° | 1.25 m, +23° | 1.84 m, −29° | 1.72 m, −17° |
+| A | 1.6 m (2.2) | 0.7 m | 65° | 1.55 m, −2° | 1.20 m, +15° | 1.79 m, −25° | 1.67 m, −13° |
+| B | 2.0 m (2.6) | 0.8 m | 68° | 1.65 m, −7° | 1.30 m, +16° | 1.89 m, −30° | 1.77 m, −18° |
+| C | 1.2 m (1.9) | 0.6 m | 60° | 1.50 m, −7° | 1.15 m, +11° | 1.74 m, −23° | 1.62 m, −11° |
+
+- At its extremes, A's full look-up and C's full look-down fail `cam_player_in_frame`: his whole head and torso don't fit that close. If a tight variant is chosen, the target may need redefining (head and shoulders only?).
+- In the locked shots, the levy is about 11 m off; at that range all four keep both in frame.
