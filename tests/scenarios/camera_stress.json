@@ -40,7 +40,7 @@
   ],
   "checks": [
     {"id": "cam_player_in_frame", "target": [1.0, null], "baseline": 1.0, "tolerance": 0.05},
-    {"id": "cam_wall_fill", "target": [null, 0.6], "baseline": 0.446, "tolerance": 0.05},
+    {"id": "cam_wall_fill", "target": [null, 0.6], "baseline": 0.427, "tolerance": 0.05},
     {"id": "cam_melee_occlusion", "target": [null, 0.25], "baseline": 0.0161, "tolerance": 0.05},
     {"id": "cam_lock_both_in_frame", "target": [0.95, null], "baseline": 1.0, "tolerance": 0.05}
   ]

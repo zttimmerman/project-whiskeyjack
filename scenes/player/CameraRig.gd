@@ -61,10 +61,11 @@ const LOCK_SWING_STEP := 0.3  # radians
 const LOCK_SWING_STEPS := 5
 const LOCK_SWING_MAX := 1.5
 
-@export var framing: Framing = Framing.CURRENT
+@export var framing: Framing = Framing.A_MEDIUM
 @export var pivot_height: float = 0.7  # above the body origin (0.9 m above the feet): 1.6 m
 @export var arm_length: float = 2.5
 @export var lock_arm_length: float = 3.0  # locked on, the arm pulls back a little to fit both
+@export var shoulder_tuck: float = 0.6  # the most of the shoulder offset a short arm gives up
 @export var shoulder_offset: float = 0.9  # to the right
 @export var fov: float = 72.0
 @export var look_right: float = deg_to_rad(4.0)  # the free look turns this far right, so he sits in the left third
@@ -75,8 +76,8 @@ const LOCK_SWING_MAX := 1.5
 @export var lens_band: float = 0.35
 @export var look_down: float = 0.1  # radians the look tilts below the arm, so a wall ahead leaves floor in view
 @export var probe_radius: float = 0.3
-@export var ease_out_speed: float = 5.0  # 1/s, the arm growing back after a squeeze
-@export var squeeze_fraction: float = 0.6  # below this share of the full arm the camera rises
+@export var ease_out_speed: float = 10.0  # 1/s, the arm growing back after a squeeze
+@export var squeeze_fraction: float = 0.8  # below this share of the full arm the camera rises
 @export var squeeze_rise: float = 1.0  # metres at an arm of zero
 @export var lock_separation: float = 1.1  # metres the target should stand off the player's line of sight
 @export var lock_angle_min: float = deg_to_rad(8.0)
@@ -156,6 +157,10 @@ func update_view(delta: float, yaw: float, pitch: float, target: Node3D) -> void
 	else:
 		_length = lerpf(_length, reach, 1.0 - exp(-ease_out_speed * delta))
 	var cam_pos: Vector3 = arm[0] + arm[2] * _length
+	# A short arm brings the camera in toward his back; the shoulder offset shrinks with it (up to
+	# shoulder_tuck of it), or close in his near side leaves the frame sideways
+	var tuck: Vector3 = (pivot - arm[0]) * clampf(1.0 - _length / maxf(_mode_length, 0.01), 0.0, shoulder_tuck)
+	cam_pos += tuck * _cast(cam_pos, cam_pos + tuck)
 
 	# Squeezed: rise, and turn the look from the heading toward his torso, so he stays whole in view from above
 	# his shoulder; the tilt below then keeps his head and torso, and the target, inside the vertical FOV
@@ -181,7 +186,8 @@ func update_view(delta: float, yaw: float, pitch: float, target: Node3D) -> void
 				target.global_position - Vector3.UP * BODY_HALF_HEIGHT
 			]
 		)
-	look_yaw = _framed_yaw(cam_pos, look_yaw)
+	look_pitch = _framed_pitch(cam_pos, look_yaw, look_pitch, spans)
+	look_yaw = _framed_yaw(cam_pos, look_yaw, look_pitch)
 	look_pitch = _framed_pitch(cam_pos, look_yaw, look_pitch, spans)
 	camera.global_transform = Transform3D(Basis(Vector3.UP, look_yaw) * Basis(Vector3.RIGHT, look_pitch), cam_pos)
 	_apply_shake(delta)
@@ -234,22 +240,26 @@ func _framed_pitch(cam_pos: Vector3, view_yaw: float, pitch: float, spans: Array
 	return clampf(pitch, lo, hi)
 
 
-# The look yaw nearest `yaw` that keeps the corners of his head-and-torso box inside the horizontal FOV: close
-# in, the shoulder offset and look_right would otherwise push his near side off the left edge
-func _framed_yaw(cam_pos: Vector3, yaw: float) -> float:
+# The look yaw nearest `yaw` that keeps the corners of his head-and-torso box inside the horizontal FOV at
+# this pitch: close in, the shoulder offset and look_right would otherwise push his near side off the edge.
+# Angles are taken in camera space, since a pitched look brings near corners in sideways.
+func _framed_yaw(cam_pos: Vector3, yaw: float, pitch: float) -> float:
 	var vp := get_viewport().get_visible_rect().size
 	var half := atan(tan(deg_to_rad(fov * 0.5)) * vp.x / maxf(vp.y, 1.0)) - deg_to_rad(FRAME_MARGIN_DEG)
+	var to_cam := (Basis(Vector3.UP, yaw) * Basis(Vector3.RIGHT, pitch)).inverse()
+	var heading := Basis(Vector3.UP, yaw)  # the box turns with the view, as the replay's probe measures it
 	var lo := -INF
 	var hi := INF
 	var c := _body.global_position
-	var heading := Basis(Vector3.UP, yaw)  # the box turns with the view, as the replay's probe measures it
-	for dx: float in [-BODY_RADIUS, BODY_RADIUS]:
-		for dz: float in [-BODY_RADIUS, BODY_RADIUS]:
-			var d := c + heading * Vector3(dx, 0, dz) - cam_pos
-			var a := atan2(-d.x, -d.z)  # the yaw that would look straight at this corner
-			var rel := wrapf(a - yaw, -PI, PI)
-			lo = maxf(lo, rel - half)
-			hi = minf(hi, rel + half)
+	for dy: float in [0.0, BODY_HALF_HEIGHT]:
+		for dx: float in [-BODY_RADIUS, BODY_RADIUS]:
+			for dz: float in [-BODY_RADIUS, BODY_RADIUS]:
+				var local := to_cam * (c + heading * Vector3(dx, dy, dz) - cam_pos)
+				if local.z > -0.05:
+					continue  # beside or behind the lens: yaw can't bring it in
+				var rel := atan2(-local.x, -local.z)  # positive: left of centre
+				lo = maxf(lo, rel - half)
+				hi = minf(hi, rel + half)
 	if lo > hi:
 		return yaw
 	return yaw + clampf(0.0, lo, hi)

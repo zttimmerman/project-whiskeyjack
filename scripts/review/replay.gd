@@ -169,6 +169,8 @@ func _sample_camera() -> void:
 	var c := camera.global_position
 	data["camera_position"] = [EventLog.round3(c.x), EventLog.round3(c.y), EventLog.round3(c.z)]
 	data["look_pitch_deg"] = EventLog.round3(rad_to_deg(asin(clampf(-camera.global_basis.z.y, -1.0, 1.0))))
+	var look := -camera.global_basis.z
+	data["look_yaw_deg"] = EventLog.round3(rad_to_deg(atan2(-look.x, -look.z)))
 	var p := _player.global_position
 	data["player_position"] = [EventLog.round3(p.x), EventLog.round3(p.y), EventLog.round3(p.z)]
 	EventLog.log_event("camera", data)
