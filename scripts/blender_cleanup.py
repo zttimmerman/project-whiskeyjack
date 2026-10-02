@@ -1025,13 +1025,19 @@ def main():
         json.dump(report, f, indent=2)
 
 
-def import_source(path, report):
+def import_source(path, report, node_rest=False):
     """glTF (generated and most kits), OBJ and FBX (downloaded kits). Blender's OBJ importer (forward -Z,
     up Y) and glTF importer land a Y-up source in the same Z-up frame, so kit pieces agree whichever
-    format they came in; FBX uses Blender's bundled importer."""
+    format they came in; FBX uses Blender's bundled importer.
+    node_rest (sourced assets): a rigged glTF keeps its own node hierarchy as the rest pose instead of
+    the importer guessing one from the inverse bind matrices. The guess folds a skinned mesh node's
+    transform (which glTF says to ignore) into the rig: Gobkit's FBX-converted animals carry a -90 deg X,
+    x100 mesh node and came out pitched 90 deg nose-down. Unrigged files have no bind pose to guess."""
     ext = path.rsplit(".", 1)[-1].lower()
     if ext in ("glb", "gltf"):
-        bpy.ops.import_scene.gltf(filepath=path)
+        bpy.ops.import_scene.gltf(filepath=path, guess_original_bind_pose=not node_rest)
+        if node_rest:
+            report["gltf_bind_pose"] = "node rest (not guessed from the inverse bind matrices)"
     elif ext == "obj":
         bpy.ops.wm.obj_import(filepath=path)
     elif ext == "fbx":
@@ -1043,7 +1049,7 @@ def import_source(path, report):
 
 def run(args, params, report):
     bpy.ops.wm.read_factory_settings(use_empty=True)
-    import_source(args.input, report)
+    import_source(args.input, report, node_rest=params.get("source") == "download")
 
     # Blender's glTF importer creates a mesh (e.g. "Icosphere") to draw bones. It isn't in the
     # source file, but it would be exported as real geometry, so drop it.

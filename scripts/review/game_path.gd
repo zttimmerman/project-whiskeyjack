@@ -5,9 +5,9 @@ extends RefCounted
 # plays clips with AnimationPlayer.play() from whatever was playing (BaseEnemy and Player _play_anim),
 # so this pass drives each handover the game makes (HANDOVERS: idle → attack, run → idle, an attack's
 # end → locomotion, ...) the same way: play() with the game scene's own AnimationPlayer settings
-# (blend times included), advanced one physics frame at a time. Per frame it samples both hands and
-# feet in the character's own frame (the model root's: the body's travel and turning don't count) and
-# measures:
+# (blend times included), advanced one physics frame at a time. Per frame it samples the rig's limbs
+# (its limb map, scripts/review/LimbMap.gd: a humanoid's hands and feet by default) in the character's
+# own frame (the model root's: the body's travel and turning don't count) and measures:
 # - snap_excess_mps: across the handover (from the frame before it to three frames after the blend),
 #   how much faster any hand or foot moves than that limb ever moves in either clip played on its own:
 #   a pose snap. Gated by the art bible's motion_handover_snap_mps (docs/art-bible.md → Judge
@@ -25,7 +25,6 @@ extends RefCounted
 # contact marker; the window covers the whole windup.
 # Ideas after htdt/godogen asset-gen/motion.md pitfalls 16 and 18 (MIT; no code copied).
 
-const LIMBS := {"left_hand": "LeftHand", "right_hand": "RightHand", "left_foot": "LeftFoot", "right_foot": "RightFoot"}
 # [from, to]: the handovers BaseEnemy, ArcherEnemy and Player make, by the clip names they play
 const HANDOVERS := [
 	["idle", "run"],
@@ -138,14 +137,20 @@ static func _scenes_with(needle: String, dir: String) -> Array:
 	return out
 
 
-# Every handover in the library, each its worst phase
+# Every handover in the library, each its worst phase; `limbs` is the rig's limb map (humanoid if null)
 static func measure_all(
-	holder: Node, model: PackedScene, lib: AnimationLibrary, settings: Dictionary, fps: float, windup := 0.0
+	holder: Node,
+	model: PackedScene,
+	lib: AnimationLibrary,
+	settings: Dictionary,
+	fps: float,
+	windup := 0.0,
+	limbs: LimbMap = null
 ) -> Array:
 	var steady := {}
 	var out := []
 	for pair in handovers(lib.get_animation_list()):
-		out.append(measure_pair(holder, model, lib, pair[0], pair[1], settings, fps, steady, windup))
+		out.append(measure_pair(holder, model, lib, pair[0], pair[1], settings, fps, steady, windup, limbs))
 	return out
 
 
@@ -160,32 +165,36 @@ static func measure_pair(
 	settings: Dictionary,
 	fps: float,
 	steady := {},
-	windup := 0.0
+	windup := 0.0,
+	limbs: LimbMap = null
 ) -> Dictionary:
+	var lm := LimbMap.or_default(limbs)
 	for clip in [from, to]:
 		if not steady.has(clip):
-			steady[clip] = _steady_peaks(holder, model, lib, clip, settings, fps)
+			steady[clip] = _steady_peaks(holder, model, lib, clip, settings, fps, lm)
 	var own := {}
-	for limb in LIMBS:
+	for limb in lm.limbs():
 		own[limb] = maxf(steady[from].get(limb, 0.0), steady[to].get(limb, 0.0))
 	var phased := lib.get_animation(from).loop_mode != Animation.LOOP_NONE or [from, to] in CUTS
 	var worst := {}
 	for phase in LOOP_PHASES if phased else [-1.0]:
-		var r := _handover(holder, model, lib, from, to, phase, settings, fps, own, windup)
+		var r := _handover(holder, model, lib, from, to, phase, settings, fps, own, windup, lm)
 		if worst.is_empty() or r["snap_excess_mps"] > worst["snap_excess_mps"]:
 			worst = r
 	worst["phases"] = LOOP_PHASES.size() if phased else 1
 	return worst
 
 
-# Hands and feet in the model root's frame
-static func limb_points(root: Node3D, sk: Skeleton3D) -> Dictionary:
+# The limb map's limbs (humanoid: hands and feet) in the model root's frame
+static func limb_points(root: Node3D, sk: Skeleton3D, limbs: LimbMap = null) -> Dictionary:
+	var lm := LimbMap.or_default(limbs)
 	var out := {}
 	var to_root := root.global_transform.affine_inverse() * sk.global_transform
-	for limb: String in LIMBS:
-		var i := sk.find_bone(LIMBS[limb])
-		if i >= 0:
-			out[limb] = (to_root * sk.get_bone_global_pose(i)).origin
+	var named := lm.limbs()
+	for limb: String in named:
+		var p: Variant = lm.locate(sk, named[limb], to_root)
+		if p != null:
+			out[limb] = p
 	return out
 
 
@@ -223,13 +232,13 @@ static func _spawn(holder: Node, model: PackedScene, lib: AnimationLibrary, sett
 	return {"root": root, "ap": ap, "sk": sk}
 
 
-static func _sample(inst: Dictionary) -> Dictionary:
+static func _sample(inst: Dictionary, lm: LimbMap) -> Dictionary:
 	var ap: AnimationPlayer = inst["ap"]
 	var clip := String(ap.current_animation)
 	return {
 		"clip": clip,
 		"position": ap.current_animation_position if clip != "" else 0.0,
-		"limbs": limb_points(inst["root"], inst["sk"])
+		"limbs": limb_points(inst["root"], inst["sk"], lm)
 	}
 
 
@@ -243,7 +252,7 @@ static func _speeds(a: Dictionary, b: Dictionary, fps: float) -> Dictionary:
 
 # Each limb's top speed over the clip played on its own (a loop includes its wrap)
 static func _steady_peaks(
-	holder: Node, model: PackedScene, lib: AnimationLibrary, clip: String, settings: Dictionary, fps: float
+	holder: Node, model: PackedScene, lib: AnimationLibrary, clip: String, settings: Dictionary, fps: float, lm: LimbMap
 ) -> Dictionary:
 	var inst := _spawn(holder, model, lib, settings)
 	var ap: AnimationPlayer = inst["ap"]
@@ -252,7 +261,7 @@ static func _steady_peaks(
 	var prev := {}
 	for f in int(ceil(lib.get_animation(clip).length * fps)) + 2:
 		ap.advance(1.0 / fps)
-		var s := _sample(inst)
+		var s := _sample(inst, lm)
 		if f > 0:
 			var sp := _speeds(prev, s, fps)
 			for limb in sp:
@@ -279,7 +288,8 @@ static func _handover(
 	settings: Dictionary,
 	fps: float,
 	own: Dictionary,
-	windup := 0.0
+	windup := 0.0,
+	lm: LimbMap = null
 ) -> Dictionary:
 	var inst := _spawn(holder, model, lib, settings)
 	var ap: AnimationPlayer = inst["ap"]
@@ -304,7 +314,7 @@ static func _handover(
 	var lead := maxi(1, roundi(phase * from_len * fps)) if phase >= 0.0 else int(ceil(from_len * fps)) + 5
 	for f in lead:
 		ap.advance(1.0 / fps)
-		samples.append(_sample(inst))
+		samples.append(_sample(inst, lm))
 		if handed[0]:
 			h = samples.size() - 1
 			break
@@ -339,7 +349,7 @@ static func _handover(
 		elif winding:
 			posed = AttackWindup.position(to_clip, windup, 0.0)
 		ap.advance(1.0 / fps)
-		var s := _sample(inst)
+		var s := _sample(inst, lm)
 		if posed >= 0.0:
 			s["expected"] = posed
 		posed = -1.0
@@ -358,7 +368,7 @@ static func _handover(
 	var ref := _spawn(holder, model, lib, settings)
 	(ref["ap"] as AnimationPlayer).play(to)
 	(ref["ap"] as AnimationPlayer).seek(last["position"], true)
-	var own_pose := limb_points(ref["root"], ref["sk"])
+	var own_pose := limb_points(ref["root"], ref["sk"], lm)
 	ref["root"].free()
 	var settle := 0.0
 	for limb in own_pose:

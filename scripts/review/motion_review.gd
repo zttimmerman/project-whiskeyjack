@@ -16,6 +16,9 @@ extends Node
 #       [--library <res:// tres>] [--clips a,b]            clips from a character library (default: all)
 #       [--raw <PACK>:<Clip>=<name>[,...]]                   a clip straight from a Quaternius pack, before the
 #                                                           build tool's options (in_place, trim, speed)
+#       [--own-clips all|<clip>[,...]]                       the model's own clips (a sourced rig that ships them)
+#       [--limbs <res:// tres>]                              the rig's limb map (scripts/review/LimbMap.gd:
+#                                                           feet, hands, root); default the humanoid map
 #       [--ground-speed <clip>=<m/s>[,...]]                  gameplay speed for locomotion clips (in-place loops)
 #       [--kind <clip>=death|in_place|action[,...]]
 #           default: death* death; idle, run, walk in_place; else action
@@ -24,11 +27,12 @@ extends Node
 #                                                           uses (default: the scene that loads --library)
 #       [--game-path-only true]                              only the game-path pass: no images, runs headless
 #
-# Measurements, sampled at FPS on the CPU-skinned mesh (the same linear blend skinning the GPU does):
-# - root travel: horizontal Hips offset from the first frame (death and in-place clips must stay put);
+# Measurements, sampled at FPS on the CPU-skinned mesh (the same linear blend skinning the GPU does).
+# Bones come from the limb map (a humanoid's Hips, Foot/Toes and hands unless --limbs names another):
+# - root travel: horizontal root (Hips) offset from the first frame (death and in-place clips must stay put);
 # - foot slide: ground-relative horizontal speed of each foot's planted contact point, at --ground-speed
 #   (scripts/review/foot_slide.gd, shared with the locomotion test);
-# - bind deviation: each vertex's displacement from its bind-pose position, both in the Hips frame;
+# - bind deviation: each vertex's displacement from its bind-pose position, both in the root's frame;
 # - edge stretch: |length / bind length - 1| over the mesh's edges of at least MIN_EDGE.
 # Everything above scrubs the clip with seek(). The game-path pass (scripts/review/game_path.gd) plays
 # each handover the game makes between the library's clips the way the game does, play() and a
@@ -49,11 +53,21 @@ const PACKS := {
 	"UAL1": "res://assets/animations/quaternius/UAL1_Standard.glb",
 	"UAL2": "res://assets/animations/quaternius/UAL2_Standard.glb",
 }
+# Plot colours per foot, in the limb map's order (a humanoid's left and right first)
+const FOOT_COLORS := [
+	Color(0.1, 0.45, 0.85),
+	Color(0.85, 0.35, 0.1),
+	Color(0.15, 0.6, 0.25),
+	Color(0.65, 0.2, 0.6),
+	Color(0.55, 0.45, 0.1),
+	Color(0.1, 0.6, 0.6),
+]
 
 var args := {}
 var model_scene: PackedScene
 var out_dir := ""
 var game_path := {}  # {"scene", "settings", "fps", "handovers": [...]}, empty when not run
+var limbs := LimbMap.new()
 
 
 func _ready() -> void:
@@ -71,6 +85,8 @@ func _ready() -> void:
 		else String(args["out"])
 	)
 	DirAccess.make_dir_recursive_absolute(out_dir)
+	if args.has("limbs"):
+		limbs = load(args["limbs"])
 	var lib := AnimationLibrary.new()
 	var sources := {}
 	if args.has("library"):
@@ -89,6 +105,17 @@ func _ready() -> void:
 			lib.add_animation(kv[1], ap.get_animation(clip_name).duplicate())
 			sources[kv[1]] = "%s (raw pack clip, no build options)" % kv[0]
 			pack.free()
+	if args.has("own-clips"):
+		var own: Node = model_scene.instantiate()
+		var aps := own.find_children("*", "AnimationPlayer", true, false)
+		var ap: AnimationPlayer = aps[0] if not aps.is_empty() else null
+		var wanted: Array = Array(ap.get_animation_list()) if ap and args["own-clips"] == "all" else []
+		if args["own-clips"] != "all":
+			wanted = Array(String(args["own-clips"]).split(","))
+		for n in wanted:
+			lib.add_animation(n, ap.get_animation(n).duplicate())
+			sources[n] = "%s (the model's own clip)" % args["model"]
+		own.free()
 	_game_path(lib)
 	if args.get("game-path-only", "") != "true":
 		for n in lib.get_animation_list():
@@ -107,7 +134,7 @@ func _game_path(lib: AnimationLibrary) -> void:
 	# The whole character library when there is one: --clips picks what's reviewed, not what the game plays
 	var game_lib: AnimationLibrary = load(args["library"]) if args.has("library") else lib
 	var windup := GamePath.scene_windup(scene) if scene != "" else 0.0
-	var results := GamePath.measure_all(holder, model_scene, game_lib, settings, fps, windup)
+	var results := GamePath.measure_all(holder, model_scene, game_lib, settings, fps, windup, limbs)
 	holder.queue_free()
 	game_path = {
 		"scene": scene if scene != "" else null,
@@ -300,13 +327,14 @@ func _measure(lib: AnimationLibrary, clip: String, ground_speed: float) -> Dicti
 	var edges := _edges(meshes)
 	# Bind pose: the mesh's own vertices (skin binds map mesh space into each bone's space). Resetting
 	# the skeleton to rest doesn't reproduce it on retargeted models: the rest fixer moves the rests
-	# (13 cm off on the player). The Hips bind frame is the inverse of the Hips bind pose.
+	# (13 cm off on the player). The root's (Hips) bind frame is the inverse of its bind pose.
+	var root_bone := sk.find_bone(limbs.root)
 	var rest := PackedVector3Array()
 	var hips_rest := sk.global_transform
 	for md in meshes:
 		for v in md["verts"]:
 			rest.append(sk.global_transform * v)
-		var hb: int = Array(md["bind_bones"]).find(sk.find_bone("Hips"))
+		var hb: int = Array(md["bind_bones"]).find(root_bone)
 		if hb >= 0:
 			hips_rest = sk.global_transform * md["bind_poses"][hb].affine_inverse()
 	var rest_local := PackedVector3Array()
@@ -318,16 +346,8 @@ func _measure(lib: AnimationLibrary, clip: String, ground_speed: float) -> Dicti
 	ap.play(clip)
 	var length := lib.get_animation(clip).length
 	var n := int(ceil(length * FPS)) + 1
-	var series := {
-		"t": [],
-		"hips": [],
-		"left_foot": [],
-		"right_foot": [],
-		"left_contact": [],
-		"right_contact": [],
-		"bind_deviation_max": [],
-		"edge_stretch_max": []
-	}
+	# "hips" is the root bone's path, whatever the rig calls it; each foot adds <side>_foot and <side>_contact
+	var series := {"t": [], "hips": [], "bind_deviation_max": [], "edge_stretch_max": []}
 	var lo := Vector3(INF, INF, INF)
 	var hi := -lo
 	var dev_all := []
@@ -339,7 +359,7 @@ func _measure(lib: AnimationLibrary, clip: String, ground_speed: float) -> Dicti
 	for f in n:
 		var t: float = minf(f / FPS, length)
 		ap.seek(t, true)
-		var hips := sk.global_transform * sk.get_bone_global_pose(sk.find_bone("Hips"))
+		var hips := sk.global_transform * sk.get_bone_global_pose(root_bone)
 		var pos := _skin(sk, meshes)
 		var inv := hips.affine_inverse()
 		var fdev := 0.0
@@ -368,15 +388,16 @@ func _measure(lib: AnimationLibrary, clip: String, ground_speed: float) -> Dicti
 				stretch_all.append(s)
 		series["t"].append(t)
 		series["hips"].append(hips.origin)
-		feet.append(FootSlide.feet(sk))
+		feet.append(FootSlide.feet(sk, limbs))
 		series["bind_deviation_max"].append(fdev)
 		series["edge_stretch_max"].append(fst)
 	holder.queue_free()
 	# Contacts and ground-relative speeds
 	var looping := lib.get_animation(clip).loop_mode != Animation.LOOP_NONE
 	var fs := FootSlide.measure(series["t"], feet, ground_speed, looping)
-	var speeds := {"left": fs["speeds"]["left"], "right": fs["speeds"]["right"], "hips": []}
-	for side in FootSlide.SIDES:
+	var speeds := {"hips": []}
+	for side in FootSlide.sides(feet):
+		speeds[side] = fs["speeds"][side]
 		series[side + "_foot"] = fs["points"][side]
 		series[side + "_contact"] = fs["contact"][side]
 	var ground := Vector3(0, 0, ground_speed)
@@ -635,7 +656,7 @@ func _onion_view(lib: AnimationLibrary, clip: String, m: Dictionary, times: Arra
 		var inst := _spawn(vp, lib, clip, times[i])
 		var edge := i == 0 or i == times.size() - 1
 		_tint(inst["root"], Color(u, 0.25, 1.0 - u, 0.55 if edge else 0.16))
-	# The Hips path: one dot per sampled frame, blue to red
+	# The root's (Hips) path: one dot per sampled frame, blue to red
 	var hips: Array = m["series"]["hips"]
 	for f in hips.size():
 		var u := float(f) / maxi(hips.size() - 1, 1)
@@ -696,10 +717,10 @@ func _onion(lib: AnimationLibrary, clip: String, m: Dictionary, times: Array, so
 				Vector2(10, 52),
 				(
 					(
-						"Red cross and post = the character's origin; floor grid 0.25 m (bold every 1 m); dots = Hips path."
-						+ " Hips travel max %.2f m, final %.2f m."
+						"Red cross and post = the character's origin; floor grid 0.25 m (bold every 1 m); dots = %s path."
+						+ " %s travel max %.2f m, final %.2f m."
 					)
-					% [m["root_travel_max_m"], m["root_travel_final_m"]]
+					% [limbs.root, limbs.root, m["root_travel_max_m"], m["root_travel_final_m"]]
 				),
 				15
 			)
@@ -770,11 +791,18 @@ func _plots(clip: String, m: Dictionary, ground_speed: float, source: String) ->
 	var dz: Array = s["hips"].map(func(p): return p.z - h0.z)
 	var dxz: Array = s["hips"].map(func(p): return Vector2(p.x - h0.x, p.z - h0.z).length())
 	var hy: Array = s["hips"].map(func(p): return p.y)
-	var ly: Array = s["left_foot"].map(func(p): return p.y)
-	var ry: Array = s["right_foot"].map(func(p): return p.y)
-	var lc := Color(0.1, 0.45, 0.85, 0.35)
-	var rc := Color(0.85, 0.35, 0.1, 0.35)
-	var bands := [["left foot planted", s["left_contact"], lc], ["right foot planted", s["right_contact"], rc]]
+	var root := limbs.root
+	var heights := [[root.to_lower(), hy, Color(0.3, 0.3, 0.3)]]
+	var foot_speeds := [["root (%s)" % root.to_lower(), m["speeds"]["hips"], Color(0.3, 0.3, 0.3)]]
+	var bands := []
+	var sides: Array = limbs.feet.keys()
+	for i in sides.size():
+		var side: String = sides[i]
+		var label := side.replace("_", " ") + " foot"
+		var c: Color = FOOT_COLORS[i % FOOT_COLORS.size()]
+		heights.append([label, s[side + "_foot"].map(func(p): return p.y), c])
+		foot_speeds.append([label, m["speeds"][side], c])
+		bands.append([label + " planted", s[side + "_contact"], Color(c, 0.35)])
 	var w := (PLOT_SIZE.x - 200) / 2.0
 	var h := (PLOT_SIZE.y - 190) / 2.0
 	return await _canvas(
@@ -791,10 +819,11 @@ func _plots(clip: String, m: Dictionary, ground_speed: float, source: String) ->
 				Vector2(20, 52),
 				(
 					(
-						"Hips travel max %.3f m / final %.3f m.  Foot slide p90 %.3f m/s (max %.3f) over %d planted frames."
+						"%s travel max %.3f m / final %.3f m.  Foot slide p90 %.3f m/s (max %.3f) over %d planted frames."
 						+ "  Bind deviation max %.3f m.  Skin stretch max %.3f."
 					)
 					% [
+						root,
 						m["root_travel_max_m"],
 						m["root_travel_final_m"],
 						m["foot_slide_p90_mps"],
@@ -809,7 +838,7 @@ func _plots(clip: String, m: Dictionary, ground_speed: float, source: String) ->
 			_plot_panel(
 				ctl,
 				Rect2(80, 100, w, h),
-				"Root (Hips) horizontal offset from frame 1 (m)",
+				"Root (%s) horizontal offset from frame 1 (m)" % root,
 				t,
 				[
 					["x", dx, Color(0.2, 0.6, 0.2)],
@@ -820,13 +849,9 @@ func _plots(clip: String, m: Dictionary, ground_speed: float, source: String) ->
 			_plot_panel(
 				ctl,
 				Rect2(180 + w, 100, w, h),
-				"Heights (m): Hips and each foot's contact point",
+				"Heights (m): %s and each foot's contact point" % root,
 				t,
-				[
-					["hips", hy, Color(0.3, 0.3, 0.3)],
-					["left foot", ly, Color(0.1, 0.45, 0.85)],
-					["right foot", ry, Color(0.85, 0.35, 0.1)]
-				],
+				heights,
 				bands
 			)
 			_plot_panel(
@@ -834,17 +859,13 @@ func _plots(clip: String, m: Dictionary, ground_speed: float, source: String) ->
 				Rect2(80, 170 + h, w, h),
 				"Ground-relative horizontal speed (m/s): feet vs root",
 				t,
-				[
-					["root (hips)", m["speeds"]["hips"], Color(0.3, 0.3, 0.3)],
-					["left foot", m["speeds"]["left"], Color(0.1, 0.45, 0.85)],
-					["right foot", m["speeds"]["right"], Color(0.85, 0.35, 0.1)]
-				],
+				foot_speeds,
 				bands
 			)
 			_plot_panel(
 				ctl,
 				Rect2(180 + w, 170 + h, w, h),
-				"Per frame: max vertex deviation from bind pose (m, Hips frame) and max skin stretch",
+				"Per frame: max vertex deviation from bind pose (m, %s frame) and max skin stretch" % root,
 				t,
 				[
 					["bind deviation (m)", s["bind_deviation_max"], Color(0.5, 0.2, 0.6)],
@@ -886,6 +907,11 @@ func _review(clip: String, lib: AnimationLibrary, source: String) -> void:
 		"vertices": m["vertices"],
 		"edges": m["edges"]
 	}
+	if args.has("limbs"):
+		# Only with --limbs, so a humanoid's metrics are unchanged
+		out["limbs"] = {
+			"map": args["limbs"], "body_plan": limbs.body_plan, "root": limbs.root, "feet": limbs.feet.keys()
+		}
 	for k in [
 		"root_travel_max_m",
 		"root_travel_final_m",

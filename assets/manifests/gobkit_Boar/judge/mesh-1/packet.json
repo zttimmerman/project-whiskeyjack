@@ -1,0 +1,529 @@
+{
+  "asset_id": "gobkit_Boar",
+  "stage": "mesh",
+  "created_at": "2026-10-02T21:44:29+00:00",
+  "replay": null,
+  "packet_dir": "assets/manifests/gobkit_Boar/judge/mesh-1",
+  "brief": {
+    "type": "prop",
+    "brief": "The subject of spike-agent-animation (docs/backlog/spike-agent-animation.md): a CC0 rigged quadruped from Gobkit Free Animal Pack Vol. 2, for the per-rig limb map (data/rigs/gobkit_limbs.tres) and the motion review. Not placed in any level. Imported as a prop because sourced characters are not supported; it keeps its own 16-bone rig and clips.",
+    "prompt": "A chibi low-poly boar: a round brown body on four short stub legs, a big head with a snout, tusks and ears, and a small tail; rigged (16 bones) with idle, attack, dead and walk clips.",
+    "face_limit": null,
+    "triangle_budget": 1320,
+    "texture_size": 128,
+    "target_size_m": null,
+    "pivot": "source",
+    "tip_end": null,
+    "rigid_parts": null,
+    "skirt_reweight": null,
+    "source": "download",
+    "source_scale": 1.0,
+    "orientation": "source"
+  },
+  "brief_palette": {
+    "Saddle Leather": {
+      "hex": "#4A2A10",
+      "plain": "dark reddish-brown"
+    },
+    "Barrow Oak": {
+      "hex": "#8C5933",
+      "plain": "warm mid-brown"
+    },
+    "Peat Black": {
+      "hex": "#2E2926",
+      "plain": "very dark brown-black"
+    },
+    "Old Bone": {
+      "hex": "#CCB484",
+      "plain": "pale yellowed beige"
+    }
+  },
+  "art_bible": {
+    "brief_section": null,
+    "form_block": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art.",
+    "concept_lighting_block": "Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights.",
+    "tolerances": "## Judge tolerances\n\nThe numeric assertions the asset judge checks (`scripts/judge.py`, which reads this table; nothing else holds these numbers). \u0394E is CIE76 in Lab. Each value is set on principle and checked against the replays in `assets/manifests/judge_replays/`: the known-bad inputs fail, and where a shipped asset or clip fails too, it's a real finding recorded in `docs/decisions.md`, not a reason to loosen the limit.\n\n| Check | Limit | Applies to | Why |\n|---|---|---|---|\n| `concept_palette_de` | 25 | concept | A brief palette color counts as present when one of the concept's main colors (\u2265 3% of the figure) sits within this distance. Loose on purpose: the player's approved \"deep dark teal\" rendered as navy #14313F. |\n| `color_min_share` | 0.05 | model, mesh | Colors covering less of the concept (or texture) than this are details, not checked. |\n| `color_kept_ratio` | 0.33 | model, mesh | A concept color must keep at least this fraction of its concept share in the texture, or the model lost it. |\n| `color_dab_after` | 5 | model, mesh | Hue/saturation distance (Lab a, b) between a corrected texture cluster and its concept color. |\n| `palette_de_before` | 20 | model, mesh | Concept-less assets (sourced ones measured over their UV footprint): distance before correction for a palette group covering at least `color_min_share`. Correction can repaint a wrong color: blade attempt 1's olive-green blade grouped under Old Bone (27.5 \u0394E) and came out bone-colored. |\n| `palette_de_after` | 12 | model, mesh | Concept-less assets: distance between a corrected palette group's median and its palette color. |\n| `mesh_max_holes` | 10 | model, mesh (generated) | Open boundary loops after welding. Fewer are reported for the judge to weigh (the blade's 4 grip slits are recorded and accepted). |\n| `mesh_kit_max_loops_per_part` | 2 | mesh (**sourced kits**, the rule for them instead of `mesh_max_holes`) | Open boundary loops on any one welded part. Kit pieces are open-backed shells: a KayKit wall is a body plus 22 raised blocks set flush on its face, each open at the back (23 loops), and a barrel hoop is an open band (2). Allowed only where no loop is visible from the judge's views, which is the judge's call. |\n| `motion_root_travel_m` | 0.15 | death, in-place clips | Horizontal Hips travel from the first frame. The pre-fix `Death01` travelled 0.45\u20130.51 m; shipped idles and runs stay under 0.07. |\n| `motion_foot_slide_mps` | 0.5 | in-place clips | 90th-percentile ground-relative speed of a planted foot (near its lowest point and not moving vertically), at the clip's gameplay speed: 10% of the player's run. Reported only for action clips (attacks and rolls pivot on planted feet on purpose) and deaths (the feet kick out as the body collapses onto its pinned Hips; `Death01` can't meet both this and the travel limit, since keeping 30% of its travel still slid 0.80 m/s). |\n| `motion_bind_deviation_m` | 1.8 | every clip | Largest vertex displacement from the bind pose in the Hips frame; a character's height, because no attached vertex gets that far from the hips. Normal clips reach 0.5\u20131.6 (arms swinging from the T-pose). |\n| `motion_edge_stretch` | 1.0 | every clip | Largest relative length change of any mesh edge of at least 1 cm from the bind pose: an edge has doubled. Rigid-part characters read 0. |\n| `motion_handover_snap_mps` | 5 | every clip's game handovers (motion review game-path pass); adopted by the user 2026-10-01, asserted by the judge | Across a handover played the game's way (`play()` with the scene's blend settings, per physics frame, cut-short one-shots at four phases, enemy windups posed as `BaseEnemy` poses them), how much faster any hand or foot moves, in the character's own frame, than it ever moves in either clip on its own. 5 m/s is a one-frame pop of about 8 cm at 60 fps. Hard cuts (no blend time) read 16\u201369 m/s on most handovers; with the per-transition blend times in the character scenes every handover reads 4.3 or less (worst: Back-file attack to stagger). `tests/unit/test_anim_blends.gd` holds every game handover to this limit. |"
+  },
+  "design_notes": [],
+  "images": [
+    {
+      "role": "front",
+      "path": "assets/manifests/gobkit_Boar/judge/mesh-1/01_front.png",
+      "sha256": "e4da137088099b2bb87c4623fae362346443f4ef53a89bcd49a418e12fa1bfeb",
+      "source": "assets/manifests/gobkit_Boar/judge/mesh-1/work/views/front.png",
+      "source_sha256": "e4da137088099b2bb87c4623fae362346443f4ef53a89bcd49a418e12fa1bfeb",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "right",
+      "path": "assets/manifests/gobkit_Boar/judge/mesh-1/02_right.png",
+      "sha256": "2324e4e9f4985d3dfc394c0d15104e3db6d8dc1899add0bbd2ce62d458b2d29f",
+      "source": "assets/manifests/gobkit_Boar/judge/mesh-1/work/views/right.png",
+      "source_sha256": "2324e4e9f4985d3dfc394c0d15104e3db6d8dc1899add0bbd2ce62d458b2d29f",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "back",
+      "path": "assets/manifests/gobkit_Boar/judge/mesh-1/03_back.png",
+      "sha256": "b45404f3dcabc1927d7cffa9a37ff795d03b5964c2825cfa1b39c7bc3579853d",
+      "source": "assets/manifests/gobkit_Boar/judge/mesh-1/work/views/back.png",
+      "source_sha256": "b45404f3dcabc1927d7cffa9a37ff795d03b5964c2825cfa1b39c7bc3579853d",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "top",
+      "path": "assets/manifests/gobkit_Boar/judge/mesh-1/04_top.png",
+      "sha256": "e67de0df1ee6a58d0dadfbe8545d729d075e7ea168aeae20fe690011bc933675",
+      "source": "assets/manifests/gobkit_Boar/judge/mesh-1/work/views/top.png",
+      "source_sha256": "e67de0df1ee6a58d0dadfbe8545d729d075e7ea168aeae20fe690011bc933675",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "clay_front",
+      "path": "assets/manifests/gobkit_Boar/judge/mesh-1/05_clay_front.png",
+      "sha256": "f9650cffaa8400ecaf8d6f3bc865cf36092acdf13c497f373690e95d6e0b48c7",
+      "source": "assets/manifests/gobkit_Boar/judge/mesh-1/work/views/clay_front.png",
+      "source_sha256": "f9650cffaa8400ecaf8d6f3bc865cf36092acdf13c497f373690e95d6e0b48c7",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "wireframe_front",
+      "path": "assets/manifests/gobkit_Boar/judge/mesh-1/06_wireframe_front.png",
+      "sha256": "0c2ef45c4c52747b28a86d2446ccfc162f0f40d55eb8c2a6dc5eacedadf0e629",
+      "source": "assets/manifests/gobkit_Boar/judge/mesh-1/work/views/wireframe_front.png",
+      "source_sha256": "0c2ef45c4c52747b28a86d2446ccfc162f0f40d55eb8c2a6dc5eacedadf0e629",
+      "size": [
+        512,
+        512
+      ]
+    }
+  ],
+  "metrics": {
+    "mesh": {
+      "triangles": 380,
+      "triangle_budget": 1320,
+      "texture_sizes": [
+        [
+          128,
+          128
+        ]
+      ],
+      "part_count": 17,
+      "parts": [
+        {
+          "triangles": 84,
+          "size_m": [
+            3.1553,
+            3.3648,
+            2.9869
+          ],
+          "boundary_loops": 0
+        },
+        {
+          "triangles": 56,
+          "size_m": [
+            2.1918,
+            1.0595,
+            1.2247
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 30,
+          "size_m": [
+            0.8126,
+            0.3112,
+            0.8351
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 30,
+          "size_m": [
+            0.8126,
+            0.3112,
+            0.8351
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 28,
+          "size_m": [
+            0.2293,
+            0.7683,
+            0.3526
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 18,
+          "size_m": [
+            0.5715,
+            0.5715,
+            1.5889
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 18,
+          "size_m": [
+            0.5715,
+            0.5715,
+            1.5889
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 18,
+          "size_m": [
+            0.5715,
+            0.5715,
+            1.5889
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 18,
+          "size_m": [
+            0.5715,
+            0.5715,
+            1.5889
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 12,
+          "size_m": [
+            0.532,
+            0.3158,
+            0.7408
+          ],
+          "boundary_loops": 0
+        },
+        {
+          "triangles": 12,
+          "size_m": [
+            0.532,
+            0.3158,
+            0.7408
+          ],
+          "boundary_loops": 0
+        },
+        {
+          "triangles": 12,
+          "size_m": [
+            0.4346,
+            0.6669,
+            0.2805
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 12,
+          "size_m": [
+            0.4346,
+            0.6669,
+            0.2805
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 12,
+          "size_m": [
+            0.1763,
+            0.2968,
+            0.3998
+          ],
+          "boundary_loops": 0
+        },
+        {
+          "triangles": 12,
+          "size_m": [
+            0.1218,
+            0.208,
+            0.2757
+          ],
+          "boundary_loops": 0
+        },
+        {
+          "triangles": 4,
+          "size_m": [
+            0.2011,
+            0.0381,
+            0.2327
+          ],
+          "boundary_loops": 1
+        },
+        {
+          "triangles": 4,
+          "size_m": [
+            0.2011,
+            0.0381,
+            0.2327
+          ],
+          "boundary_loops": 1
+        }
+      ],
+      "holes_boundary_loops": 12,
+      "non_manifold_edges": 0,
+      "true_dims_m": {
+        "x": 3.1553,
+        "y": 4.5739,
+        "z": 3.5256
+      },
+      "true_length_m": 3.5256,
+      "target_size_m": null,
+      "source_scale": 1.0,
+      "clean_warnings": [
+        "material 'lambert1': albedo baked from a node chain (Cycles EMIT bake)"
+      ],
+      "clean_errors": [],
+      "view_coverage": {
+        "front": 0.5543,
+        "right": 0.3497,
+        "back": 0.5543,
+        "top": 0.3444,
+        "clay_front": 0.5543,
+        "wireframe_front": 0.1156
+      }
+    },
+    "color_vs_palette": [
+      [
+        {
+          "color": "Saddle Leather",
+          "target": "#4A2A10",
+          "share": 0.5305,
+          "median_before": "#5D352A",
+          "delta_e_before": 11.1,
+          "applied": true,
+          "median_after": "#4A2A10",
+          "delta_e_after": 0.0
+        },
+        {
+          "color": "Barrow Oak",
+          "target": "#8C5933",
+          "share": 0.2056,
+          "median_before": "#844027",
+          "delta_e_before": 12.8,
+          "applied": true,
+          "median_after": "#8C5933",
+          "delta_e_after": 0.0
+        },
+        {
+          "color": "Peat Black",
+          "target": "#2E2926",
+          "share": 0.2081,
+          "median_before": "#3B3439",
+          "delta_e_before": 7.5,
+          "applied": true,
+          "median_after": "#2D2927",
+          "delta_e_after": 1.0
+        },
+        {
+          "color": "Old Bone",
+          "target": "#CCB484",
+          "share": 0.0558,
+          "median_before": "#E4E0D4",
+          "delta_e_before": 26.0,
+          "applied": true,
+          "median_after": "#CCB484",
+          "delta_e_after": 0.0
+        }
+      ]
+    ],
+    "color_vs_palette_basis": [
+      {
+        "measured_over": {
+          "texels": 394,
+          "of": 16384,
+          "mask": "the asset's UV footprint"
+        },
+        "lightness": "lifted or lowered (sourced asset)",
+        "shared_atlas": null
+      }
+    ],
+    "dominant_palette_group": {
+      "color": "Saddle Leather",
+      "target": "#4A2A10",
+      "share": 0.5305,
+      "median_before": "#5D352A",
+      "delta_e_before": 11.1,
+      "applied": true,
+      "median_after": "#4A2A10",
+      "delta_e_after": 0.0
+    },
+    "validate": {
+      "status": "pass",
+      "errors": [],
+      "warnings": [
+        "prop has a Skeleton3D",
+        "gross check: holes: 12 open boundary loops after welding"
+      ],
+      "humanoid_mappable": false,
+      "missing_required": [
+        "LeftShoulder",
+        "LeftUpperArm",
+        "LeftLowerArm",
+        "RightShoulder",
+        "RightUpperArm",
+        "RightLowerArm",
+        "LeftUpperLeg",
+        "LeftLowerLeg",
+        "LeftFoot",
+        "RightUpperLeg",
+        "RightLowerLeg",
+        "RightFoot"
+      ],
+      "sockets": null
+    }
+  },
+  "assertions": [
+    {
+      "name": "triangles within budget",
+      "passed": true,
+      "value": 380,
+      "limit": 1320,
+      "detail": "art bible: triangles after triangulation, summed across the GLB"
+    },
+    {
+      "name": "one albedo texture at the brief's size",
+      "passed": true,
+      "value": [
+        [
+          128,
+          128
+        ]
+      ],
+      "limit": 128,
+      "detail": ""
+    },
+    {
+      "name": "holes per part (sourced kit: open boundary loops on any one part)",
+      "passed": true,
+      "value": 1,
+      "limit": 2.0,
+      "detail": "12 loops over 17 parts after welding at 0.01 mm; parts over the limit: 0; no loop may be visible in the views (judge)"
+    },
+    {
+      "name": "palette color Saddle Leather close before correction",
+      "passed": true,
+      "value": 11.1,
+      "limit": 20.0,
+      "detail": "median #5D352A covers 53% of the texture, target #4A2A10"
+    },
+    {
+      "name": "palette color Saddle Leather within tolerance after correction",
+      "passed": true,
+      "value": 0.0,
+      "limit": 12.0,
+      "detail": "median #5D352A -> #4A2A10, target #4A2A10"
+    },
+    {
+      "name": "palette color Barrow Oak close before correction",
+      "passed": true,
+      "value": 12.8,
+      "limit": 20.0,
+      "detail": "median #844027 covers 21% of the texture, target #8C5933"
+    },
+    {
+      "name": "palette color Barrow Oak within tolerance after correction",
+      "passed": true,
+      "value": 0.0,
+      "limit": 12.0,
+      "detail": "median #844027 -> #8C5933, target #8C5933"
+    },
+    {
+      "name": "palette color Peat Black close before correction",
+      "passed": true,
+      "value": 7.5,
+      "limit": 20.0,
+      "detail": "median #3B3439 covers 21% of the texture, target #2E2926"
+    },
+    {
+      "name": "palette color Peat Black within tolerance after correction",
+      "passed": true,
+      "value": 1.0,
+      "limit": 12.0,
+      "detail": "median #3B3439 -> #2D2927, target #2E2926"
+    },
+    {
+      "name": "palette color Old Bone close before correction",
+      "passed": false,
+      "value": 26.0,
+      "limit": 20.0,
+      "detail": "median #E4E0D4 covers 6% of the texture, target #CCB484"
+    },
+    {
+      "name": "palette color Old Bone within tolerance after correction",
+      "passed": true,
+      "value": 0.0,
+      "limit": 12.0,
+      "detail": "median #E4E0D4 -> #CCB484, target #CCB484"
+    },
+    {
+      "name": "validate stage passed",
+      "passed": true,
+      "value": "pass",
+      "limit": "pass",
+      "detail": ""
+    }
+  ],
+  "questions": [
+    "Does the mesh match the approved concept (or, with no concept, the brief's prompt) part for part? List each named element as present, absent or changed.",
+    "Is anything missing or malformed: holes, fused limbs or parts that should be separate, separate pieces that should be one (see the part list), spikes, floating fragments, extra props?",
+    "Budget and scale: do the triangle, texture and size assertions pass?",
+    "Colors: do the color assertions pass? Name any concept or palette color the texture lost, or a large area in a color the brief doesn't ask for.",
+    "Rigged characters: does the validate report map every required humanoid bone, and do the sockets resolve?"
+  ],
+  "escalate_rules": [
+    "Open style or taste questions (is it appealing, is the silhouette strong enough, is this the right design) are not yours: escalate them.",
+    "A deliberate, recorded design change (see design_notes) is not a defect: don't flag it again, but say so if the asset contradicts the note.",
+    "When the evidence can't settle a question (the view that would show it is missing), escalate rather than guess.",
+    "Revise only when one concrete edit would fix every blocker and major finding. Otherwise escalate."
+  ],
+  "refine_budget": {
+    "per_stage": 1,
+    "used": 0
+  },
+  "tool_versions": {
+    "python": "3.14.7",
+    "blender": "Blender 5.0.1",
+    "godot": "4.7.2.stable.official.ed1daf0bf",
+    "tripo": "0.5.1"
+  },
+  "sourcing": {
+    "note": "sourced, no concept: judge against the brief's prompt and palette",
+    "colors": "palette metrics cover only the texels this piece's UVs sample (on a shared atlas, not the whole atlas); correction may darken as well as lift",
+    "holes": "open boundary loops are allowed per part up to mesh_kit_max_loops_per_part, only where none is visible in the views: check the views for any gap",
+    "pack": "gobkit_animal_b",
+    "source_url": "https://gobkit.com/freebies/animalB/gobkit-animalB-pack.zip",
+    "author": "Gobkit / Alsomind Tech Co., Ltd.",
+    "license": "CC0-1.0",
+    "source_file": ".downloads/gobkit_animal_b/gobkit-animalB-pack/Boar.glb",
+    "orientation": "source",
+    "pivot": "source",
+    "atlas": null
+  },
+  "subject": {
+    "kind": "shipped mesh",
+    "path": "assets/meshes/gobkit_Boar.glb",
+    "sha256": "43c3932aad49dfdc466f317fff905d10e05020cbf4ca155f959ae2810e74de23",
+    "concept": null
+  },
+  "assertions_failed": 1
+}

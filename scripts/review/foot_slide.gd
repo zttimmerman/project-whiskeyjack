@@ -2,30 +2,37 @@ extends RefCounted
 
 # Foot slide, shared by the motion review (scripts/review/motion_review.gd) and the locomotion test
 # (tests/unit/test_locomotion_foot_slide.gd): the ground-relative horizontal speed of each foot's
-# contact point (the lower of Foot and Toes) while it is planted (within CONTACT_HEIGHT of its lowest
-# point in the clip, and moving vertically slower than CONTACT_VSPEED). Clips play in place, so the
-# ground moves at the gameplay speed toward -Z (the model faces +Z). The tolerance is the art bible's
-# motion_foot_slide_mps (docs/art-bible.md → Judge tolerances), the only source.
+# contact point (the lowest of its candidates: a humanoid's Foot and Toes) while it is planted (within
+# CONTACT_HEIGHT of its lowest point in the clip, and moving vertically slower than CONTACT_VSPEED).
+# Clips play in place, so the ground moves at the gameplay speed toward -Z (the model faces +Z). The
+# tolerance is the art bible's motion_foot_slide_mps (docs/art-bible.md → Judge tolerances), the only source.
 # A contact point's velocity is its own bone's: when the lowest point hops from Foot to Toes as the
 # foot rolls, differencing across the hop reads the ~5 cm between the two joints as motion (a false
 # 0.8 m/s dip mid-stance on the Back-file walk). A looping clip's last sample is its first instant
 # again: velocities difference across the seam, and that instant counts once.
+# Which bones are feet comes from the rig's limb map (scripts/review/LimbMap.gd), humanoid by default:
+# any number of feet, each with one or more contact candidates (a stub leg's single bone, at its tip).
 
 const CONTACT_HEIGHT := 0.03
 const CONTACT_VSPEED := 0.25  # m/s
-const SIDES := ["left", "right"]
-const BONES := {"left": ["LeftFoot", "LeftToes"], "right": ["RightFoot", "RightToes"]}
 
 
-# Both feet's bone positions this frame, in world space: {"left": [foot, toes], "right": [foot, toes]}
-static func feet(sk: Skeleton3D) -> Dictionary:
+# Every foot's candidate positions this frame, in world space, by side in the limb map's order
+# (humanoid: {"left": [foot, toes], "right": [foot, toes]}); a bone the rig lacks reads as the origin
+static func feet(sk: Skeleton3D, limbs: LimbMap = null) -> Dictionary:
+	var lm := LimbMap.or_default(limbs)
 	var out := {}
-	for side in SIDES:
+	for side: String in lm.feet:
 		out[side] = []
-		for bone in BONES[side]:
-			var i := sk.find_bone(bone)
-			out[side].append((sk.global_transform * sk.get_bone_global_pose(i)).origin if i >= 0 else Vector3.ZERO)
+		for bone: String in lm.feet[side]:
+			var p: Variant = lm.locate(sk, bone, sk.global_transform)
+			out[side].append(p if p != null else Vector3.ZERO)
 	return out
+
+
+# The sides feet() returned, in order
+static func sides(samples: Array) -> Array:
+	return samples[0].keys() if not samples.is_empty() else []
 
 
 # t: sample times (s); samples: one feet() result per sample. Returns each side's contact points,
@@ -34,12 +41,18 @@ static func measure(t: Array, samples: Array, ground_speed: float, looping: bool
 	var ground := Vector3(0, 0, ground_speed)
 	var out := {"points": {}, "contact": {}, "speeds": {}}
 	var slides := []
-	for side in SIDES:
-		var bones := [samples.map(func(s): return s[side][0]), samples.map(func(s): return s[side][1])]
+	for side in sides(samples):
+		var bones := []
+		for c in samples[0][side].size():
+			bones.append(samples.map(func(s): return s[side][c]))
 		var lower := []
 		var points := []
 		for f in samples.size():
-			var k := 1 if bones[1][f].y < bones[0][f].y else 0
+			# The lowest candidate; ties keep the earlier one (a humanoid's ankle over its toes)
+			var k := 0
+			for c in range(1, bones.size()):
+				if bones[c][f].y < bones[k][f].y:
+					k = c
 			lower.append(k)
 			points.append(bones[k][f])
 		var ys: Array = points.map(func(p): return p.y)
