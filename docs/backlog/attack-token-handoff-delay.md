@@ -1,13 +1,13 @@
 ---
 id: attack-token-handoff-delay
 title: "Delay the attack-token hand-off when a holder dies"
-status: ready
+status: in-review
 kind: fix
 targets: [enemy_attackers_max]
 after: []
 phase: gameplay-2
-branch: null
-pr: null
+branch: fix/attack-token-handoff-delay
+pr: 43
 updated: 2026-10-02
 ---
 ## Goal
