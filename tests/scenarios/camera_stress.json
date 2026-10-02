@@ -1,11 +1,11 @@
 {
   "name": "camera_stress",
-  "description": "The camera stress run (design bible §2; cam_* targets): from Level 1's spawn, facing east, back into the start room's west wall (the arm squeezed against the player's back), walk east into Corridor A and lock on to the central room's levy as it comes, fight it beside Corridor A's north pillar (a light swing that falls short and one that lands, a dodge left that pins the camera against the pillar, three more hits to the kill), then, once its body is gone, turn about in the 4 m corridor: 90° right, walk, 90° left. Every other enemy is removed so only the camera varies. Movement is camera-relative, so a different camera can change the path; the inputs stay fixed.",
+  "description": "The camera stress run (design bible §2; cam_* targets): from Level 1's spawn, facing east, back into the start room's west wall (the arm squeezed against the player's back), walk east into Corridor A and lock on to the central room's levy as it comes, fight it beside Corridor A's north pillar (a light swing that falls short and one that lands, a dodge left that pins the camera against the pillar, three more hits to the kill), then, once its body is gone, turn about in the 4 m corridor: 90° right, walk, 90° left; then stand and look fully up and fully down (camera_up, camera_down: mouse and pad pitch take the same path). Every other enemy is removed so only the camera varies. Movement is camera-relative, so a different camera can change the path; the inputs stay fixed.",
   "scene": "res://scenes/world/Level1.tscn",
   "seed": 1,
   "player": {"position": [0, 1, 0], "yaw_deg": -90, "pitch": -0.2},
   "remove": ["EnemyCorridorA", "EnemyCentral2", "ArcherCentral", "ArcherCorridorB", "EnemyExit1", "EnemyExit2"],
-  "duration_frames": 1020,
+  "duration_frames": 1170,
   "steps": [
     {"frame": 0, "action": "move_backward", "pressed": true},
     {"frame": 110, "action": "move_backward", "pressed": false},
@@ -32,12 +32,16 @@
     {"frame": 847, "action": "camera_right", "pressed": false},
     {"frame": 900, "action": "camera_left", "pressed": true},
     {"frame": 947, "action": "camera_left", "pressed": false},
-    {"frame": 960, "action": "move_forward", "pressed": false}
+    {"frame": 960, "action": "move_forward", "pressed": false},
+    {"frame": 970, "action": "camera_up", "pressed": true},
+    {"frame": 1030, "action": "camera_up", "pressed": false},
+    {"frame": 1040, "action": "camera_down", "pressed": true},
+    {"frame": 1140, "action": "camera_down", "pressed": false}
   ],
   "checks": [
     {"id": "cam_player_in_frame", "target": [1.0, null], "baseline": 1.0, "tolerance": 0.05},
-    {"id": "cam_wall_fill", "target": [null, 0.6], "baseline": 0.47, "tolerance": 0.05},
-    {"id": "cam_melee_occlusion", "target": [null, 0.25], "baseline": 0.0148, "tolerance": 0.05},
+    {"id": "cam_wall_fill", "target": [null, 0.6], "baseline": 0.446, "tolerance": 0.05},
+    {"id": "cam_melee_occlusion", "target": [null, 0.25], "baseline": 0.0161, "tolerance": 0.05},
     {"id": "cam_lock_both_in_frame", "target": [0.95, null], "baseline": 1.0, "tolerance": 0.05}
   ]
 }
