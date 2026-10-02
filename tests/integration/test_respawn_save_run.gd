@@ -21,8 +21,17 @@ func test_respawn_restores_the_save(timeout := 120000) -> void:
 		"--",
 		"--save-slot=respawn_test",
 	]
+	# OS.execute blocks the runner, so gdUnit4's own timeout can't fire: the child runs under the shared
+	# limit (scripts/tools/godot_timeout.sh), and a hung child exits 124 instead of stalling the suite
+	var limited := [
+		ProjectSettings.globalize_path("res://scripts/tools/godot_timeout.sh"),
+		"GODOT_TIMEOUT_RUN",
+		"100",
+		SCRIPT,
+		OS.get_executable_path()
+	]
 	var output := []
-	var code := OS.execute(OS.get_executable_path(), args, output, true)
+	var code := OS.execute("bash", limited + args, output, true)
 	var text: String = "".join(output)
 	assert_int(code).override_failure_message("%s exited %d:\n%s" % [SCRIPT, code, text]).is_equal(0)
 	assert_str(text).contains("PASS test_respawn_save")

@@ -20,6 +20,9 @@ extends Node
 #       [--kind <clip>=death|in_place|action[,...]]
 #           default: death* death; idle, run, walk in_place; else action
 #       [--frames <n>]                                       strip frames (default 14)
+#       [--game-scene <res:// tscn>]                         whose AnimationPlayer settings the game-path pass
+#                                                           uses (default: the scene that loads --library)
+#       [--game-path-only true]                              only the game-path pass: no images, runs headless
 #
 # Measurements, sampled at FPS on the CPU-skinned mesh (the same linear blend skinning the GPU does):
 # - root travel: horizontal Hips offset from the first frame (death and in-place clips must stay put);
@@ -27,8 +30,15 @@ extends Node
 #   (scripts/review/foot_slide.gd, shared with the locomotion test);
 # - bind deviation: each vertex's displacement from its bind-pose position, both in the Hips frame;
 # - edge stretch: |length / bind length - 1| over the mesh's edges of at least MIN_EDGE.
+# Everything above scrubs the clip with seek(). The game-path pass (scripts/review/game_path.gd) plays
+# each handover the game makes between the library's clips the way the game does, play() and a
+# per-physics-frame advance with the game scene's blend settings, and adds to each clip's metrics
+# (key game_path) the handovers into and out of it: the pose snap (hand and foot speed above either
+# clip's own, art bible motion_handover_snap_mps), frames where the wrong clip plays, and the settle
+# error. All handovers also go to game_path.json.
 
 const FootSlide := preload("res://scripts/review/foot_slide.gd")
+const GamePath := preload("res://scripts/review/game_path.gd")
 const FPS := 30.0
 const STRETCH_EDGES := 12
 const MIN_EDGE := 0.01  # m: shorter edges (crotch and seam slivers) turn millimetre moves into huge ratios
@@ -43,6 +53,7 @@ const PACKS := {
 var args := {}
 var model_scene: PackedScene
 var out_dir := ""
+var game_path := {}  # {"scene", "settings", "fps", "handovers": [...]}, empty when not run
 
 
 func _ready() -> void:
@@ -78,9 +89,71 @@ func _ready() -> void:
 			lib.add_animation(kv[1], ap.get_animation(clip_name).duplicate())
 			sources[kv[1]] = "%s (raw pack clip, no build options)" % kv[0]
 			pack.free()
-	for n in lib.get_animation_list():
-		await _review(String(n), lib, sources[n])
+	_game_path(lib)
+	if args.get("game-path-only", "") != "true":
+		for n in lib.get_animation_list():
+			await _review(String(n), lib, sources[n])
 	get_tree().quit()
+
+
+func _game_path(lib: AnimationLibrary) -> void:
+	var scene: String = args.get("game-scene", "")
+	if scene == "" and args.has("library"):
+		scene = GamePath.scene_for_library(args["library"])
+	var settings := GamePath.game_settings(scene) if scene != "" else {}
+	var fps := float(Engine.physics_ticks_per_second)
+	var holder := Node3D.new()
+	add_child(holder)
+	# The whole character library when there is one: --clips picks what's reviewed, not what the game plays
+	var game_lib: AnimationLibrary = load(args["library"]) if args.has("library") else lib
+	var results := GamePath.measure_all(holder, model_scene, game_lib, settings, fps)
+	holder.queue_free()
+	game_path = {
+		"scene": scene if scene != "" else null,
+		"settings": var_to_str(settings),
+		"fps": fps,
+		"handovers": results,
+	}
+	for r: Dictionary in results:
+		print(
+			(
+				"GAMEPATH %s>%s blend=%.2f snap_excess=%.2f peak=%.2f (%s, own %.2f) wrong_clip=%d settle=%.3f"
+				% [
+					r["from"],
+					r["to"],
+					r.get("blend_s", 0.0),
+					r["snap_excess_mps"],
+					r.get("peak_mps", 0.0),
+					r.get("peak_limb", ""),
+					r.get("own_peak_mps", 0.0),
+					r.get("wrong_clip_frames", -1),
+					r.get("settle_error_m", -1.0),
+				]
+			)
+		)
+	var f := FileAccess.open(out_dir.path_join("game_path.json"), FileAccess.WRITE)
+	f.store_string(JSON.stringify(game_path, "  "))
+	f.close()
+
+
+# This clip's share of the game-path pass: the handovers into and out of it, and their worst values
+func _game_path_for(clip: String) -> Variant:
+	if game_path.is_empty():
+		return null
+	var mine: Array = game_path["handovers"].filter(func(r): return r["from"] == clip or r["to"] == clip)
+	var worst := {}
+	for r: Dictionary in mine:
+		if worst.is_empty() or r["snap_excess_mps"] > worst["snap_excess_mps"]:
+			worst = r
+	return {
+		"scene": game_path["scene"],
+		"fps": game_path["fps"],
+		"handovers": mine,
+		"handover_snap_mps": worst.get("snap_excess_mps", 0.0),
+		"handover_snap_worst": "%s>%s" % [worst["from"], worst["to"]] if not worst.is_empty() else "",
+		"wrong_clip_frames": mine.reduce(func(a, r): return a + r.get("wrong_clip_frames", 0), 0),
+		"settle_error_max_m": mine.reduce(func(a, r): return maxf(a, r.get("settle_error_m", 0.0)), 0.0),
+	}
 
 
 func _opt(key: String, clip: String, fallback: String) -> String:
@@ -825,6 +898,7 @@ func _review(clip: String, lib: AnimationLibrary, source: String) -> void:
 		"edge_stretch_worst_bone"
 	]:
 		out[k] = m[k]
+	out["game_path"] = _game_path_for(clip)
 	out["series"] = {
 		"t": s["t"],
 		"hips": s["hips"].map(func(p): return [snappedf(p.x, 0.001), snappedf(p.y, 0.001), snappedf(p.z, 0.001)])

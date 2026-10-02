@@ -3,6 +3,8 @@ extends SceneTree
 # Writes the held-prop wrapper scenes: each instances a prop GLB under a Node3D with the child
 # Transform3D that seats it in the hand. The art bible keeps alignment here, never in the mesh.
 #   godot --headless --path . -s scripts/tools/make_held_props.gd
+# The save is checked (scripts/tools/generator_checks.gd): a node lost in packing fails the run, and
+# node ids are kept across runs, so two runs give identical files.
 #
 # Offsets are in the hand bone's local frame after retargeting, which is the same on every
 # SkeletonProfileHumanoid character: +Y runs along the hand to the fingers, +X is the thumb side
@@ -26,8 +28,11 @@ const PROPS := {
 	},
 }
 
+const Checks := preload("res://scripts/tools/generator_checks.gd")
+
 
 func _init() -> void:
+	var failed := false
 	for path in PROPS:
 		var spec: Dictionary = PROPS[path]
 		var root := Node3D.new()
@@ -43,8 +48,15 @@ func _init() -> void:
 			var r: Vector3 = spec["rotation_deg"]
 			basis = Basis.from_euler(Vector3(deg_to_rad(r.x), deg_to_rad(r.y), deg_to_rad(r.z)))
 		prop.transform = Transform3D(basis, spec["offset"])
-		var scene := PackedScene.new()
-		scene.pack(root)
-		print("PROP ", path, " err ", ResourceSaver.save(scene, path))
+		# Packed only when every node survives the round trip; node ids are kept, so a rebuild is identical
+		var checked := Checks.pack_checked(root, "make_held_props")
 		root.free()
-	quit()
+		var err: String = checked["error"]
+		if err == "":
+			err = Checks.save_scene(checked["scene"], path, "make_held_props")
+		if err != "":
+			push_error(err)
+			failed = true
+			continue
+		print("PROP ", path, " saved")
+	quit(1 if failed else 0)

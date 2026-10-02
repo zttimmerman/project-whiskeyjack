@@ -48,6 +48,8 @@ SEVERITIES = ("blocker", "major", "minor")
 AUTO_REFINES_PER_STAGE = 1
 EXIT_REVISE, EXIT_ESCALATE = 5, 6
 TOLERANCE_ROW = re.compile(r"^\| `([a-z_]+)` \| ([0-9.]+) \|", re.M)
+# A row whose "Applies to" cell says **proposed** is reported as an advisory, not asserted, until adopted
+PROPOSED_ROW = re.compile(r"^\| `([a-z_]+)` \| [0-9.]+ \| [^|\n]*\*\*proposed\*\*", re.M)
 
 # What the judge is asked, per stage. Checkable questions only; style and taste escalate.
 QUESTIONS = {
@@ -104,6 +106,10 @@ def tolerances():
     if not t:
         raise JudgeError("docs/art-bible.md has no Judge tolerances table")
     return t
+
+
+def proposed_tolerances(text=None):
+    return set(PROPOSED_ROW.findall(P.ART_BIBLE.read_text() if text is None else text))
 
 
 def art_bible_section(heading_regex):
@@ -460,6 +466,33 @@ def packet_motion(packet, pdir, brief, m, args, tol):
               mm["bind_deviation_max_m"], tol["motion_bind_deviation_m"], f"p99 {mm['bind_deviation_p99_m']} m; worst vertex on {mm.get('bind_deviation_worst_bone')}")
     assertion(packet, "skin stretch (edge length vs bind pose)", mm["edge_stretch_max"] <= tol["motion_edge_stretch"],
               mm["edge_stretch_max"], tol["motion_edge_stretch"], f"p99 {mm['edge_stretch_p99']}; worst edge on {mm.get('edge_stretch_worst_bone')}")
+    game_path_assertions(packet, mm, tol, proposed_tolerances())
+
+
+def game_path_assertions(packet, mm, tol, proposed):
+    """The motion review's game-path pass (scripts/review/game_path.gd): the clip plays through the game's
+    play() path, and its handovers don't snap. Absent from metrics written before the pass existed."""
+    gp = mm.get("game_path")
+    if not gp:
+        return
+    errors = [f"{h['from']}>{h['to']}: {h['error']}" for h in gp["handovers"] if "error" in h]
+    assertion(packet, "the expected clip plays through the game's play path", gp["wrong_clip_frames"] == 0 and not errors,
+              gp["wrong_clip_frames"], 0,
+              f"frames with another clip current or the clip not advancing, over {len(gp['handovers'])} handovers "
+              f"({gp.get('scene')}); settle error max {gp['settle_error_max_m']} m" + (f"; failed: {errors}" if errors else ""))
+    key = "motion_handover_snap_mps"
+    if key not in tol or not gp["handovers"]:
+        return
+    worst = max(gp["handovers"], key=lambda h: h["snap_excess_mps"])
+    entry = {"name": "no pose snap at handovers (game play path)", "passed": gp["handover_snap_mps"] <= tol[key],
+             "value": gp["handover_snap_mps"], "limit": tol[key],
+             "detail": f"worst {gp['handover_snap_worst']}: {worst.get('peak_limb')} at {worst.get('peak_mps')} m/s vs its own "
+                       f"{worst.get('own_peak_mps')} m/s, blend {worst.get('blend_s')} s"}
+    if key in proposed:
+        entry["detail"] += "; proposed tolerance (art bible), reported only until adopted"
+        packet.setdefault("advisories", []).append(entry)
+    else:
+        packet["assertions"].append(entry)
 
 
 STAGE_PACKETS = {"concept": packet_concept, "multiview": packet_multiview, "model": packet_model, "mesh": packet_mesh, "motion": packet_motion}
@@ -516,6 +549,8 @@ def cmd_packet(args):
           f"{len(packet['assertions'])} assertions, {len(failed)} failed)")
     for a in failed:
         print(f"  FAIL {a['name']}: {a['value']} (limit {a['limit']}) {a['detail']}")
+    for a in packet.get("advisories", []):
+        print(f"  {'ok' if a['passed'] else 'ADVISORY'} {a['name']}: {a['value']} (proposed limit {a['limit']}) {a['detail']}")
     print(f"next: spawn the asset-judge subagent on {P.rel(pdir / 'packet.json')}, save its JSON reply to "
           f"{P.rel(pdir / 'verdict.json')}, then run: python3 scripts/judge.py record {P.rel(pdir)} {P.rel(pdir / 'verdict.json')}")
     return 0

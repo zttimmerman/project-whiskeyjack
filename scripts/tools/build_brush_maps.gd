@@ -18,6 +18,9 @@ const MAPS := {
 	"res://scenes/world/trials/crypt_trial.map": "res://scenes/world/trials/CryptTrial_brushes.tscn",
 }
 const MAP_SETTINGS := "res://data/maps/crypt_map_settings.tres"
+# Godot 4.7 gives every saved node a random unique_id; Checks.rewrite_node_ids keeps each node's id
+# from the previous build (new nodes get a hash of their path), so two builds are identical.
+const Checks := preload("res://scripts/tools/generator_checks.gd")
 
 
 func _initialize() -> void:
@@ -32,26 +35,31 @@ func _run() -> void:
 		if built == null:
 			failed = true
 			continue
-		var packed := PackedScene.new()
-		var err := packed.pack(built)
+		# Packed only when every node survives the round trip (scripts/tools/generator_checks.gd)
+		var checked := Checks.pack_checked(built, "build_brush_maps")
 		built.free()
-		if err != OK:
-			push_error("build_brush_maps: couldn't pack %s (%s)" % [map_path, error_string(err)])
+		if checked["error"] != "":
+			push_error(checked["error"])
 			failed = true
 			continue
+		var packed: PackedScene = checked["scene"]
+		var previous := FileAccess.get_file_as_string(scene_path) if FileAccess.file_exists(scene_path) else ""
 		# Keep the scene's uid across builds, so the level that instances it keeps its reference.
 		var uid := _file_uid(scene_path)
 		if uid == ResourceUID.INVALID_ID:
 			uid = ResourceUID.create_id()
 		if not ResourceUID.has_id(uid):
 			ResourceUID.add_id(uid, scene_path)
-		err = ResourceSaver.save(packed, scene_path)
+		var err := ResourceSaver.save(packed, scene_path)
 		if err == OK:
 			err = ResourceSaver.set_uid(scene_path, uid)
-		if err == OK:
-			err = _stable_node_ids(scene_path)
 		if err != OK:
 			push_error("build_brush_maps: couldn't save %s (%s)" % [scene_path, error_string(err)])
+			failed = true
+			continue
+		var ids_err := Checks.rewrite_node_ids(scene_path, previous, "build_brush_maps")
+		if ids_err != "":
+			push_error(ids_err)
 			failed = true
 			continue
 		print("built %s -> %s" % [map_path, scene_path])
@@ -93,35 +101,6 @@ static func _own(node: Node, scene: Node) -> void:
 		return
 	for child in node.get_children():
 		_own(child, scene)
-
-
-# Godot 4.7 gives every saved node a random unique_id, so two builds would differ. Each one is
-# replaced by a hash of the node's path, which is stable across builds and unique within the scene.
-static func _stable_node_ids(scene_path: String) -> Error:
-	var file_path := ProjectSettings.globalize_path(scene_path)
-	var text := FileAccess.get_file_as_string(file_path)
-	var node := RegEx.create_from_string(
-		'\\[node name="([^"]+)"(?: type="[^"]+")?(?: parent="([^"]*)")? unique_id=(\\d+)'
-	)
-	var out := ""
-	var at := 0
-	var seen := {}
-	for found in node.search_all(text):
-		var path := found.get_string(2).path_join(found.get_string(1)) if found.get_start(2) >= 0 else "."
-		var id := path.hash() & 0x7FFFFFFF
-		if seen.has(id):
-			push_error("build_brush_maps: node id clash in %s (%s, %s)" % [scene_path, seen[id], path])
-			return ERR_ALREADY_EXISTS
-		seen[id] = path
-		out += text.substr(at, found.get_start(3) - at) + str(id)
-		at = found.get_end(3)
-	out += text.substr(at)
-	var f := FileAccess.open(file_path, FileAccess.WRITE)
-	if f == null:
-		return FileAccess.get_open_error()
-	f.store_string(out)
-	f.close()
-	return OK
 
 
 static func _file_uid(path: String) -> int:

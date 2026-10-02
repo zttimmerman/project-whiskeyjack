@@ -14,7 +14,6 @@ Exit code: 0 all pass, 2 any validate failure, 1 usage or tool error.
 """
 
 import json
-import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -38,7 +37,10 @@ def validate(asset_id, tmp):
     cmd = [pipeline.GODOT, "--headless", "--path", ROOT, "-s", pipeline.GODOT_SCRIPT, "--",
            "--glb", glb, "--params", params_path, "--report", report_path]
     print(f"validate: {asset_id}: " + " ".join(str(c) for c in cmd), flush=True)
-    proc = subprocess.run([str(c) for c in cmd], capture_output=True, text=True, stdin=subprocess.DEVNULL)
+    try:
+        proc = pipeline.godot_timeout.run(cmd, f"validate {asset_id}", "GODOT_TIMEOUT_RUN", 600, capture_output=True, text=True)
+    except pipeline.godot_timeout.ToolTimeout as e:
+        raise pipeline.PipelineError(str(e)) from None
     if not report_path.exists():
         print(proc.stdout + proc.stderr)
         raise pipeline.PipelineError(f"{asset_id}: godot_validate.gd wrote no report (exit {proc.returncode})")

@@ -19,15 +19,25 @@ if [ -z "$GODOT" ]; then
 	if command -v godot > /dev/null; then GODOT="$(command -v godot)"; else GODOT=/Applications/Godot.app/Contents/MacOS/Godot; fi
 fi
 test -x "$GODOT" || { echo "pre-push: Godot not found at $GODOT (set GODOT_BIN)" >&2; exit 1; }
+# Every Godot call runs under a limit (scripts/tools/godot_timeout.sh): a hung Godot fails the push
+source scripts/tools/godot_timeout.sh || exit 2
 
 LOGS="$(mktemp -d)" || exit 2
 trap 'rm -rf "$LOGS"' EXIT
 
 echo "pre-push: import and compile every script (ci/load_all.gd)"
+# Runs one Godot call under its limit into a log. Only a timeout fails here; check_log.py judges the logs.
+godot_logged() {
+	local log=$1
+	shift
+	with_timeout "$@" < /dev/null > "$log" 2>&1
+	[ $? -eq 124 ] && { tail -1 "$log" >&2; exit 1; }
+	return 0
+}
 # A fresh checkout's first import reports missing UID-cache errors, so it gets an extra run
-[ -d .godot ] || "$GODOT" --headless --path . --import < /dev/null > /dev/null 2>&1
-"$GODOT" --headless --path . --import < /dev/null > "$LOGS/import.log" 2>&1
-"$GODOT" --headless --path . -s res://ci/load_all.gd -d < /dev/null > "$LOGS/load-all.log" 2>&1
+[ -d .godot ] || godot_logged "$LOGS/import-1.log" GODOT_TIMEOUT_IMPORT 900 "pre-push: first import" "$GODOT" --headless --path . --import
+godot_logged "$LOGS/import.log" GODOT_TIMEOUT_IMPORT 900 "pre-push: import" "$GODOT" --headless --path . --import
+godot_logged "$LOGS/load-all.log" GODOT_TIMEOUT_RUN 600 "pre-push: load_all" "$GODOT" --headless --path . -s res://ci/load_all.gd -d
 python3 ci/check_log.py --baseline ci/warnings-baseline.txt "$LOGS/import.log" "$LOGS/load-all.log" || exit 1
 
 echo "pre-push: gdUnit4 suites (tests/run.sh)"

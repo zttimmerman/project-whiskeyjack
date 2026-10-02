@@ -27,6 +27,7 @@ const LEVELS := {
 # Decorative nodes with no collision (a brush map's torches) are in this group; the bake skips them.
 const IGNORE_GROUP := "nav_ignore"
 const REGION := "NavigationRegion3D"
+const Checks := preload("res://scripts/tools/generator_checks.gd")
 
 # Cell size and height match the navigation map defaults (0.25 m). The agent sizes are whole cells:
 # the levels used to ask for 1.8 m and 0.4 m, which Godot ceiled to 2.0 m and 0.5 m (with a warning
@@ -137,6 +138,11 @@ static func bake_region(tree: SceneTree, scene_path: String, settings: Dictionar
 static func _add_collision_faces(
 	region: Node3D, source: NavigationMeshSourceGeometryData3D, scene_path: String
 ) -> bool:
+	# The faces are placed by global_transform, which only means something inside the tree
+	var outside := Checks.in_tree_error(region, "bake_navmeshes (%s)" % scene_path)
+	if outside != "":
+		push_error(outside)
+		return false
 	var ok := true
 	var nodes: Array[Node] = region.find_children("*", "", true, false)
 	nodes.sort_custom(func(a: Node, b: Node) -> bool: return str(region.get_path_to(a)) < str(region.get_path_to(b)))
