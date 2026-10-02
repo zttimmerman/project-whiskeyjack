@@ -33,7 +33,8 @@ func _measure(scene: String) -> Array:
 	add_child(holder)
 	var spec: Array = CHARACTERS[scene]
 	assert_str(GamePath.scene_for_library(spec[1])).is_equal(scene)
-	return GamePath.measure_all(holder, load(spec[0]), load(spec[1]), GamePath.game_settings(scene), FPS)
+	var settings := GamePath.game_settings(scene)
+	return GamePath.measure_all(holder, load(spec[0]), load(spec[1]), settings, FPS, GamePath.scene_windup(scene))
 
 
 func _assert_handovers(scene: String) -> void:
