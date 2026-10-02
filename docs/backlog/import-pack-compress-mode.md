@@ -1,13 +1,13 @@
 ---
 id: import-pack-compress-mode
 title: "Have import_pack.py write compress/mode=2 for new kit textures"
-status: ready
+status: in-review
 kind: fix
 targets: []
 after: []
 phase: gameplay-2
-branch: null
-pr: null
+branch: fix/import-pack-compress-mode
+pr: 45
 updated: 2026-10-02
 ---
 ## Goal
