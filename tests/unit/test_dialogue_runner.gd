@@ -112,6 +112,25 @@ func test_completed_quest_branches_the_opening_and_ends() -> void:
 	assert_array(events[2]).is_equal(["ended"])
 
 
+# The key that closes a conversation is the player's interact key, which Player polls in the physics
+# step; without a block it would reopen the conversation on the frame the dialogue ends.
+func test_interact_is_blocked_while_talking_and_on_the_frame_it_ends() -> void:
+	assert_bool(runner.accepts_interact()).is_true()
+	quests.start_quest(QUEST)
+	quests.complete_quest(QUEST)
+	await _start_fixture()
+	assert_bool(runner.accepts_interact()).is_false()
+	var at_end: Array = []
+	runner.dialogue_ended.connect(func() -> void: at_end.append(runner.accepts_interact()))
+	runner.advance()
+	await _wait_for_events(3)
+	assert_array(at_end).is_equal([false])
+	assert_bool(runner.accepts_interact()).is_false()
+	for i in 3:
+		await get_tree().physics_frame
+	assert_bool(runner.accepts_interact()).is_true()
+
+
 func test_start_while_active_is_ignored() -> void:
 	await _start_fixture()
 	runner.start("runner_fixture")

@@ -44,6 +44,11 @@ case "${1:-}" in
     git_main worktree remove --force "$REVIEW"
     git_main worktree prune
     echo "removed $REVIEW"
+    # The review copies' own user:// folders (override.cfg names them "REVIEW <ref> · ..."); only
+    # folders with that exact prefix, never the human's "Project Whiskeyjack".
+    for d in "$HOME/Library/Application Support/Godot/app_userdata/REVIEW "*; do
+      [ -d "$d" ] && rm -rf "$d" && echo "removed review saves: $(basename "$d")"
+    done
     exit 0 ;;
   -*) die "unknown option $1 (see --help)" ;;
 esac
@@ -63,7 +68,7 @@ fi
 SHA=$(git_main rev-parse "$TARGET^{commit}")
 
 if review_registered && [ -d "$REVIEW" ]; then
-  discard=$( { git -C "$REVIEW" status --porcelain --untracked-files=no; git -C "$REVIEW" clean -ndx -e .godot; } )
+  discard=$( { git -C "$REVIEW" status --porcelain --untracked-files=no; git -C "$REVIEW" clean -ndx -e .godot -e override.cfg; } )
   if [ -n "$discard" ]; then
     echo "playtest: discarding local changes in the review worktree:"
     echo "$discard" | sed 's/^/  /'
@@ -76,6 +81,11 @@ else
   git_main worktree prune
   git_main worktree add --quiet --detach "$REVIEW" "$SHA"
 fi
+
+# Label the copy: override.cfg renames the project, so its editor and game windows read
+# "REVIEW <ref>" and can't be mistaken for the human's own editor, and (user:// being keyed by the
+# project name) its saves stay out of the human's save.json. Rewritten on every run.
+printf '[application]\n\nconfig/name="REVIEW %s · Project Whiskeyjack"\n' "$TARGET" >"$REVIEW/override.cfg"
 
 # 2. Pick the Godot binary from project.godot's config/features.
 VER=$(sed -n 's/^config\/features=PackedStringArray("\([0-9][0-9.]*\)".*/\1/p' "$REVIEW/project.godot" | head -1)

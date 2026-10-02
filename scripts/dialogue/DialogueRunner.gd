@@ -25,6 +25,8 @@ var _choices: Array[DialogueResponse] = []
 var _active: bool = false
 # True while Dialogue Manager resolves the next line (mutations take at least a frame)
 var _busy: bool = false
+# The physics frame the last conversation ended on (see accepts_interact)
+var _ended_frame: int = -100
 
 
 func start(dialogue_id: String) -> void:
@@ -57,6 +59,13 @@ func is_active() -> bool:
 	return _active
 
 
+## False while a conversation is open and for two physics frames after it ends. The key that closes
+## a conversation is the interact key, which Player polls in the physics step, so without this the
+## closing press would reopen the conversation on the frame the tree unpauses.
+func accepts_interact() -> bool:
+	return not _active and Engine.get_physics_frames() - _ended_frame > 2
+
+
 # Asks Dialogue Manager for the next spoken line from `key`, running any mutations on the way.
 func _show(key: String) -> void:
 	_busy = true
@@ -81,6 +90,7 @@ func _show(key: String) -> void:
 
 func _end() -> void:
 	_active = false
+	_ended_frame = Engine.get_physics_frames()
 	_resource = null
 	_line = null
 	_choices.clear()
