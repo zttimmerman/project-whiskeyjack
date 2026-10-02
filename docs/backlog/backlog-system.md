@@ -1,13 +1,13 @@
 ---
 id: backlog-system
 title: "Home-grown backlog: docs/backlog, backlog.py, package-worker agent"
-status: in-progress
+status: in-review
 kind: chore
 targets: []
 after: [decide-backlog-system]
 phase: B
 branch: chore/backlog
-pr: null
+pr: 42
 updated: 2026-10-02
 ---
 ## Goal
