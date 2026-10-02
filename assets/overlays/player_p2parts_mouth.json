@@ -1,0 +1,21 @@
+{
+  "uv_source_sha256": "facc5e76a6247edb91b7af3097ba86380b5d6538babafe04d435e3eddc3a3a99",
+  "uv_source": ".tripo-out/player_p2parts/rig-1/tripo-out/rig-4-a51030cf/model.glb",
+  "size": 256,
+  "stroke_z": 1.48,
+  "half_width": 0.02,
+  "thickness_px": 1.5,
+  "color": "#4A2A2A",
+  "alpha": 0.9,
+  "uv_span": [
+    [
+      0.4363,
+      0.9891
+    ],
+    [
+      0.7519,
+      0.8003
+    ]
+  ],
+  "covered_pixels": 21
+}

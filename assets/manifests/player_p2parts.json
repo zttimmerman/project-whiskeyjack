@@ -1,0 +1,1397 @@
+{
+  "asset_id": "player_p2parts",
+  "stages": {
+    "clean": {
+      "status": "ok",
+      "timestamp": "2026-10-02T23:36:04+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/player_p2parts.yaml",
+          "sha256": "9890866575a4e97198ebd4b5f885d070a57cff805c46b4a28f1f6ff4b91a57f0"
+        },
+        {
+          "path": ".tripo-out/player_p2parts/rig-1/tripo-out/rig-4-a51030cf/model.glb",
+          "sha256": "facc5e76a6247edb91b7af3097ba86380b5d6538babafe04d435e3eddc3a3a99"
+        },
+        {
+          "path": "scripts/blender_cleanup.py",
+          "sha256": "d29b70acbc52e8069533ddf5259567d7646779cc48c12ee3407e13140cfa1158"
+        },
+        {
+          "path": ".tripo-out/player_p2parts/rig-1/tripo-out/rig-4-a51030cf/task.json",
+          "sha256": "f3f76d96f762b3a40f4e64ea74a2370d042ccbe0de8a6f077ed352863540c0e9"
+        },
+        {
+          "path": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+          "sha256": "e92b55a11a671ace6e50e37e78578afaa6a2e46e7d230da2da61ef368c2e9f98"
+        },
+        {
+          "path": "assets/overlays/player_p2parts_mouth.png",
+          "sha256": "a779342d84299198388a464784b1733553331e9b0e773b6e231949486b7ea86d"
+        },
+        {
+          "path": "assets/overlays/player_p2parts_mouth.json",
+          "sha256": "0952097b3ff9ff7b77ddc897c2f68e3a1b1d63a44d3a1c3c5940bcca27c08410"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "assets/meshes/player_p2parts.glb",
+          "sha256": "0c1faf0d739727f325e88dd92e9802d247b32fb1f911e1ba46dee217c2010c3e"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "exported assets/meshes/player_p2parts.glb",
+      "actual_cost_credits": 0,
+      "params": {
+        "asset_id": "player_p2parts",
+        "type": "character",
+        "face_limit": 5000,
+        "triangle_budget": 5500,
+        "texture_size": 256,
+        "target_size_m": 1.8,
+        "pivot": "base",
+        "palette": [
+          "Garrison Teal",
+          "Saddle Leather",
+          "Blackened Iron",
+          "Tarnished Gold"
+        ],
+        "socket_map": null,
+        "bone_map": "data/rigs/mixamorig_bone_map.tres",
+        "animations": [
+          "idle",
+          "run",
+          "dodge_roll",
+          "attack_light",
+          "attack_heavy",
+          "death"
+        ],
+        "exclude_objects": null,
+        "tip_end": null,
+        "rigid_parts": null,
+        "skirt_reweight": null,
+        "parts": [
+          {
+            "select": "rank 1-4",
+            "bind": "keep"
+          },
+          {
+            "select": "rank 5",
+            "bind": "transfer",
+            "offset_mm": 4
+          },
+          {
+            "select": "rank 6-9",
+            "bind": "rigid:Head"
+          }
+        ],
+        "parts_transfer": null,
+        "source": null,
+        "source_scale": null,
+        "orientation": "principal_axis",
+        "source_forward": {
+          "axis": "+x",
+          "source": "Tripo API default (.tripo-out/player_p2parts/rig-1/tripo-out/rig-4-a51030cf/task.json sets no export_orientation)"
+        },
+        "palette_targets": {
+          "Garrison Teal": "#0C5454",
+          "Saddle Leather": "#4A2A10",
+          "Blackened Iron": "#242424",
+          "Tarnished Gold": "#E6BF1A"
+        },
+        "reference_image": "/Users/zach/Documents/repos/project-whiskeyjack-bodyspike/.tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+        "texture_overlays": [
+          "/Users/zach/Documents/repos/project-whiskeyjack-bodyspike/assets/overlays/player_p2parts_mouth.png"
+        ]
+      },
+      "report": {
+        "status": "pass",
+        "errors": [],
+        "warnings": [],
+        "blender_version": "5.0.1",
+        "input": "/Users/zach/Documents/repos/project-whiskeyjack-bodyspike/.tripo-out/player_p2parts/rig-1/tripo-out/rig-4-a51030cf/model.glb",
+        "output": "/Users/zach/Documents/repos/project-whiskeyjack-bodyspike/assets/meshes/player_p2parts.glb",
+        "materials": [
+          {
+            "name": "tripo_material_ad7cb377-72e7-40bc-a4f5-f8416d786a97",
+            "stripped": "normal, roughness, metallic, specular, emission and occlusion inputs are not carried over",
+            "converted_from": "principled",
+            "texture": "Color_ad7cb377-72e7-40bc-a4f5-f8416d786a97",
+            "alpha": false
+          }
+        ],
+        "textures": [
+          {
+            "name": "Color_ad7cb377-72e7-40bc-a4f5-f8416d786a97",
+            "size_before": [
+              2048,
+              2048
+            ],
+            "size_after": [
+              256,
+              256
+            ]
+          }
+        ],
+        "removed_objects": [
+          "Icosphere (bone display shape created by the importer)"
+        ],
+        "input_format": "glb",
+        "rigged": true,
+        "armatures": [
+          {
+            "name": "Armature",
+            "bones": [
+              "Root",
+              "mixamorig:Hips",
+              "mixamorig:Spine",
+              "mixamorig:Spine1",
+              "mixamorig:Spine2",
+              "mixamorig:Neck",
+              "mixamorig:Head",
+              "mixamorig:LeftShoulder",
+              "mixamorig:LeftArm",
+              "mixamorig:LeftForeArm",
+              "mixamorig:LeftHand",
+              "mixamorig:RightShoulder",
+              "mixamorig:RightArm",
+              "mixamorig:RightForeArm",
+              "mixamorig:RightHand",
+              "mixamorig:LeftUpLeg",
+              "mixamorig:LeftLeg",
+              "mixamorig:LeftFoot",
+              "mixamorig:LeftToeBase",
+              "mixamorig:RightUpLeg",
+              "mixamorig:RightLeg",
+              "mixamorig:RightFoot",
+              "mixamorig:RightToeBase"
+            ]
+          }
+        ],
+        "transform": {
+          "pivot": "base",
+          "size_before_m": [
+            0.2145,
+            1.0,
+            0.9717
+          ],
+          "geometry_forward": null,
+          "geometry_note": "feet don't reach forward of the ankles (+0.0063)",
+          "source_forward": {
+            "axis": "+x",
+            "source": "Tripo API default (.tripo-out/player_p2parts/rig-1/tripo-out/rig-4-a51030cf/task.json sets no export_orientation)"
+          },
+          "facing_detected_by": "foot bones (head to tail)",
+          "forward_before": [
+            0.999,
+            0.047
+          ],
+          "rotation_z_deg": -90,
+          "scale_factor": 1.85249,
+          "size_after_m": [
+            1.8525,
+            0.3973,
+            1.8
+          ],
+          "true_dims_m": {
+            "x": 1.8525,
+            "y": 0.3973,
+            "z": 1.8
+          },
+          "true_length_m": 1.8,
+          "min_after": [
+            -0.9262,
+            -0.1986,
+            0.0
+          ]
+        },
+        "mesh_health": {
+          "totals": {
+            "as_imported": {
+              "vertices": 5954,
+              "edges": 9540,
+              "faces": 4439,
+              "triangles": 4439,
+              "quads": 0,
+              "ngons": 0,
+              "non_manifold_edges": 0,
+              "boundary_edges": 5763,
+              "boundary_loops": 878,
+              "wire_edges": 0,
+              "loose_vertices": 0,
+              "degenerate_faces": 0,
+              "zero_length_edges": 0,
+              "quad_ratio": 0.0,
+              "triangle_ratio": 1.0
+            },
+            "welded": {
+              "vertices": 2318,
+              "edges": 6755,
+              "faces": 4439,
+              "triangles": 4439,
+              "quads": 0,
+              "ngons": 0,
+              "non_manifold_edges": 2,
+              "boundary_edges": 195,
+              "boundary_loops": 17,
+              "wire_edges": 0,
+              "loose_vertices": 0,
+              "degenerate_faces": 0,
+              "zero_length_edges": 0,
+              "part_count": 9,
+              "parts": [
+                {
+                  "triangles": 2740,
+                  "vertices": 1399,
+                  "size_m": [
+                    0.213,
+                    1.0,
+                    0.6546
+                  ],
+                  "boundary_loops": 7
+                },
+                {
+                  "triangles": 841,
+                  "vertices": 433,
+                  "size_m": [
+                    0.1661,
+                    0.1729,
+                    0.1847
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 298,
+                  "vertices": 154,
+                  "size_m": [
+                    0.1661,
+                    0.1109,
+                    0.4021
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 298,
+                  "vertices": 154,
+                  "size_m": [
+                    0.1661,
+                    0.1109,
+                    0.4021
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 198,
+                  "vertices": 130,
+                  "size_m": [
+                    0.1749,
+                    0.1939,
+                    0.234
+                  ],
+                  "boundary_loops": 3
+                },
+                {
+                  "triangles": 22,
+                  "vertices": 16,
+                  "size_m": [
+                    0.0151,
+                    0.0352,
+                    0.0107
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 22,
+                  "vertices": 16,
+                  "size_m": [
+                    0.0151,
+                    0.0352,
+                    0.0107
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 10,
+                  "vertices": 8,
+                  "size_m": [
+                    0.0083,
+                    0.0122,
+                    0.0107
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 10,
+                  "vertices": 8,
+                  "size_m": [
+                    0.0083,
+                    0.0122,
+                    0.0107
+                  ],
+                  "boundary_loops": 1
+                }
+              ],
+              "quad_ratio": 0.0,
+              "triangle_ratio": 1.0
+            }
+          },
+          "per_mesh": [
+            {
+              "mesh": "tripo_node_ad7cb377-72e7-40bc-a4f5-f8416",
+              "as_imported": {
+                "vertices": 5954,
+                "edges": 9540,
+                "faces": 4439,
+                "triangles": 4439,
+                "quads": 0,
+                "ngons": 0,
+                "quad_ratio": 0.0,
+                "triangle_ratio": 1.0,
+                "non_manifold_edges": 0,
+                "boundary_edges": 5763,
+                "boundary_loops": 878,
+                "wire_edges": 0,
+                "loose_vertices": 0,
+                "degenerate_faces": 0,
+                "zero_length_edges": 0
+              },
+              "welded": {
+                "vertices": 2318,
+                "edges": 6755,
+                "faces": 4439,
+                "triangles": 4439,
+                "quads": 0,
+                "ngons": 0,
+                "quad_ratio": 0.0,
+                "triangle_ratio": 1.0,
+                "non_manifold_edges": 2,
+                "boundary_edges": 195,
+                "boundary_loops": 17,
+                "wire_edges": 0,
+                "loose_vertices": 0,
+                "degenerate_faces": 0,
+                "zero_length_edges": 0,
+                "parts": [
+                  {
+                    "triangles": 2740,
+                    "vertices": 1399,
+                    "size_m": [
+                      0.213,
+                      1.0,
+                      0.6546
+                    ],
+                    "boundary_loops": 7
+                  },
+                  {
+                    "triangles": 841,
+                    "vertices": 433,
+                    "size_m": [
+                      0.1661,
+                      0.1729,
+                      0.1847
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 298,
+                    "vertices": 154,
+                    "size_m": [
+                      0.1661,
+                      0.1109,
+                      0.4021
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 298,
+                    "vertices": 154,
+                    "size_m": [
+                      0.1661,
+                      0.1109,
+                      0.4021
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 198,
+                    "vertices": 130,
+                    "size_m": [
+                      0.1749,
+                      0.1939,
+                      0.234
+                    ],
+                    "boundary_loops": 3
+                  },
+                  {
+                    "triangles": 22,
+                    "vertices": 16,
+                    "size_m": [
+                      0.0151,
+                      0.0352,
+                      0.0107
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 22,
+                    "vertices": 16,
+                    "size_m": [
+                      0.0151,
+                      0.0352,
+                      0.0107
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 10,
+                    "vertices": 8,
+                    "size_m": [
+                      0.0083,
+                      0.0122,
+                      0.0107
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 10,
+                    "vertices": 8,
+                    "size_m": [
+                      0.0083,
+                      0.0122,
+                      0.0107
+                    ],
+                    "boundary_loops": 1
+                  }
+                ],
+                "part_count": 9
+              }
+            }
+          ],
+          "weld_distance_m": 1e-05,
+          "note": "baseline only; nothing fails on these yet"
+        },
+        "color_correction": [
+          {
+            "image": "Color_ad7cb377-72e7-40bc-a4f5-f8416d786a97",
+            "size": [
+              256,
+              256
+            ],
+            "method": "approved concept (hue and saturation restored; lightness lifted to the matched concept tone, never lowered)",
+            "reference": "/Users/zach/Documents/repos/project-whiskeyjack-bodyspike/.tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+            "concept_background": "#8B8B8B",
+            "clusters": [
+              {
+                "concept": "#14313F",
+                "concept_share": 0.32,
+                "texture_before": "#042E3D",
+                "texture_share": 0.283,
+                "delta_e_before": 2.9,
+                "applied": true,
+                "texture_after": "#123140",
+                "delta_ab_after": 0.9,
+                "lightness": [
+                  17.2,
+                  18.9,
+                  18.8
+                ],
+                "delta_ab_before": 2.4
+              },
+              {
+                "concept": "#BC9781",
+                "concept_share": 0.058,
+                "texture_before": "#A89284",
+                "texture_share": 0.108,
+                "delta_e_before": 8.5,
+                "applied": true,
+                "texture_after": "#BD9882",
+                "delta_ab_after": 0.1,
+                "lightness": [
+                  62.1,
+                  65.8,
+                  65.4
+                ],
+                "delta_ab_before": 7.8
+              },
+              {
+                "concept": "#646064",
+                "concept_share": 0.004,
+                "texture_before": "#5D4944",
+                "texture_share": 0.025,
+                "delta_e_before": 12.7,
+                "applied": false,
+                "reason": "covers 2.5% of the texture"
+              },
+              {
+                "concept": "#957468",
+                "concept_share": 0.03,
+                "texture_before": "#897469",
+                "texture_share": 0.058,
+                "delta_e_before": 5.8,
+                "applied": true,
+                "texture_after": "#987669",
+                "delta_ab_after": 1.0,
+                "lightness": [
+                  50.5,
+                  52.6,
+                  51.7
+                ],
+                "delta_ab_before": 5.7
+              },
+              {
+                "concept": "#45282B",
+                "concept_share": 0.231,
+                "texture_before": "#431D1F",
+                "texture_share": 0.254,
+                "delta_e_before": 6.7,
+                "applied": true,
+                "texture_after": "#44262B",
+                "delta_ab_after": 0.5,
+                "lightness": [
+                  16.2,
+                  19.3,
+                  19.8
+                ],
+                "delta_ab_before": 5.7
+              },
+              {
+                "concept": "#2C1D25",
+                "concept_share": 0.145,
+                "texture_before": "#291B1C",
+                "texture_share": 0.192,
+                "delta_e_before": 5.0,
+                "applied": true,
+                "texture_after": "#2B1C22",
+                "delta_ab_after": 1.2,
+                "lightness": [
+                  11.5,
+                  12.4,
+                  12.7
+                ],
+                "delta_ab_before": 4.8
+              },
+              {
+                "concept": "#383C43",
+                "concept_share": 0.021,
+                "texture_before": "#3C4247",
+                "texture_share": 0.028,
+                "delta_e_before": 3.0,
+                "applied": false,
+                "reason": "covers 2.8% of the texture"
+              },
+              {
+                "concept": "#0B1C2C",
+                "concept_share": 0.19,
+                "texture_before": "#060824",
+                "texture_share": 0.052,
+                "delta_e_before": 10.4,
+                "applied": true,
+                "texture_after": "#081B2C",
+                "delta_ab_after": 0.8,
+                "lightness": [
+                  3.0,
+                  9.0,
+                  9.5
+                ],
+                "delta_ab_before": 8.2
+              }
+            ]
+          }
+        ],
+        "overlays": [
+          {
+            "overlay": "/Users/zach/Documents/repos/project-whiskeyjack-bodyspike/assets/overlays/player_p2parts_mouth.png",
+            "pixels": 21
+          }
+        ],
+        "parts_weight_transfer": {
+          "source": "keep shells [1, 2, 3, 4] (the rig's own weights)",
+          "method": "data_transfer",
+          "shells": [
+            {
+              "rank": 1,
+              "triangles": 2740,
+              "center": [
+                0.005,
+                -0.013,
+                1.272
+              ],
+              "bind": "keep",
+              "offset_mm": 0
+            },
+            {
+              "rank": 2,
+              "triangles": 841,
+              "center": [
+                0.006,
+                -0.054,
+                1.614
+              ],
+              "bind": "keep",
+              "offset_mm": 0
+            },
+            {
+              "rank": 3,
+              "triangles": 298,
+              "center": [
+                -0.125,
+                -0.007,
+                0.254
+              ],
+              "bind": "keep",
+              "offset_mm": 0
+            },
+            {
+              "rank": 4,
+              "triangles": 298,
+              "center": [
+                0.127,
+                -0.006,
+                0.272
+              ],
+              "bind": "keep",
+              "offset_mm": 0
+            },
+            {
+              "rank": 5,
+              "triangles": 198,
+              "center": [
+                -0.003,
+                -0.033,
+                1.18
+              ],
+              "bind": "transfer",
+              "offset_mm": 4
+            },
+            {
+              "rank": 6,
+              "triangles": 22,
+              "center": [
+                -0.054,
+                -0.163,
+                1.59
+              ],
+              "bind": "rigid:Head",
+              "offset_mm": 0
+            },
+            {
+              "rank": 7,
+              "triangles": 22,
+              "center": [
+                0.056,
+                -0.163,
+                1.589
+              ],
+              "bind": "rigid:Head",
+              "offset_mm": 0
+            },
+            {
+              "rank": 8,
+              "triangles": 10,
+              "center": [
+                -0.039,
+                -0.162,
+                1.567
+              ],
+              "bind": "rigid:Head",
+              "offset_mm": 0
+            },
+            {
+              "rank": 9,
+              "triangles": 10,
+              "center": [
+                0.039,
+                -0.162,
+                1.567
+              ],
+              "bind": "rigid:Head",
+              "offset_mm": 0
+            }
+          ],
+          "edge_weight_jump": [
+            {
+              "mesh": "tripo_node_ad7cb377-72e7-40bc-a4f5-f8416",
+              "p99_before": 0.697,
+              "p99_after": 0.72,
+              "max_before": 1.0,
+              "max_after": 1.0,
+              "worst_after": [
+                {
+                  "edge": 9242,
+                  "jump_before": 1.0,
+                  "jump_after": 1.0,
+                  "at": [
+                    -0.695,
+                    -0.041,
+                    1.29
+                  ],
+                  "bones": [
+                    "mixamorig:RightHand",
+                    "mixamorig:RightForeArm"
+                  ]
+                },
+                {
+                  "edge": 8025,
+                  "jump_before": 1.0,
+                  "jump_after": 1.0,
+                  "at": [
+                    -0.695,
+                    -0.041,
+                    1.29
+                  ],
+                  "bones": [
+                    "mixamorig:RightHand",
+                    "mixamorig:RightForeArm"
+                  ]
+                },
+                {
+                  "edge": 5009,
+                  "jump_before": 1.0,
+                  "jump_after": 1.0,
+                  "at": [
+                    -0.174,
+                    -0.119,
+                    0.0
+                  ],
+                  "bones": [
+                    "mixamorig:RightToeBase",
+                    "mixamorig:RightFoot"
+                  ]
+                },
+                {
+                  "edge": 1206,
+                  "jump_before": 1.0,
+                  "jump_after": 1.0,
+                  "at": [
+                    -0.124,
+                    -0.118,
+                    0.0
+                  ],
+                  "bones": [
+                    "mixamorig:RightToeBase",
+                    "mixamorig:RightFoot"
+                  ]
+                },
+                {
+                  "edge": 2950,
+                  "jump_before": 0.953,
+                  "jump_after": 0.953,
+                  "at": [
+                    0.124,
+                    -0.118,
+                    0.0
+                  ],
+                  "bones": [
+                    "mixamorig:LeftToeBase",
+                    "mixamorig:LeftFoot"
+                  ]
+                },
+                {
+                  "edge": 6498,
+                  "jump_before": 0.953,
+                  "jump_after": 0.953,
+                  "at": [
+                    0.174,
+                    -0.119,
+                    0.0
+                  ],
+                  "bones": [
+                    "mixamorig:LeftToeBase",
+                    "mixamorig:LeftFoot"
+                  ]
+                },
+                {
+                  "edge": 2515,
+                  "jump_before": 0.934,
+                  "jump_after": 0.934,
+                  "at": [
+                    0.124,
+                    -0.118,
+                    0.0
+                  ],
+                  "bones": [
+                    "mixamorig:LeftToeBase",
+                    "mixamorig:LeftFoot"
+                  ]
+                },
+                {
+                  "edge": 5648,
+                  "jump_before": 0.932,
+                  "jump_after": 0.932,
+                  "at": [
+                    -0.174,
+                    -0.119,
+                    0.0
+                  ],
+                  "bones": [
+                    "mixamorig:RightToeBase",
+                    "mixamorig:RightFoot"
+                  ]
+                }
+              ]
+            }
+          ],
+          "weight_change": [
+            {
+              "mesh": "tripo_node_ad7cb377-72e7-40bc-a4f5-f8416",
+              "shells": [
+                {
+                  "rank": 5,
+                  "p50": 0.312,
+                  "p90": 0.498,
+                  "max": 0.593,
+                  "worst_at": [
+                    -0.0,
+                    0.114,
+                    1.129
+                  ],
+                  "worst_bones": [
+                    "mixamorig:Spine2",
+                    "mixamorig:Spine2"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "hide_covered_body": {
+          "ray_m": 0.02,
+          "faces_removed": 2,
+          "triangles_removed": 2
+        },
+        "shading": {
+          "angle_deg": 30.0,
+          "welded_vertices_removed": 3636,
+          "custom_normals_cleared": [
+            "tripo_node_ad7cb377-72e7-40bc-a4f5-f8416"
+          ],
+          "welded": "same_weights"
+        },
+        "triangle_count": 4437,
+        "triangle_budget": 5500,
+        "vertex_metrics": {
+          "split_at_seams": 2318,
+          "welded": 2318,
+          "note": "metrics only; the budget is in triangles"
+        },
+        "animations": [],
+        "exported": {
+          "images": 1,
+          "materials": [
+            {
+              "name": "tripo_material_ad7cb377-72e7-40bc-a4f5-f8416d786a97",
+              "alphaMode": "OPAQUE",
+              "base_color_texture": true
+            }
+          ],
+          "animations": 0,
+          "skins": 1
+        }
+      }
+    },
+    "concept": {
+      "status": "ok",
+      "timestamp": "2026-10-02T23:36:01+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/player_p2parts.yaml",
+          "sha256": "9890866575a4e97198ebd4b5f885d070a57cff805c46b4a28f1f6ff4b91a57f0"
+        },
+        {
+          "path": "docs/art-bible.md",
+          "sha256": "f37b2f91beea8620379b213a12ffa83c60f30cbe030ba3d5c819857d5cf43fc0"
+        }
+      ],
+      "outputs": [],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "not needed: the base mesh is already on disk",
+      "actual_cost_credits": 0,
+      "concept_model": "banana_pro",
+      "params": {
+        "template": "t_pose",
+        "aspect_ratio": "3:4"
+      },
+      "approval": {
+        "attempt": "concept-1",
+        "image": {
+          "path": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+          "sha256": "e92b55a11a671ace6e50e37e78578afaa6a2e46e7d230da2da61ef368c2e9f98"
+        },
+        "approved_at": "2026-09-28T01:16:49+00:00",
+        "approved_by": "user",
+        "concept_model": "banana_pro",
+        "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A young frontier soldier in a knee-length wool tunic in deep dark teal that flares at the hem, a leather harness in dark reddish-brown with two straps crossing the chest and back, leather boots in dark reddish-brown, spiky dark hair, empty hands, T-pose.",
+        "command": "tripo generate text-to-image 'Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A young frontier soldier in a knee-length wool tunic in deep dark teal that flares at the hem, a leather harness in dark reddish-brown with two straps crossing the chest and back, leather boots in dark reddish-brown, spiky dark hair, empty hands, T-pose.' --model banana_pro --param template=t_pose --param aspect_ratio=3:4 -o .tripo-out/player/concept-1 --no-open --json",
+        "carried_from": "assets/manifests/player.json (the same approved concept-1; the P2 download was made from its multiview sheet)"
+      },
+      "cost_unknown_attempts": [],
+      "cost_check": [],
+      "tripo_attempts": [],
+      "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A young frontier soldier in a knee-length wool tunic in deep dark teal that flares at the hem, a leather harness in dark reddish-brown with two straps crossing the chest and back, leather boots in dark reddish-brown, spiky dark hair, empty hands, T-pose."
+    },
+    "multiview": {
+      "status": "ok",
+      "timestamp": "2026-10-02T21:40:29+00:00",
+      "inputs": [
+        {
+          "path": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+          "sha256": "e92b55a11a671ace6e50e37e78578afaa6a2e46e7d230da2da61ef368c2e9f98"
+        }
+      ],
+      "outputs": [],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "not needed: the base mesh is already on disk",
+      "actual_cost_credits": 0,
+      "cost_unknown_attempts": [],
+      "cost_check": [],
+      "tripo_attempts": []
+    },
+    "model": {
+      "status": "ok",
+      "timestamp": "2026-10-02T23:36:02+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/player_p2parts.yaml",
+          "sha256": "9890866575a4e97198ebd4b5f885d070a57cff805c46b4a28f1f6ff4b91a57f0"
+        },
+        {
+          "path": "docs/art-bible.md",
+          "sha256": "f37b2f91beea8620379b213a12ffa83c60f30cbe030ba3d5c819857d5cf43fc0"
+        },
+        {
+          "path": ".tripo-out/player_p2parts/attempt-1.spend.json",
+          "sha256": "f7f41f809eac64de8ec455a9daf065bd115ff4834b8370776bb15af9e46a3afd"
+        }
+      ],
+      "outputs": [
+        {
+          "path": ".tripo-out/player_p2parts/attempt-1/tripo-out/generate-multiview-image-front-v-4-ad7cb377/model.glb",
+          "sha256": "ab46f8182934166857db82c96b09b84bdcff43b4167023ae0bd41e23aa44e4a0"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "Tripo download .tripo-out/player_p2parts/attempt-1/tripo-out/generate-multiview-image-front-v-4-ad7cb377/model.glb",
+      "actual_cost_credits": 0,
+      "prompt": null,
+      "params": {
+        "pbr": false,
+        "texture": true,
+        "face_limit": 5000
+      },
+      "tripo_model": "P2-20260801",
+      "estimate_credits": 0,
+      "cost_unknown_attempts": [],
+      "cost_check": [
+        {
+          "attempt": "attempt-1",
+          "status": "copied",
+          "estimate_credits": 0,
+          "actual_balance_delta": 0,
+          "cli_reported_credits": 0,
+          "estimate_error": 0
+        }
+      ],
+      "tripo_attempts": [
+        {
+          "status": "copied",
+          "copied_from": ".tripo-out/player/attempt-2.spend.json",
+          "original_status": "generated",
+          "model_version": "P2-20260801",
+          "tripo_cli_version": "0.5.1",
+          "command": "tripo make .tripo-out/player/multiview-1/tripo-out/tripo-out-player-concept-1-tripo-e62305da/generate_multiview_image.front_view.jpeg .tripo-out/player/multiview-1/tripo-out/tripo-out-player-concept-1-tripo-e62305da/generate_multiview_image.left_view.jpeg .tripo-out/player/multiview-1/tripo-out/tripo-out-player-concept-1-tripo-e62305da/generate_multiview_image.back_view.jpeg .tripo-out/player/multiview-1/tripo-out/tripo-out-player-concept-1-tripo-e62305da/generate_multiview_image.right_view.jpeg --model P2-20260801 --param pbr=false --param texture=true --param face_limit=5000 -o .tripo-out/player_p2parts/attempt-1 --no-open --json",
+          "params": {
+            "pbr": false,
+            "texture": true,
+            "face_limit": 5000
+          },
+          "task_ids": [
+            "ad7cb377-72e7-40bc-a4f5-f8416d786a97"
+          ],
+          "estimate_credits": 0,
+          "actual_spend": 0,
+          "cli_reported_credits": 0,
+          "note": "spike-body-only-humanoid Phase 0: a local copy of the player's paid attempt-2 (110 credits, counted once under player); no new spend"
+        }
+      ]
+    },
+    "rig": {
+      "status": "ok",
+      "timestamp": "2026-10-02T21:40:29+00:00",
+      "inputs": [
+        {
+          "path": ".tripo-out/player_p2parts/attempt-1/tripo-out/generate-multiview-image-front-v-4-ad7cb377/model.glb",
+          "sha256": "ab46f8182934166857db82c96b09b84bdcff43b4167023ae0bd41e23aa44e4a0"
+        },
+        {
+          "path": ".tripo-out/player_p2parts/rig-1.spend.json",
+          "sha256": "cd284a539efea15f7a3ad4f7609492dbb4b3ee54011cacd73977a28faed27cdd"
+        }
+      ],
+      "outputs": [
+        {
+          "path": ".tripo-out/player_p2parts/rig-1/tripo-out/rig-4-a51030cf/model.glb",
+          "sha256": "facc5e76a6247edb91b7af3097ba86380b5d6538babafe04d435e3eddc3a3a99"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "rigged .tripo-out/player_p2parts/rig-1/tripo-out/rig-4-a51030cf/model.glb from .tripo-out/player_p2parts/attempt-1/tripo-out/generate-multiview-image-front-v-4-ad7cb377/model.glb",
+      "actual_cost_credits": 0,
+      "params": {
+        "rig_type": "biped",
+        "spec": "mixamo",
+        "model": "v1.0-20240301",
+        "out_format": "glb"
+      },
+      "cost_unknown_attempts": [],
+      "cost_check": [
+        {
+          "attempt": "rig-1",
+          "status": "copied",
+          "estimate_credits": 0,
+          "actual_balance_delta": 0,
+          "cli_reported_credits": 0,
+          "estimate_error": 0
+        }
+      ],
+      "tripo_attempts": [
+        {
+          "status": "copied",
+          "copied_from": ".tripo-out/player/rig-2.spend.json",
+          "original_status": "generated",
+          "model_version": "v1.0-20240301",
+          "tripo_cli_version": "0.5.1",
+          "command": "tripo anim rig .tripo-out/player_p2parts/attempt-1/tripo-out/generate-multiview-image-front-v-4-ad7cb377/model.glb --rig-type biped --spec mixamo --out-format glb --param model=v1.0-20240301 -o .tripo-out/player_p2parts/rig-1 --no-open --json",
+          "params": {
+            "rig_type": "biped",
+            "spec": "mixamo"
+          },
+          "task_ids": [
+            "a51030cf-7a17-4691-850b-c5c3a1fd59d6"
+          ],
+          "estimate_credits": 0,
+          "actual_spend": 0,
+          "cli_reported_credits": 0,
+          "note": "spike-body-only-humanoid Phase 0: a local copy of the player's paid rig-2 (25 credits, counted once under player); no new spend"
+        }
+      ]
+    },
+    "validate": {
+      "status": "ok",
+      "timestamp": "2026-10-02T23:36:06+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/player_p2parts.yaml",
+          "sha256": "9890866575a4e97198ebd4b5f885d070a57cff805c46b4a28f1f6ff4b91a57f0"
+        },
+        {
+          "path": "assets/meshes/player_p2parts.glb",
+          "sha256": "0c1faf0d739727f325e88dd92e9802d247b32fb1f911e1ba46dee217c2010c3e"
+        },
+        {
+          "path": "scripts/godot_validate.gd",
+          "sha256": "7990d0b422dad7def4ba5cbef89d9632cd29cc3edddc28143757e982988985c9"
+        },
+        {
+          "path": "scripts/blender_views.py",
+          "sha256": "9ca1b243e3bb4d5ab1247b718cd1a0e1648e89e2683dacf2a71d3eede55a6388"
+        },
+        {
+          "path": "data/rigs/mixamorig_bone_map.tres",
+          "sha256": "fd9ef8777ff44c8f8e377c1b57c06954c36e8a5bfce2807d2312fcd3ecc0a19a"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "assets/manifests/player_p2parts/front.png",
+          "sha256": "f56348896e8b321b7debef6b9bb892b8cdc89b89ba210817b04b457a7c36792f"
+        },
+        {
+          "path": "assets/manifests/player_p2parts/right.png",
+          "sha256": "628a968f0d35d799c5c333ead02bbd7805f1c81c95c13fc6cf2909b729dbbb85"
+        },
+        {
+          "path": "assets/manifests/player_p2parts/back.png",
+          "sha256": "b9036822a07ab436bd74469c54eda7d904676ec093aad6f1983653bc46e90ebf"
+        },
+        {
+          "path": "assets/manifests/player_p2parts/top.png",
+          "sha256": "0dc58ad468f526aa20d48bf3919718fc2ecb903a70138989c14d5156c6f54f53"
+        },
+        {
+          "path": "assets/manifests/player_p2parts/clay_front.png",
+          "sha256": "1401821991e5220c3bc0366743c5fb38d2ddc4ea11294cdc8a6f0cc74934cc90"
+        },
+        {
+          "path": "assets/manifests/player_p2parts/wireframe_front.png",
+          "sha256": "7249ceba87c1df25686b81b46096edfc51c40396eee03fdd252e3e706b7e50ff"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "all checks passed",
+      "actual_cost_credits": 0,
+      "params": {
+        "asset_id": "player_p2parts",
+        "type": "character",
+        "face_limit": 5000,
+        "triangle_budget": 5500,
+        "texture_size": 256,
+        "target_size_m": 1.8,
+        "pivot": "base",
+        "palette": [
+          "Garrison Teal",
+          "Saddle Leather",
+          "Blackened Iron",
+          "Tarnished Gold"
+        ],
+        "socket_map": null,
+        "bone_map": "data/rigs/mixamorig_bone_map.tres",
+        "animations": [
+          "idle",
+          "run",
+          "dodge_roll",
+          "attack_light",
+          "attack_heavy",
+          "death"
+        ],
+        "exclude_objects": null,
+        "tip_end": null,
+        "rigid_parts": null,
+        "skirt_reweight": null,
+        "parts": [
+          {
+            "select": "rank 1-4",
+            "bind": "keep"
+          },
+          {
+            "select": "rank 5",
+            "bind": "transfer",
+            "offset_mm": 4
+          },
+          {
+            "select": "rank 6-9",
+            "bind": "rigid:Head"
+          }
+        ],
+        "parts_transfer": null,
+        "source": null,
+        "source_scale": null,
+        "orientation": "principal_axis",
+        "blender_triangle_count": 4437
+      },
+      "report": {
+        "animations": {
+          "expected": [
+            "idle",
+            "run",
+            "dodge_roll",
+            "attack_light",
+            "attack_heavy",
+            "death"
+          ],
+          "missing": [
+            "idle",
+            "run",
+            "dodge_roll",
+            "attack_light",
+            "attack_heavy",
+            "death"
+          ],
+          "present": []
+        },
+        "errors": [],
+        "godot_version": "4.7.2-stable (official)",
+        "import_method": "GLTFDocument (runtime); editor import settings such as a BoneMap don't apply",
+        "materials": [
+          {
+            "albedo_texture": [
+              256,
+              256
+            ],
+            "extra_maps": [],
+            "mesh": "tripo_node_ad7cb377-72e7-40bc-a4f5-f8416",
+            "metallic": 0.0,
+            "metallic_specular": 0.0,
+            "roughness": 1.0,
+            "specular_mode": "schlick_ggx",
+            "surface": 0,
+            "transparency": "disabled",
+            "unshaded": false
+          }
+        ],
+        "rig": {
+          "bone_count": 23,
+          "bones": [
+            "Root",
+            "mixamorig_Hips",
+            "mixamorig_Spine",
+            "mixamorig_Spine1",
+            "mixamorig_Spine2",
+            "mixamorig_Neck",
+            "mixamorig_Head",
+            "mixamorig_LeftShoulder",
+            "mixamorig_LeftArm",
+            "mixamorig_LeftForeArm",
+            "mixamorig_LeftHand",
+            "mixamorig_RightShoulder",
+            "mixamorig_RightArm",
+            "mixamorig_RightForeArm",
+            "mixamorig_RightHand",
+            "mixamorig_LeftUpLeg",
+            "mixamorig_LeftLeg",
+            "mixamorig_LeftFoot",
+            "mixamorig_LeftToeBase",
+            "mixamorig_RightUpLeg",
+            "mixamorig_RightLeg",
+            "mixamorig_RightFoot",
+            "mixamorig_RightToeBase"
+          ],
+          "exact_profile_name_matches": [
+            "Root"
+          ],
+          "humanoid_mappable": true,
+          "mapping_method": "name heuristic; confirm in the editor's BoneMap before retargeting",
+          "missing_required": [],
+          "profile": "SkeletonProfileHumanoid (56 bones, 17 required)",
+          "proposed_bone_map": {
+            "Chest": "mixamorig_Spine1",
+            "Head": "mixamorig_Head",
+            "Hips": "mixamorig_Hips",
+            "LeftFoot": "mixamorig_LeftFoot",
+            "LeftHand": "mixamorig_LeftHand",
+            "LeftLowerArm": "mixamorig_LeftForeArm",
+            "LeftLowerLeg": "mixamorig_LeftLeg",
+            "LeftShoulder": "mixamorig_LeftShoulder",
+            "LeftToes": "mixamorig_LeftToeBase",
+            "LeftUpperArm": "mixamorig_LeftArm",
+            "LeftUpperLeg": "mixamorig_LeftUpLeg",
+            "Neck": "mixamorig_Neck",
+            "RightFoot": "mixamorig_RightFoot",
+            "RightHand": "mixamorig_RightHand",
+            "RightLowerArm": "mixamorig_RightForeArm",
+            "RightLowerLeg": "mixamorig_RightLeg",
+            "RightShoulder": "mixamorig_RightShoulder",
+            "RightToes": "mixamorig_RightToeBase",
+            "RightUpperArm": "mixamorig_RightArm",
+            "RightUpperLeg": "mixamorig_RightUpLeg",
+            "Spine": "mixamorig_Spine",
+            "UpperChest": "mixamorig_Spine2"
+          },
+          "skeleton": true,
+          "skeleton_path": "Armature/Skeleton3D",
+          "unmapped_bones": [
+            "Root"
+          ]
+        },
+        "status": "pass",
+        "textures": {
+          "count": 1,
+          "max_allowed": 256,
+          "sizes": [
+            [
+              256,
+              256
+            ]
+          ]
+        },
+        "triangles": {
+          "blender_count": 4437.0,
+          "budget": 5500,
+          "count": 4437
+        },
+        "vertex_metrics": {
+          "gpu_count": 6292,
+          "note": "metrics only; the budget is in triangles"
+        },
+        "warnings": [
+          "animations missing (they'll come from the shared library): [\"idle\", \"run\", \"dodge_roll\", \"attack_light\", \"attack_heavy\", \"death\"]",
+          "gross check: holes: 17 open boundary loops after welding"
+        ],
+        "views": {
+          "status": "ok",
+          "views": {
+            "front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-bodyspike/assets/manifests/player_p2parts/front.png",
+              "coverage": 0.1751
+            },
+            "right": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-bodyspike/assets/manifests/player_p2parts/right.png",
+              "coverage": 0.1123
+            },
+            "back": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-bodyspike/assets/manifests/player_p2parts/back.png",
+              "coverage": 0.1751
+            },
+            "top": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-bodyspike/assets/manifests/player_p2parts/top.png",
+              "coverage": 0.0811
+            },
+            "clay_front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-bodyspike/assets/manifests/player_p2parts/clay_front.png",
+              "coverage": 0.1751
+            },
+            "wireframe_front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-bodyspike/assets/manifests/player_p2parts/wireframe_front.png",
+              "coverage": 0.1567
+            }
+          },
+          "errors": [],
+          "triangles": 4437,
+          "pieces_welded": 9
+        },
+        "gross_flags": [
+          "holes: 17 open boundary loops after welding"
+        ]
+      }
+    }
+  },
+  "concept_approval": {
+    "attempt": "concept-1",
+    "image": {
+      "path": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+      "sha256": "e92b55a11a671ace6e50e37e78578afaa6a2e46e7d230da2da61ef368c2e9f98"
+    },
+    "approved_at": "2026-09-28T01:16:49+00:00",
+    "approved_by": "user",
+    "concept_model": "banana_pro",
+    "prompt": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A young frontier soldier in a knee-length wool tunic in deep dark teal that flares at the hem, a leather harness in dark reddish-brown with two straps crossing the chest and back, leather boots in dark reddish-brown, spiky dark hair, empty hands, T-pose.",
+    "command": "tripo generate text-to-image 'Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art. Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights. A young frontier soldier in a knee-length wool tunic in deep dark teal that flares at the hem, a leather harness in dark reddish-brown with two straps crossing the chest and back, leather boots in dark reddish-brown, spiky dark hair, empty hands, T-pose.' --model banana_pro --param template=t_pose --param aspect_ratio=3:4 -o .tripo-out/player/concept-1 --no-open --json",
+    "carried_from": "assets/manifests/player.json (the same approved concept-1; the P2 download was made from its multiview sheet)"
+  },
+  "brief": {
+    "path": "assets/briefs/player_p2parts.yaml",
+    "sha256": "9890866575a4e97198ebd4b5f885d070a57cff805c46b4a28f1f6ff4b91a57f0"
+  },
+  "total_cost_credits": 0,
+  "updated_at": "2026-10-02T23:36:06+00:00"
+}
