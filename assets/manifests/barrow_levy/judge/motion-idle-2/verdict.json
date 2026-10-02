@@ -1,0 +1,23 @@
+{
+  "verdict": "pass",
+  "summary": "The Back-file idle stays in place with planted feet, no broken poses or stretch, and every assertion passes, including the game-path handovers.",
+  "findings": [
+    {
+      "check": "pose",
+      "severity": "minor",
+      "observation": "In side view the head and upper spine sit forward of the hips, so the brief's 'upright' Back-file idle reads slightly stooped; whether it reads distinct from the hunched Front-file at 15 m is a silhouette question, not a defect.",
+      "evidence": "01_frame_strip.png side row; 02_onion_skin.png side"
+    }
+  ],
+  "questions_answered": [
+    "In place: Hips 0.008 m.",
+    "Feet: p90 0.024 m/s, planted throughout.",
+    "No broken poses; stretch 0.",
+    "All 6 pass: travel 0.008/0.15, slide 0.024/0.5, bind 0.534/1.8, stretch 0/1.0, wrong-clip 0, snap 1.76/5 (attack>idle)."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png"
+  ]
+}

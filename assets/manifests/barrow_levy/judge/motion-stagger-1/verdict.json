@@ -1,0 +1,16 @@
+{
+  "verdict": "pass",
+  "summary": "Front-file stagger is a small in-place recoil with planted feet, no broken poses, and every assertion passes, including the game-path handovers.",
+  "findings": [],
+  "questions_answered": [
+    "In place: Hips travel 0.029 m.",
+    "Feet planted all 24 contact frames, p90 0.016 m/s; root peaks 0.13 m/s.",
+    "No broken pose; skin stretch 0.",
+    "All 4 pass: bind 0.632/1.8, stretch 0/1.0, wrong-clip 0, handover snap 3.85/5 (run>stagger)."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png"
+  ]
+}

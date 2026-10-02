@@ -1,0 +1,16 @@
+{
+  "verdict": "pass",
+  "summary": "The Front-file run clip stays in place with feet planted, holds clean poses and has smooth game handovers; all six assertions pass.",
+  "findings": [],
+  "questions_answered": [
+    "In place: max travel 0.038 m, final 0.00 m.",
+    "Planted feet near 0 m/s (p90 0.211) against 4.6 m/s ground speed.",
+    "No broken poses; stretch 0.",
+    "All pass: travel 0.038/0.15, slide 0.211/0.5, bind 1.032/1.8, stretch 0/1.0, wrong-clip 0, snap 3.85/5 (run>stagger)."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png"
+  ]
+}

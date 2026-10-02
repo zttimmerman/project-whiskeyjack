@@ -1,0 +1,37 @@
+{
+  "verdict": "escalate",
+  "summary": "attack_heavy plays in place with a coherent pose and clean game handovers, but the skin-stretch assertion fails (4.98 vs 1.0) at the knee and boot-top seam, and that comes from the skin weights rather than anything a library change fixes.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "major",
+      "observation": "Knee/boot-top edges on both legs, worst LeftUpperLeg, 3.0-6.0x in the opening crouch; above 1.0 the whole clip (~1.8 standing at 2.0 s).",
+      "evidence": "skin stretch 4.977; 04_stretch_detail.png; 03_plots.png"
+    },
+    {
+      "check": "motion",
+      "severity": "minor",
+      "observation": "Mostly hidden under the hem and boot tops; only a dark crease at the left boot top in the crouch.",
+      "evidence": "01_frame_strip.png frames 1, 6-8"
+    },
+    {
+      "check": "motion",
+      "severity": "minor",
+      "observation": "Hips up to 0.175 m in the lunge, back to 0.047; foot slide p90 1.875 during intended pivots (not asserted for actions).",
+      "evidence": "02_onion_skin.png; 03_plots.png"
+    }
+  ],
+  "escalation_reason": "Skin stretch at the knee/boot-top, likely where skirt_reweight grading meets the leg bones; a clean-stage weighting issue, not a library change. User decides to accept or rework the skirt and knee weighting.",
+  "questions_answered": [
+    "In place: Hips max 0.18, end 0.05.",
+    "Feet slide in intended pivots; ground speed 0.",
+    "No broken pose; crease at knee/boot top.",
+    "3 of 4 pass; stretch 4.977 fails."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png",
+    "04_stretch_detail.png"
+  ]
+}

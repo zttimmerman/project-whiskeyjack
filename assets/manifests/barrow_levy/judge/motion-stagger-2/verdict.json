@@ -1,0 +1,23 @@
+{
+  "verdict": "pass",
+  "summary": "The Back-file stagger is a short in-place recoil from a forward lean to upright, with no drift, foot slide, broken pose or stretch, and all four assertions pass.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "minor",
+      "observation": "Worst handover attack>stagger peaks at 4.28 m/s snap excess (blend 0.15 s), close to the 5 m/s limit; little room if blend times change.",
+      "evidence": "assertion 'no pose snap at handovers (game play path)'"
+    }
+  ],
+  "questions_answered": [
+    "In place: Hips 0.029 m backward, a recoil.",
+    "Feet planted: p90 0.016 m/s over 24 frames.",
+    "No broken poses; stretch 0.",
+    "All 4 pass: bind 0.632/1.8, stretch 0/1.0, wrong-clip 0, snap 4.28/5."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "verdict": "escalate",
+  "summary": "The dodge_roll stays in place, and its pose and handovers look clean, but skin stretch fails at 3.88x against a 1.0 limit, in the tunic skirt between the hips and the raised thighs during the crouch recovery. The likely fix is in the skirt reweight at the clean stage.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "major",
+      "observation": "Skirt edges between hips and raised left thigh stretch 2.7-4.9x in the recovery crouch (t=0.31-0.50, worst 0.40 s); the skirt panel is visibly taut and sheared over the lifted knee, visible at gameplay distance coming out of every roll.",
+      "evidence": "skin stretch 3.876; 04_stretch_detail.png; 03_plots.png; 01_frame_strip.png frames 9-14"
+    },
+    {
+      "check": "motion",
+      "severity": "minor",
+      "observation": "Hips peak 0.194 m mid-roll, end 0.036 (limit applies only to death/in-place).",
+      "evidence": "03_plots.png; 02_onion_skin.png"
+    },
+    {
+      "check": "pose",
+      "severity": "minor",
+      "observation": "At ~0.27 s the curled body dips slightly to or below the floor line.",
+      "evidence": "01_frame_strip.png bottom row frame 8"
+    }
+  ],
+  "escalation_reason": "Failing stretch in the skirt_reweight region during the deep recovery crouch; fix by changing the clean stage's skirt reweight grading (less thigh weight near the waist) or a roll clip with a shallower recovery. User picks; check other deep-crouch clips too.",
+  "questions_answered": [
+    "In place: Hips peak 0.19, end 0.04.",
+    "Feet plant only last 0.15 s; ground speed 0.",
+    "No broken joints; slight floor dip at frame 8; skirt stretched over the left thigh.",
+    "Bind 1.10/1.8, play path 0, snap 3.89/5 pass; stretch 3.876 fails."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png",
+    "04_stretch_detail.png"
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "verdict": "escalate",
+  "summary": "The death clip stays in place and its feet hold still, but skin stretch is 3.6x against a limit of 1.0, already over the limit in the first frame, centred on the tunic and thigh region, so the cause looks like the skin weights rather than the clip.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "major",
+      "observation": "Peak 3.61x, worst LeftUpperLeg; long edges thighs-to-tunic/vest hem 2.5-4.6x at t=0.93 s.",
+      "evidence": "04_stretch_detail.png; edge_stretch_max 3.608"
+    },
+    {
+      "check": "motion",
+      "severity": "major",
+      "observation": "1.8x at t=0, ~3.2x through the crouch, ~1.8x lying down; never under the limit, pointing to weighting.",
+      "evidence": "03_plots.png"
+    },
+    {
+      "check": "other",
+      "severity": "minor",
+      "observation": "The stretch detail labels its worst edge 4.61x but metrics report 3.608; the two measurements disagree.",
+      "evidence": "04_stretch_detail.png header vs edge_stretch_max"
+    },
+    {
+      "check": "pose",
+      "severity": "minor",
+      "observation": "The collapse reads cleanly at strip scale.",
+      "evidence": "01_frame_strip.png frames 4-7"
+    }
+  ],
+  "escalation_reason": "Stretch present from frame 0 around tunic and thighs points to mesh weights (skirt_reweight or auto-rig), outside the motion stage. The user decides whether to fix weights in the clean stage or accept it as hidden; also check the 4.61 vs 3.608 discrepancy.",
+  "questions_answered": [
+    "In place: Hips 0.00 m.",
+    "Feet p90 0.036 once planted.",
+    "No broken poses at strip scale.",
+    "4 of 5 pass; stretch 3.61 fails."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png",
+    "04_stretch_detail.png"
+  ]
+}

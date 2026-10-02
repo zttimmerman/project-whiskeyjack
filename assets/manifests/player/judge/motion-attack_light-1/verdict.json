@@ -1,0 +1,37 @@
+{
+  "verdict": "escalate",
+  "summary": "attack_light stays in place and its handovers pass, but skin stretch is 4.63 against a limit of 1.0, concentrated where the tunic hem meets the thighs and knees in the deep lunge, and no single library change clearly fixes that.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "major",
+      "observation": "Tunic-hem-to-thigh/knee edges up to 5.6x at t=0.30 s in a deep wide lunge (hips 0.80 -> 0.53 m); across the skirt-reweight boundary on both legs.",
+      "evidence": "04_stretch_detail.png, 03_plots.png; skin stretch 4.63, worst LeftUpperLeg"
+    },
+    {
+      "check": "motion",
+      "severity": "minor",
+      "observation": "Right foot moves 6.7 m/s early while flagged planted (p90 3.49); action clips are exempt and the strip shows a deliberate step.",
+      "evidence": "03_plots.png"
+    },
+    {
+      "check": "pose",
+      "severity": "minor",
+      "observation": "Crouches low and ends with the left arm high behind the head; whether this clip suits a quick light attack is a design question.",
+      "evidence": "01_frame_strip.png frames 5-14"
+    }
+  ],
+  "escalation_reason": "Stretch from the skirt-reweighted tunic band pulled by a deep lunge; fix at the clean stage (skirt reweight radius/hem grading) or a shallower clip (a design call).",
+  "questions_answered": [
+    "In place: Hips peak 0.13 m, end 0.04.",
+    "Right foot pivots early (exempt), then settles.",
+    "No broken joints.",
+    "Bind 1.585/1.8, play path 0, snap 3.9/5 pass; stretch 4.63 fails."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png",
+    "04_stretch_detail.png"
+  ]
+}

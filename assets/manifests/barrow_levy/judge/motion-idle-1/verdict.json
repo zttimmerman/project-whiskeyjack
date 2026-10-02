@@ -1,0 +1,16 @@
+{
+  "verdict": "pass",
+  "summary": "Front-file idle (Sword_Idle, hunched) stays in place with planted feet, clean poses and no stretch; all six assertions pass.",
+  "findings": [],
+  "questions_answered": [
+    "In place: the onion skin shows one tight silhouette over 14 frames with only a slight sway; hips travel max 0.06 m, final 0.00 m.",
+    "Feet hold still: planted foot speed is about 0.01-0.02 m/s (p90 0.012), foot heights are flat at contact level, and the root's horizontal speed peaks at 0.11 m/s, which is the hip sway for a 0 m/s idle.",
+    "No broken pose: the hunched crouch stays consistent across both strip rows, with no limbs through the body, no twisted or collapsed joints, and edge stretch 0.",
+    "All 6 pass: travel 0.06/0.15, foot slide 0.012/0.5, bind deviation 0.518/1.8, stretch 0/1.0, wrong-clip frames 0/0, handover snap 3.42/5 (worst is run>idle)."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png"
+  ]
+}

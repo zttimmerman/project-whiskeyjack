@@ -2232,7 +2232,7 @@
     "sha256": "e3c912c2d51344044c0821f976f228a9e696dd91507c20577536912144ece15a"
   },
   "total_cost_credits": 155,
-  "updated_at": "2026-10-01T20:50:52+00:00",
+  "updated_at": "2026-10-02T04:07:57+00:00",
   "concept_approval": {
     "attempt": "concept-3",
     "image": {
@@ -2540,6 +2540,593 @@
       "revise": null,
       "escalation_reason": null,
       "summary": "The Back-file attack clip (the Spell_Simple_Enter stand-in) stays in place with planted feet and no broken poses, and both assertions pass.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:attack",
+      "recorded_at": "2026-10-02T04:07:57+00:00",
+      "packet": "assets/manifests/barrow_levy/judge/motion-attack-3/packet.json",
+      "packet_sha256": "6d7831baf8554eaf30d311c6314cde8ad312bb3cc633f95a7cc41fd9fb95a060",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "attack",
+        "source": "res://data/animations/levy_frontfile_library.tres:attack",
+        "model": "res://assets/meshes/barrow_levy.glb",
+        "metrics_file": {
+          "path": ".tripo-out/barrow_levy/motion/blends-frontfile/attack_metrics.json",
+          "sha256": "0695d9ae279f924c3ba8fd4d876901fe4f981f5e3c632c9e856839578d080dec"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/barrow_levy/judge/motion-attack-3/01_frame_strip.png",
+          "sha256": "dafac78ddaae5b76cb61b90c60acb6a9097f94e18e8140009e4084760acdeca7",
+          "source": ".tripo-out/barrow_levy/motion/blends-frontfile/attack_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/barrow_levy/judge/motion-attack-3/02_onion_skin.png",
+          "sha256": "21938cac15b23b7f05222b1bd5f2e9bc0164160e5ea439c76683a400555e09ce",
+          "source": ".tripo-out/barrow_levy/motion/blends-frontfile/attack_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/barrow_levy/judge/motion-attack-3/03_plots.png",
+          "sha256": "8074862652ea15c99446c17355f14b362a548a2cf38a94444388a04257ed59e3",
+          "source": ".tripo-out/barrow_levy/motion/blends-frontfile/attack_plots.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/barrow_levy/judge/motion-attack-3/01_frame_strip.png",
+        "assets/manifests/barrow_levy/judge/motion-attack-3/02_onion_skin.png",
+        "assets/manifests/barrow_levy/judge/motion-attack-3/03_plots.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "In recovery (0.92-1.33 s) the right foot, flagged planted, slides back ~1.4 m/s as it settles: a drag rather than a step; reported only for actions.",
+          "evidence": "03_plots.png; foot_slide_p90_mps 1.277"
+        },
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "One-frame 8-10 m/s foot spikes at ~0.31 s as the feet leave for the lunge step; the strip shows an intentional lunge, not a pop.",
+          "evidence": "03_plots.png, 01_frame_strip.png frames 4-5"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "Front-file Sword_Attack plays as a readable overhead lunge-and-recover: it returns to its origin, has no broken poses and passes every assertion; only minor foot-drag in the recovery remains.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:attack",
+      "recorded_at": "2026-10-02T04:07:57+00:00",
+      "packet": "assets/manifests/barrow_levy/judge/motion-attack-4/packet.json",
+      "packet_sha256": "a8cea6d2f07db1495d2f4f23a4c0b184a4808feff075791f7d1eaa54c689b8bc",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "attack",
+        "source": "res://data/animations/levy_backfile_library.tres:attack",
+        "model": "res://assets/meshes/barrow_levy.glb",
+        "metrics_file": {
+          "path": ".tripo-out/barrow_levy/motion/blends-backfile/attack_metrics.json",
+          "sha256": "176f7e44797e4751592805c6850273265f205decd44a924472f86dcdaeb5c59c"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/barrow_levy/judge/motion-attack-4/01_frame_strip.png",
+          "sha256": "2db74d8fa182fb6f75f9eb4134dd94b38234bd3a5b0ce0dda6d14c54ced39304",
+          "source": ".tripo-out/barrow_levy/motion/blends-backfile/attack_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/barrow_levy/judge/motion-attack-4/02_onion_skin.png",
+          "sha256": "a58fb25201f2f54af1b101e830105ce9b16aa9bf71a7d80b2bb11d855e74433e",
+          "source": ".tripo-out/barrow_levy/motion/blends-backfile/attack_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/barrow_levy/judge/motion-attack-4/03_plots.png",
+          "sha256": "d0b2c35502ca100afa1d740ee835cdbe91e5f963657a9f357a425433de74db4d",
+          "source": ".tripo-out/barrow_levy/motion/blends-backfile/attack_plots.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/barrow_levy/judge/motion-attack-4/01_frame_strip.png",
+        "assets/manifests/barrow_levy/judge/motion-attack-4/02_onion_skin.png",
+        "assets/manifests/barrow_levy/judge/motion-attack-4/03_plots.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "attack>stagger peaks at 4.28 m/s snap excess (left hand 7.62 vs 3.34 m/s at a 0.15 s blend); close to but under the 5 m/s limit.",
+          "evidence": "assertion 'no pose snap at handovers (game play path)'"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The Back-file attack (Spell_Simple_Enter stand-in) stays in place with planted feet and no broken poses, and every assertion passes.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:death",
+      "recorded_at": "2026-10-02T04:07:57+00:00",
+      "packet": "assets/manifests/barrow_levy/judge/motion-death-2/packet.json",
+      "packet_sha256": "95dc777b0c3a7983dc1c595da7af5e2a7ef2a84f0459fd6d6e68d25f92230fb4",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "death",
+        "source": "res://data/animations/levy_frontfile_library.tres:death",
+        "model": "res://assets/meshes/barrow_levy.glb",
+        "metrics_file": {
+          "path": ".tripo-out/barrow_levy/motion/blends-frontfile/death_metrics.json",
+          "sha256": "8248b01fb4d1c8046ba7cac7873a8ddbc3dd3cf7c17418c74c2fd2a3edfc0972"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/barrow_levy/judge/motion-death-2/01_frame_strip.png",
+          "sha256": "92e52be2c53d2f73c9a943931e7c4448789249cde8521f0a2befa007ff4cef51",
+          "source": ".tripo-out/barrow_levy/motion/blends-frontfile/death_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/barrow_levy/judge/motion-death-2/02_onion_skin.png",
+          "sha256": "f6690de62d6587482308004d6c60da2ec2d6663f16bd3da0306ccc8dcb0da021",
+          "source": ".tripo-out/barrow_levy/motion/blends-frontfile/death_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/barrow_levy/judge/motion-death-2/03_plots.png",
+          "sha256": "ea78b9139ea4f6455fd08b22bad6ff312940899299a07078ec4e0223d3c4fe4e",
+          "source": ".tripo-out/barrow_levy/motion/blends-frontfile/death_plots.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/barrow_levy/judge/motion-death-2/01_frame_strip.png",
+        "assets/manifests/barrow_levy/judge/motion-death-2/02_onion_skin.png",
+        "assets/manifests/barrow_levy/judge/motion-death-2/03_plots.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "Feet slide ~1.1 m/s (p90) in the first ~0.15 s as the body drops and kick up ~0.45 m at 1.0-1.4 s; reported only for deaths, not a skid in the onion skin.",
+          "evidence": "03_plots.png, 02_onion_skin.png; foot_slide_p90_mps 1.1"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "Front-file death collapses in place with the Hips pinned, nothing breaks or stretches, and every assertion passes, including the game-path handovers (worst snap 3.4 vs 5 m/s).",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:death",
+      "recorded_at": "2026-10-02T04:07:57+00:00",
+      "packet": "assets/manifests/barrow_levy/judge/motion-death-3/packet.json",
+      "packet_sha256": "d47905c5dbab353acfd90274a2e9b01cbb88d17e3d874c01f4cf683a2639f1e3",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "death",
+        "source": "res://data/animations/levy_backfile_library.tres:death",
+        "model": "res://assets/meshes/barrow_levy.glb",
+        "metrics_file": {
+          "path": ".tripo-out/barrow_levy/motion/blends-backfile/death_metrics.json",
+          "sha256": "bdaf842468493c68186e639e3fef3def3a89be145760dda80c7548569c25bcde"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/barrow_levy/judge/motion-death-3/01_frame_strip.png",
+          "sha256": "92e52be2c53d2f73c9a943931e7c4448789249cde8521f0a2befa007ff4cef51",
+          "source": ".tripo-out/barrow_levy/motion/blends-backfile/death_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/barrow_levy/judge/motion-death-3/02_onion_skin.png",
+          "sha256": "c7f8c4e4c7d3b4b364dd64b73f3ca9f96bd587bfe4445f331a933c3f774a857f",
+          "source": ".tripo-out/barrow_levy/motion/blends-backfile/death_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/barrow_levy/judge/motion-death-3/03_plots.png",
+          "sha256": "9adf8766b51b05c4685cbd539d7e818f9cd6419cdf6d81d30012f9ac20903690",
+          "source": ".tripo-out/barrow_levy/motion/blends-backfile/death_plots.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/barrow_levy/judge/motion-death-3/01_frame_strip.png",
+        "assets/manifests/barrow_levy/judge/motion-death-3/02_onion_skin.png",
+        "assets/manifests/barrow_levy/judge/motion-death-3/03_plots.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "Planted-foot slide 1.10 m/s p90 over the first ~0.2 s as the feet shuffle before the knees give; reported only for deaths, not visible at gameplay distance.",
+          "evidence": "03_plots.png; foot_slide_p90_mps"
+        },
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "Worst handover attack>death: left hand 7.62 vs 5.68 m/s, excess 1.94, well under 5.",
+          "evidence": "metrics.motion.game_path.handovers[attack>death]"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The Back-file death clip holds its Hips exactly in place, collapses backward into a clean supine pose with no broken joints or stretch, and passes all five assertions, including the game-path handover checks.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:idle",
+      "recorded_at": "2026-10-02T04:07:57+00:00",
+      "packet": "assets/manifests/barrow_levy/judge/motion-idle-1/packet.json",
+      "packet_sha256": "daba2b137c68f2b1b3ab700b28d245bd9c066bd55f0047efcd0cd8e6c9b00f50",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "idle",
+        "source": "res://data/animations/levy_frontfile_library.tres:idle",
+        "model": "res://assets/meshes/barrow_levy.glb",
+        "metrics_file": {
+          "path": ".tripo-out/barrow_levy/motion/blends-frontfile/idle_metrics.json",
+          "sha256": "726ab6866edecd9467048b0c5c49f262f203e9e7a676f8c0f650057d3495abe1"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/barrow_levy/judge/motion-idle-1/01_frame_strip.png",
+          "sha256": "b4c3284c860bf42ce695c608028d0059148626d71b7f42d6440738a14fe9ef84",
+          "source": ".tripo-out/barrow_levy/motion/blends-frontfile/idle_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/barrow_levy/judge/motion-idle-1/02_onion_skin.png",
+          "sha256": "2290b1adfd79725dd98f0deab7cc54855c5b482fbe0fe9df603c6bde589fe92c",
+          "source": ".tripo-out/barrow_levy/motion/blends-frontfile/idle_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/barrow_levy/judge/motion-idle-1/03_plots.png",
+          "sha256": "eb86f47a25740326fa1f091ef0c24607fc2dc9cbdff0c2e27e4048dd975b6858",
+          "source": ".tripo-out/barrow_levy/motion/blends-frontfile/idle_plots.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/barrow_levy/judge/motion-idle-1/01_frame_strip.png",
+        "assets/manifests/barrow_levy/judge/motion-idle-1/02_onion_skin.png",
+        "assets/manifests/barrow_levy/judge/motion-idle-1/03_plots.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "Front-file idle (Sword_Idle, hunched) stays in place with planted feet, clean poses and no stretch; all six assertions pass.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:idle",
+      "recorded_at": "2026-10-02T04:07:57+00:00",
+      "packet": "assets/manifests/barrow_levy/judge/motion-idle-2/packet.json",
+      "packet_sha256": "afbbaed8d76e85010588bcc4fc9360803f32beb4057839b78ac56febe28c1fb2",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "idle",
+        "source": "res://data/animations/levy_backfile_library.tres:idle",
+        "model": "res://assets/meshes/barrow_levy.glb",
+        "metrics_file": {
+          "path": ".tripo-out/barrow_levy/motion/blends-backfile/idle_metrics.json",
+          "sha256": "1f3f14d0406ea525ee0de72b8454018828b39a87dec15afcf9771e10818c3709"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/barrow_levy/judge/motion-idle-2/01_frame_strip.png",
+          "sha256": "414345a55f932ace75fd38ccdacfaa637e31d5a80ea958b05db98b596ddeec88",
+          "source": ".tripo-out/barrow_levy/motion/blends-backfile/idle_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/barrow_levy/judge/motion-idle-2/02_onion_skin.png",
+          "sha256": "01f7e145fbd7be32a9c3e6ebb0c3ea44fa176bcb31fab49cc9244f89f4504488",
+          "source": ".tripo-out/barrow_levy/motion/blends-backfile/idle_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/barrow_levy/judge/motion-idle-2/03_plots.png",
+          "sha256": "1f37a2ac82f432f59007a03e1360923165bb03b108dd620a6a3f2e79d26aaf2a",
+          "source": ".tripo-out/barrow_levy/motion/blends-backfile/idle_plots.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/barrow_levy/judge/motion-idle-2/01_frame_strip.png",
+        "assets/manifests/barrow_levy/judge/motion-idle-2/02_onion_skin.png",
+        "assets/manifests/barrow_levy/judge/motion-idle-2/03_plots.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "pose",
+          "severity": "minor",
+          "observation": "In side view the head and upper spine sit forward of the hips, so the brief's 'upright' Back-file idle reads slightly stooped; whether it reads distinct from the hunched Front-file at 15 m is a silhouette question, not a defect.",
+          "evidence": "01_frame_strip.png side row; 02_onion_skin.png side"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The Back-file idle stays in place with planted feet, no broken poses or stretch, and every assertion passes, including the game-path handovers.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:run",
+      "recorded_at": "2026-10-02T04:07:57+00:00",
+      "packet": "assets/manifests/barrow_levy/judge/motion-run-3/packet.json",
+      "packet_sha256": "26010717f4b0d8e8bb505e4e732bb186a131c7131abd8ddc9f742e3eeb1a047f",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "run",
+        "source": "res://data/animations/levy_frontfile_library.tres:run",
+        "model": "res://assets/meshes/barrow_levy.glb",
+        "metrics_file": {
+          "path": ".tripo-out/barrow_levy/motion/blends-frontfile/run_metrics.json",
+          "sha256": "2279f091636717a83ca79db3a262d8e0c59caf5d516a3035d0e7f7c4dfa1a1f8"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/barrow_levy/judge/motion-run-3/01_frame_strip.png",
+          "sha256": "768aba181ffcd91391ac00b50d93eeae4b61a0c723136a5e465cc3fa4dbace1d",
+          "source": ".tripo-out/barrow_levy/motion/blends-frontfile/run_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/barrow_levy/judge/motion-run-3/02_onion_skin.png",
+          "sha256": "162b98d42af585028af71d7634f839ceb6b5549914cffdbd8f69ee225575c6e5",
+          "source": ".tripo-out/barrow_levy/motion/blends-frontfile/run_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/barrow_levy/judge/motion-run-3/03_plots.png",
+          "sha256": "78af21825fbc4336c41f307932b837aba95b95818a2bef34af7bda562590358d",
+          "source": ".tripo-out/barrow_levy/motion/blends-frontfile/run_plots.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/barrow_levy/judge/motion-run-3/01_frame_strip.png",
+        "assets/manifests/barrow_levy/judge/motion-run-3/02_onion_skin.png",
+        "assets/manifests/barrow_levy/judge/motion-run-3/03_plots.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The Front-file run clip stays in place with feet planted, holds clean poses and has smooth game handovers; all six assertions pass.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:run",
+      "recorded_at": "2026-10-02T04:07:57+00:00",
+      "packet": "assets/manifests/barrow_levy/judge/motion-run-4/packet.json",
+      "packet_sha256": "2ee2c7fb176e8a5aca741f4bee1ca5e9fd4e49e3d5e911a4e4b2a58bb3086f53",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "run",
+        "source": "res://data/animations/levy_backfile_library.tres:run",
+        "model": "res://assets/meshes/barrow_levy.glb",
+        "metrics_file": {
+          "path": ".tripo-out/barrow_levy/motion/blends-backfile/run_metrics.json",
+          "sha256": "8dd06ed1a6d33ff72f2f63a6c1b12357a2fce5038e6e971a12de4ef95d45ed55"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/barrow_levy/judge/motion-run-4/01_frame_strip.png",
+          "sha256": "704bbb0460294d820f107a7af9edc11d565346948947761adcd685b68e65e3f0",
+          "source": ".tripo-out/barrow_levy/motion/blends-backfile/run_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/barrow_levy/judge/motion-run-4/02_onion_skin.png",
+          "sha256": "dd978c4403082623a322c2dbb0fffe62f0b775b871ef1aa39c34a7f7610fe9af",
+          "source": ".tripo-out/barrow_levy/motion/blends-backfile/run_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/barrow_levy/judge/motion-run-4/03_plots.png",
+          "sha256": "d0f1e72c7ec08901a7ecee79ff1d8cb6a1bf82819d3d30a49944a768de3a7059",
+          "source": ".tripo-out/barrow_levy/motion/blends-backfile/run_plots.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/barrow_levy/judge/motion-run-4/01_frame_strip.png",
+        "assets/manifests/barrow_levy/judge/motion-run-4/02_onion_skin.png",
+        "assets/manifests/barrow_levy/judge/motion-run-4/03_plots.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "attack>run left hand 6.75 vs 3.34 m/s (excess 3.41) and run>stagger right foot 5.7 (excess 2.4); within tolerance, not visible as a pop.",
+          "evidence": "metrics.motion.game_path.handovers"
+        },
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "Foot-slide max 0.769 m/s vs p90 0.172 comes from contact-edge frames, not mid-plant sliding.",
+          "evidence": "03_plots.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "Back-file run (Walk_Loop per brief) stays in place, feet hold when planted, no broken poses, and every assertion passes including the game-path handovers.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:stagger",
+      "recorded_at": "2026-10-02T04:07:57+00:00",
+      "packet": "assets/manifests/barrow_levy/judge/motion-stagger-1/packet.json",
+      "packet_sha256": "bcc09fb470bf6fe7f1fc2723cb9618c6d5ce81e605681ea11b8c4ecb53c3e418",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "stagger",
+        "source": "res://data/animations/levy_frontfile_library.tres:stagger",
+        "model": "res://assets/meshes/barrow_levy.glb",
+        "metrics_file": {
+          "path": ".tripo-out/barrow_levy/motion/blends-frontfile/stagger_metrics.json",
+          "sha256": "769b052dc08f7fbfce87cf9323e5c4eb439a34677c6f74b4b82dca2e35b3dfdb"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/barrow_levy/judge/motion-stagger-1/01_frame_strip.png",
+          "sha256": "9563d2b9b30adec2c7a26672c498738666a791319e9022472d9c1ffd6445dc52",
+          "source": ".tripo-out/barrow_levy/motion/blends-frontfile/stagger_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/barrow_levy/judge/motion-stagger-1/02_onion_skin.png",
+          "sha256": "0d714be3e0f65a2fe96516ef9cf1db69058db91e3587aee378ef4a31a3e10a04",
+          "source": ".tripo-out/barrow_levy/motion/blends-frontfile/stagger_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/barrow_levy/judge/motion-stagger-1/03_plots.png",
+          "sha256": "be3b37ef0b9478b89b5c407688402fbe598ae6de8d07a0fe19a43c56ac66d0e0",
+          "source": ".tripo-out/barrow_levy/motion/blends-frontfile/stagger_plots.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/barrow_levy/judge/motion-stagger-1/01_frame_strip.png",
+        "assets/manifests/barrow_levy/judge/motion-stagger-1/02_onion_skin.png",
+        "assets/manifests/barrow_levy/judge/motion-stagger-1/03_plots.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "Front-file stagger is a small in-place recoil with planted feet, no broken poses, and every assertion passes, including the game-path handovers.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:stagger",
+      "recorded_at": "2026-10-02T04:07:57+00:00",
+      "packet": "assets/manifests/barrow_levy/judge/motion-stagger-2/packet.json",
+      "packet_sha256": "6e6cf5963867860b344ebe1dfb01266d3c0b23a9d7059f8f0d5a546e9240f15f",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "stagger",
+        "source": "res://data/animations/levy_backfile_library.tres:stagger",
+        "model": "res://assets/meshes/barrow_levy.glb",
+        "metrics_file": {
+          "path": ".tripo-out/barrow_levy/motion/blends-backfile/stagger_metrics.json",
+          "sha256": "cc764bf8b4d2780a206ffd609dbc8a466cb1e56dbda7ffba758b5b779f09d00e"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/barrow_levy/judge/motion-stagger-2/01_frame_strip.png",
+          "sha256": "9563d2b9b30adec2c7a26672c498738666a791319e9022472d9c1ffd6445dc52",
+          "source": ".tripo-out/barrow_levy/motion/blends-backfile/stagger_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/barrow_levy/judge/motion-stagger-2/02_onion_skin.png",
+          "sha256": "1c833043c0cf95d9caf7fb6d0afcbe85ebd5f4b2adbb8edb1ee76ebba32ca86f",
+          "source": ".tripo-out/barrow_levy/motion/blends-backfile/stagger_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/barrow_levy/judge/motion-stagger-2/03_plots.png",
+          "sha256": "0146bcfb3ebb587df38bad4175e376b20aff5c8643c67fede5020b04363efa7c",
+          "source": ".tripo-out/barrow_levy/motion/blends-backfile/stagger_plots.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/barrow_levy/judge/motion-stagger-2/01_frame_strip.png",
+        "assets/manifests/barrow_levy/judge/motion-stagger-2/02_onion_skin.png",
+        "assets/manifests/barrow_levy/judge/motion-stagger-2/03_plots.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "Worst handover attack>stagger peaks at 4.28 m/s snap excess (blend 0.15 s), close to the 5 m/s limit; little room if blend times change.",
+          "evidence": "assertion 'no pose snap at handovers (game play path)'"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The Back-file stagger is a short in-place recoil from a forward lean to upright, with no drift, foot slide, broken pose or stretch, and all four assertions pass.",
       "next": "proceed to the next stage"
     }
   ]

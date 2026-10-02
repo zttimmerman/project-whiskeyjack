@@ -1,0 +1,23 @@
+{
+  "verdict": "pass",
+  "summary": "Front-file death collapses in place with the Hips pinned, nothing breaks or stretches, and every assertion passes, including the game-path handovers (worst snap 3.4 vs 5 m/s).",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "minor",
+      "observation": "Feet slide ~1.1 m/s (p90) in the first ~0.15 s as the body drops and kick up ~0.45 m at 1.0-1.4 s; reported only for deaths, not a skid in the onion skin.",
+      "evidence": "03_plots.png, 02_onion_skin.png; foot_slide_p90_mps 1.1"
+    }
+  ],
+  "questions_answered": [
+    "In place: Hips 0.00 m; falls backward.",
+    "16 planted frames at the start with brief slide (reported only).",
+    "No broken pose; stretch 0.",
+    "All 5 pass: travel 0.0/0.15, bind 1.285/1.8, stretch 0/1.0, wrong-clip 0, snap 3.4/5 (run>death)."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png"
+  ]
+}
