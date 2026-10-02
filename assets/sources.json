@@ -1,5 +1,34 @@
 {
   "packs": {
+    "gobkit_animal_b": {
+      "title": "Gobkit Free Animal Pack Vol. 2",
+      "homepage": "https://gobkit.com/freebies",
+      "source_url": "https://gobkit.com/freebies/animalB/gobkit-animalB-pack.zip",
+      "author": "Gobkit / Alsomind Tech Co., Ltd.",
+      "license": "CC0-1.0",
+      "version": "Vol. 2 (zip sha256 a5d73ab6)",
+      "archive": {
+        "file": ".downloads/gobkit_animal_b/gobkit-animalB-pack.zip",
+        "sha256": "a5d73ab6621b7526caf16ea33f65d76a53071278be63d5bae3f68f5204a68bc5"
+      },
+      "license_file": {
+        "file": ".downloads/gobkit_animal_b/gobkit-animalB-pack/LICENSE.txt",
+        "sha256": "2cc1ee106e8214cd1b7ab82dc2f447d79a040c767266b9360bddd74eaba54ff6"
+      },
+      "import": {
+        "palette": [
+          "Saddle Leather",
+          "Barrow Oak",
+          "Peat Black",
+          "Old Bone"
+        ],
+        "budget": "Sourced props (kit dressing)",
+        "source_scale": 1.0,
+        "prefix": "gobkit_",
+        "format": "gltf",
+        "pivot": "source"
+      }
+    },
     "kaykit_dungeon_remastered": {
       "title": "KayKit Dungeon Remastered",
       "homepage": "https://kaylousberg.itch.io/kaykit-dungeon-remastered",
@@ -34,6 +63,15 @@
     }
   },
   "assets": {
+    "gobkit_Boar": {
+      "pack": "gobkit_animal_b",
+      "source_url": "https://gobkit.com/freebies/animalB/gobkit-animalB-pack.zip",
+      "author": "Gobkit / Alsomind Tech Co., Ltd.",
+      "license": "CC0-1.0",
+      "pack_version": "Vol. 2 (zip sha256 a5d73ab6)",
+      "source_file": ".downloads/gobkit_animal_b/gobkit-animalB-pack/Boar.glb",
+      "source_sha256": "91d9c55dbf9bba1d2f4f7a110b341c6645b9077bb160a1f01abdc47dd1712fee"
+    },
     "kaykit_dungeon_barrel_large": {
       "pack": "kaykit_dungeon_remastered",
       "source_url": "https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0/archive/b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07.zip",
