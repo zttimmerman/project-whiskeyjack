@@ -1,0 +1,27 @@
+---
+id: dialogue-questmanager-lint
+title: "Lint QuestManager method names used in .dialogue files"
+status: ready
+kind: chore
+targets: []
+after: []
+phase: gameplay-2
+branch: null
+pr: null
+updated: 2026-10-02
+---
+## Goal
+
+A typo in `QuestManager.<method>` inside a `.dialogue` expression fails only at runtime (B4 trial follow-up).
+
+## Scope
+
+- extend `ci/data_lint.py` or `ci/check_dialogue.gd`: every `QuestManager.<name>` must exist on the script
+
+## Acceptance
+
+- a throwaway typo fails CI
+
+## Serves
+
+Dialogue integrity (B4).
