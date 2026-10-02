@@ -111,3 +111,136 @@ func test_enemy_attackers_max_melee_in_play() -> void:
 			. override_failure_message("the levy without a token holds at %.2f m (target 3–5 m)" % dist)
 			. is_between(2.9, 5.1)
 		)
+
+
+# A holder that dies (or is freed) keeps its token until 2 s after its last attack started, so the metric's
+# 2 s window never counts a third melee attacker
+func test_enemy_attackers_max_handoff_waits_for_window() -> void:
+	var tokens := _tokens()
+	if tokens == null:
+		return
+	var a := _node()
+	var b := _node()
+	var c := _node()
+	assert_bool(tokens.try_acquire_melee(a, 9.0)).is_true()
+	assert_bool(tokens.try_acquire_melee(b, 9.0)).is_true()
+	tokens.note_melee_attack(a, 10.0)
+	tokens.release(a)  # a dies at 10.5
+	assert_bool(tokens.holds_melee(a)).is_false()
+	(
+		assert_bool(tokens.try_acquire_melee(c, 10.5))
+		. override_failure_message("the dead holder's token went on within 2 s of its last attack")
+		. is_false()
+	)
+	assert_bool(tokens.try_acquire_melee(c, 11.99)).is_false()
+	# Physics-frame times: 120 frames after the attack is exactly the window, and allowed
+	assert_bool(tokens.try_acquire_melee(c, 10.0 + 120.0 / 60.0)).override_failure_message("2 s after").is_true()
+
+
+func test_enemy_attackers_max_handoff_immediate_without_recent_attack() -> void:
+	var tokens := _tokens()
+	if tokens == null:
+		return
+	var a := _node()
+	var b := _node()
+	var c := _node()
+	assert_bool(tokens.try_acquire_melee(a, 0.0)).is_true()
+	assert_bool(tokens.try_acquire_melee(b, 0.0)).is_true()
+	tokens.note_melee_attack(a, 10.0)
+	tokens.release(a)
+	(
+		assert_bool(tokens.try_acquire_melee(c, 12.5))
+		. override_failure_message("a holder that last attacked over 2 s ago still blocks its token")
+		. is_true()
+	)
+	# A holder that never attacked hands its token on at once
+	tokens.release(b)
+	assert_bool(tokens.try_acquire_melee(_node(), 12.5)).is_true()
+
+
+func test_enemy_attackers_max_freed_holder_waits_for_window() -> void:
+	var tokens := _tokens()
+	if tokens == null:
+		return
+	var a := Node.new()
+	var b := _node()
+	var c := _node()
+	assert_bool(tokens.try_acquire_melee(a, 9.0)).is_true()
+	assert_bool(tokens.try_acquire_melee(b, 9.0)).is_true()
+	tokens.note_melee_attack(a, 10.0)
+	a.free()
+	assert_bool(tokens.try_acquire_melee(c, 11.0)).override_failure_message("freed holder's token handed on").is_false()
+	assert_bool(tokens.try_acquire_melee(c, 12.0)).is_true()
+
+
+func test_enemy_attackers_max_holder_reclaims_its_own_token() -> void:
+	var tokens := _tokens()
+	if tokens == null:
+		return
+	var a := _node()
+	var b := _node()
+	assert_bool(tokens.try_acquire_melee(a, 9.0)).is_true()
+	assert_bool(tokens.try_acquire_melee(b, 9.0)).is_true()
+	tokens.note_melee_attack(a, 10.0)
+	tokens.release(a)  # lost sight of the player
+	assert_bool(tokens.try_acquire_melee(a, 10.5)).override_failure_message("its own reserved token").is_true()
+	assert_bool(tokens.try_acquire_melee(_node(), 12.5)).is_false()
+
+
+# Three levies around the player; one holder dies right after attacking. No 2 s window counts three distinct
+# melee attack starts, and the third levy still gets the token and attacks.
+func test_enemy_attackers_max_melee_when_holder_dies() -> void:
+	var ground := StaticBody3D.new()
+	var shape := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(60, 1, 60)
+	shape.shape = box
+	ground.add_child(shape)
+	ground.position = Vector3(0, -0.5, 0)
+	add_child(auto_free(ground))
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	var player: CharacterBody3D = FakePlayer.new()
+	player.position = Vector3(0, BODY_Y, 0)
+	add_child(auto_free(player))
+	var levies: Array[CharacterBody3D] = []
+	for i in 3:
+		var levy: CharacterBody3D = (load(LEVY_SCENE) as PackedScene).instantiate()
+		var angle := TAU * i / 3.0
+		levy.position = Vector3(sin(angle) * 1.3, BODY_Y, cos(angle) * 1.3)
+		add_child(auto_free(levy))
+		levies.append(levy)
+	var starts: Array[Dictionary] = []  # {frame, actor}
+	var was_attacking := {}
+	var killed: CharacterBody3D = null
+	var kill_at := -1
+	for frame in 480:
+		await get_tree().physics_frame
+		for levy in levies:
+			if not is_instance_valid(levy):
+				continue
+			var attacking: bool = levy.state == ATTACK
+			if attacking and not was_attacking.get(levy.name, false):
+				starts.append({"frame": frame, "actor": levy.name})
+				if killed == null:
+					killed = levy
+					kill_at = frame + 50  # dies 50 frames into its attack
+			was_attacking[levy.name] = attacking
+		if frame == kill_at and is_instance_valid(killed):
+			killed.take_damage(9999)
+	var best := 0
+	for s in starts:
+		var actors := {}
+		for e in starts:
+			if s.frame - 120 < e.frame and e.frame <= s.frame:
+				actors[e.actor] = true
+		best = maxi(best, actors.size())
+	(
+		assert_int(best)
+		. override_failure_message("%d melee attackers started within 2 s (target: at most 2)" % best)
+		. is_less_equal(2)
+	)
+	var actors := {}
+	for s in starts:
+		actors[s.actor] = true
+	assert_int(actors.size()).override_failure_message("the third levy never got the token").is_equal(3)
