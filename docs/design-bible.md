@@ -32,18 +32,20 @@ The third-person camera behind the player is the lens for everything else. Most 
 
 - **Modes, not one camera (settled):** the rig supports swappable modes: third-person over-the-shoulder now, first person later, as in Skyrim or Fallout 4. Aiming, lock-on and interaction use the **camera's** forward ray, never the character's facing, so they work in either mode.
   - First person is post-slice. It needs a first-person viewmodel (arms and weapon), and assets that hold up much closer than the 256 px texture budget assumes.
-- **Framing (settled):** the camera sits over the shoulder, offset 0.5–0.7 m to the side, with a pivot about 1.6–1.8 m above the floor (head height), 3.5–4.5 m behind, and a 70–75° FOV. **Current:** dead centre, pivot 2.4 m, 4 m behind, FOV 75°.
+- **Framing (settled; over the shoulder, variant A, decided by the user 2026-10-01):** the lens sits about 1.55 m above the floor, about 0.7 m right of the player and 1.6 m behind (2.2 m when locked on, to fit both), with a 65° FOV, looking forward past his right shoulder; he sits in the left third of the frame. Looking up and down turns the **look**; the lens stays near shoulder height, within about 0.35 m of rest. Close in (a short arm) the shoulder offset tucks in, and the look turns only as far as it must to keep his head and torso in frame. **Current:** as above (`scenes/player/CameraRig.gd`, `framing = A_MEDIUM`; the earlier framing and variants B and C stay selectable by that export for comparison in play).
   - An over-the-shoulder offset is what stops the player model hiding the enemy at melee range (`cam_melee_occlusion`).
 - **Collision:** the spring arm uses a sphere probe with a margin, not a ray, and eases in and out.
   - The player must stay fully in frame (`cam_player_in_frame`), and wall must never fill the frame (`cam_wall_fill`).
-  - When the arm is squeezed shorter than 1.5 m, the camera may rise, but not clip into the player.
+  - When the arm is squeezed shorter than 80% of its length, the camera may rise, but not clip into the player.
+  - **Current:** a 0.3 m sphere probe. A probe that starts touching a wall doesn't move, and each move stops 5 cm short of its hit (fixed 2026-10-01: a touching start passed through walls).
 - **Lock-on (Witcher model):**
   - A reticle on the target, always visible while locked.
   - Only living enemies in line of sight are candidates.
   - Cycling picks the next-nearest to screen centre.
   - The camera keeps both the player and the target in frame (`cam_lock_both_in_frame`).
-  - Lock releases on target death, on losing line of sight for 2 s, or beyond 1.5× range.
-  - **Current:** no reticle; no line-of-sight or dead filter; camera input is disabled while locked.
+  - When the target dies, the lock moves at once to the nearest living enemy in range and in sight, or releases (user, 2026-10-01).
+  - Lock releases when the target stays hidden behind world geometry for more than about 1 s (user, 2026-10-01; a moment behind a pillar keeps it), or beyond 1.5× range.
+  - **Current:** all of the above, with a Signal Red ring reticle on the target (`scenes/ui/LockOnReticle.tscn`, in the HUD); camera input is disabled while locked.
 - **Respawn and loads** restore the saved view heading, so the same input moves the same way (fixed in #6).
 - **Bindings:** one action per key. **Current:** E is bound to both `interact` and `camera_right`. Gameplay actions are polled in the physics step, so automated input can frame-time them.
 
@@ -187,10 +189,10 @@ Units are metres; the player is 1.8 m tall.
 
 | ID | Target | How measured | Current (2026-10-01) |
 |---|---|---|---|
-| `cam_melee_occlusion` | ≤ 0.25 | locked on, target within 3 m: fraction of the target's screen box covered by the player | about 1.0 (the target is fully hidden) |
-| `cam_player_in_frame` | 1.0 | fraction of sampled frames with the player's head and torso fully in frame | failed in corners (playtest) |
-| `cam_wall_fill` | ≤ 0.6 | the largest fraction of the frame covered by one wall surface | about 0.9 in a corner |
-| `cam_lock_both_in_frame` | ≥ 0.95 | while locked, fraction of frames with both player and target in frame | not measured |
+| `cam_melee_occlusion` | ≤ 0.25 | locked on, target within 3 m: fraction of the target's screen box covered by the player (replay: mean over those frames) | 0.01–0.11 (was 0.60–0.87, trial B1) |
+| `cam_player_in_frame` | 1.0 | fraction of sampled frames with the player's head and torso fully in frame | 1.0 in every scenario (was 0.58 in `camera_stress`) |
+| `cam_wall_fill` | ≤ 0.6 | the largest fraction of the frame covered by one wall surface, counting only wall between the camera and the player or beside him (no deeper along the view than his axis), so a wall he deliberately faces close up doesn't count (user, 2026-10-01) | 0.00–0.47 (was 0.01–0.57) |
+| `cam_lock_both_in_frame` | ≥ 0.95 | while locked, fraction of frames with both player and target in frame | 1.0 (was 0.36–1.0) |
 | `atk_hitbox_sync` | ±2 frames | hitbox open frame vs the clip's contact frame | hitbox opens on the press |
 | `enemy_melee_telegraph` | ≥ 0.5 s | windup from the tell's start to the hitbox opening | 0.6 s |
 | `enemy_ranged_telegraph` | ≥ 0.8 s | draw start to release | 0.9 s |

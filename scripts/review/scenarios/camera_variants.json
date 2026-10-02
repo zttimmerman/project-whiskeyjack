@@ -1,0 +1,22 @@
+{
+  "name": "camera_variants",
+  "description": "Review shots for choosing the camera framing (playtest 2026-10-01), rendered with scripts/review/capture_evidence.sh per CameraRig.framing: standing at Level 1's spawn facing north at rest (frame 40), looking fully up (100) and fully down (200), turned east with the Corridor A levy in view through the doorway (290), and locked on to it (360). Not a CI scenario: it has no checks.",
+  "scene": "res://scenes/world/Level1.tscn",
+  "seed": 1,
+  "player": {"position": [0, 1, 0], "yaw_deg": 0, "pitch": 0.0},
+  "remove": ["EnemyCentral1", "EnemyCentral2", "ArcherCentral", "ArcherCorridorB", "EnemyExit1", "EnemyExit2"],
+  "duration_frames": 380,
+  "steps": [
+    {"frame": 41, "action": "camera_up", "pressed": true},
+    {"frame": 100, "action": "camera_up", "pressed": false},
+    {"frame": 101, "action": "camera_down", "pressed": true},
+    {"frame": 200, "action": "camera_down", "pressed": false},
+    {"frame": 201, "action": "camera_up", "pressed": true},
+    {"frame": 213, "action": "camera_up", "pressed": false},
+    {"frame": 220, "action": "camera_right", "pressed": true},
+    {"frame": 267, "action": "camera_right", "pressed": false},
+    {"frame": 300, "action": "lock_on", "pressed": true},
+    {"frame": 301, "action": "lock_on", "pressed": false}
+  ],
+  "checks": [{"id": "cam_player_in_frame"}, {"id": "cam_lock_both_in_frame"}, {"id": "cam_melee_occlusion"}]
+}

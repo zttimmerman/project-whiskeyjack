@@ -10,6 +10,8 @@
     {"frame": 240, "action": "move_forward", "pressed": false}
   ],
   "checks": [
-    {"id": "reach_distance_m", "point": [0, 1.9, -9], "target": [null, 1.0]}
+    {"id": "reach_distance_m", "point": [0, 1.9, -9], "target": [null, 1.0]},
+    {"id": "cam_player_in_frame", "target": [1.0, null], "baseline": 1.0, "tolerance": 0.05},
+    {"id": "cam_wall_fill", "target": [null, 0.6], "baseline": 0.293, "tolerance": 0.05}
   ]
 }

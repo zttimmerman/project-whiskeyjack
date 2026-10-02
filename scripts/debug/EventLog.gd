@@ -28,7 +28,8 @@ extends Node
 ##   lost_sight      actor, distance          (a chasing enemy lost sight and starts searching)
 ##   search_end      actor, outcome (regained | gave_up)   (regained: a detected event follows)
 ##   quest           kind (started | updated | completed), quest_id, stage
-## The replay runner adds scenario_start, input and scenario_end.
+## The replay runner adds scenario_start, input and scenario_end, and with cam_* checks one "camera" event
+## per frame (fields in scripts/review/camera_probe.gd, plus target, camera_position and player_position).
 
 const ARG := "--event-log"
 const ENV := "WHISKEYJACK_EVENT_LOG"

@@ -14,7 +14,8 @@ extends Node
 #   remove: [node paths]  level nodes freed before the level enters the tree (to isolate a fight)
 #   duration_frames       physics frames to run; the run also ends shortly after the player dies
 #   steps: [{frame, action, pressed}]   Input Map actions, pressed or released on that frame
-#   checks: [...]         read by scripts/review/replay_metrics.py, not here
+#   checks: [...]         read by scripts/review/replay_metrics.py, not here; any cam_* check turns on the
+#                         per-frame camera samples (scripts/review/camera_probe.gd, a "camera" event per frame)
 # Frame 0 is the second physics frame after the level is ready; EventLog frames count from it.
 # Timing: in Godot 4.7 an Input.action_press() during physics frame N reads as just-pressed on N+1,
 # while is_action_pressed() changes at once. So this node runs last in every physics frame and, at
@@ -23,6 +24,7 @@ extends Node
 # Exit code: 0 when the run completed, 1 when the scenario couldn't be loaded.
 
 const END_AFTER_DEATH_FRAMES := 30  # well before GameManager reloads the scene (3.2 s)
+const CameraProbe := preload("res://scripts/review/camera_probe.gd")
 
 var _scenario: Dictionary = {}
 var _steps: Array[Dictionary] = []
@@ -34,6 +36,7 @@ var _end_frame: int = -1
 var _held: Dictionary = {}  # action -> true while a step holds it
 var _level: Node = null
 var _player: CharacterBody3D = null
+var _camera_samples: bool = false
 
 
 func _ready() -> void:
@@ -50,6 +53,12 @@ func _ready() -> void:
 		_fail("can't read scenario %s" % path)
 		return
 	_scenario = parsed
+	if DisplayServer.get_name() == "headless":
+		# A headless root viewport is 64x64; the camera checks need the game's window shape (16:9)
+		get_tree().root.size = Vector2i(
+			ProjectSettings.get_setting("display/window/size/viewport_width"),
+			ProjectSettings.get_setting("display/window/size/viewport_height")
+		)
 	# Replays never touch the player's save, whatever the command line said
 	if SaveManager.get_save_path() == SaveManager.SAVE_PATH:
 		SaveManager.set_save_slot("replay")
@@ -62,6 +71,9 @@ func _ready() -> void:
 			_fail("unknown action in step %s" % JSON.stringify(step))
 			return
 		_steps.append(step)
+	for check: Dictionary in _scenario.get("checks", []):
+		if String(check.get("id", "")).begins_with("cam_"):
+			_camera_samples = true
 	_steps.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a["frame"]) < int(b["frame"]))
 
 	var packed := load(String(_scenario.get("scene", ""))) as PackedScene
@@ -123,6 +135,8 @@ func _physics_process(_delta: float) -> void:
 	if _frame >= _duration or (_end_frame >= 0 and _frame >= _end_frame):
 		_finish()
 		return
+	if _camera_samples and _frame >= 0:
+		_sample_camera()
 	while _next_step < _steps.size() and int(_steps[_next_step]["frame"]) <= _frame + 1:
 		_apply(_steps[_next_step], _frame + 1)
 		_next_step += 1
@@ -138,6 +152,28 @@ func _apply(step: Dictionary, lands_on: int) -> void:
 		Input.action_release(action)
 		_held.erase(action)
 	EventLog.log_event_at(lands_on, "input", {"action": action, "pressed": pressed})
+
+
+# Runs last in the physics frame, after the player and his camera rig have moved
+func _sample_camera() -> void:
+	var camera := get_viewport().get_camera_3d()
+	if camera == null:
+		return
+	var target: Node3D = _player.call("get_lock_on_target") if _player.has_method("get_lock_on_target") else null
+	var s := CameraProbe.sample(camera, _player, target)
+	var data := {}
+	for key: String in s:
+		data[key] = EventLog.round3(s[key]) if s[key] is float else s[key]
+	if s["locked"]:
+		data["target"] = EventLog.label(target)
+	var c := camera.global_position
+	data["camera_position"] = [EventLog.round3(c.x), EventLog.round3(c.y), EventLog.round3(c.z)]
+	data["look_pitch_deg"] = EventLog.round3(rad_to_deg(asin(clampf(-camera.global_basis.z.y, -1.0, 1.0))))
+	var look := -camera.global_basis.z
+	data["look_yaw_deg"] = EventLog.round3(rad_to_deg(atan2(-look.x, -look.z)))
+	var p := _player.global_position
+	data["player_position"] = [EventLog.round3(p.x), EventLog.round3(p.y), EventLog.round3(p.z)]
+	EventLog.log_event("camera", data)
 
 
 func _on_player_died() -> void:

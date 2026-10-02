@@ -4,6 +4,8 @@ signal died
 signal inventory_toggled
 
 const HeldProps := preload("res://scripts/combat/HeldProps.gd")
+const WorldRay := preload("res://scripts/combat/WorldRay.gd")
+const SIGHT_HEIGHT := 0.8  # lock-on sight runs between both bodies at this height, as EventLog.line_of_sight
 const CHARACTER_LIGHT_LAYER := 2  # render layer of CameraRig/FillLight's cull mask (value 2 = layer 2)
 
 @export var stats: CharacterStats
@@ -21,12 +23,14 @@ const CHARACTER_LIGHT_LAYER := 2  # render layer of CameraRig/FillLight's cull m
 @export var camera_pitch_min: float = -0.4  # ~-23 degrees
 @export var camera_pitch_max: float = 0.8  # ~46 degrees
 @export var lock_on_range: float = 15.0
+@export var lock_lost_sight_time: float = 1.0  # hidden by world geometry this long, the lock ends (user, 2026-10-01)
+@export var lock_on_pitch: float = -0.2  # the arm's tilt locked on a target level with him (as free look starts)
 @export var combo_window: float = 0.6  # seconds before light combo resets
 @export var attack_active_time: float = 0.2  # light hitbox active duration (seconds)
 @export var heavy_active_time: float = 0.35  # heavy hitbox active duration (seconds)
 
+# The camera (scenes/player/CameraRig.gd): top level on the head-height pivot, turned to the heading only
 @onready var camera_rig: Node3D = $CameraRig
-@onready var spring_arm: SpringArm3D = $CameraRig/SpringArm3D
 @onready var hurtbox: HurtboxComponent = $HurtboxComponent
 @onready var hitbox: HitboxComponent = $HitboxComponent
 @onready var _sfx_swing: AudioStreamPlayer3D = $SFXSwing
@@ -41,6 +45,8 @@ var _dodge_dir: Vector3 = Vector3.FORWARD
 var _lock_on_target: Node3D = null
 var _lock_on_candidates: Array[Node3D] = []
 var _lock_on_index: int = 0
+var _lock_hidden_time: float = 0.0
+var _sight_query := WorldRay.make_query()
 
 # Stored separately so lock-on can drive them independently of input
 var _cam_yaw: float = 0.0
@@ -49,10 +55,6 @@ var _cam_pitch: float = -0.2
 var _combo_index: int = 0
 var _combo_timer: float = 0.0
 var _attack_timer: float = 0.0
-
-var _shake_timer: float = 0.0
-var _shake_duration: float = 0.0
-var _shake_intensity: float = 0.0
 
 const FOOTSTEP_INTERVAL: float = 0.4
 var _footstep_timer: float = 0.0
@@ -68,8 +70,9 @@ func _ready() -> void:
 	for mesh in $PlayerModel.find_children("*", "VisualInstance3D", true, false):
 		(mesh as VisualInstance3D).layers |= 1 << (CHARACTER_LIGHT_LAYER - 1)
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	_cam_yaw = camera_rig.rotation.y + rotation.y
-	_cam_pitch = spring_arm.rotation.x
+	_cam_yaw = rotation.y
+	_cam_pitch = 0.0
+	camera_rig.update_view(0.0, _cam_yaw, _cam_pitch, null)
 	if stats:
 		stats.died.connect(die)
 	if is_instance_valid(hitbox):
@@ -136,8 +139,9 @@ func _physics_process(delta: float) -> void:
 		_move(delta)
 
 	_tick_attack(delta)
-	_update_camera(delta)
 	move_and_slide()
+	# After moving, so the camera frames where he is this frame
+	_update_camera(delta)
 	_update_locomotion_anim()
 	_tick_footsteps(delta)
 
@@ -248,19 +252,12 @@ func _update_camera(delta: float) -> void:
 
 		# Tilt camera slightly down to keep target in frame
 		var flat_dist := Vector2(to_target.x, to_target.z).length()
-		var desired_pitch: float = clamp(-atan2(to_target.y, flat_dist) * 0.5, camera_pitch_min, camera_pitch_max)
+		var desired_pitch: float = clamp(
+			lock_on_pitch - atan2(to_target.y, flat_dist) * 0.5, camera_pitch_min, camera_pitch_max
+		)
 		_cam_pitch = lerp(_cam_pitch, desired_pitch, 5.0 * delta)
 
-	# Subtract player's own rotation so the rig's world-space yaw equals _cam_yaw
-	camera_rig.rotation.y = _cam_yaw - rotation.y
-	spring_arm.rotation.x = _cam_pitch
-
-	# Camera shake — fades out linearly over the shake duration
-	if _shake_timer > 0.0:
-		_shake_timer -= delta
-		var t: float = _shake_timer / _shake_duration if _shake_duration > 0.0 else 0.0
-		camera_rig.rotation.y += randf_range(-_shake_intensity, _shake_intensity) * t
-		spring_arm.rotation.x += randf_range(-_shake_intensity, _shake_intensity) * t * 0.5
+	camera_rig.update_view(delta, _cam_yaw, _cam_pitch, get_lock_on_target())
 
 
 # Body facing and camera heading (world-space yaw, pitch) for SaveManager
@@ -273,10 +270,9 @@ func apply_view_state(view: Dictionary) -> void:
 	_cam_yaw = wrapf(float(view.get("camera_yaw", _cam_yaw)), -PI, PI)
 	_cam_pitch = clampf(float(view.get("camera_pitch", _cam_pitch)), camera_pitch_min, camera_pitch_max)
 	_release_lock_on()
-	_shake_timer = 0.0
+	camera_rig.stop_shake()
 	# Apply now rather than next physics frame, so input this frame already uses the restored view
-	camera_rig.rotation.y = _cam_yaw - rotation.y
-	spring_arm.rotation.x = _cam_pitch
+	camera_rig.update_view(0.0, _cam_yaw, _cam_pitch, null)
 
 
 # ── Lock-on ───────────────────────────────────────────────────────────────────
@@ -296,23 +292,80 @@ func _toggle_lock_on() -> void:
 		EventLog.log_event("lock_on", {"actor": EventLog.label(self), "target": EventLog.label(_lock_on_target)})
 
 
+# The locked-on enemy, or null (the replay's camera checks read it)
+func get_lock_on_target() -> Node3D:
+	return _lock_on_target if is_instance_valid(_lock_on_target) else null
+
+
 func _release_lock_on() -> void:
 	if EventLog.enabled and _lock_on_target != null:
 		EventLog.log_event("lock_off", {"actor": EventLog.label(self)})
 	_lock_on_target = null
+	_lock_hidden_time = 0.0
 	_lock_on_index = 0
 	_lock_on_candidates.clear()
 
 
 func _validate_lock_on() -> void:
-	if not _lock_on_target:
+	# A freed target compares equal to null, so the candidate list tells "never locked" from "target gone"
+	if _lock_on_target == null and _lock_on_candidates.is_empty():
 		return
-	# Release if target was freed or moved out of range
-	if (
-		not is_instance_valid(_lock_on_target)
-		or global_position.distance_to(_lock_on_target.global_position) > lock_on_range * 1.5
-	):
+	if not is_instance_valid(_lock_on_target) or _is_dead(_lock_on_target):
+		_lock_on_next_after_death()
+	elif global_position.distance_to(_lock_on_target.global_position) > lock_on_range * 1.5:
 		_release_lock_on()
+	elif _in_sight(_lock_on_target):
+		_lock_hidden_time = 0.0
+	else:
+		# Circling a pillar hides it for a moment; behind cover for longer, the lock ends
+		_lock_hidden_time += get_physics_process_delta_time()
+		if _lock_hidden_time > lock_lost_sight_time:
+			_release_lock_on()
+
+
+# The locked target died (or was freed): lock the nearest living enemy in range at once, else release
+func _lock_on_next_after_death() -> void:
+	var gone := _lock_on_target
+	var next: Node3D = null
+	var best := INF
+	for enemy in get_tree().get_nodes_in_group("enemy"):
+		if not _lockable(enemy) or enemy == gone:
+			continue
+		var d := global_position.distance_to((enemy as Node3D).global_position)
+		if d <= lock_on_range and d < best:
+			best = d
+			next = enemy as Node3D
+	if next == null:
+		_release_lock_on()
+		return
+	_lock_on_target = next
+	_lock_on_candidates = [next]
+	_lock_on_index = 0
+	if EventLog.enabled:
+		EventLog.log_event("lock_on", {"actor": EventLog.label(self), "target": EventLog.label(next)})
+
+
+static func _is_dead(node: Node) -> bool:
+	return node.has_method("is_dead") and bool(node.call("is_dead"))
+
+
+# Lock-on candidates: living enemies (BaseEnemy and its subclasses, which have is_dead) in line of sight
+func _lockable(node: Node) -> bool:
+	return node is Node3D and node.has_method("is_dead") and not _is_dead(node) and _in_sight(node as Node3D)
+
+
+# Nothing on the world layer between him and `target` (characters don't block), as enemy sight
+func _in_sight(target: Node3D) -> bool:
+	var exclude: Array[RID] = [get_rid()]
+	if target is CollisionObject3D:
+		exclude.append((target as CollisionObject3D).get_rid())
+	_sight_query.exclude = exclude
+	return WorldRay.is_clear(
+		get_world_3d().direct_space_state,
+		_sight_query,
+		global_position + Vector3.UP * SIGHT_HEIGHT,
+		target.global_position + Vector3.UP * SIGHT_HEIGHT
+	)
 
 
 func _find_lock_on_target() -> Node3D:
@@ -320,7 +373,7 @@ func _find_lock_on_target() -> Node3D:
 	_lock_on_index = 0
 
 	for enemy in get_tree().get_nodes_in_group("enemy"):
-		if enemy is Node3D and global_position.distance_to(enemy.global_position) <= lock_on_range:
+		if _lockable(enemy) and global_position.distance_to(enemy.global_position) <= lock_on_range:
 			_lock_on_candidates.append(enemy as Node3D)
 
 	if _lock_on_candidates.is_empty():
@@ -373,9 +426,7 @@ func _on_hitbox_hit(_target: Node, _damage: int) -> void:
 
 
 func camera_shake(intensity: float, duration: float) -> void:
-	_shake_intensity = intensity
-	_shake_duration = duration
-	_shake_timer = duration
+	camera_rig.shake(intensity, duration)
 
 
 func _tick_attack(delta: float) -> void:

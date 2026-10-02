@@ -81,6 +81,63 @@ class FixtureLevy1v1(unittest.TestCase):
         self.assertIsNone(r["value"])
 
 
+def cam(frame, in_view=True, visible=1.0, inside=False, wall=0.1, target=None, t_in_view=True, t_visible=1.0,
+        distance=5.0, occlusion=0.0):
+    """A camera sample, as scripts/review/camera_probe.gd logs it; target=None is unlocked."""
+    e = ev(frame, "camera", player_in_view=in_view, player_visible=visible, camera_in_player=inside, wall_fill=wall,
+           locked=target is not None)
+    if target is not None:
+        e.update(target=target, target_in_view=t_in_view, target_visible=t_visible, target_distance=distance,
+                 melee_occlusion=occlusion)
+    return e
+
+
+class CameraMetrics(unittest.TestCase):
+    def test_player_in_frame_is_the_fraction_of_good_samples(self):
+        events = [cam(0), cam(1), cam(2, in_view=False), cam(3)]
+        r = rm.compute({"id": "cam_player_in_frame"}, events)
+        self.assertAlmostEqual(r["value"], 0.75)
+        self.assertEqual(r["detail"]["samples"], 4)
+
+    def test_player_hidden_by_a_wall_or_clipped_is_not_in_frame(self):
+        # Fully in frame needs the head and torso mostly unhidden by world geometry, and the camera outside him
+        events = [cam(0, visible=0.5), cam(1, inside=True), cam(2, visible=rm.CAM_VISIBLE_MIN), cam(3)]
+        r = rm.compute({"id": "cam_player_in_frame"}, events)
+        self.assertAlmostEqual(r["value"], 0.5)
+
+    def test_wall_fill_is_the_worst_sample(self):
+        events = [cam(0, wall=0.2), cam(1, wall=0.9), cam(2, wall=0.4)]
+        r = rm.compute({"id": "cam_wall_fill"}, events)
+        self.assertAlmostEqual(r["value"], 0.9)
+        self.assertEqual(r["detail"]["worst_frame"], 1)
+
+    def test_melee_occlusion_averages_locked_frames_within_3m(self):
+        events = [cam(0, occlusion=1.0),  # not locked: ignored
+                  cam(1, target="Levy", distance=2.0, occlusion=0.9),
+                  cam(2, target="Levy", distance=3.0, occlusion=0.5),
+                  cam(3, target="Levy", distance=3.5, occlusion=1.0)]  # beyond 3 m: ignored
+        r = rm.compute({"id": "cam_melee_occlusion"}, events)
+        self.assertAlmostEqual(r["value"], 0.7)
+        self.assertEqual(r["detail"]["samples"], 2)
+        self.assertAlmostEqual(r["detail"]["max"], 0.9)
+
+    def test_melee_occlusion_unmeasured_without_a_close_lock(self):
+        r = rm.compute({"id": "cam_melee_occlusion"}, [cam(0), cam(1, target="Levy", distance=6.0)])
+        self.assertIsNone(r["value"])
+
+    def test_lock_both_in_frame_counts_locked_frames_with_both_framed(self):
+        events = [cam(0, in_view=False),  # not locked: ignored
+                  cam(1, target="Levy"), cam(2, target="Levy", t_in_view=False),
+                  cam(3, target="Levy", in_view=False), cam(4, target="Levy", t_visible=0.25)]
+        r = rm.compute({"id": "cam_lock_both_in_frame"}, events)
+        self.assertAlmostEqual(r["value"], 0.25)
+        self.assertEqual(r["detail"]["samples"], 4)
+
+    def test_camera_metrics_unmeasured_without_samples(self):
+        for check in ("cam_player_in_frame", "cam_wall_fill", "cam_lock_both_in_frame"):
+            self.assertIsNone(rm.compute({"id": check}, [ev(0, "hit", target="A")])["value"], check)
+
+
 class SyntheticLogs(unittest.TestCase):
     def test_telegraph_measures_windup_to_hitbox_open(self):
         events = melee_attack(100, "Levy", windup=30) + melee_attack(300, "Levy", windup=36)

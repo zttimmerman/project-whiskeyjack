@@ -1,0 +1,73 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://crnrieeure8kk" path="res://scenes/player/CameraRig.gd" id="1_rig"]
+[ext_resource type="Script" uid="uid://csjccrhj5wnx7" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="2_pcam"]
+[ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="3_host"]
+[ext_resource type="Script" uid="uid://ccmiitq0sdh7j" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_noise_emitter_3d.gd" id="4_emitter"]
+[ext_resource type="Script" uid="uid://cuffvge5ad4aa" path="res://addons/phantom_camera/scripts/resources/phantom_camera_noise_3d.gd" id="5_noise"]
+[ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="6_tween"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_probe"]
+radius = 0.3
+
+[sub_resource type="Resource" id="Tween_cut"]
+script = ExtResource("6_tween")
+duration = 0.3
+
+[sub_resource type="Resource" id="Noise_shake"]
+script = ExtResource("5_noise")
+amplitude = 3.0
+frequency = 2.0
+randomize_noise_seed = false
+noise_seed = 1
+
+[node name="CameraRig" type="Node3D"]
+script = ExtResource("1_rig")
+
+[node name="FillLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 2.5)
+light_color = Color(1, 0.8, 0.5, 1)
+light_energy = 3.5
+light_cull_mask = 2
+omni_range = 5.0
+
+[node name="ShoulderTarget" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0, 0)
+
+[node name="HeadTarget" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.45, 0)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+current = true
+fov = 72.0
+
+[node name="PhantomCameraHost" type="Node" parent="Camera3D"]
+process_priority = 300
+process_physics_priority = 300
+script = ExtResource("3_host")
+
+[node name="OverShoulder" type="Node3D" parent="."]
+script = ExtResource("2_pcam")
+priority = 10
+follow_mode = 6
+tween_resource = SubResource("Tween_cut")
+spring_length = 4.0
+collision_mask = 1
+shape = SubResource("SphereShape3D_probe")
+margin = 0.05
+
+[node name="LockOn" type="Node3D" parent="."]
+script = ExtResource("2_pcam")
+follow_mode = 6
+look_at_mode = 3
+tween_resource = SubResource("Tween_cut")
+spring_length = 4.0
+collision_mask = 1
+shape = SubResource("SphereShape3D_probe")
+margin = 0.05
+
+[node name="Shake" type="Node3D" parent="."]
+script = ExtResource("4_emitter")
+noise = SubResource("Noise_shake")
+duration = 0.3
+decay_time = 0.2

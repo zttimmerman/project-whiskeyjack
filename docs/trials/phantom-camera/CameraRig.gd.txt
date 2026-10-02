@@ -1,0 +1,107 @@
+extends Node3D
+
+## Trial B1, candidate B: the player's camera through Phantom Camera v0.11.0.3 (addons/phantom_camera), with the
+## same interface as candidate A's rig (update_view, shake, stop_shake, get_pivot), so Player.gd is unchanged.
+##
+## Phantom Camera does the camera work it offers:
+##   - OverShoulder: a PhantomCamera3D in THIRD_PERSON follow (its SpringArm3D with a sphere shape and a
+##     margin) on ShoulderTarget, a point 0.6 m right of the 1.7 m pivot in heading space (follow_offset is
+##     world-space, so the shoulder is a node);
+##   - LockOn: a second PhantomCamera3D, the same arm plus LookAt GROUP on the player and the target; it takes
+##     over by priority while locked (the host tweens between them);
+##   - shake: a PhantomCameraNoiseEmitter3D.
+## What Phantom Camera has no setting for is done here, as in A: the arm's rotation (heading plus the lock-on
+## swing off the target line). A's squeeze rise and framing tilt are not ported: they are rig code, not
+## configuration.
+
+const LOCK_PRIORITY := 20
+const FREE_PRIORITY := 10
+
+@export var pivot_height: float = 0.8
+@export var shoulder_offset: float = 0.6
+@export var fov: float = 72.0
+@export var lock_separation: float = 1.1
+@export var lock_angle_min: float = deg_to_rad(8.0)
+@export var lock_angle_max: float = deg_to_rad(50.0)
+@export var lock_angle_speed: float = 5.0
+
+var _body: Node3D
+var _lock_angle: float = 0.0
+var _target: Node3D = null
+
+@onready var camera: Camera3D = $Camera3D
+@onready var _shoulder: Node3D = $ShoulderTarget
+@onready var _head: Node3D = $HeadTarget
+@onready var _free_cam: Node3D = $OverShoulder
+@onready var _lock_cam: Node3D = $LockOn
+@onready var _shake: Node3D = $Shake
+
+
+func _ready() -> void:
+	_body = get_parent() as Node3D
+	top_level = true
+	camera.fov = fov
+	_shoulder.position = Vector3(shoulder_offset, 0, 0)
+	for pcam: Node3D in [_free_cam, _lock_cam]:
+		pcam.call("set_follow_target", _shoulder)
+	_free_cam.set("priority", FREE_PRIORITY)
+	_lock_cam.set("priority", 0)
+	var group: Array[Node3D] = [_head]
+	_lock_cam.call("set_look_at_targets", group)
+
+
+func get_pivot() -> Vector3:
+	return _body.global_position + Vector3.UP * pivot_height
+
+
+func update_view(delta: float, yaw: float, pitch: float, target: Node3D) -> void:
+	if not is_inside_tree():
+		return
+	global_transform = Transform3D(Basis(Vector3.UP, yaw), get_pivot())
+	_exclude_characters()
+	var locked := is_instance_valid(target)
+	var want_angle := 0.0
+	if locked:
+		var to_target := target.global_position - _body.global_position
+		var dist := maxf(Vector2(to_target.x, to_target.z).length(), 0.01)
+		want_angle = clampf(asin(minf(lock_separation / dist, 1.0)), lock_angle_min, lock_angle_max)
+	_lock_angle = lerpf(_lock_angle, want_angle, 1.0 - exp(-lock_angle_speed * delta)) if delta > 0.0 else want_angle
+	if locked != is_instance_valid(_target) or (locked and target != _target):
+		_target = target if locked else null
+		var group: Array[Node3D] = [_head]
+		if locked:
+			group.append(target)
+		_lock_cam.call("set_look_at_targets", group)
+		_lock_cam.set("priority", LOCK_PRIORITY if locked else 0)
+	for pcam: Node3D in [_free_cam, _lock_cam]:
+		if pcam.get_parent() is SpringArm3D:
+			var swing := _lock_angle if pcam == _lock_cam else 0.0
+			pcam.call("set_third_person_rotation", Vector3(pitch, yaw + swing, 0))
+
+
+func shake(intensity: float, duration: float) -> void:
+	var noise: Resource = _shake.get("noise")
+	noise.set("amplitude", rad_to_deg(intensity))
+	_shake.set("duration", duration)
+	_shake.call("emit")
+
+
+func stop_shake() -> void:
+	_shake.call("stop", false)
+
+
+# Phantom Camera's arm excludes only its follow target, and ours is a plain node: exclude the player and enemies
+func _exclude_characters() -> void:
+	var rids: Array[RID] = []
+	if _body is CollisionObject3D:
+		rids.append((_body as CollisionObject3D).get_rid())
+	for enemy in get_tree().get_nodes_in_group("enemy"):
+		if enemy is CollisionObject3D:
+			rids.append((enemy as CollisionObject3D).get_rid())
+	for pcam: Node3D in [_free_cam, _lock_cam]:
+		var arm := pcam.get_parent() as SpringArm3D
+		if arm == null:
+			continue
+		arm.clear_excluded_objects()
+		for rid in rids:
+			arm.add_excluded_object(rid)

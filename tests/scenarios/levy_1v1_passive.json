@@ -13,6 +13,10 @@
   ],
   "checks": [
     {"id": "ttk_levy_player", "attacker": "EnemyCorridorA", "target": [10, 14], "baseline": 12},
-    {"id": "enemy_melee_telegraph", "target": [0.5, null], "baseline": 0.6}
+    {"id": "enemy_melee_telegraph", "target": [0.5, null], "baseline": 0.6},
+    {"id": "cam_player_in_frame", "target": [1.0, null], "baseline": 1.0, "tolerance": 0.05},
+    {"id": "cam_wall_fill", "target": [null, 0.6], "baseline": 0.0, "tolerance": 0.05},
+    {"id": "cam_melee_occlusion", "target": [null, 0.25], "baseline": 0.1117, "tolerance": 0.05},
+    {"id": "cam_lock_both_in_frame", "target": [0.95, null], "baseline": 1.0, "tolerance": 0.05}
   ]
 }
