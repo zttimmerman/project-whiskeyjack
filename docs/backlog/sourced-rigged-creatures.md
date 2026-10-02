@@ -1,7 +1,7 @@
 ---
 id: sourced-rigged-creatures
 title: "Decide how downloaded pre-rigged creatures enter the pipeline"
-status: needs-user
+status: done
 kind: decision
 targets: []
 after: []
@@ -23,3 +23,7 @@ updated: 2026-10-02
 ## Recommendation
 
 Keep the workaround until `spike-agent-animation` reaches a go or no-go. On a go, add `type: creature`.
+
+## Outcome
+
+Decided by the user (2026-10-02): **allow sourced rigged creatures.** A brief type for rigged CC0 creatures keeps their own rig, validates bones and the limb map, and checks their clips with the motion review. Humanoid characters still come through our own rig flow. Implementation: `sourced-creature-brief`.

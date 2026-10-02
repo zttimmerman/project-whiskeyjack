@@ -1,0 +1,40 @@
+{
+  "verdict": "escalate",
+  "summary": "The Gobkit boar matches the brief and is within budget with no visible holes, but the 'Old Bone close before correction' assertion fails (26.0 > 20): the source's near-white eye rings and tusks were repainted to Old Bone, which looks intended but is a call for the user.",
+  "findings": [
+    {
+      "check": "color",
+      "severity": "major",
+      "observation": "The source's pale group (median #E4E0D4, 6% of the UV footprint) is 26.0 dE from Old Bone #CCB484, over the 20 limit. Correction repainted it to Old Bone exactly; in the views this group is the eye-ring whites and the tusks, which now read as pale yellowed beige, plausible for tusks and eye whites. Whether to accept it is the user's call.",
+      "evidence": "assertion 'palette color Old Bone close before correction'; metrics.color_vs_palette; 01_front.png, 02_right.png"
+    },
+    {
+      "check": "other",
+      "severity": "minor",
+      "observation": "Source scale is very large for a boar: about 3.2 x 4.6 x 3.5 m at source_scale 1.0; only matters if used in the game.",
+      "evidence": "metrics.mesh.true_dims_m"
+    },
+    {
+      "check": "other",
+      "severity": "minor",
+      "observation": "A small extra hair tuft on top of the head the prompt doesn't mention; harmless.",
+      "evidence": "01_front.png, 02_right.png, 04_top.png"
+    }
+  ],
+  "escalation_reason": "The only failing assertion is Old Bone's distance before correction (26.0 vs 20); the near-white eye rings and tusks were plausibly meant to become bone-coloured and look right. No refine or reroll applies to a sourced CC0 mesh. The user decides whether to accept the repaint or exempt this sourced asset from the check.",
+  "questions_answered": [
+    "All prompt elements present (round brown body, four stub legs, big head, snout, two tusks, pointed ears, small tail), plus eye rings and a head tuft.",
+    "Nothing malformed: 12 loops over 17 parts, at most 1 per part, none visible.",
+    "Budget passes: 380 of 1320 tris, one 128 px texture; source is ~3.2 x 4.6 x 3.5 m.",
+    "Saddle Leather, Barrow Oak and Peat Black pass; Old Bone fails before (26.0) and passes after (0.0).",
+    "Not a humanoid: validate reports humanoid_mappable false, expected for a 16-bone quadruped imported as a prop; validate passes."
+  ],
+  "images_seen": [
+    "01_front.png",
+    "02_right.png",
+    "03_back.png",
+    "04_top.png",
+    "05_clay_front.png",
+    "06_wireframe_front.png"
+  ]
+}

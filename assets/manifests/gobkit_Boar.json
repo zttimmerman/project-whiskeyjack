@@ -993,5 +993,103 @@
     "sha256": "be27d5d168ca2d61710abe66d4484660d5db6e9c29955f4bef7d99d919b26ad9"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-10-02T21:35:02+00:00"
+  "updated_at": "2026-10-02T23:32:45+00:00",
+  "judgments": [
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-10-02T21:45:39+00:00",
+      "packet": "assets/manifests/gobkit_Boar/judge/mesh-1/packet.json",
+      "packet_sha256": "94dba5f5338aa9d6326fa88ed1ce5ef8ad9d940db200dd61eaacde6c41e8271c",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/gobkit_Boar.glb",
+        "sha256": "43c3932aad49dfdc466f317fff905d10e05020cbf4ca155f959ae2810e74de23",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/gobkit_Boar/judge/mesh-1/01_front.png",
+          "sha256": "e4da137088099b2bb87c4623fae362346443f4ef53a89bcd49a418e12fa1bfeb",
+          "source": "assets/manifests/gobkit_Boar/judge/mesh-1/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/gobkit_Boar/judge/mesh-1/02_right.png",
+          "sha256": "2324e4e9f4985d3dfc394c0d15104e3db6d8dc1899add0bbd2ce62d458b2d29f",
+          "source": "assets/manifests/gobkit_Boar/judge/mesh-1/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/gobkit_Boar/judge/mesh-1/03_back.png",
+          "sha256": "b45404f3dcabc1927d7cffa9a37ff795d03b5964c2825cfa1b39c7bc3579853d",
+          "source": "assets/manifests/gobkit_Boar/judge/mesh-1/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/gobkit_Boar/judge/mesh-1/04_top.png",
+          "sha256": "e67de0df1ee6a58d0dadfbe8545d729d075e7ea168aeae20fe690011bc933675",
+          "source": "assets/manifests/gobkit_Boar/judge/mesh-1/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/gobkit_Boar/judge/mesh-1/05_clay_front.png",
+          "sha256": "f9650cffaa8400ecaf8d6f3bc865cf36092acdf13c497f373690e95d6e0b48c7",
+          "source": "assets/manifests/gobkit_Boar/judge/mesh-1/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/gobkit_Boar/judge/mesh-1/06_wireframe_front.png",
+          "sha256": "0c2ef45c4c52747b28a86d2446ccfc162f0f40d55eb8c2a6dc5eacedadf0e629",
+          "source": "assets/manifests/gobkit_Boar/judge/mesh-1/work/views/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/gobkit_Boar/judge/mesh-1/01_front.png",
+        "assets/manifests/gobkit_Boar/judge/mesh-1/02_right.png",
+        "assets/manifests/gobkit_Boar/judge/mesh-1/03_back.png",
+        "assets/manifests/gobkit_Boar/judge/mesh-1/04_top.png",
+        "assets/manifests/gobkit_Boar/judge/mesh-1/05_clay_front.png",
+        "assets/manifests/gobkit_Boar/judge/mesh-1/06_wireframe_front.png"
+      ],
+      "assertions_failed": [
+        "palette color Old Bone close before correction"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "color",
+          "severity": "major",
+          "observation": "The source's pale group (median #E4E0D4, 6% of the UV footprint) is 26.0 dE from Old Bone #CCB484, over the 20 limit. Correction repainted it to Old Bone exactly; in the views this group is the eye-ring whites and the tusks, which now read as pale yellowed beige, plausible for tusks and eye whites. Whether to accept it is the user's call.",
+          "evidence": "assertion 'palette color Old Bone close before correction'; metrics.color_vs_palette; 01_front.png, 02_right.png"
+        },
+        {
+          "check": "other",
+          "severity": "minor",
+          "observation": "Source scale is very large for a boar: about 3.2 x 4.6 x 3.5 m at source_scale 1.0; only matters if used in the game.",
+          "evidence": "metrics.mesh.true_dims_m"
+        },
+        {
+          "check": "other",
+          "severity": "minor",
+          "observation": "A small extra hair tuft on top of the head the prompt doesn't mention; harmless.",
+          "evidence": "01_front.png, 02_right.png, 04_top.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "The only failing assertion is Old Bone's distance before correction (26.0 vs 20); the near-white eye rings and tusks were plausibly meant to become bone-coloured and look right. No refine or reroll applies to a sourced CC0 mesh. The user decides whether to accept the repaint or exempt this sourced asset from the check.",
+      "summary": "The Gobkit boar matches the brief and is within budget with no visible holes, but the 'Old Bone close before correction' assertion fails (26.0 > 20): the source's near-white eye rings and tusks were repainted to Old Bone, which looks intended but is a call for the user.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "resolution",
+      "stage": "mesh",
+      "recorded_at": "2026-10-02T23:32:45+00:00",
+      "decision": "User 2026-10-02: accept; the source's near-white eye rings and tusks repainted to Old Bone read correctly as bone (test subject for spike-agent-animation)"
+    }
+  ]
 }
