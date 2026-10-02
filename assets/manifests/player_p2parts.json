@@ -1393,5 +1393,543 @@
     "sha256": "9890866575a4e97198ebd4b5f885d070a57cff805c46b4a28f1f6ff4b91a57f0"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-10-02T23:36:06+00:00"
+  "updated_at": "2026-10-02T23:54:16+00:00",
+  "judgments": [
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-10-02T23:54:16+00:00",
+      "packet": "assets/manifests/player_p2parts/judge/mesh-2/packet.json",
+      "packet_sha256": "18a03872acc296f2e61cd3d78c177ce5b8683eae3f1f4f9a78c52fe1e8abd382",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/player_p2parts.glb",
+        "sha256": "0c1faf0d739727f325e88dd92e9802d247b32fb1f911e1ba46dee217c2010c3e",
+        "concept": {
+          "path": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+          "sha256": "e92b55a11a671ace6e50e37e78578afaa6a2e46e7d230da2da61ef368c2e9f98"
+        }
+      },
+      "images": [
+        {
+          "role": "approved_concept",
+          "path": "assets/manifests/player_p2parts/judge/mesh-2/01_approved_concept.png",
+          "sha256": "c489317c17b7d21da9d8bc493eab7a50cbdb13f7855a9d485539534444ad21a1",
+          "source": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png"
+        },
+        {
+          "role": "front",
+          "path": "assets/manifests/player_p2parts/judge/mesh-2/02_front.png",
+          "sha256": "d6b2fcb4f750697f3e18d7995b5d6329e32abe60626bb4e1eb741fe565cdb12d",
+          "source": "assets/manifests/player_p2parts/judge/mesh-2/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/player_p2parts/judge/mesh-2/03_right.png",
+          "sha256": "904b28e1b266748f23d9e3b5335679bed9e7c56a9f33a5063c8c910195919647",
+          "source": "assets/manifests/player_p2parts/judge/mesh-2/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/player_p2parts/judge/mesh-2/04_back.png",
+          "sha256": "05465a27ce900a3e180e3af7abdb8c8d34be76b2cd87e2c9238792aafdd028e9",
+          "source": "assets/manifests/player_p2parts/judge/mesh-2/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/player_p2parts/judge/mesh-2/05_top.png",
+          "sha256": "25b6e16845674e5bdd754a8a025fcaef77257f3346cf1a3efb1063cee5f7a5b0",
+          "source": "assets/manifests/player_p2parts/judge/mesh-2/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/player_p2parts/judge/mesh-2/06_clay_front.png",
+          "sha256": "17ce916a1b57da22b79e7285e56ed974fe035348f0f9241685936d98fb2c05e0",
+          "source": "assets/manifests/player_p2parts/judge/mesh-2/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/player_p2parts/judge/mesh-2/07_wireframe_front.png",
+          "sha256": "1cef8b09d915ed64a3a16df2ca02be6f7f3aa6942fea3ad58efd7bbbbd370881",
+          "source": "assets/manifests/player_p2parts/judge/mesh-2/work/views/wireframe_front.png"
+        },
+        {
+          "role": "closeup_front",
+          "path": "assets/manifests/player_p2parts/judge/mesh-2/08_closeup_front.png",
+          "sha256": "48f011de9b47f3ac3f879e91f38f57cabaf1e94af203ba91e7901082385c6081",
+          "source": "assets/manifests/player_p2parts/judge/mesh-2/work/views/closeup_front.png"
+        },
+        {
+          "role": "closeup_back",
+          "path": "assets/manifests/player_p2parts/judge/mesh-2/09_closeup_back.png",
+          "sha256": "e2638a662e55bac31a8d030983137ee1d96819a1cbcf5a1a876599760a92698e",
+          "source": "assets/manifests/player_p2parts/judge/mesh-2/work/views/closeup_back.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player_p2parts/judge/mesh-2/01_approved_concept.png",
+        "assets/manifests/player_p2parts/judge/mesh-2/02_front.png",
+        "assets/manifests/player_p2parts/judge/mesh-2/03_right.png",
+        "assets/manifests/player_p2parts/judge/mesh-2/04_back.png",
+        "assets/manifests/player_p2parts/judge/mesh-2/05_top.png",
+        "assets/manifests/player_p2parts/judge/mesh-2/06_clay_front.png",
+        "assets/manifests/player_p2parts/judge/mesh-2/07_wireframe_front.png",
+        "assets/manifests/player_p2parts/judge/mesh-2/08_closeup_front.png",
+        "assets/manifests/player_p2parts/judge/mesh-2/09_closeup_back.png"
+      ],
+      "assertions_failed": [
+        "holes (welded boundary loops)",
+        "concept color #0B1C2C kept in the texture"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "malformed",
+          "severity": "major",
+          "observation": "Long stray edges in the wireframe at the waist, wrists and head, not visible in shaded views. (Orchestrator note: on the same raw P2 mesh the longest edge measured ~0.1 m in the A/B, so these are most likely a wireframe-render artefact.)",
+          "evidence": "07_wireframe_front.png; non_manifold_edges=2"
+        },
+        {
+          "check": "missing",
+          "severity": "major",
+          "observation": "The back of the torso is a plain leather panel with no crossing harness straps, which the brief names as an identity mark.",
+          "evidence": "04_back.png, 09_closeup_back.png"
+        },
+        {
+          "check": "missing",
+          "severity": "major",
+          "observation": "Eyes are dark smudges, brows faint, mouth barely visible; only the nose reads.",
+          "evidence": "08_closeup_front.png vs 01_approved_concept.png"
+        },
+        {
+          "check": "other",
+          "severity": "major",
+          "observation": "Holes 17 vs 10 (body 7 loops, one part 3, others 1), possibly expected for a shell-built body; none visible.",
+          "evidence": "assertion 'holes'; metrics.mesh.parts"
+        },
+        {
+          "check": "color",
+          "severity": "minor",
+          "observation": "Trouser navy keeps 0.052 vs 0.063 of the texture but still shows.",
+          "evidence": "assertion 'concept color #0B1C2C kept'"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "Unrelated fixes: spike edges (likely render artefact), back straps (concept gap), faint face (texture resolution), and the hole count may be misleading for a shell-built spike asset. None is a single concept edit or reroll.",
+      "summary": "The mesh matches the concept's front in most parts, but two assertions fail (holes 17/10, trouser navy kept 0.052/0.063), the face reads faintly, the back shows a plain leather panel where the brief wants crossing straps, and the wireframe shows long spike edges.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:idle",
+      "recorded_at": "2026-10-02T23:54:16+00:00",
+      "packet": "assets/manifests/player_p2parts/judge/motion-idle-1/packet.json",
+      "packet_sha256": "1b1b8ed99abfe2431a102821909301a147ffadb4c2f7e0bd3085df7f1ecf5531",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "idle",
+        "source": "res://data/animations/player_library.tres:idle",
+        "model": "res://assets/meshes/player_p2parts.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player_p2parts/motion/idle_metrics.json",
+          "sha256": "dad973f7f953fcd806821e633de8ad29194fb041e915c4969576b71a3e9c578c"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/player_p2parts/judge/motion-idle-1/01_frame_strip.png",
+          "sha256": "877262e010ff89d80672b5a433640efddf5f2f7e9223967c653a5ee73a3c5ebb",
+          "source": ".tripo-out/player_p2parts/motion/idle_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/player_p2parts/judge/motion-idle-1/02_onion_skin.png",
+          "sha256": "cd2843aaba969bbb31a50d9b4fff0c7748e5be9a5d00480d600af04b1278c062",
+          "source": ".tripo-out/player_p2parts/motion/idle_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/player_p2parts/judge/motion-idle-1/03_plots.png",
+          "sha256": "af3cd01a5f09e8b31c8c816dbe8671e35a171c3b406e1d8c1b90319074a085ab",
+          "source": ".tripo-out/player_p2parts/motion/idle_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/player_p2parts/judge/motion-idle-1/04_stretch_detail.png",
+          "sha256": "2c52d9954ea8f2ef53a08913dd4eb0a55ff9d492ebf746132bee2a1f78fb5384",
+          "source": ".tripo-out/player_p2parts/motion/idle_stretch.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player_p2parts/judge/motion-idle-1/01_frame_strip.png",
+        "assets/manifests/player_p2parts/judge/motion-idle-1/02_onion_skin.png",
+        "assets/manifests/player_p2parts/judge/motion-idle-1/03_plots.png",
+        "assets/manifests/player_p2parts/judge/motion-idle-1/04_stretch_detail.png"
+      ],
+      "assertions_failed": [
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "Stretch 1.7-1.85 for the whole clip on the tunic skirt (crotch inverted-V, hem points), front panel pulled apart between the legs with skin showing; pale patches at the knees/inner thighs in the 3/4 view; 4 poke-through verts up to 2.8 cm at the chest. The stretch-detail header (2.85x) and the metric (1.854) disagree.",
+          "evidence": "assertion 'skin stretch (edge length vs bind pose)'; 04_stretch_detail.png; 03_plots.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "The failing stretch comes from the spike's garment-shell weighting (the tunic skirt follows the thighs; skirt_reweight is off for player_p2parts), not the clip; no library_change or concept refine fixes it. The user decides whether to grade the tunic shell like skirt_reweight (Hips/Spine to thighs, no shin) and re-run, or accept/stop the approach.",
+      "summary": "The idle stays in place and the feet hold, but skin stretch fails (1.854 vs 1.0) because the tunic skirt is bound to the legs: it splits at the crotch and hem and shows the body underneath.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:run",
+      "recorded_at": "2026-10-02T23:54:16+00:00",
+      "packet": "assets/manifests/player_p2parts/judge/motion-run-1/packet.json",
+      "packet_sha256": "0ebb42a867593cdd87a051378a7921a3f0db814f4d62a13300f04f3417a71411",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "run",
+        "source": "res://data/animations/player_library.tres:run",
+        "model": "res://assets/meshes/player_p2parts.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player_p2parts/motion/run_metrics.json",
+          "sha256": "f11708683efbd1debe7f7365af00c0e5b1bc36216bf1a4352748a7bf79234845"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/player_p2parts/judge/motion-run-1/01_frame_strip.png",
+          "sha256": "0e761a3cb0e27b8716b958cce5a000b53fa9b1b3529c9f630529da0cfb0b1c18",
+          "source": ".tripo-out/player_p2parts/motion/run_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/player_p2parts/judge/motion-run-1/02_onion_skin.png",
+          "sha256": "66870050fb8a4ca05503d542b29e3730b7ff1be665b7d0a09d52eab75b3f2568",
+          "source": ".tripo-out/player_p2parts/motion/run_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/player_p2parts/judge/motion-run-1/03_plots.png",
+          "sha256": "bb313c90cceea2363882962869a4bd3afe1c72ff194a0169685705d964aa9664",
+          "source": ".tripo-out/player_p2parts/motion/run_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/player_p2parts/judge/motion-run-1/04_stretch_detail.png",
+          "sha256": "4526cd075af8d64b90b3481558f9e5e63994f33a005403f28079d64bd8aa2891",
+          "source": ".tripo-out/player_p2parts/motion/run_stretch.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player_p2parts/judge/motion-run-1/01_frame_strip.png",
+        "assets/manifests/player_p2parts/judge/motion-run-1/02_onion_skin.png",
+        "assets/manifests/player_p2parts/judge/motion-run-1/03_plots.png",
+        "assets/manifests/player_p2parts/judge/motion-run-1/04_stretch_detail.png"
+      ],
+      "assertions_failed": [
+        "planted feet don't slide",
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "At t=0.73 s the tunic front splits around the forward thigh and the inner leg shows; belt and harness stretch vertically (Spine) while the hem follows the thighs. Foot slide 0.553 over short 3-frame contacts comes from the shared run clip, not visible.",
+          "evidence": "assertion 'skin stretch (edge length vs bind pose)'; 04_stretch_detail.png; 03_plots.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "The failing stretch comes from the spike's garment-shell weighting (the tunic skirt follows the thighs; skirt_reweight is off for player_p2parts), not the clip; no library_change or concept refine fixes it. The user decides whether to grade the tunic shell like skirt_reweight (Hips/Spine to thighs, no shin) and re-run, or accept/stop the approach.",
+      "summary": "The run stays in place with clean handovers, but skin stretch fails (2.35 vs 1.0) from the garment weighting splitting the tunic and stretching the harness, and foot slide is 0.553 vs 0.5 (shared run clip).",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:dodge_roll",
+      "recorded_at": "2026-10-02T23:54:16+00:00",
+      "packet": "assets/manifests/player_p2parts/judge/motion-dodge_roll-1/packet.json",
+      "packet_sha256": "5a90749247e349eb4080d5d8b3546410d1bc3ac2bea08a705fbad0ecd2fa6801",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "dodge_roll",
+        "source": "res://data/animations/player_library.tres:dodge_roll",
+        "model": "res://assets/meshes/player_p2parts.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player_p2parts/motion/dodge_roll_metrics.json",
+          "sha256": "7ec7ccb4dec8667aa9fad036d50136a21fa16691499adf3251f2e431ce6db7b6"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/player_p2parts/judge/motion-dodge_roll-1/01_frame_strip.png",
+          "sha256": "57b56e148d6791e92e818a979331ec1980a3afa0b4a9b5b1d93f0c97bb99f837",
+          "source": ".tripo-out/player_p2parts/motion/dodge_roll_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/player_p2parts/judge/motion-dodge_roll-1/02_onion_skin.png",
+          "sha256": "fd97b2e84c124094d2a942cce9eb052c4b6f69dacc0d2d62c21c736121067c56",
+          "source": ".tripo-out/player_p2parts/motion/dodge_roll_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/player_p2parts/judge/motion-dodge_roll-1/03_plots.png",
+          "sha256": "0629399b5ad3a64f988b4e13cb36eeb735c5b7c8c9da26b45983c6c6ba020aed",
+          "source": ".tripo-out/player_p2parts/motion/dodge_roll_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/player_p2parts/judge/motion-dodge_roll-1/04_stretch_detail.png",
+          "sha256": "f4cce50eb18aae8dcdea5412f83f982c3e8a2271aa87bb4ed2d1549a97b19132",
+          "source": ".tripo-out/player_p2parts/motion/dodge_roll_stretch.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player_p2parts/judge/motion-dodge_roll-1/01_frame_strip.png",
+        "assets/manifests/player_p2parts/judge/motion-dodge_roll-1/02_onion_skin.png",
+        "assets/manifests/player_p2parts/judge/motion-dodge_roll-1/03_plots.png",
+        "assets/manifests/player_p2parts/judge/motion-dodge_roll-1/04_stretch_detail.png"
+      ],
+      "assertions_failed": [
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "Stretch above 3x through the tucked roll (0.17-0.38 s) on long waist-to-hem skirt edges, front and back; skirt vertices split between Spine and the thighs/shins as the legs fold.",
+          "evidence": "assertion 'skin stretch (edge length vs bind pose)'; 04_stretch_detail.png; 03_plots.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "The failing stretch comes from the spike's garment-shell weighting (the tunic skirt follows the thighs; skirt_reweight is off for player_p2parts), not the clip; no library_change or concept refine fixes it. The user decides whether to grade the tunic shell like skirt_reweight (Hips/Spine to thighs, no shin) and re-run, or accept/stop the approach.",
+      "summary": "The dodge roll is clean, but the tunic skirt and hem edges stretch up to 5.4x during the tuck (4.381 vs 1.0).",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:attack_light",
+      "recorded_at": "2026-10-02T23:54:16+00:00",
+      "packet": "assets/manifests/player_p2parts/judge/motion-attack_light-1/packet.json",
+      "packet_sha256": "5ecd102f1d5a75ac51aaa91f969e46cded990ed897ffdd15c16317dc2e79dc56",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "attack_light",
+        "source": "res://data/animations/player_library.tres:attack_light",
+        "model": "res://assets/meshes/player_p2parts.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player_p2parts/motion/attack_light_metrics.json",
+          "sha256": "010fedb3b68caccca6045943a41ec672aeb2f1427b2e5395108a51ad91b9cafe"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/player_p2parts/judge/motion-attack_light-1/01_frame_strip.png",
+          "sha256": "c4b1a2708d8a4c52b8ff5d8d3c1cc17bff3e45fd579253ad971722a2dee7b0c8",
+          "source": ".tripo-out/player_p2parts/motion/attack_light_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/player_p2parts/judge/motion-attack_light-1/02_onion_skin.png",
+          "sha256": "072a9069c0dc43e02a5ad24977f3f3f5fad423a71699753622cbd5e7443bcb7e",
+          "source": ".tripo-out/player_p2parts/motion/attack_light_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/player_p2parts/judge/motion-attack_light-1/03_plots.png",
+          "sha256": "7265ebcb673988ea8b1867b710af6831de6466cd5b25e13a669279db8c3ac71d",
+          "source": ".tripo-out/player_p2parts/motion/attack_light_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/player_p2parts/judge/motion-attack_light-1/04_stretch_detail.png",
+          "sha256": "4935f5d53a1b2d80086aaf4496d13bd0bd9fead741d6e7068de3d0e422dd7f0b",
+          "source": ".tripo-out/player_p2parts/motion/attack_light_stretch.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player_p2parts/judge/motion-attack_light-1/01_frame_strip.png",
+        "assets/manifests/player_p2parts/judge/motion-attack_light-1/02_onion_skin.png",
+        "assets/manifests/player_p2parts/judge/motion-attack_light-1/03_plots.png",
+        "assets/manifests/player_p2parts/judge/motion-attack_light-1/04_stretch_detail.png"
+      ],
+      "assertions_failed": [
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "Edges 2.2-2.6x at t=0.37 s on shell boundaries: harness lower edge, shoulder strap (worst, RightUpperArm), belt sides, inner thigh/crotch under the hem, boot tops; inner thigh shows through in the wide stance; 7 poke-through verts up to 2.1 cm.",
+          "evidence": "assertion 'skin stretch (edge length vs bind pose)'; 04_stretch_detail.png; 03_plots.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "The failing stretch comes from the spike's garment-shell weighting (the tunic skirt follows the thighs; skirt_reweight is off for player_p2parts), not the clip; no library_change or concept refine fixes it. The user decides whether to grade the tunic shell like skirt_reweight (Hips/Spine to thighs, no shin) and re-run, or accept/stop the approach.",
+      "summary": "attack_light plays in place with no pose breaks, but skin stretch reaches 1.605 vs 1.0 on the garment-shell seams.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:attack_heavy",
+      "recorded_at": "2026-10-02T23:54:16+00:00",
+      "packet": "assets/manifests/player_p2parts/judge/motion-attack_heavy-1/packet.json",
+      "packet_sha256": "525fe17c931826be71639f9282f6ffa4448e7d518b17ee24565f5881ea7000b5",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "attack_heavy",
+        "source": "res://data/animations/player_library.tres:attack_heavy",
+        "model": "res://assets/meshes/player_p2parts.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player_p2parts/motion/attack_heavy_metrics.json",
+          "sha256": "874ea2988c462b14f28b39803a4bcbf6fa1a8847b2aa5866fde4bfeea8adfb0a"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/player_p2parts/judge/motion-attack_heavy-1/01_frame_strip.png",
+          "sha256": "dced3737640b909961abfd5d378dc75f5d6f258eb02bdd7c11a204f8b1b72b1f",
+          "source": ".tripo-out/player_p2parts/motion/attack_heavy_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/player_p2parts/judge/motion-attack_heavy-1/02_onion_skin.png",
+          "sha256": "0fc0b8dceb3c0dd61271002a240fe2bc3d605d4cc1c58403900ac9d7e6ac241d",
+          "source": ".tripo-out/player_p2parts/motion/attack_heavy_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/player_p2parts/judge/motion-attack_heavy-1/03_plots.png",
+          "sha256": "ab54c03a49b578c564f4b95ec8f20a480e99ffe47f4c576c82848fe1f1bd6ada",
+          "source": ".tripo-out/player_p2parts/motion/attack_heavy_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/player_p2parts/judge/motion-attack_heavy-1/04_stretch_detail.png",
+          "sha256": "948776ce582a7dc612e12ce15c0919f0d0f0d4401407d4681a2b2f74bab80433",
+          "source": ".tripo-out/player_p2parts/motion/attack_heavy_stretch.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player_p2parts/judge/motion-attack_heavy-1/01_frame_strip.png",
+        "assets/manifests/player_p2parts/judge/motion-attack_heavy-1/02_onion_skin.png",
+        "assets/manifests/player_p2parts/judge/motion-attack_heavy-1/03_plots.png",
+        "assets/manifests/player_p2parts/judge/motion-attack_heavy-1/04_stretch_detail.png"
+      ],
+      "assertions_failed": [
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "At t=0.70 s belt and lower tunic edges stretch 2.3-4.2x (Spine), above 1.0 for most of the clip; mostly visible up close; 7 poke-through verts up to 4.6 cm at chest height.",
+          "evidence": "assertion 'skin stretch (edge length vs bind pose)'; 04_stretch_detail.png; 03_plots.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "The failing stretch comes from the spike's garment-shell weighting (the tunic skirt follows the thighs; skirt_reweight is off for player_p2parts), not the clip; no library_change or concept refine fixes it. The user decides whether to grade the tunic shell like skirt_reweight (Hips/Spine to thighs, no shin) and re-run, or accept/stop the approach.",
+      "summary": "attack_heavy stays in place and reads correctly, but skin stretch fails at 3.2x on the tunic and torso shells around the waist in the deep lunge.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:death",
+      "recorded_at": "2026-10-02T23:54:16+00:00",
+      "packet": "assets/manifests/player_p2parts/judge/motion-death-1/packet.json",
+      "packet_sha256": "cff3fc2c04a87713d5ef21a985409a0c57868e969871e3f26c40c6b613f5f3a8",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "death",
+        "source": "res://data/animations/player_library.tres:death",
+        "model": "res://assets/meshes/player_p2parts.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player_p2parts/motion/death_metrics.json",
+          "sha256": "5f21b2c5952b5baace4c05cfffdf55ee6c58059d458cfa417bc76eb35e10397a"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/player_p2parts/judge/motion-death-1/01_frame_strip.png",
+          "sha256": "356aa87e4d5614a2b83fa1d1775497e1fab50ffccdec8a9af2401b88945f7d3c",
+          "source": ".tripo-out/player_p2parts/motion/death_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/player_p2parts/judge/motion-death-1/02_onion_skin.png",
+          "sha256": "6cbc3e239cf5fa94ab847a2d02512c1d91f2f94e7aa04e9060dd1ccd54704937",
+          "source": ".tripo-out/player_p2parts/motion/death_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/player_p2parts/judge/motion-death-1/03_plots.png",
+          "sha256": "452f60432fcad03aed39ce614a35d11ce421d79ebb32c62925ad110f70870a64",
+          "source": ".tripo-out/player_p2parts/motion/death_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/player_p2parts/judge/motion-death-1/04_stretch_detail.png",
+          "sha256": "f0e696e03a50ce306ec02cb68268c810febcfc93ba3c2b37919666216629f922",
+          "source": ".tripo-out/player_p2parts/motion/death_stretch.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player_p2parts/judge/motion-death-1/01_frame_strip.png",
+        "assets/manifests/player_p2parts/judge/motion-death-1/02_onion_skin.png",
+        "assets/manifests/player_p2parts/judge/motion-death-1/03_plots.png",
+        "assets/manifests/player_p2parts/judge/motion-death-1/04_stretch_detail.png"
+      ],
+      "assertions_failed": [
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "At t=0.83 s the tunic panels stretch tight between the knees (2.1-3.4x), skin-coloured band showing across the crotch; settles at ~1.1 lying down; 5 verts poke through up to 11 mm.",
+          "evidence": "assertion 'skin stretch (edge length vs bind pose)'; 04_stretch_detail.png; 03_plots.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "The failing stretch comes from the spike's garment-shell weighting (the tunic skirt follows the thighs; skirt_reweight is off for player_p2parts), not the clip; no library_change or concept refine fixes it. The user decides whether to grade the tunic shell like skirt_reweight (Hips/Spine to thighs, no shin) and re-run, or accept/stop the approach.",
+      "summary": "The death clip stays in place and its feet hold, but skin stretch reaches 2.43 vs 1.0 in the garment shell's crotch and hem, and stays ~1.1 in the final lying pose.",
+      "next": "surface to the user: the escalation reason and findings"
+    }
+  ]
 }

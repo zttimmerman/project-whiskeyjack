@@ -1,0 +1,25 @@
+{
+  "verdict": "escalate",
+  "summary": "attack_light plays in place with no pose breaks, but skin stretch reaches 1.605 vs 1.0 on the garment-shell seams.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "major",
+      "observation": "Edges 2.2-2.6x at t=0.37 s on shell boundaries: harness lower edge, shoulder strap (worst, RightUpperArm), belt sides, inner thigh/crotch under the hem, boot tops; inner thigh shows through in the wide stance; 7 poke-through verts up to 2.1 cm.",
+      "evidence": "assertion 'skin stretch (edge length vs bind pose)'; 04_stretch_detail.png; 03_plots.png"
+    }
+  ],
+  "escalation_reason": "The failing stretch comes from the spike's garment-shell weighting (the tunic skirt follows the thighs; skirt_reweight is off for player_p2parts), not the clip; no library_change or concept refine fixes it. The user decides whether to grade the tunic shell like skirt_reweight (Hips/Spine to thighs, no shin) and re-run, or accept/stop the approach.",
+  "questions_answered": [
+    "In place: Hips 0.13 m lunge, end 0.04.",
+    "Right foot pivots (exempt).",
+    "Seam stretch and a sliver of inner thigh in the deep stance.",
+    "3 pass (snap 4.8/5); stretch 1.605 fails."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png",
+    "04_stretch_detail.png"
+  ]
+}

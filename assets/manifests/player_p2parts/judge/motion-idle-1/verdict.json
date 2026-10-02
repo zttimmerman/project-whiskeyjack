@@ -1,0 +1,25 @@
+{
+  "verdict": "escalate",
+  "summary": "The idle stays in place and the feet hold, but skin stretch fails (1.854 vs 1.0) because the tunic skirt is bound to the legs: it splits at the crotch and hem and shows the body underneath.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "major",
+      "observation": "Stretch 1.7-1.85 for the whole clip on the tunic skirt (crotch inverted-V, hem points), front panel pulled apart between the legs with skin showing; pale patches at the knees/inner thighs in the 3/4 view; 4 poke-through verts up to 2.8 cm at the chest. The stretch-detail header (2.85x) and the metric (1.854) disagree.",
+      "evidence": "assertion 'skin stretch (edge length vs bind pose)'; 04_stretch_detail.png; 03_plots.png"
+    }
+  ],
+  "escalation_reason": "The failing stretch comes from the spike's garment-shell weighting (the tunic skirt follows the thighs; skirt_reweight is off for player_p2parts), not the clip; no library_change or concept refine fixes it. The user decides whether to grade the tunic shell like skirt_reweight (Hips/Spine to thighs, no shin) and re-run, or accept/stop the approach.",
+  "questions_answered": [
+    "In place: Hips 0.053 m.",
+    "Feet hold: p90 0.019.",
+    "Skirt split between the legs; body shows at crotch and knees.",
+    "5 of 6 pass; stretch 1.854 fails."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png",
+    "04_stretch_detail.png"
+  ]
+}

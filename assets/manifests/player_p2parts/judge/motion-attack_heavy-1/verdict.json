@@ -1,0 +1,25 @@
+{
+  "verdict": "escalate",
+  "summary": "attack_heavy stays in place and reads correctly, but skin stretch fails at 3.2x on the tunic and torso shells around the waist in the deep lunge.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "major",
+      "observation": "At t=0.70 s belt and lower tunic edges stretch 2.3-4.2x (Spine), above 1.0 for most of the clip; mostly visible up close; 7 poke-through verts up to 4.6 cm at chest height.",
+      "evidence": "assertion 'skin stretch (edge length vs bind pose)'; 04_stretch_detail.png; 03_plots.png"
+    }
+  ],
+  "escalation_reason": "The failing stretch comes from the spike's garment-shell weighting (the tunic skirt follows the thighs; skirt_reweight is off for player_p2parts), not the clip; no library_change or concept refine fixes it. The user decides whether to grade the tunic shell like skirt_reweight (Hips/Spine to thighs, no shin) and re-run, or accept/stop the approach.",
+  "questions_answered": [
+    "In place: Hips 0.17, end 0.05.",
+    "Short plants; pivots intended (exempt).",
+    "Waist stretch in the lunge.",
+    "3 pass (snap 4.8/5); stretch 3.216 fails."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png",
+    "04_stretch_detail.png"
+  ]
+}
