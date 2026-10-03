@@ -78,3 +78,9 @@ Each cell: stretch (×) / seam gap (cm) / poke-through vertices (worst, cm). The
 **Mesh verdict follow-ups:** the faint face and the missing back straps are concept-level and unchanged. The "long spike edges" in the wireframe aren't defects. The longest edge on the cleaned GLB is 0.20 m (vertical boot-shaft edges; p99 0.153 m), and P1's is 0.187 m (p99 0.158 m).
 
 **Recommendation:** start `player-model-rework` from P2 with the transfer (`player_p2parts`), once the leg-top albedo is fixed and the user has seen it in play next to P1. It holds together better than P1 at no further credit cost; its remaining defects are texture (leg tops, faint face) and concept (back straps). Phase 1 isn't needed for the weights.
+
+## Leg-top albedo (`p2parts-leg-top-albedo`)
+
+The new `scripts/make_shell_overlay.py` (deterministic; its sidecar hashes the UV source like the mouth overlay) paints the leg shells' faces at or above 0.55 m: 64 faces, 3,844 texels. They're painted in the median colour of the same shells between 0.45 and 0.54 m, the visible trousers, which comes to #071B2C. The clean stage composites it like the mouth line. A census of the cleaned GLB finds no skin-toned faces left on the legs or the body below 1 m (48 before). Weights and metrics are unchanged.
+
+![leg tops](body-only-humanoid/legtops_run_stretch.jpg)

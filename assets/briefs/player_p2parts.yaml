@@ -21,7 +21,10 @@ pivot: base
 palette: [Garrison Teal, Saddle Leather, Blackened Iron, Tarnished Gold]
 animations: [idle, run, dodge_roll, attack_light, attack_heavy, death]
 # Mouth line, as on the player, redrawn for this download's UVs (same make_texture_overlay.py settings).
-texture_overlays: [assets/overlays/player_p2parts_mouth.png]
+# Leg tops: Tripo painted the leg shells' tops (hidden under the tunic) in skin tones, which showed in the
+# tunic slit; scripts/make_shell_overlay.py --ranks 3,4 --above 0.55 --sample 0.45,0.54 paints them in the
+# trousers' colour.
+texture_overlays: [assets/overlays/player_p2parts_mouth.png, assets/overlays/player_p2parts_leg_tops.png]
 # P2 hands the rigger 9 separate shells (docs/trials/tripo-p2.md). Each shell is listed by size rank
 # (1 = most triangles): 1 body with the tunic and arms, 2 head and hair, 3-4 the legs and boots (they reach
 # up under the tunic), 5 the harness, 6-9 the eyes and brows. The body, head and legs keep the rig's own

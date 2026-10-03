@@ -3,11 +3,11 @@
   "stages": {
     "clean": {
       "status": "ok",
-      "timestamp": "2026-10-03T00:34:40+00:00",
+      "timestamp": "2026-10-03T01:04:25+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player_p2parts.yaml",
-          "sha256": "b14bdbe1de09ee2d9f0b38d45853eab0a3f8801ff3477b53756176f69637f276"
+          "sha256": "bc5906ed34ed018a5653d5ee319b960a11f5ce1124e75981658280d319f167ae"
         },
         {
           "path": ".tripo-out/player_p2parts/rig-1/tripo-out/rig-4-a51030cf/model.glb",
@@ -15,7 +15,7 @@
         },
         {
           "path": "scripts/blender_cleanup.py",
-          "sha256": "a3c60250195e8c5072c5fa5d5d89b57842309e412fec8ce14397943a575fd1ec"
+          "sha256": "10d77b583182bcd0680091b50e8a50be29af6571ad6af780db086869a44fc3ec"
         },
         {
           "path": ".tripo-out/player_p2parts/rig-1/tripo-out/rig-4-a51030cf/task.json",
@@ -30,14 +30,22 @@
           "sha256": "a779342d84299198388a464784b1733553331e9b0e773b6e231949486b7ea86d"
         },
         {
+          "path": "assets/overlays/player_p2parts_leg_tops.png",
+          "sha256": "eedd4aad38e930e1e91bbf02bbf30174382cbdd0d0a12930f57f42a62fc7a395"
+        },
+        {
           "path": "assets/overlays/player_p2parts_mouth.json",
           "sha256": "0952097b3ff9ff7b77ddc897c2f68e3a1b1d63a44d3a1c3c5940bcca27c08410"
+        },
+        {
+          "path": "assets/overlays/player_p2parts_leg_tops.json",
+          "sha256": "fa3581826a4a3f3e4b0be798781e7026481fec3d06db3e495008a67decbdb6d9"
         }
       ],
       "outputs": [
         {
           "path": "assets/meshes/player_p2parts.glb",
-          "sha256": "4a3a323c9f49ce84ceea10f8d98fe8590626c3bb0d01a24405356683563b29ea"
+          "sha256": "3d98f1bfdb55b4580a0b44f66d637c0a043f66af5eb83c9369007244501a9eef"
         }
       ],
       "tool_versions": {
@@ -113,7 +121,8 @@
         },
         "reference_image": "/Users/zach/Documents/repos/project-whiskeyjack-bodyspike/.tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
         "texture_overlays": [
-          "/Users/zach/Documents/repos/project-whiskeyjack-bodyspike/assets/overlays/player_p2parts_mouth.png"
+          "/Users/zach/Documents/repos/project-whiskeyjack-bodyspike/assets/overlays/player_p2parts_mouth.png",
+          "/Users/zach/Documents/repos/project-whiskeyjack-bodyspike/assets/overlays/player_p2parts_leg_tops.png"
         ]
       },
       "report": {
@@ -614,6 +623,10 @@
           {
             "overlay": "/Users/zach/Documents/repos/project-whiskeyjack-bodyspike/assets/overlays/player_p2parts_mouth.png",
             "pixels": 21
+          },
+          {
+            "overlay": "/Users/zach/Documents/repos/project-whiskeyjack-bodyspike/assets/overlays/player_p2parts_leg_tops.png",
+            "pixels": 3844
           }
         ],
         "parts_weight_transfer": {
@@ -913,11 +926,11 @@
     },
     "concept": {
       "status": "ok",
-      "timestamp": "2026-10-03T00:34:36+00:00",
+      "timestamp": "2026-10-03T01:04:22+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player_p2parts.yaml",
-          "sha256": "b14bdbe1de09ee2d9f0b38d45853eab0a3f8801ff3477b53756176f69637f276"
+          "sha256": "bc5906ed34ed018a5653d5ee319b960a11f5ce1124e75981658280d319f167ae"
         },
         {
           "path": "docs/art-bible.md",
@@ -980,11 +993,11 @@
     },
     "model": {
       "status": "ok",
-      "timestamp": "2026-10-03T00:34:37+00:00",
+      "timestamp": "2026-10-03T01:04:23+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player_p2parts.yaml",
-          "sha256": "b14bdbe1de09ee2d9f0b38d45853eab0a3f8801ff3477b53756176f69637f276"
+          "sha256": "bc5906ed34ed018a5653d5ee319b960a11f5ce1124e75981658280d319f167ae"
         },
         {
           "path": "docs/art-bible.md",
@@ -1119,15 +1132,15 @@
     },
     "validate": {
       "status": "ok",
-      "timestamp": "2026-10-03T00:34:46+00:00",
+      "timestamp": "2026-10-03T01:04:31+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player_p2parts.yaml",
-          "sha256": "b14bdbe1de09ee2d9f0b38d45853eab0a3f8801ff3477b53756176f69637f276"
+          "sha256": "bc5906ed34ed018a5653d5ee319b960a11f5ce1124e75981658280d319f167ae"
         },
         {
           "path": "assets/meshes/player_p2parts.glb",
-          "sha256": "4a3a323c9f49ce84ceea10f8d98fe8590626c3bb0d01a24405356683563b29ea"
+          "sha256": "3d98f1bfdb55b4580a0b44f66d637c0a043f66af5eb83c9369007244501a9eef"
         },
         {
           "path": "scripts/godot_validate.gd",
@@ -1145,27 +1158,27 @@
       "outputs": [
         {
           "path": "assets/manifests/player_p2parts/front.png",
-          "sha256": "109ab247a8f0c5c23e41983ea7325a72d6b0b3660b7499639708959dff0ac5a3"
+          "sha256": "bb8b048b13f9c675f6bc957c0b840b7fb4bc9af83e0039814ea04aa780e07422"
         },
         {
           "path": "assets/manifests/player_p2parts/right.png",
-          "sha256": "603af7acc6fccd88a5d0939ba180b55b34e17ae961ab662d56e64294b6c4b659"
+          "sha256": "f219f893a6ac86d55f9d1332a9654185c328676761af0aed311e1c16df68d7cc"
         },
         {
           "path": "assets/manifests/player_p2parts/back.png",
-          "sha256": "6c89c9981c083ce4dd90426fa8d790ea4fa8b0132e802061074c7c404dca2ef2"
+          "sha256": "ff5ed9fcd98fb6d17ac95686c75c6ced9f8dae75a168ac21cadffeae0d9ec003"
         },
         {
           "path": "assets/manifests/player_p2parts/top.png",
-          "sha256": "df9d490f54ce6861b4fad5f4de4a2ff55dccea673d9dc2bb64b2d38436fa6ab8"
+          "sha256": "289e0d51876c7599f1352dbd791ad96800ea688fb7b1550991aec180e4c219f8"
         },
         {
           "path": "assets/manifests/player_p2parts/clay_front.png",
-          "sha256": "66e1c55506720a6bae26b1ce9eed58ddc6112aa7bb6096d58528d3cab983e17e"
+          "sha256": "5a3b0f919c697995c37d95455577990daeba86db7e81277484956e3f5aa1ad9a"
         },
         {
           "path": "assets/manifests/player_p2parts/wireframe_front.png",
-          "sha256": "b8b55b7c325a623ac06e85a811e53d22f277f2bb5e959fceb191b3e9b5cf20e4"
+          "sha256": "18ed47809bce9cfe8f46d4e7e05c694341a8f78401077fdd7e1db01b1b04fb32"
         }
       ],
       "tool_versions": {
@@ -1412,10 +1425,10 @@
   },
   "brief": {
     "path": "assets/briefs/player_p2parts.yaml",
-    "sha256": "b14bdbe1de09ee2d9f0b38d45853eab0a3f8801ff3477b53756176f69637f276"
+    "sha256": "bc5906ed34ed018a5653d5ee319b960a11f5ce1124e75981658280d319f167ae"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-10-03T00:46:38+00:00",
+  "updated_at": "2026-10-03T01:04:31+00:00",
   "judgments": [
     {
       "kind": "verdict",

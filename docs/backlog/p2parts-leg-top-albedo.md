@@ -1,13 +1,13 @@
 ---
 id: p2parts-leg-top-albedo
 title: "Paint player_p2parts' leg tops in the trouser colour (skin shows in the tunic slit)"
-status: proposed
+status: in-review
 kind: asset
 targets: []
 after: [decide-player-p2parts]
 phase: C
-branch: null
-pr: null
+branch: spike/body-only-humanoid
+pr: 47
 updated: 2026-10-02
 ---
 ## Goal
