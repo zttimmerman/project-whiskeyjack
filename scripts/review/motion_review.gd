@@ -21,7 +21,9 @@ extends Node
 #                                                           feet, hands, root); default the humanoid map
 #       [--ground-speed <clip>=<m/s>[,...]]                  gameplay speed for locomotion clips (in-place loops)
 #       [--kind <clip>=death|in_place|action[,...]]
-#           default: death* death; idle, run, walk in_place; else action
+#           default: death* death; idle and locomotion clips in_place; else action
+#       [--locomotion <clip>=true|false[,...]]               which clips get the gait check (default: a name
+#                                                           with a walk, run, jog, trot, gallop or sprint word)
 #       [--frames <n>]                                       strip frames (default 14)
 #       [--game-scene <res:// tscn>]                         whose AnimationPlayer settings the game-path pass
 #                                                           uses (default: the scene that loads --library)
@@ -33,7 +35,12 @@ extends Node
 # - foot slide: ground-relative horizontal speed of each foot's planted contact point, at --ground-speed
 #   (scripts/review/foot_slide.gd, shared with the locomotion test);
 # - bind deviation: each vertex's displacement from its bind-pose position, both in the root's frame;
-# - edge stretch: |length / bind length - 1| over the mesh's edges of at least MIN_EDGE.
+# - edge stretch: |length / bind length - 1| over the mesh's edges of at least MIN_EDGE;
+# - body height: the rig's bind-pose height (FootSlide.body_height); travel, slide and deviation are also
+#   reported per body height (_bh, _bhps), which the art bible's limits use, and the contact thresholds
+#   scale with it (every humanoid is the 1.8 m reference, so its numbers don't move);
+# - gait: each foot's lift above its contact level and swing relative to the root (FootSlide.gait), which
+#   a locomotion clip must show on every foot.
 # Everything above scrubs the clip with seek(). The game-path pass (scripts/review/game_path.gd) plays
 # each handover the game makes between the library's clips the way the game does, play() and a
 # per-physics-frame advance with the game scene's blend settings, and adds to each clip's metrics
@@ -44,6 +51,8 @@ extends Node
 const FootSlide := preload("res://scripts/review/foot_slide.gd")
 const GamePath := preload("res://scripts/review/game_path.gd")
 const FPS := 30.0
+# Words in a clip's name that make it locomotion (the gait check), split on "_": walk, run_fwd, preset_quadruped_walk
+const LOCOMOTION_WORDS := ["walk", "run", "jog", "trot", "gallop", "sprint"]
 const STRETCH_EDGES := 12
 const MIN_EDGE := 0.01  # m: shorter edges (crotch and seam slivers) turn millimetre moves into huge ratios
 const CELL := Vector2i(170, 250)
@@ -198,9 +207,13 @@ func _opt(key: String, clip: String, fallback: String) -> String:
 func _default_kind(clip: String) -> String:
 	if clip.begins_with("death"):
 		return "death"
-	if clip in ["idle", "run", "walk"]:
+	if clip == "idle" or _default_locomotion(clip):
 		return "in_place"
 	return "action"
+
+
+func _default_locomotion(clip: String) -> bool:
+	return Array(clip.to_lower().split("_")).any(func(w): return w in LOCOMOTION_WORDS)
 
 
 # ── Character instances ───────────────────────────────────────────────────────
@@ -329,6 +342,7 @@ func _measure(lib: AnimationLibrary, clip: String, ground_speed: float) -> Dicti
 	# the skeleton to rest doesn't reproduce it on retargeted models: the rest fixer moves the rests
 	# (13 cm off on the player). The root's (Hips) bind frame is the inverse of its bind pose.
 	var root_bone := sk.find_bone(limbs.root)
+	var height := FootSlide.body_height(sk, inst["root"])
 	var rest := PackedVector3Array()
 	var hips_rest := sk.global_transform
 	for md in meshes:
@@ -394,7 +408,11 @@ func _measure(lib: AnimationLibrary, clip: String, ground_speed: float) -> Dicti
 	holder.queue_free()
 	# Contacts and ground-relative speeds
 	var looping := lib.get_animation(clip).loop_mode != Animation.LOOP_NONE
-	var fs := FootSlide.measure(series["t"], feet, ground_speed, looping)
+	var fs := FootSlide.measure(series["t"], feet, ground_speed, looping, height / FootSlide.REFERENCE_HEIGHT)
+	var gait := FootSlide.gait(fs["points"], series["hips"])
+	for side: String in gait:
+		gait[side]["lift_bh"] = snappedf(gait[side]["lift_m"] / height, 0.0001)
+		gait[side]["swing_bh"] = snappedf(gait[side]["swing_m"] / height, 0.0001)
 	var speeds := {"hips": []}
 	for side in FootSlide.sides(feet):
 		speeds[side] = fs["speeds"][side]
@@ -426,6 +444,12 @@ func _measure(lib: AnimationLibrary, clip: String, ground_speed: float) -> Dicti
 		"edge_stretch_p99": snappedf(_percentile(stretch_all, 0.99), 0.001),
 		"edge_stretch_worst_bone": stretch_worst[1],
 		"edge_stretch_worst_t": stretch_worst_t,
+		"body_height_m": height,
+		"contact_height_m": FootSlide.CONTACT_HEIGHT * (height / FootSlide.REFERENCE_HEIGHT),
+		"root_travel_max_bh": snappedf(travel.max() / height, 0.0001),
+		"foot_slide_p90_bhps": snappedf(fs["foot_slide_p90_mps"] / height, 0.0001),
+		"bind_deviation_max_bh": snappedf(dev_worst[0] / height, 0.0001),
+		"gait": gait,
 		"vertices": rest.size(),
 		"edges": edges.size() / 2
 	}
@@ -835,6 +859,7 @@ func _plots(clip: String, m: Dictionary, ground_speed: float, source: String) ->
 				),
 				15
 			)
+			_text(ctl, Vector2(20, 74), _gait_line(m), 15)
 			_plot_panel(
 				ctl,
 				Rect2(80, 100, w, h),
@@ -875,6 +900,21 @@ func _plots(clip: String, m: Dictionary, ground_speed: float, source: String) ->
 	)
 
 
+# Each foot's lift and swing for the plots' header, in metres and body heights; whether a foot is under the
+# art bible's gait limits is the judge's assertion, so this only reports
+func _gait_line(m: Dictionary) -> String:
+	var parts := []
+	for side: String in m["gait"]:
+		var g: Dictionary = m["gait"][side]
+		parts.append(
+			(
+				"%s lift %.3f m (%.3f) swing %.3f m (%.3f)"
+				% [side.replace("_", " "), g["lift_m"], g["lift_bh"], g["swing_m"], g["swing_bh"]]
+			)
+		)
+	return "Gait, per foot (in body heights of %.2f m): %s" % [m["body_height_m"], ";  ".join(parts)]
+
+
 func _review(clip: String, lib: AnimationLibrary, source: String) -> void:
 	var kind := _opt("kind", clip, _default_kind(clip))
 	var ground_speed := float(_opt("ground-speed", clip, "0"))
@@ -903,7 +943,7 @@ func _review(clip: String, lib: AnimationLibrary, source: String) -> void:
 		"frames_sampled": m["n"],
 		"strip_times_s": times.map(func(x): return snappedf(x, 0.001)),
 		"ground_speed_mps": ground_speed,
-		"contact_height_m": FootSlide.CONTACT_HEIGHT,
+		"contact_height_m": m["contact_height_m"],
 		"vertices": m["vertices"],
 		"edges": m["edges"]
 	}
@@ -926,6 +966,11 @@ func _review(clip: String, lib: AnimationLibrary, source: String) -> void:
 		"edge_stretch_worst_bone"
 	]:
 		out[k] = m[k]
+	# Per body height, and the gait (asserted on locomotion clips): after the metre values, which don't change
+	for k in ["body_height_m", "root_travel_max_bh", "foot_slide_p90_bhps", "bind_deviation_max_bh"]:
+		out[k] = m[k]
+	out["locomotion"] = _opt("locomotion", clip, str(_default_locomotion(clip)).to_lower()) == "true"
+	out["gait"] = m["gait"]
 	out["game_path"] = _game_path_for(clip)
 	out["series"] = {
 		"t": s["t"],

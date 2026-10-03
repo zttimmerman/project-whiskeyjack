@@ -74,6 +74,7 @@ QUESTIONS = {
     "motion": [
         "Onion skin: does the body stay where the clip intends (in place for in-place and death clips), or does it drift, fling or slide?",
         "Plots: do the planted feet hold still relative to the ground (foot speed near zero while the foot is in contact), and does the root follow the gameplay speed?",
+        "Locomotion clips (walk, run, trot...): does every foot step, lifting and moving through the strip and the foot-height plot? Name any foot that stays put; a frozen foot reads as planted with no slide.",
         "Frame strip: any broken pose: limbs through the body, arms behind the back where the clip doesn't intend it, twisted or collapsed joints, stretched skin?",
         "Do the numeric assertions pass? Tie each failing one to what you see in the images.",
     ],
@@ -451,22 +452,49 @@ def packet_motion(packet, pdir, brief, m, args, tol):
                               ("plots", d / f"{args.clip}_plots.png", 1600)]
                  + ([("stretch_detail", d / f"{args.clip}_stretch.png", 1600)] if (d / f"{args.clip}_stretch.png").exists() else []))
     packet["metrics"]["motion"] = {k: v for k, v in mm.items() if k != "series"}
+    motion_assertions(packet, mm, tol)
+    game_path_assertions(packet, mm, tol, proposed_tolerances())
+
+
+def motion_assertions(packet, mm, tol):
+    """One clip's own gates, per body height (the rig's bind-pose height; every humanoid is 1.8 m, where the
+    limits are the metre values they replaced; motion-gates-gait-and-scale, user decision 2026-10-02)."""
+    if "body_height_m" not in mm:
+        raise JudgeError("the motion metrics have no body_height_m (written before the size-relative gates); "
+                         "re-run the motion review")
+    h = mm["body_height_m"]
     kind = mm.get("kind")
     if kind in ("death", "in_place"):
-        assertion(packet, "root stays in place (horizontal hips travel)", mm["root_travel_max_m"] <= tol["motion_root_travel_m"],
-                  mm["root_travel_max_m"], tol["motion_root_travel_m"], f"final offset {mm['root_travel_final_m']} m")
+        assertion(packet, "root stays in place (horizontal hips travel)", mm["root_travel_max_bh"] <= tol["motion_root_travel_bh"],
+                  mm["root_travel_max_bh"], tol["motion_root_travel_bh"],
+                  f"body heights; {mm['root_travel_max_m']} m max, final {mm['root_travel_final_m']} m, body height {h} m")
     # Action clips (attacks, rolls) pivot on planted feet on purpose, and a death's feet kick out as the
     # body collapses onto its pinned Hips (Death01 can't meet both limits: keeping 30% of its travel still
     # slid 0.80 m/s). Their slide is reported, not asserted; root travel is what catches a fling.
     if kind == "in_place" and mm.get("contact_frames"):
-        assertion(packet, "planted feet don't slide", mm["foot_slide_p90_mps"] <= tol["motion_foot_slide_mps"],
-                  mm["foot_slide_p90_mps"], tol["motion_foot_slide_mps"],
-                  f"90th percentile ground-relative foot speed over {mm['contact_frames']} contact frames at ground speed {mm['ground_speed_mps']} m/s")
-    assertion(packet, "vertex deviation from bind pose (Hips frame)", mm["bind_deviation_max_m"] <= tol["motion_bind_deviation_m"],
-              mm["bind_deviation_max_m"], tol["motion_bind_deviation_m"], f"p99 {mm['bind_deviation_p99_m']} m; worst vertex on {mm.get('bind_deviation_worst_bone')}")
+        assertion(packet, "planted feet don't slide", mm["foot_slide_p90_bhps"] <= tol["motion_foot_slide_bhps"],
+                  mm["foot_slide_p90_bhps"], tol["motion_foot_slide_bhps"],
+                  f"body heights per second; 90th percentile ground-relative foot speed {mm['foot_slide_p90_mps']} m/s over "
+                  f"{mm['contact_frames']} contact frames at ground speed {mm['ground_speed_mps']} m/s, body height {h} m")
+    assertion(packet, "vertex deviation from bind pose (Hips frame)", mm["bind_deviation_max_bh"] <= tol["motion_bind_deviation_bh"],
+              mm["bind_deviation_max_bh"], tol["motion_bind_deviation_bh"],
+              f"body heights; {mm['bind_deviation_max_m']} m, p99 {mm['bind_deviation_p99_m']} m; worst vertex on {mm.get('bind_deviation_worst_bone')}")
     assertion(packet, "skin stretch (edge length vs bind pose)", mm["edge_stretch_max"] <= tol["motion_edge_stretch"],
               mm["edge_stretch_max"], tol["motion_edge_stretch"], f"p99 {mm['edge_stretch_p99']}; worst edge on {mm.get('edge_stretch_worst_bone')}")
-    game_path_assertions(packet, mm, tol, proposed_tolerances())
+    if mm.get("locomotion") and mm.get("gait"):
+        gait_assertions(packet, mm["gait"], h, tol)
+
+
+def gait_assertions(packet, gait, h, tol):
+    """A locomotion clip moves every foot: each lifts above its contact level and swings relative to the root
+    at least once in the clip (one cycle). A frozen foot reads as planted with no slide, so slide can't catch it."""
+    for what, key, name in (("lift", "motion_gait_lift_bh", "every foot lifts (gait)"),
+                            ("swing", "motion_gait_swing_bh", "every foot swings (gait)")):
+        values = {side: g[f"{what}_bh"] for side, g in gait.items()}
+        failing = [side for side, v in values.items() if v < tol[key]]
+        per_foot = ", ".join(f"{side} {v} ({gait[side][f'{what}_m']} m)" for side, v in values.items())
+        assertion(packet, name, not failing, min(values.values()), tol[key],
+                  f"body heights (body {h} m), lowest foot's; per foot: {per_foot}; failing: {', '.join(failing) or 'none'}")
 
 
 def game_path_assertions(packet, mm, tol, proposed):
