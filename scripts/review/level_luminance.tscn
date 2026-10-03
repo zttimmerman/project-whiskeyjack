@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/review/level_luminance.gd" id="1_lum"]
+
+[node name="LevelLuminance" type="Node"]
+script = ExtResource("1_lum")
