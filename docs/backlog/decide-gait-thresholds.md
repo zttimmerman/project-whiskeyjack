@@ -1,7 +1,7 @@
 ---
 id: decide-gait-thresholds
 title: "Confirm the gait check's lift and swing limits"
-status: needs-user
+status: done
 kind: decision
 targets: []
 after: [motion-gates-gait-and-scale]
@@ -10,6 +10,10 @@ branch: null
 pr: null
 updated: 2026-10-02
 ---
+## Goal
+
+Set the gait-check minimums for the art bible.
+
 ## Question
 
 The gait check (`motion-gates-gait-and-scale`) asserts that in every locomotion clip each foot lifts at least `motion_gait_lift_bh` and swings at least `motion_gait_swing_bh` body heights once per cycle. The scope left the numbers to the user. The package set them as liveness floors from the measured clips: **0.005** lift (9 mm on a 1.8 m humanoid) and **0.05** swing (9 cm).
@@ -32,3 +36,7 @@ Keep these numbers, or raise them toward a real step height? Raising lift above 
 ## Recommendation
 
 Keep 0.005 / 0.05 for now: they separate a frozen foot (0) from the weakest real walk (Gobkit, 0.0077 / 0.092) with room on both sides, and every humanoid clears them by 20× or more. Revisit after the agent-authored walk exists.
+
+## Outcome
+
+Decided by the user (2026-10-02): adopt `motion_gait_lift_bh` 0.005 and `motion_gait_swing_bh` 0.05 as minimums (they catch frozen or dragged feet); raise them later if clips pass but still shuffle.

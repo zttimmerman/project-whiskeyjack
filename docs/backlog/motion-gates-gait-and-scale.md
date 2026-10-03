@@ -1,7 +1,7 @@
 ---
 id: motion-gates-gait-and-scale
 title: "Motion gates that catch frozen legs and scale with the creature"
-status: in-review
+status: done
 kind: chore
 targets: []
 after: [spike-agent-animation]
