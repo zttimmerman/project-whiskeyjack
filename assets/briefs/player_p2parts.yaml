@@ -27,13 +27,15 @@ texture_overlays: [assets/overlays/player_p2parts_mouth.png]
 # up under the tunic), 5 the harness, 6-9 the eyes and brows. The body, head and legs keep the rig's own
 # weights; the harness, which parted from the body by up to 13 cm, copies its weights from them and sits
 # 4 mm out (docs/trials/body-only-humanoid.md). A voxel proxy of all the shells (bind transfer for 1-5)
-# fused the legs at the crotch and stretched them 22-40x, so it isn't used here.
+# fused the legs at the crotch and stretched them 22-40x, so it isn't used here. The head and legs are
+# covers: body faces they fully hide (the collar inside the neck) are removed, so they can't poke through.
 parts:
-  - {select: rank 1-4, bind: keep}
+  - {select: rank 1, bind: keep, skirt: true}
+  - {select: rank 2-4, bind: keep, cover: true}
   - {select: rank 5, bind: transfer, offset_mm: 4}
   - {select: rank 6-9, bind: rigid:Head}
-# No skirt_reweight: on every shell it caught the flared boot cuffs (13.6x in the run, the A/B's "tearing
-# at the boot tops"); limited to the body shell (a part's skirt: true) it changed nothing measurable, and
-# the rig's own weights already stretch less than P1's.
-# Retarget: the GLB's import settings use this BoneMap (bones renamed to SkeletonProfileHumanoid names)
+# The tunic skirt, on the body shell only (part 1's skirt: true): Hips at the waist grading to the thighs
+# at the hem, no shin weight. On every shell it also caught the flared boot cuffs (13.6x in the run, the
+# A/B's "tearing at the boot tops").
+skirt_reweight: true
 bone_map: data/rigs/mixamorig_bone_map.tres

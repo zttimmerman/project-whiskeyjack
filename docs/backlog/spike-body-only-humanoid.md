@@ -59,3 +59,11 @@ Commit the code if it works and the findings (a `docs/trials/` note) if it doesn
 - **Failing:** poke-through (4–7 vertices, the collar under the head shell → `parts-contact-blend`). The mesh packet has two failing assertions (17 holes, the dark-navy share), so the judge will escalate.
 - **The A/B's tearing** was mostly `skirt_reweight` catching the boot cuffs. The real tear was the harness.
 - **Phase 1** isn't recommended yet (`decide-player-p2parts`). `tripo mesh segment` has no `--dry-run`, so there's no free price.
+
+**Phase 0b** (free, approved after all 7 judge verdicts escalated):
+- **Changes:** the tunic is graded on the body shell only, and the head and legs are `cover` shells. That removes the collar under the neck (18 faces) and fixes the poke test's backside false positives.
+- **Poke-through:** 2–5 vertices per clip (worst 0.3–2.7 cm), from 4–7 (1.1–4.6 cm). All of them are at one front chest-strap spot, possibly a metric artefact.
+- **Seam gap and stretch:** unchanged (0.52–0.71 cm; 1.85–4.38, below P1 in 5 of 6 clips).
+- **Skin in the slit:** it's the leg shells' tops, which Tripo painted in skin tones (`p2parts-leg-top-albedo`).
+- **"Spike edges":** refuted. The longest edge is 0.20 m against P1's 0.187.
+- **Recommendation:** start the player rework from P2 with transfer (`decide-player-p2parts`). The judge packets (mesh-1 and motion-*-2) wait for the judge.

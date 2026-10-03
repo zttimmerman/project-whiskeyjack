@@ -3,11 +3,11 @@
   "stages": {
     "clean": {
       "status": "ok",
-      "timestamp": "2026-10-02T23:36:04+00:00",
+      "timestamp": "2026-10-03T00:34:40+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player_p2parts.yaml",
-          "sha256": "9890866575a4e97198ebd4b5f885d070a57cff805c46b4a28f1f6ff4b91a57f0"
+          "sha256": "b14bdbe1de09ee2d9f0b38d45853eab0a3f8801ff3477b53756176f69637f276"
         },
         {
           "path": ".tripo-out/player_p2parts/rig-1/tripo-out/rig-4-a51030cf/model.glb",
@@ -15,7 +15,7 @@
         },
         {
           "path": "scripts/blender_cleanup.py",
-          "sha256": "d29b70acbc52e8069533ddf5259567d7646779cc48c12ee3407e13140cfa1158"
+          "sha256": "a3c60250195e8c5072c5fa5d5d89b57842309e412fec8ce14397943a575fd1ec"
         },
         {
           "path": ".tripo-out/player_p2parts/rig-1/tripo-out/rig-4-a51030cf/task.json",
@@ -37,7 +37,7 @@
       "outputs": [
         {
           "path": "assets/meshes/player_p2parts.glb",
-          "sha256": "0c1faf0d739727f325e88dd92e9802d247b32fb1f911e1ba46dee217c2010c3e"
+          "sha256": "4a3a323c9f49ce84ceea10f8d98fe8590626c3bb0d01a24405356683563b29ea"
         }
       ],
       "tool_versions": {
@@ -75,11 +75,17 @@
         "exclude_objects": null,
         "tip_end": null,
         "rigid_parts": null,
-        "skirt_reweight": null,
+        "skirt_reweight": true,
         "parts": [
           {
-            "select": "rank 1-4",
-            "bind": "keep"
+            "select": "rank 1",
+            "bind": "keep",
+            "skirt": true
+          },
+          {
+            "select": "rank 2-4",
+            "bind": "keep",
+            "cover": true
           },
           {
             "select": "rank 5",
@@ -860,20 +866,30 @@
             }
           ]
         },
+        "skirt_reweight": {
+          "vertices": 187,
+          "blended_vertices": 1,
+          "waist_z": 0.803,
+          "hem_z": 0.508,
+          "knee_z": 0.3,
+          "method": "vertices between knee and waist, further than 0.085 m from both thigh bones: Hips at the waist grading linearly to the thighs at the hem, split by inverse squared distance; no shin weight. Within 0.025 m inside that radius, blended linearly from the vertex's own weights"
+        },
         "hide_covered_body": {
-          "ray_m": 0.02,
-          "faces_removed": 2,
-          "triangles_removed": 2
+          "ray_m": 0.035,
+          "faces_removed": 18,
+          "triangles_removed": 18,
+          "body_faces_removed": 18,
+          "garment_faces_removed": 0
         },
         "shading": {
           "angle_deg": 30.0,
-          "welded_vertices_removed": 3636,
+          "welded_vertices_removed": 3629,
           "custom_normals_cleared": [
             "tripo_node_ad7cb377-72e7-40bc-a4f5-f8416"
           ],
           "welded": "same_weights"
         },
-        "triangle_count": 4437,
+        "triangle_count": 4421,
         "triangle_budget": 5500,
         "vertex_metrics": {
           "split_at_seams": 2318,
@@ -897,11 +913,11 @@
     },
     "concept": {
       "status": "ok",
-      "timestamp": "2026-10-02T23:36:01+00:00",
+      "timestamp": "2026-10-03T00:34:36+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player_p2parts.yaml",
-          "sha256": "9890866575a4e97198ebd4b5f885d070a57cff805c46b4a28f1f6ff4b91a57f0"
+          "sha256": "b14bdbe1de09ee2d9f0b38d45853eab0a3f8801ff3477b53756176f69637f276"
         },
         {
           "path": "docs/art-bible.md",
@@ -964,11 +980,11 @@
     },
     "model": {
       "status": "ok",
-      "timestamp": "2026-10-02T23:36:02+00:00",
+      "timestamp": "2026-10-03T00:34:37+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player_p2parts.yaml",
-          "sha256": "9890866575a4e97198ebd4b5f885d070a57cff805c46b4a28f1f6ff4b91a57f0"
+          "sha256": "b14bdbe1de09ee2d9f0b38d45853eab0a3f8801ff3477b53756176f69637f276"
         },
         {
           "path": "docs/art-bible.md",
@@ -1103,15 +1119,15 @@
     },
     "validate": {
       "status": "ok",
-      "timestamp": "2026-10-02T23:36:06+00:00",
+      "timestamp": "2026-10-03T00:34:46+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player_p2parts.yaml",
-          "sha256": "9890866575a4e97198ebd4b5f885d070a57cff805c46b4a28f1f6ff4b91a57f0"
+          "sha256": "b14bdbe1de09ee2d9f0b38d45853eab0a3f8801ff3477b53756176f69637f276"
         },
         {
           "path": "assets/meshes/player_p2parts.glb",
-          "sha256": "0c1faf0d739727f325e88dd92e9802d247b32fb1f911e1ba46dee217c2010c3e"
+          "sha256": "4a3a323c9f49ce84ceea10f8d98fe8590626c3bb0d01a24405356683563b29ea"
         },
         {
           "path": "scripts/godot_validate.gd",
@@ -1129,27 +1145,27 @@
       "outputs": [
         {
           "path": "assets/manifests/player_p2parts/front.png",
-          "sha256": "f56348896e8b321b7debef6b9bb892b8cdc89b89ba210817b04b457a7c36792f"
+          "sha256": "109ab247a8f0c5c23e41983ea7325a72d6b0b3660b7499639708959dff0ac5a3"
         },
         {
           "path": "assets/manifests/player_p2parts/right.png",
-          "sha256": "628a968f0d35d799c5c333ead02bbd7805f1c81c95c13fc6cf2909b729dbbb85"
+          "sha256": "603af7acc6fccd88a5d0939ba180b55b34e17ae961ab662d56e64294b6c4b659"
         },
         {
           "path": "assets/manifests/player_p2parts/back.png",
-          "sha256": "b9036822a07ab436bd74469c54eda7d904676ec093aad6f1983653bc46e90ebf"
+          "sha256": "6c89c9981c083ce4dd90426fa8d790ea4fa8b0132e802061074c7c404dca2ef2"
         },
         {
           "path": "assets/manifests/player_p2parts/top.png",
-          "sha256": "0dc58ad468f526aa20d48bf3919718fc2ecb903a70138989c14d5156c6f54f53"
+          "sha256": "df9d490f54ce6861b4fad5f4de4a2ff55dccea673d9dc2bb64b2d38436fa6ab8"
         },
         {
           "path": "assets/manifests/player_p2parts/clay_front.png",
-          "sha256": "1401821991e5220c3bc0366743c5fb38d2ddc4ea11294cdc8a6f0cc74934cc90"
+          "sha256": "66e1c55506720a6bae26b1ce9eed58ddc6112aa7bb6096d58528d3cab983e17e"
         },
         {
           "path": "assets/manifests/player_p2parts/wireframe_front.png",
-          "sha256": "7249ceba87c1df25686b81b46096edfc51c40396eee03fdd252e3e706b7e50ff"
+          "sha256": "b8b55b7c325a623ac06e85a811e53d22f277f2bb5e959fceb191b3e9b5cf20e4"
         }
       ],
       "tool_versions": {
@@ -1187,11 +1203,17 @@
         "exclude_objects": null,
         "tip_end": null,
         "rigid_parts": null,
-        "skirt_reweight": null,
+        "skirt_reweight": true,
         "parts": [
           {
-            "select": "rank 1-4",
-            "bind": "keep"
+            "select": "rank 1",
+            "bind": "keep",
+            "skirt": true
+          },
+          {
+            "select": "rank 2-4",
+            "bind": "keep",
+            "cover": true
           },
           {
             "select": "rank 5",
@@ -1207,7 +1229,7 @@
         "source": null,
         "source_scale": null,
         "orientation": "principal_axis",
-        "blender_triangle_count": 4437
+        "blender_triangle_count": 4421
       },
       "report": {
         "animations": {
@@ -1325,12 +1347,12 @@
           ]
         },
         "triangles": {
-          "blender_count": 4437.0,
+          "blender_count": 4421.0,
           "budget": 5500,
-          "count": 4437
+          "count": 4421
         },
         "vertex_metrics": {
-          "gpu_count": 6292,
+          "gpu_count": 6285,
           "note": "metrics only; the budget is in triangles"
         },
         "warnings": [
@@ -1366,7 +1388,7 @@
             }
           },
           "errors": [],
-          "triangles": 4437,
+          "triangles": 4421,
           "pieces_welded": 9
         },
         "gross_flags": [
@@ -1390,10 +1412,10 @@
   },
   "brief": {
     "path": "assets/briefs/player_p2parts.yaml",
-    "sha256": "9890866575a4e97198ebd4b5f885d070a57cff805c46b4a28f1f6ff4b91a57f0"
+    "sha256": "b14bdbe1de09ee2d9f0b38d45853eab0a3f8801ff3477b53756176f69637f276"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-10-02T23:54:16+00:00",
+  "updated_at": "2026-10-03T00:34:46+00:00",
   "judgments": [
     {
       "kind": "verdict",
