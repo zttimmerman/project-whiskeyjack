@@ -1,0 +1,25 @@
+{
+  "verdict": "escalate",
+  "summary": "Idle stays in place with planted feet; skin stretch fails at 1.85 from the spike's weights, present from frame 1.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "major",
+      "observation": "Torso/tunic edges 1.8-2.9x (chest/spine verticals, belt sides, a V at the hem between the legs) on every frame; a pale tan panel shows at the right thigh hem; the stretch image's 2.85x vs the metric's 1.854 disagree.",
+      "evidence": "assertion 'skin stretch'; 04_stretch_detail.png; 03_plots.png"
+    }
+  ],
+  "escalation_reason": "The failing stretch comes from the Phase 0b garment-shell weights (Tripo's Spine weighting on the belt/tunic and the Hips/thigh grading), not the clip; library_change, reroll and refine_concept don't apply. The user decides whether to rework the transfer, accept it for the spike, or keep P1.",
+  "questions_answered": [
+    "In place.",
+    "Feet p90 0.019.",
+    "No broken joints.",
+    "5 of 6 pass; stretch 1.854."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png",
+    "04_stretch_detail.png"
+  ]
+}

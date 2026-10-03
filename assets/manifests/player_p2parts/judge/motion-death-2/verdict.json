@@ -1,0 +1,25 @@
+{
+  "verdict": "escalate",
+  "summary": "Death stays in place and plays cleanly, but skin stretch fails (2.425) at the waist and tunic, and stays ~1.1-1.2 lying down.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "major",
+      "observation": "Peak at t=0.83 s (worst edge 3.43x on Spine) up the waist and tunic into the harness and skirt; bare thigh patches show between tunic and boots in the crouch.",
+      "evidence": "assertion 'skin stretch'; 04_stretch_detail.png; 03_plots.png"
+    }
+  ],
+  "escalation_reason": "The failing stretch comes from the Phase 0b garment-shell weights (Tripo's Spine weighting on the belt/tunic and the Hips/thigh grading), not the clip; library_change, reroll and refine_concept don't apply. The user decides whether to rework the transfer, accept it for the spike, or keep P1.",
+  "questions_answered": [
+    "In place.",
+    "Feet hold once planted.",
+    "Waist/tunic stretch at the crouch.",
+    "Stretch 2.425 fails; others pass."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png",
+    "04_stretch_detail.png"
+  ]
+}
