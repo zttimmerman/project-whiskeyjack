@@ -361,11 +361,11 @@
     },
     "clean": {
       "status": "ok",
-      "timestamp": "2026-09-28T21:47:07+00:00",
+      "timestamp": "2026-10-03T03:36:35+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player.yaml",
-          "sha256": "ee9664699c8771285f584c5351ad7868007de99a1ab2bf7385fca6d4ebcc849b"
+          "sha256": "919450602b376aaefdd2d8e3aed1df88403a6469799f56072102a2137b9acdd8"
         },
         {
           "path": ".tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/model.glb",
@@ -373,7 +373,7 @@
         },
         {
           "path": "scripts/blender_cleanup.py",
-          "sha256": "9eefccd91bc8f3e81c819903a6d2838716a4ccc0e95d3f681147dfa2b65fb0fe"
+          "sha256": "f65428190ef7958ab0142b740e69ccbb406ba85c4766e83399c95a1db9c2a7f1"
         },
         {
           "path": ".tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/task.json",
@@ -385,23 +385,23 @@
         },
         {
           "path": "assets/overlays/player_mouth.png",
-          "sha256": "ad40db84b412035c867629510d3505e53a4f3044d14110a9e88242672fbb409c"
+          "sha256": "ec50451731b36932906d9d04456b0c5c94de7f7fb20c279a2e99eaa25d3b7fe0"
         },
         {
           "path": "assets/overlays/player_mouth.json",
-          "sha256": "fb7f7dc5f4a7abf98b5f9334f2d22f2a0cc4f7ea56de2764cb661ef360c353d9"
+          "sha256": "c1a64b7c2aefdd8505d344d2180e1f55baa9c2b9d74ab927a2d30d88b3806604"
         }
       ],
       "outputs": [
         {
           "path": "assets/meshes/player.glb",
-          "sha256": "acbd75c9f85b278841e0cd5e716ce73c3728b6453598ca1592a3f4fd30001a14"
+          "sha256": "d28ffcb38a4600c50640f2dd8bd366f73beb1a7ebdcb7b89c9de0830f1dc8c7b"
         }
       ],
       "tool_versions": {
         "python": "3.14.7",
         "blender": "Blender 5.0.1",
-        "godot": "4.6.1.stable.official.14d19694e",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
         "tripo": "0.5.1"
       },
       "message": "exported assets/meshes/player.glb",
@@ -411,7 +411,7 @@
         "type": "character",
         "face_limit": 5000,
         "triangle_budget": 5500,
-        "texture_size": 256,
+        "texture_size": 1024,
         "target_size_m": 1.8,
         "pivot": "base",
         "palette": [
@@ -434,6 +434,12 @@
         "tip_end": null,
         "rigid_parts": null,
         "skirt_reweight": true,
+        "smooth_shading": true,
+        "parts": null,
+        "parts_transfer": null,
+        "source": null,
+        "source_scale": null,
+        "orientation": "principal_axis",
         "source_forward": {
           "axis": "+x",
           "source": "Tripo API default (.tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/task.json sets no export_orientation)"
@@ -444,9 +450,9 @@
           "Blackened Iron": "#242424",
           "Tarnished Gold": "#E6BF1A"
         },
-        "reference_image": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+        "reference_image": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/.tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
         "texture_overlays": [
-          "/Users/zach/Documents/repos/project-whiskeyjack/assets/overlays/player_mouth.png"
+          "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/overlays/player_mouth.png"
         ]
       },
       "report": {
@@ -454,8 +460,8 @@
         "errors": [],
         "warnings": [],
         "blender_version": "5.0.1",
-        "input": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/model.glb",
-        "output": "/Users/zach/Documents/repos/project-whiskeyjack/assets/meshes/player.glb",
+        "input": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/.tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/model.glb",
+        "output": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/meshes/player.glb",
         "materials": [
           {
             "name": "tripo_material_e2b61bb2-f8dc-43c6-8eea-39854366cb6d",
@@ -473,14 +479,15 @@
               2048
             ],
             "size_after": [
-              256,
-              256
+              1024,
+              1024
             ]
           }
         ],
         "removed_objects": [
           "Icosphere (bone display shape created by the importer)"
         ],
+        "input_format": "glb",
         "rigged": true,
         "armatures": [
           {
@@ -595,7 +602,8 @@
                     0.2211,
                     1.0,
                     0.9883
-                  ]
+                  ],
+                  "boundary_loops": 2
                 },
                 {
                   "triangles": 50,
@@ -604,7 +612,8 @@
                     0.0157,
                     0.0372,
                     0.0078
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 50,
@@ -613,7 +622,8 @@
                     0.0157,
                     0.0372,
                     0.0078
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 42,
@@ -622,7 +632,8 @@
                     0.0078,
                     0.0117,
                     0.0137
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 38,
@@ -631,7 +642,8 @@
                     0.0078,
                     0.0137,
                     0.0137
-                  ]
+                  ],
+                  "boundary_loops": 0
                 }
               ],
               "quad_ratio": 0.0,
@@ -682,7 +694,8 @@
                       0.2211,
                       1.0,
                       0.9883
-                    ]
+                    ],
+                    "boundary_loops": 2
                   },
                   {
                     "triangles": 50,
@@ -691,7 +704,8 @@
                       0.0157,
                       0.0372,
                       0.0078
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 50,
@@ -700,7 +714,8 @@
                       0.0157,
                       0.0372,
                       0.0078
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 42,
@@ -709,7 +724,8 @@
                       0.0078,
                       0.0117,
                       0.0137
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 38,
@@ -718,7 +734,8 @@
                       0.0078,
                       0.0137,
                       0.0137
-                    ]
+                    ],
+                    "boundary_loops": 0
                   }
                 ],
                 "part_count": 5
@@ -732,69 +749,69 @@
           {
             "image": "Color_e2b61bb2-f8dc-43c6-8eea-39854366cb6d",
             "size": [
-              256,
-              256
+              1024,
+              1024
             ],
             "method": "approved concept (hue and saturation restored; lightness lifted to the matched concept tone, never lowered)",
-            "reference": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+            "reference": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/.tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
             "concept_background": "#8B8B8B",
             "clusters": [
               {
                 "concept": "#14313F",
                 "concept_share": 0.32,
-                "texture_before": "#032C3F",
-                "texture_share": 0.351,
-                "delta_e_before": 4.5,
+                "texture_before": "#022D40",
+                "texture_share": 0.354,
+                "delta_e_before": 4.6,
                 "applied": true,
                 "texture_after": "#13303E",
-                "delta_ab_after": 0.3,
+                "delta_ab_after": 0.2,
                 "lightness": [
                   16.6,
                   18.5,
                   18.8
                 ],
-                "delta_ab_before": 3.9
+                "delta_ab_before": 4.1
               },
               {
                 "concept": "#BC9781",
                 "concept_share": 0.058,
-                "texture_before": "#AC9386",
-                "texture_share": 0.078,
-                "delta_e_before": 7.9,
+                "texture_before": "#AE9587",
+                "texture_share": 0.089,
+                "delta_e_before": 7.6,
                 "applied": true,
-                "texture_after": "#BE9983",
+                "texture_after": "#BD9882",
                 "delta_ab_after": 0.1,
                 "lightness": [
-                  62.9,
-                  66.2,
+                  63.4,
+                  65.8,
                   65.4
                 ],
-                "delta_ab_before": 7.5
+                "delta_ab_before": 7.4
               },
               {
                 "concept": "#646064",
                 "concept_share": 0.004,
-                "texture_before": "#5B4444",
-                "texture_share": 0.016,
-                "delta_e_before": 13.8,
+                "texture_before": "#584242",
+                "texture_share": 0.009,
+                "delta_e_before": 14.3,
                 "applied": false,
-                "reason": "covers 1.6% of the texture"
+                "reason": "covers 0.9% of the texture"
               },
               {
                 "concept": "#957468",
                 "concept_share": 0.03,
-                "texture_before": "#7F6E68",
-                "texture_share": 0.023,
-                "delta_e_before": 9.2,
+                "texture_before": "#82716B",
+                "texture_share": 0.014,
+                "delta_e_before": 8.7,
                 "applied": false,
-                "reason": "covers 2.3% of the texture"
+                "reason": "covers 1.4% of the texture"
               },
               {
                 "concept": "#45282B",
                 "concept_share": 0.231,
-                "texture_before": "#441B21",
-                "texture_share": 0.246,
-                "delta_e_before": 7.8,
+                "texture_before": "#441A21",
+                "texture_share": 0.253,
+                "delta_e_before": 7.9,
                 "applied": true,
                 "texture_after": "#432629",
                 "delta_ab_after": 0.4,
@@ -803,44 +820,44 @@
                   19.0,
                   19.8
                 ],
-                "delta_ab_before": 6.8
+                "delta_ab_before": 7.0
               },
               {
                 "concept": "#2C1D25",
                 "concept_share": 0.145,
-                "texture_before": "#281A21",
-                "texture_share": 0.159,
-                "delta_e_before": 1.6,
+                "texture_before": "#281920",
+                "texture_share": 0.156,
+                "delta_e_before": 2.0,
                 "applied": true,
-                "texture_after": "#2B1A22",
-                "delta_ab_after": 1.3,
+                "texture_after": "#2C1A22",
+                "delta_ab_after": 1.4,
                 "lightness": [
-                  11.3,
-                  11.7,
+                  10.9,
+                  12.0,
                   12.7
                 ],
-                "delta_ab_before": 0.8
+                "delta_ab_before": 1.0
               },
               {
                 "concept": "#383C43",
                 "concept_share": 0.021,
-                "texture_before": "#354149",
-                "texture_share": 0.029,
-                "delta_e_before": 3.4,
+                "texture_before": "#333E46",
+                "texture_share": 0.025,
+                "delta_e_before": 2.9,
                 "applied": false,
-                "reason": "covers 2.9% of the texture"
+                "reason": "covers 2.5% of the texture"
               },
               {
                 "concept": "#0B1C2C",
                 "concept_share": 0.19,
                 "texture_before": "#03122A",
-                "texture_share": 0.098,
-                "delta_e_before": 7.2,
+                "texture_share": 0.099,
+                "delta_e_before": 7.4,
                 "applied": true,
                 "texture_after": "#071929",
-                "delta_ab_after": 0.4,
+                "delta_ab_after": 0.3,
                 "lightness": [
-                  5.7,
+                  5.5,
                   8.0,
                   9.5
                 ],
@@ -851,8 +868,8 @@
         ],
         "overlays": [
           {
-            "overlay": "/Users/zach/Documents/repos/project-whiskeyjack/assets/overlays/player_mouth.png",
-            "pixels": 19
+            "overlay": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/overlays/player_mouth.png",
+            "pixels": 195
           }
         ],
         "skirt_reweight": {
@@ -864,17 +881,15 @@
           "method": "vertices between knee and waist, further than 0.085 m from both thigh bones: Hips at the waist grading linearly to the thighs at the hem, split by inverse squared distance; no shin weight. Within 0.025 m inside that radius, blended linearly from the vertex's own weights"
         },
         "shading": {
-          "angle_deg": 30.0,
-          "welded_vertices_removed": 4062,
-          "custom_normals_cleared": [
+          "mode": "source normals kept (smooth_shading)",
+          "custom_normals": [
             "tripo_node_e2b61bb2-f8dc-43c6-8eea-39854"
-          ],
-          "welded": "same_weights"
+          ]
         },
         "triangle_count": 4893,
         "triangle_budget": 5500,
         "vertex_metrics": {
-          "split_at_seams": 2502,
+          "split_at_seams": 6564,
           "welded": 2481,
           "note": "metrics only; the budget is in triangles"
         },
@@ -895,19 +910,19 @@
     },
     "validate": {
       "status": "ok",
-      "timestamp": "2026-09-28T21:48:16+00:00",
+      "timestamp": "2026-10-03T03:36:46+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player.yaml",
-          "sha256": "ee9664699c8771285f584c5351ad7868007de99a1ab2bf7385fca6d4ebcc849b"
+          "sha256": "919450602b376aaefdd2d8e3aed1df88403a6469799f56072102a2137b9acdd8"
         },
         {
           "path": "assets/meshes/player.glb",
-          "sha256": "acbd75c9f85b278841e0cd5e716ce73c3728b6453598ca1592a3f4fd30001a14"
+          "sha256": "d28ffcb38a4600c50640f2dd8bd366f73beb1a7ebdcb7b89c9de0830f1dc8c7b"
         },
         {
           "path": "scripts/godot_validate.gd",
-          "sha256": "b6e15053c4219818c4d819d9d64720b11aa7cddbef876e106eee74cbca31e554"
+          "sha256": "7990d0b422dad7def4ba5cbef89d9632cd29cc3edddc28143757e982988985c9"
         },
         {
           "path": "scripts/blender_views.py",
@@ -921,33 +936,33 @@
       "outputs": [
         {
           "path": "assets/manifests/player/front.png",
-          "sha256": "0d9dcae8109c5d692bafc5358ccb674363aa00c4f976ed4c2d5bc86f0d2d1335"
+          "sha256": "2d0449f08318e8c58dfc668aa0067e3c340c7c641c158f886d340052c817ae26"
         },
         {
           "path": "assets/manifests/player/right.png",
-          "sha256": "28c85e3b76af356734658d9dd565f435c1c1109590e6962a56380874abceb74f"
+          "sha256": "9c5c143524e70404dd2d7bbb2ebb650c849d6628461ded2532be870771d5338f"
         },
         {
           "path": "assets/manifests/player/back.png",
-          "sha256": "dfee172f02f7f7f8cc3453ec9ec63d89621d5277480cf4cdeb800e70da7b9716"
+          "sha256": "d757f5e735ff7fdc71f041cdf758f740bcb60bae98733087d0e3e72e5acf705c"
         },
         {
           "path": "assets/manifests/player/top.png",
-          "sha256": "b0725daf8dc5c4a76ca0c8c9b797336bf1775cc8699c77fa3a0cca06e024534e"
+          "sha256": "9a89958d89361674003cc22db699c0d5ac6b4e47820e54dda4dadb388b09729b"
         },
         {
           "path": "assets/manifests/player/clay_front.png",
-          "sha256": "eda74a7ccce3732b9c97e6421117f21ce6ffadad8c19cf39d9e0e35b7c595043"
+          "sha256": "0d847ec828fc6b7f8ef26da43346bf6e51b4b58d1d8cc5d1d5efb2118ffab759"
         },
         {
           "path": "assets/manifests/player/wireframe_front.png",
-          "sha256": "fe3c3bf771bc03deb75216e5124fc2aa54f4dccb56901d04cb6b8c7ee6d9dae3"
+          "sha256": "7cbaa3193958e997739ca142a38707c2f9f3a40c04d8417c7e4d3476a9abf790"
         }
       ],
       "tool_versions": {
         "python": "3.14.7",
         "blender": "Blender 5.0.1",
-        "godot": "4.6.1.stable.official.14d19694e",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
         "tripo": "0.5.1"
       },
       "message": "all checks passed",
@@ -957,7 +972,7 @@
         "type": "character",
         "face_limit": 5000,
         "triangle_budget": 5500,
-        "texture_size": 256,
+        "texture_size": 1024,
         "target_size_m": 1.8,
         "pivot": "base",
         "palette": [
@@ -980,6 +995,12 @@
         "tip_end": null,
         "rigid_parts": null,
         "skirt_reweight": true,
+        "smooth_shading": true,
+        "parts": null,
+        "parts_transfer": null,
+        "source": null,
+        "source_scale": null,
+        "orientation": "principal_axis",
         "blender_triangle_count": 4893
       },
       "report": {
@@ -1003,13 +1024,13 @@
           "present": []
         },
         "errors": [],
-        "godot_version": "4.6.1-stable (official)",
+        "godot_version": "4.7.2-stable (official)",
         "import_method": "GLTFDocument (runtime); editor import settings such as a BoneMap don't apply",
         "materials": [
           {
             "albedo_texture": [
-              256,
-              256
+              1024,
+              1024
             ],
             "extra_maps": [],
             "mesh": "tripo_node_e2b61bb2-f8dc-43c6-8eea-39854",
@@ -1089,11 +1110,11 @@
         "status": "pass",
         "textures": {
           "count": 1,
-          "max_allowed": 256,
+          "max_allowed": 1024,
           "sizes": [
             [
-              256,
-              256
+              1024,
+              1024
             ]
           ]
         },
@@ -1103,7 +1124,7 @@
           "count": 4893
         },
         "vertex_metrics": {
-          "gpu_count": 7242,
+          "gpu_count": 6571,
           "note": "metrics only; the budget is in triangles"
         },
         "warnings": [
@@ -1114,28 +1135,28 @@
           "status": "ok",
           "views": {
             "front": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/player/front.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/manifests/player/front.png",
               "coverage": 0.1776
             },
             "right": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/player/right.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/manifests/player/right.png",
               "coverage": 0.1099
             },
             "back": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/player/back.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/manifests/player/back.png",
               "coverage": 0.1776
             },
             "top": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/player/top.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/manifests/player/top.png",
               "coverage": 0.079
             },
             "clay_front": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/player/clay_front.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/manifests/player/clay_front.png",
               "coverage": 0.1776
             },
             "wireframe_front": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/player/wireframe_front.png",
-              "coverage": 0.159
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/manifests/player/wireframe_front.png",
+              "coverage": 0.1571
             }
           },
           "errors": [],
@@ -1150,10 +1171,10 @@
   },
   "brief": {
     "path": "assets/briefs/player.yaml",
-    "sha256": "ee9664699c8771285f584c5351ad7868007de99a1ab2bf7385fca6d4ebcc849b"
+    "sha256": "919450602b376aaefdd2d8e3aed1df88403a6469799f56072102a2137b9acdd8"
   },
   "total_cost_credits": 100,
-  "updated_at": "2026-10-02T04:22:42+00:00",
+  "updated_at": "2026-10-03T03:36:47+00:00",
   "concept_approval": {
     "attempt": "concept-1",
     "image": {
