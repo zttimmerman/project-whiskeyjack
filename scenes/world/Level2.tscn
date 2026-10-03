@@ -36,12 +36,29 @@ albedo_color = Color(0.7, 0.65, 0.55, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_end"]
 size = Vector3(4, 3, 1)
 
+[sub_resource type="Environment" id="Environment_level2"]
+background_mode = 1
+background_color = Color(0.03, 0.025, 0.02, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.56, 0.5, 0.45, 1)
+ambient_light_energy = 0.8
+tonemap_mode = 2
+tonemap_exposure = 1.15
+fog_enabled = true
+fog_light_color = Color(0.12, 0.09, 0.07, 1)
+fog_density = 0.03
+fog_sky_affect = 0.0
+
 [node name="Level2" type="Node3D"]
 script = ExtResource("1_script")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.866, -0.25, 0.433, 0, 0.866, 0.5, -0.5, -0.433, 0.75, 0, 10, 0)
-light_energy = 0.6
+light_color = Color(0.78, 0.84, 1, 1)
+light_energy = 0.55
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_level2")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
 navigation_mesh = ExtResource("navmesh_baked")
@@ -480,39 +497,45 @@ material = SubResource("Mat_urn")
 
 [node name="CandelabraLight1" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 2.0, -2)
-light_color = Color(1.0, 0.8, 0.5, 1)
-light_energy = 0.4
-omni_range = 5.0
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 1.6
+omni_range = 7.0
+omni_attenuation = 1.6
 
 [node name="CandelabraLight2" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 2.0, -2)
-light_color = Color(1.0, 0.8, 0.5, 1)
-light_energy = 0.4
-omni_range = 5.0
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 1.6
+omni_range = 7.0
+omni_attenuation = 1.6
 
 [node name="CandelabraLight3" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 2.0, 22)
-light_color = Color(1.0, 0.8, 0.5, 1)
-light_energy = 0.4
-omni_range = 6.0
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 1.6
+omni_range = 7.0
+omni_attenuation = 1.6
 
 [node name="CandelabraLight4" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 2.0, 22)
-light_color = Color(1.0, 0.8, 0.5, 1)
-light_energy = 0.4
-omni_range = 6.0
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 1.6
+omni_range = 7.0
+omni_attenuation = 1.6
 
 [node name="CandelabraLight5" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2.0, 67)
-light_color = Color(1.0, 0.8, 0.5, 1)
-light_energy = 0.4
-omni_range = 5.0
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 1.6
+omni_range = 7.0
+omni_attenuation = 1.6
 
 [node name="CandelabraLight6" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 2.0, 67)
-light_color = Color(1.0, 0.8, 0.5, 1)
-light_energy = 0.4
-omni_range = 5.0
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 1.6
+omni_range = 7.0
+omni_attenuation = 1.6
 
 [node name="Candelabra1" parent="." instance=ExtResource("10_candelabra")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -2)

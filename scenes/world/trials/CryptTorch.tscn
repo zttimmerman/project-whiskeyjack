@@ -9,5 +9,7 @@ transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0)
 
 [node name="Light" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, -0.5)
-light_color = Color(1, 0.85, 0.6, 1)
-light_energy = 0.5
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 1.6
+omni_range = 7.0
+omni_attenuation = 1.6
