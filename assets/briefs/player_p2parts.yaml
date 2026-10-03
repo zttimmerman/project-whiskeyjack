@@ -1,0 +1,44 @@
+# spike-body-only-humanoid Phase 0: the player's paid Tripo P2 download (player attempt-2, rig-2), built as
+# a separate asset so the shipped P1 player stays the player. Copied from assets/briefs/player.yaml.
+# Carried from docs/art-bible.md, "Brief: Player — Line soldier".
+# The art bible is the only source for these numbers: change it there first, then copy here.
+asset_id: player_p2parts
+type: character
+brief: |
+  The player, a Frontier Line soldier. The camera sits behind them, so the back and
+  shoulders read most. Identity marks: spiky dark hair, knee-length tunic flare,
+  harness straps crossing the back.
+prompt: |
+  A young frontier soldier in a knee-length wool tunic in Garrison Teal that flares at
+  the hem, a leather harness in Saddle Leather with two straps crossing the chest and
+  back, leather boots in Saddle Leather, spiky dark hair, empty hands, T-pose.
+face_limit: 5000
+tripo_model: P2-20260801
+triangle_budget: 5500
+texture_size: 256
+target_size_m: 1.8
+pivot: base
+palette: [Garrison Teal, Saddle Leather, Blackened Iron, Tarnished Gold]
+animations: [idle, run, dodge_roll, attack_light, attack_heavy, death]
+# Mouth line, as on the player, redrawn for this download's UVs (same make_texture_overlay.py settings).
+# Leg tops: Tripo painted the leg shells' tops (hidden under the tunic) in skin tones, which showed in the
+# tunic slit; scripts/make_shell_overlay.py --ranks 3,4 --above 0.55 --sample 0.45,0.54 paints them in the
+# trousers' colour.
+texture_overlays: [assets/overlays/player_p2parts_mouth.png, assets/overlays/player_p2parts_leg_tops.png]
+# P2 hands the rigger 9 separate shells (docs/trials/tripo-p2.md). Each shell is listed by size rank
+# (1 = most triangles): 1 body with the tunic and arms, 2 head and hair, 3-4 the legs and boots (they reach
+# up under the tunic), 5 the harness, 6-9 the eyes and brows. The body, head and legs keep the rig's own
+# weights; the harness, which parted from the body by up to 13 cm, copies its weights from them and sits
+# 4 mm out (docs/trials/body-only-humanoid.md). A voxel proxy of all the shells (bind transfer for 1-5)
+# fused the legs at the crotch and stretched them 22-40x, so it isn't used here. The head and legs are
+# covers: body faces they fully hide (the collar inside the neck) are removed, so they can't poke through.
+parts:
+  - {select: rank 1, bind: keep, skirt: true}
+  - {select: rank 2-4, bind: keep, cover: true}
+  - {select: rank 5, bind: transfer, offset_mm: 4}
+  - {select: rank 6-9, bind: rigid:Head}
+# The tunic skirt, on the body shell only (part 1's skirt: true): Hips at the waist grading to the thighs
+# at the hem, no shin weight. On every shell it also caught the flared boot cuffs (13.6x in the run, the
+# A/B's "tearing at the boot tops").
+skirt_reweight: true
+bone_map: data/rigs/mixamorig_bone_map.tres

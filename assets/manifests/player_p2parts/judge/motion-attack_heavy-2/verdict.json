@@ -1,0 +1,25 @@
+{
+  "verdict": "escalate",
+  "summary": "attack_heavy stays in place and its handovers pass, but skin stretch is 3.216 from the garment-shell weights on the tunic and torso.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "major",
+      "observation": "At t=0.70 s ~12 Spine-weighted tunic/torso edges stretch 2.5-4.2x between harness, belt and skirt; pale skin shows between tunic and harness at the upper back and through the skirt (5 poke-through verts, worst 2.7 cm).",
+      "evidence": "assertion 'skin stretch'; 04_stretch_detail.png; 03_plots.png"
+    }
+  ],
+  "escalation_reason": "The failing stretch comes from the Phase 0b garment-shell weights (Tripo's Spine weighting on the belt/tunic and the Hips/thigh grading), not the clip; library_change, reroll and refine_concept don't apply. The user decides whether to rework the transfer, accept it for the spike, or keep P1.",
+  "questions_answered": [
+    "In place.",
+    "Pivots intended (exempt).",
+    "Torso/tunic stretch; shells separate at the back.",
+    "Stretch 3.216 fails; others pass."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png",
+    "04_stretch_detail.png"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "verdict": "escalate",
+  "summary": "The death clip stays in place and its feet hold, but skin stretch reaches 2.43 vs 1.0 in the garment shell's crotch and hem, and stays ~1.1 in the final lying pose.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "major",
+      "observation": "At t=0.83 s the tunic panels stretch tight between the knees (2.1-3.4x), skin-coloured band showing across the crotch; settles at ~1.1 lying down; 5 verts poke through up to 11 mm.",
+      "evidence": "assertion 'skin stretch (edge length vs bind pose)'; 04_stretch_detail.png; 03_plots.png"
+    }
+  ],
+  "escalation_reason": "The failing stretch comes from the spike's garment-shell weighting (the tunic skirt follows the thighs; skirt_reweight is off for player_p2parts), not the clip; no library_change or concept refine fixes it. The user decides whether to grade the tunic shell like skirt_reweight (Hips/Spine to thighs, no shin) and re-run, or accept/stop the approach.",
+  "questions_answered": [
+    "In place: Hips 0.00 m.",
+    "Feet hold: p90 0.037.",
+    "Tunic stretched between the knees in frames 4-6.",
+    "4 of 5 pass; stretch 2.425 fails."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png",
+    "04_stretch_detail.png"
+  ]
+}

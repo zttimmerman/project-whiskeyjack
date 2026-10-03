@@ -1,0 +1,25 @@
+{
+  "verdict": "escalate",
+  "summary": "The roll is clean and in place, but skirt stretch fails at 4.38.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "major",
+      "observation": "At the tuck (0.20-0.37 s) skirt hem edges stretch up to 5.4x, pulled between Hips/Spine and thigh weights as the legs fold.",
+      "evidence": "assertion 'skin stretch'; 04_stretch_detail.png; 03_plots.png"
+    }
+  ],
+  "escalation_reason": "The failing stretch comes from the Phase 0b garment-shell weights (Tripo's Spine weighting on the belt/tunic and the Hips/thigh grading), not the clip; library_change, reroll and refine_concept don't apply. The user decides whether to rework the transfer, accept it for the spike, or keep P1.",
+  "questions_answered": [
+    "In place: Hips 0.19 peak, end 0.04.",
+    "Feet plant only at the end (exempt).",
+    "Hem visibly stretches frames 5-10.",
+    "Stretch 4.381 fails; others pass."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png",
+    "04_stretch_detail.png"
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "verdict": "escalate",
+  "summary": "The mesh matches the concept's front in most parts, but two assertions fail (holes 17/10, trouser navy kept 0.052/0.063), the face reads faintly, the back shows a plain leather panel where the brief wants crossing straps, and the wireframe shows long spike edges.",
+  "findings": [
+    {
+      "check": "malformed",
+      "severity": "major",
+      "observation": "Long stray edges in the wireframe at the waist, wrists and head, not visible in shaded views. (Orchestrator note: on the same raw P2 mesh the longest edge measured ~0.1 m in the A/B, so these are most likely a wireframe-render artefact.)",
+      "evidence": "07_wireframe_front.png; non_manifold_edges=2"
+    },
+    {
+      "check": "missing",
+      "severity": "major",
+      "observation": "The back of the torso is a plain leather panel with no crossing harness straps, which the brief names as an identity mark.",
+      "evidence": "04_back.png, 09_closeup_back.png"
+    },
+    {
+      "check": "missing",
+      "severity": "major",
+      "observation": "Eyes are dark smudges, brows faint, mouth barely visible; only the nose reads.",
+      "evidence": "08_closeup_front.png vs 01_approved_concept.png"
+    },
+    {
+      "check": "other",
+      "severity": "major",
+      "observation": "Holes 17 vs 10 (body 7 loops, one part 3, others 1), possibly expected for a shell-built body; none visible.",
+      "evidence": "assertion 'holes'; metrics.mesh.parts"
+    },
+    {
+      "check": "color",
+      "severity": "minor",
+      "observation": "Trouser navy keeps 0.052 vs 0.063 of the texture but still shows.",
+      "evidence": "assertion 'concept color #0B1C2C kept'"
+    }
+  ],
+  "escalation_reason": "Unrelated fixes: spike edges (likely render artefact), back straps (concept gap), faint face (texture resolution), and the hole count may be misleading for a shell-built spike asset. None is a single concept edit or reroll.",
+  "questions_answered": [
+    "Present: hair, tunic, collar, vest with front X straps, belt, bracers, trousers, boots, empty hands, T-pose. Changed: no back straps; faint face.",
+    "17 loops, none visible; wireframe spikes; 9 parts.",
+    "Yes: 4437 of 5500 tris, one 256 texture, 1.8 m.",
+    "Trouser navy under its kept share but visible.",
+    "Validate passes; humanoid-mappable.",
+    "Eyes faint, nose present, mouth faint."
+  ],
+  "images_seen": [
+    "01_approved_concept.png",
+    "02_front.png",
+    "03_right.png",
+    "04_back.png",
+    "05_top.png",
+    "06_clay_front.png",
+    "07_wireframe_front.png",
+    "08_closeup_front.png",
+    "09_closeup_back.png"
+  ]
+}

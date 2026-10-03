@@ -233,7 +233,7 @@ def rigid_rebind(meshes, arms, report):
                               "parts": rows}
 
 
-def skirt_reweight(meshes, arms, report):
+def skirt_reweight(meshes, arms, report, only=None):
     """Continuous-skin characters with a skirt (brief: skirt_reweight: true). Auto-riggers bind a
     skirt to the legs; the player's hem came back about 40% on the shins, so it stretches between
     the legs when walking. The skirt is the part of the mesh between knee and hip height that sits
@@ -242,7 +242,8 @@ def skirt_reweight(meshes, arms, report):
     split between the two thighs by inverse squared distance, with zero weight on the shins.
     Vertices within SKIRT_BLEND_WIDTH inside the radius blend linearly from their own weights to the
     skirt weights: a hard boundary put a skirt vertex (no shin weight) 2.5 cm from a trouser vertex at
-    72% shin, and that edge stretched 8.7x in the run (the motion review's skin-stretch check)."""
+    72% shin, and that edge stretched 8.7x in the run (the motion review's skin-stretch check).
+    `only` ({mesh name: vertex indices}) limits it to the shells a parts brief marks skirt: true."""
     seg = joint_segments(arms[0])
     find = lambda token: next((n for n in seg if n.lower().endswith(token.lower())), None)
     hips, lthigh, rthigh = find("Hips"), find("LeftUpLeg"), find("RightUpLeg")
@@ -256,7 +257,10 @@ def skirt_reweight(meshes, arms, report):
         me = o.data
         groups = {n: (o.vertex_groups.get(n) or o.vertex_groups.new(name=n)) for n in (hips, lthigh, rthigh)}
         skirt = []  # (index, position, dist to left thigh, dist to right thigh, share of skirt weights 0-1)
+        allowed = None if only is None else set(only.get(o.name, ()))
         for v in me.vertices:
+            if allowed is not None and v.index not in allowed:
+                continue
             p = o.matrix_world @ v.co
             if knee_z < p.z < waist_z:
                 dl, dr = _segment_distance(p, *seg[lthigh]), _segment_distance(p, *seg[rthigh])
@@ -289,6 +293,511 @@ def skirt_reweight(meshes, arms, report):
                       "Within %.3f m inside that radius, blended linearly from the vertex's own weights"
                       % (SKIRT_TROUSER_RADIUS, SKIRT_BLEND_WIDTH))
     report["skirt_reweight"] = rows
+
+
+PROXY_VOXEL_M = 0.012      # m: voxel size of the continuous weight proxy (1.8 m character)
+PROXY_MATCH_M = 0.02       # m: inpaint only: a proxy vertex this close to a source shell copies its weights
+PROXY_MATCH_DEG = 35.0     # inpaint only: ...and only if their normals agree within this angle
+PROXY_CONFLICT = 0.25      # inpaint only: shells within PROXY_MATCH_M disagreeing by more (L1/2) are a seam
+INPAINT_ITERS = 400        # conjugate-gradient steps for the harmonic fill
+HIDE_RAY_M = 0.035         # m: a body face is covered when every sample's outward ray meets a cover this close
+                           # (the P2 head shell's neck sits 2.7 cm outside the body's collar)
+WEIGHT_MIN = 0.01          # weights below this are dropped after a transfer
+MAX_INFLUENCES = 4         # glTF's one joint set; Godot skins with 4 by default
+
+
+def _shells(meshes):
+    """Welded connected pieces of every mesh (coincident vertices merged at 0.01 mm, as mesh_health does),
+    ranked by triangles (1 = most), ties by center. Each: mesh, vertex indices, face indices, triangles."""
+    out = []
+    for o in meshes:
+        me = o.data
+        parent = list(range(len(me.vertices)))
+
+        def find(x):
+            while parent[x] != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
+        first = {}
+        for v in me.vertices:
+            key = tuple(round(c / 1e-5) for c in v.co)
+            if key in first:
+                parent[find(v.index)] = find(first[key])
+            else:
+                first[key] = v.index
+        for poly in me.polygons:
+            r = find(poly.vertices[0])
+            for vi in poly.vertices[1:]:
+                parent[find(vi)] = r
+        verts, faces = {}, {}
+        for v in me.vertices:
+            verts.setdefault(find(v.index), []).append(v.index)
+        for poly in me.polygons:
+            faces.setdefault(find(poly.vertices[0]), []).append(poly.index)
+        for root, vis in verts.items():
+            fis = faces.get(root, [])
+            pts = [o.matrix_world @ me.vertices[i].co for i in vis]
+            out.append({"mesh": o, "verts": vis, "faces": fis,
+                        "triangles": sum(me.polygons[f].loop_total - 2 for f in fis),
+                        "center": sum(pts, Vector()) / len(pts)})
+    out.sort(key=lambda sh: (-sh["triangles"], round(sh["center"].x, 4), round(sh["center"].y, 4), round(sh["center"].z, 4)))
+    for k, sh in enumerate(out, 1):
+        sh["rank"] = k
+    return out
+
+
+def _part_ranks(select):
+    """Mirror of pipeline.part_ranks (the pipeline validates the brief; this only expands it)."""
+    ranks = []
+    for piece in select.split(" ", 1)[1].replace(" ", "").split(","):
+        lo, _, hi = piece.partition("-")
+        ranks.extend(range(int(lo), int(hi or lo) + 1))
+    return ranks
+
+
+def _bone_by_suffix(arm, name):
+    hit = [b.name for b in arm.data.bones if b.name == name or b.name.endswith(":" + name) or b.name.endswith(name)]
+    if not hit:
+        raise RuntimeError(f"parts: bind rigid:{name} names no bone in the rig ({[b.name for b in arm.data.bones]})")
+    return sorted(hit, key=len)[0]
+
+
+def _offset_shell(sh, mm):
+    """Pushes a garment shell out along its normals by mm, one normal per welded position (the
+    split copies of a UV-seam vertex move together, so the shell doesn't crack along its seams)."""
+    o, me = sh["mesh"], sh["mesh"].data
+    acc = {}
+    for i in sh["verts"]:
+        v = me.vertices[i]
+        acc.setdefault(tuple(round(c / 1e-5) for c in v.co), []).append(i)
+    rot = o.matrix_world.to_3x3()
+    scale = (rot @ Vector((1, 0, 0))).length  # world metres per local unit (uniform scale)
+    for idx in acc.values():
+        n = sum((me.vertices[i].normal for i in idx), Vector())
+        if n.length < 1e-9:
+            continue
+        d = n.normalized() * (mm / 1000.0) / scale
+        for i in idx:
+            me.vertices[i].co += d
+    me.update()
+
+
+def _copy_faces(o, faces, name):
+    """A world-space copy of some faces of a mesh, with its vertex groups (no modifiers, no parent)."""
+    me = o.data.copy()
+    me.transform(o.matrix_world)
+    bm = bmesh.new()
+    bm.from_mesh(me)
+    keep = set(faces)
+    bm.faces.ensure_lookup_table()
+    bmesh.ops.delete(bm, geom=[f for f in bm.faces if f.index not in keep], context="FACES")
+    bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
+    bm.to_mesh(me)
+    bm.free()
+    ob = bpy.data.objects.new(name, me)
+    bpy.context.scene.collection.objects.link(ob)
+    for g in o.vertex_groups:
+        ob.vertex_groups.new(name=g.name)
+    return ob
+
+
+def _weights_matrix(o, names):
+    """Dense (vertices x bones) weights of an object's vertex groups, columns in `names` order."""
+    col = {g.index: names.index(g.name) for g in o.vertex_groups if g.name in names}
+    W = np.zeros((len(o.data.vertices), len(names)))
+    for v in o.data.vertices:
+        for g in v.groups:
+            if g.group in col:
+                W[v.index, col[g.group]] = g.weight
+    return W
+
+
+def _clean_weights(W):
+    """Drops weights under WEIGHT_MIN, keeps the MAX_INFLUENCES largest, and normalizes each row."""
+    W = np.where(W >= WEIGHT_MIN, W, 0.0)
+    if W.shape[1] > MAX_INFLUENCES:
+        cut = -np.sort(-W, axis=1)[:, MAX_INFLUENCES - 1:MAX_INFLUENCES]
+        W = np.where(W >= cut, W, 0.0)
+        # ties at the cut can leave more than MAX_INFLUENCES; drop the extra by column order (deterministic)
+        while True:
+            over = (W > 0).sum(axis=1) > MAX_INFLUENCES
+            if not over.any():
+                break
+            for r in np.flatnonzero(over):
+                nz = np.flatnonzero(W[r] == W[r][W[r] > 0].min())
+                W[r, nz[-1]] = 0.0
+    s = W.sum(axis=1, keepdims=True)
+    return np.divide(W, s, out=np.zeros_like(W), where=s > 0)
+
+
+def _set_weights(o, vis, W, names):
+    groups = [o.vertex_groups.get(n) or o.vertex_groups.new(name=n) for n in names]
+    for g in o.vertex_groups:
+        g.remove(vis)
+    for row, i in zip(W, vis):
+        for k in np.flatnonzero(row):
+            groups[k].add([i], float(row[k]), "REPLACE")
+
+
+def _data_transfer(src, dst):
+    """Blender's Data Transfer (vertex groups by name, POLYINTERP_NEAREST: barycentric on the nearest
+    face), applied. Both objects are world-space copies with identity transforms."""
+    for g in src.vertex_groups:
+        if dst.vertex_groups.get(g.name) is None:
+            dst.vertex_groups.new(name=g.name)
+    mod = dst.modifiers.new("weights", "DATA_TRANSFER")
+    mod.object = src
+    mod.use_object_transform = True
+    mod.use_vert_data = True
+    mod.data_types_verts = {"VGROUP_WEIGHTS"}
+    mod.vert_mapping = "POLYINTERP_NEAREST"
+    mod.layers_vgroup_select_src = "ALL"
+    mod.layers_vgroup_select_dst = "NAME"
+    with bpy.context.temp_override(object=dst, active_object=dst, selected_objects=[dst]):
+        bpy.ops.object.modifier_apply(modifier=mod.name)
+
+
+def _nearest_weights(src, W_src, points, normals=None):
+    """Weights at each point: barycentric on the nearest source triangle (src is a world-space mesh
+    object, W_src its weights matrix). Also returns the distance and, given normals, the angle between
+    each point's normal and the source face's."""
+    from mathutils.bvhtree import BVHTree
+    me = src.data
+    me.calc_loop_triangles()
+    tris = [tuple(t.vertices) for t in me.loop_triangles]
+    co = [v.co.copy() for v in me.vertices]
+    bvh = BVHTree.FromPolygons(co, tris)
+    out = np.zeros((len(points), W_src.shape[1]))
+    dist = np.full(len(points), np.inf)
+    ang = np.zeros(len(points))
+    for k, p in enumerate(points):
+        hit, n, ti, d = bvh.find_nearest(p)
+        if hit is None:
+            continue
+        a, b, c = (co[i] for i in tris[ti])
+        bary = _barycentric(hit, a, b, c)
+        out[k] = sum(w * W_src[i] for w, i in zip(bary, tris[ti]))
+        dist[k] = d
+        if normals is not None and n is not None:
+            ang[k] = math.degrees(normals[k].angle(n, 0.0)) if normals[k].length > 0 else 0.0
+    return out, dist, ang
+
+
+def _barycentric(p, a, b, c):
+    v0, v1, v2 = b - a, c - a, p - a
+    d00, d01, d11, d20, d21 = v0.dot(v0), v0.dot(v1), v1.dot(v1), v2.dot(v0), v2.dot(v1)
+    den = d00 * d11 - d01 * d01
+    if abs(den) < 1e-18:
+        return (1.0, 0.0, 0.0)
+    v = (d11 * d20 - d01 * d21) / den
+    w = (d00 * d21 - d01 * d20) / den
+    return (1.0 - v - w, v, w)
+
+
+def _harmonic_fill(edges, n, W, known):
+    """Weight inpainting: the unknown rows of W become the harmonic interpolation of the known ones
+    over the proxy's edge graph (minimum Dirichlet energy, uniform weights), solved for every bone at
+    once by conjugate gradients. After Abdrashitov et al. 2023, "Robust Skin Weights Transfer via
+    Weight Inpainting" (reimplemented here; their Laplacian is cotangent and squared, ours uniform)."""
+    unk = np.flatnonzero(~known)
+    if not len(unk):
+        return W
+    deg = np.bincount(edges.ravel(), minlength=n).astype(np.float64)
+    pos = np.full(n, -1)
+    pos[unk] = np.arange(len(unk))
+
+    def lap_uu(x):  # (L restricted to unknown rows and columns) @ x
+        full = np.zeros((n, x.shape[1]))
+        full[unk] = x
+        y = deg[:, None] * full
+        np.subtract.at(y, edges[:, 0], full[edges[:, 1]])
+        np.subtract.at(y, edges[:, 1], full[edges[:, 0]])
+        return y[unk]
+    fixed = W.copy()
+    fixed[unk] = 0.0
+    rhs = np.zeros((n, W.shape[1]))
+    np.add.at(rhs, edges[:, 0], fixed[edges[:, 1]])
+    np.add.at(rhs, edges[:, 1], fixed[edges[:, 0]])
+    b = rhs[unk]
+    x = W[unk].copy()
+    r = b - lap_uu(x)
+    pdir = r.copy()
+    rs = (r * r).sum(axis=0)
+    for _ in range(INPAINT_ITERS):
+        ap = lap_uu(pdir)
+        alpha = rs / np.maximum((pdir * ap).sum(axis=0), 1e-30)
+        x += alpha * pdir
+        r -= alpha * ap
+        rs_new = (r * r).sum(axis=0)
+        if rs_new.max() < 1e-12:
+            break
+        pdir = r + (rs_new / np.maximum(rs, 1e-30)) * pdir
+        rs = rs_new
+    out = W.copy()
+    out[unk] = np.clip(x, 0.0, None)
+    return out
+
+
+def _edge_jumps(o, names):
+    """Per edge, how far apart its two vertices' weights are (half the L1 distance: 0 same, 1 disjoint).
+    A jump along a short edge is what tears or stretches it when the bones move apart."""
+    W = _weights_matrix(o, names)
+    e = np.array([tuple(ed.vertices) for ed in o.data.edges], dtype=np.int64).reshape(-1, 2)
+    return np.abs(W[e[:, 0]] - W[e[:, 1]]).sum(axis=1) / 2
+
+
+def _jump_summary(o, names, before):
+    after = _edge_jumps(o, names)
+    W = _weights_matrix(o, names)
+    worst = []
+    for k in np.argsort(-after)[:8]:
+        a, b = o.data.edges[int(k)].vertices
+        pa = o.matrix_world @ o.data.vertices[a].co
+        worst.append({"edge": int(k), "jump_before": round(float(before[k]), 3), "jump_after": round(float(after[k]), 3),
+                      "at": [round(c, 3) for c in pa],
+                      "bones": [names[int(np.argmax(W[a]))], names[int(np.argmax(W[b]))]]})
+    return {"mesh": o.name, "p99_before": round(float(np.percentile(before, 99)), 3),
+            "p99_after": round(float(np.percentile(after, 99)), 3), "max_before": round(float(before.max()), 3),
+            "max_after": round(float(after.max()), 3), "worst_after": worst}
+
+
+def _change_summary(o, names, before, shells):
+    """How far the transfer moved each shell's weights from the rig's (half L1: 0 same, 1 disjoint)."""
+    W = _weights_matrix(o, names)
+    rows = []
+    for sh in shells:
+        d = np.abs(W[sh["verts"]] - before[sh["verts"]]).sum(axis=1) / 2
+        k = sh["verts"][int(np.argmax(d))]
+        rows.append({"rank": sh["rank"], "p50": round(float(np.median(d)), 3), "p90": round(float(np.percentile(d, 90)), 3),
+                     "max": round(float(d.max()), 3), "worst_at": [round(c, 3) for c in o.matrix_world @ o.data.vertices[k].co],
+                     "worst_bones": [names[int(np.argmax(before[k]))], names[int(np.argmax(W[k]))]]})
+    return {"mesh": o.name, "shells": rows}
+
+
+def _build_proxy(src):
+    """One continuous surface over the source shells: a voxel remesh (PROXY_VOXEL_M) of their union."""
+    proxy = bpy.data.objects.new("_proxy", src.data.copy())
+    bpy.context.scene.collection.objects.link(proxy)
+    rm = proxy.modifiers.new("remesh", "REMESH")
+    rm.mode = "VOXEL"
+    rm.voxel_size = PROXY_VOXEL_M
+    rm.adaptivity = 0.0
+    with bpy.context.temp_override(object=proxy, active_object=proxy, selected_objects=[proxy]):
+        bpy.ops.object.modifier_apply(modifier=rm.name)
+    for g in list(proxy.vertex_groups):
+        proxy.vertex_groups.remove(g)
+    bm = bmesh.new()
+    bm.from_mesh(proxy.data)
+    pieces = _parts(bm)
+    bm.free()
+    return proxy, {"voxel_m": PROXY_VOXEL_M, "proxy_vertices": len(proxy.data.vertices),
+                   "proxy_faces": len(proxy.data.polygons), "proxy_parts": len(pieces),
+                   "proxy_largest_part_share": round(pieces[0]["triangles"] / max(1, sum(p["triangles"] for p in pieces)), 3)}
+
+
+def _inpaint_onto(proxy, src, names, transfer, info):
+    """Robust transfer onto the proxy: a proxy vertex copies the nearest source weights only where the
+    match is close (PROXY_MATCH_M), the normals agree (PROXY_MATCH_DEG) and the shells there agree
+    (PROXY_CONFLICT); the rest are filled harmonically (_harmonic_fill). Proxy islands with no reliable
+    vertex, and any row left empty, keep their nearest match."""
+    pme = proxy.data
+    W_src = _weights_matrix(src, names)
+    pts = [v.co.copy() for v in pme.vertices]
+    nrm = [v.normal.copy() for v in pme.vertices]
+    W_near, dist, ang = _nearest_weights(src, W_src, pts, nrm)
+    known = (dist <= PROXY_MATCH_M) & (ang <= PROXY_MATCH_DEG)
+    conflict = np.zeros(len(pts), dtype=bool)
+    for sh in transfer:
+        one = _copy_faces(sh["mesh"], sh["faces"], "_one")
+        Wo, do, _ = _nearest_weights(one, _weights_matrix(one, names), pts)
+        conflict |= (do <= PROXY_MATCH_M) & (np.abs(Wo - W_near).sum(axis=1) / 2 > PROXY_CONFLICT)
+        bpy.data.objects.remove(one, do_unlink=True)
+    known &= ~conflict
+    edges = np.array([tuple(e.vertices) for e in pme.edges], dtype=np.int64).reshape(-1, 2)
+    # Islands of the proxy with nothing reliable keep their nearest match (the fill has no boundary there)
+    parent = np.arange(len(pts))
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    for u, v in edges:
+        ru, rv = find(u), find(v)
+        if ru != rv:
+            parent[ru] = rv
+    roots = np.array([find(i) for i in range(len(pts))])
+    has_known = set(roots[known].tolist())
+    orphan = np.array([r not in has_known for r in roots])
+    known |= orphan
+    W = _harmonic_fill(edges, len(pts), W_near, known)
+    empty = W.sum(axis=1) < 1e-6
+    W[empty] = W_near[empty]
+    _set_weights(proxy, list(range(len(pts))), _clean_weights(W), names)
+    info.update(known_vertices=int((known & ~orphan).sum()), orphan_island_vertices=int(orphan.sum()),
+                seam_conflicts=int(conflict.sum()), match_m=PROXY_MATCH_M, match_deg=PROXY_MATCH_DEG,
+                conflict=PROXY_CONFLICT)
+
+
+def parts_weight_transfer(meshes, arms, parts, method, report):
+    """Characters built from separate shells (brief: parts), e.g. Tripo P2, which hands the rigger a
+    body, a head, legs and a harness as separate pieces and weights each on its own, so they part at
+    the seams (docs/trials/body-only-humanoid.md). CLAUDE.md -> Rigging & Animation, fourth exception:
+    weights are transferred deterministically, never painted.
+
+    1. Shells are ranked by triangles and matched to the brief's parts (every shell must be listed).
+    2. Garments (offset_mm > 0) move out along their normals.
+    3. The source: the keep shells, with the rig's own weights. With no keep shell, a proxy: the
+       transfer shells joined and voxel-remeshed into one continuous surface (_build_proxy), which takes
+       the rig's weights by Blender's Data Transfer (method data_transfer) or by matching and harmonic
+       inpainting (method inpaint, _inpaint_onto).
+    4. Every transfer shell copies its weights from the source (Data Transfer, POLYINTERP_NEAREST:
+       barycentric on the nearest face), so a garment moves with the skin under it. rigid:<bone> shells
+       take weight 1.0 on that bone.
+    Returns the shells, for skirt_reweight and hide_covered_body."""
+    arm = arms[0]
+    shells = _shells(meshes)
+    by_rank = {sh["rank"]: sh for sh in shells}
+    for spec in parts:
+        for r in _part_ranks(spec["select"]):
+            if r not in by_rank:
+                raise RuntimeError(f"parts: rank {r} selected, but the mesh has {len(shells)} shells")
+            by_rank[r]["spec"] = spec
+    missing = [sh["rank"] for sh in shells if "spec" not in sh]
+    if missing:
+        raise RuntimeError(f"parts: shells {missing} aren't listed in the brief's parts (every shell must be)")
+    names = [b.name for b in arm.data.bones if b.use_deform]
+    jumps_before = {o.name: _edge_jumps(o, names) for o in meshes}
+    rig_weights = {o.name: _weights_matrix(o, names) for o in meshes}
+    for sh in shells:
+        mm = sh["spec"].get("offset_mm") or 0
+        if mm:
+            _offset_shell(sh, mm)
+    transfer = [sh for sh in shells if sh["spec"]["bind"] == "transfer"]
+    keep = [sh for sh in shells if sh["spec"]["bind"] == "keep"]
+    srcs = []
+    for o in meshes:
+        faces = [f for sh in (keep or transfer) if sh["mesh"] is o for f in sh["faces"]]
+        if faces:
+            srcs.append(_copy_faces(o, faces, f"_src_{o.name}"))
+    src = srcs[0]
+    if len(srcs) > 1:
+        with bpy.context.temp_override(active_object=src, selected_editable_objects=srcs, object=src):
+            bpy.ops.object.join()
+    if keep:
+        source, info = src, {"source": f"keep shells {[sh['rank'] for sh in keep]} (the rig's own weights)",
+                             "method": "data_transfer"}
+    else:
+        source, info = _build_proxy(src)
+        info.update(source=f"voxel proxy of transfer shells {[sh['rank'] for sh in transfer]}", method=method)
+        for n in names:
+            source.vertex_groups.new(name=n)
+        if method == "data_transfer":
+            _data_transfer(src, source)
+        elif method == "inpaint":
+            _inpaint_onto(source, src, names, transfer, info)
+        else:
+            raise RuntimeError(f"parts: unknown transfer method {method!r} (data_transfer or inpaint)")
+    for o in meshes:
+        mine = [sh for sh in transfer if sh["mesh"] is o]
+        if mine:
+            dst = bpy.data.objects.new("_dst", o.data.copy())
+            bpy.context.scene.collection.objects.link(dst)
+            # The copied mesh keeps its weights by group index, so the groups must be o's, in o's order
+            for g in o.vertex_groups:
+                dst.vertex_groups.new(name=g.name)
+            dst.data.transform(o.matrix_world)
+            _data_transfer(source, dst)
+            W = _clean_weights(_weights_matrix(dst, names))
+            vis = [i for sh in mine for i in sh["verts"]]
+            _set_weights(o, vis, W[vis], names)
+            bpy.data.objects.remove(dst, do_unlink=True)
+        for sh in (x for x in shells if x["mesh"] is o and x["spec"]["bind"].startswith("rigid:")):
+            bone = _bone_by_suffix(arm, sh["spec"]["bind"].split(":", 1)[1])
+            for g in o.vertex_groups:
+                g.remove(sh["verts"])
+            (o.vertex_groups.get(bone) or o.vertex_groups.new(name=bone)).add(sh["verts"], 1.0, "REPLACE")
+    for ob in {source, src}:
+        bpy.data.objects.remove(ob, do_unlink=True)
+    info["shells"] = [{"rank": sh["rank"], "triangles": sh["triangles"], "center": [round(c, 3) for c in sh["center"]],
+                       "bind": sh["spec"]["bind"], "offset_mm": sh["spec"].get("offset_mm") or 0} for sh in shells]
+    info["edge_weight_jump"] = [_jump_summary(o, names, jumps_before[o.name]) for o in meshes]
+    info["weight_change"] = [_change_summary(o, names, rig_weights[o.name], [sh for sh in transfer if sh["mesh"] is o])
+                             for o in meshes]
+    report["parts_weight_transfer"] = info
+    return shells
+
+
+def _bvh_of(shells):
+    from mathutils.bvhtree import BVHTree
+    co, tris = [], []
+    for sh in shells:
+        o = sh["mesh"]
+        idx = {}
+        for i in sh["verts"]:
+            idx[i] = len(co)
+            co.append(o.matrix_world @ o.data.vertices[i].co)
+        for f in sh["faces"]:
+            tris.append([idx[i] for i in o.data.polygons[f].vertices])
+    return BVHTree.FromPolygons(co, tris)
+
+
+def _covered_faces(targets, covers):
+    """{mesh name: face indices} of the targets' faces whose every sample (corners and center, lifted
+    0.5 mm off the face) meets the inside of a cover within HIDE_RAY_M along the face's outward normal."""
+    bvh = _bvh_of(covers)
+    out = {}
+    for sh in targets:
+        o = sh["mesh"]
+        me, rot = o.data, o.matrix_world.to_3x3()
+        for f in sh["faces"]:
+            poly = me.polygons[f]
+            n = (rot @ poly.normal).normalized()
+            pts = [o.matrix_world @ me.vertices[i].co for i in poly.vertices] + [o.matrix_world @ poly.center]
+            if all((lambda hit: hit[0] is not None and hit[1].dot(n) > 0)(bvh.ray_cast(p + n * 0.0005, n, HIDE_RAY_M))
+                   for p in pts):
+                out.setdefault(o.name, []).append(f)
+    return out
+
+
+def hide_covered_body(shells, report):
+    """Removes faces nobody can see at bind, which can only poke through in motion:
+    - body faces a cover fully hides (a garment with offset_mm > 0, or a part marked cover, such as the
+      head shell over the collar or the legs over the thighs inside the tunic);
+    - garment faces (offset_mm > 0) buried under the body (P2's back straps run inside the tunic).
+    A face is covered when every sample meets the inside of the other shell within HIDE_RAY_M along its
+    outward normal; under a flared hem the gap is wider, so the legs there stay."""
+    covers = [sh for sh in shells if (sh["spec"].get("offset_mm") or 0) > 0 or sh["spec"].get("cover")]
+    garments = [sh for sh in shells if (sh["spec"].get("offset_mm") or 0) > 0]
+    body = [sh for sh in shells if sh["spec"]["bind"] in ("keep", "transfer") and sh not in covers]
+    info = {"ray_m": HIDE_RAY_M, "faces_removed": 0, "triangles_removed": 0, "body_faces_removed": 0,
+            "garment_faces_removed": 0}
+    drops = {}
+    if covers and body:
+        for name, fs in _covered_faces(body, covers).items():
+            drops.setdefault(name, set()).update(fs)
+            info["body_faces_removed"] += len(fs)
+    if garments and body:
+        for name, fs in _covered_faces(garments, body).items():
+            drops.setdefault(name, set()).update(fs)
+            info["garment_faces_removed"] += len(fs)
+    for o in {sh["mesh"] for sh in shells}:
+        drop = drops.get(o.name)
+        if not drop:
+            continue
+        me = o.data
+        info["triangles_removed"] += sum(me.polygons[f].loop_total - 2 for f in drop)
+        info["faces_removed"] += len(drop)
+        bm = bmesh.new()
+        bm.from_mesh(me)
+        bm.faces.ensure_lookup_table()
+        bmesh.ops.delete(bm, geom=[f for f in bm.faces if f.index in drop], context="FACES")
+        bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
+        bm.to_mesh(me)
+        bm.free()
+        me.update()
+    report["hide_covered_body"] = info
 
 
 def flat_shade_by_angle(meshes, weld, report):
@@ -1199,10 +1708,23 @@ def run(args, params, report):
         if not rigged:
             raise RuntimeError("the brief sets rigid_parts, but the input has no rig to bind to")
         rigid_rebind(meshes, arms, report)
+    if params.get("parts"):
+        if not rigged:
+            raise RuntimeError("the brief sets parts, but the input has no rig to transfer weights from")
+        shells = parts_weight_transfer(meshes, arms, params["parts"], params.get("parts_transfer") or "data_transfer", report)
     if params.get("skirt_reweight"):
         if not rigged:
             raise RuntimeError("the brief sets skirt_reweight, but the input has no rig")
-        skirt_reweight(meshes, arms, report)
+        only = None
+        if params.get("parts"):
+            only = {}
+            for sh in shells:
+                if sh["spec"].get("skirt"):
+                    only.setdefault(sh["mesh"].name, []).extend(sh["verts"])
+        skirt_reweight(meshes, arms, report, only)
+    if params.get("parts"):
+        # Last: it deletes faces and vertices, so every weight step before it sees the full mesh
+        hide_covered_body(shells, report)
     flat_shade_by_angle(meshes, weld="same_weights" if rigged else "all", report=report)
 
     # Budget is in triangles (n-gon = n-2). Vertex counts are metrics only: they move with UV-seam splits.

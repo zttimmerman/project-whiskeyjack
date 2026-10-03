@@ -1,0 +1,56 @@
+{
+  "verdict": "escalate",
+  "summary": "The body and garment shells match the concept front-on and are in budget, but holes (17>10) and trouser navy kept (5.2%<6.3%) fail, the face is blurred, the back has no crossing straps, and the wireframe shows stray long edges.",
+  "findings": [
+    {
+      "check": "missing",
+      "severity": "major",
+      "observation": "No crossing back straps (brief identity mark); the concept is front-only.",
+      "evidence": "04_back.png, 09_closeup_back.png"
+    },
+    {
+      "check": "missing",
+      "severity": "major",
+      "observation": "Eyes blurry smudges, mouth effectively absent; nose a faceted wedge.",
+      "evidence": "08_closeup_front.png vs 01_approved_concept.png"
+    },
+    {
+      "check": "malformed",
+      "severity": "major",
+      "observation": "17 loops vs 10 (7 body, 3 harness, 1 per other part), possibly by design for open shells; none visible.",
+      "evidence": "assertion 'holes'; metrics.mesh.parts"
+    },
+    {
+      "check": "color",
+      "severity": "minor",
+      "observation": "Trouser navy kept 5.2% vs 6.3%, yet visibly present; the measurement looks misleading.",
+      "evidence": "assertion 'concept color #0B1C2C kept'"
+    },
+    {
+      "check": "malformed",
+      "severity": "minor",
+      "observation": "Stray long wireframe edges at the waist and spikes at hands/head, not in shaded views. (Orchestrator: measured longest edge 0.20 m vs P1's 0.187 in Phase 0b; a wireframe-render artefact.)",
+      "evidence": "07_wireframe_front.png"
+    }
+  ],
+  "escalation_reason": "Unrelated fixes (back straps, face detail at 256 px, whether shell loops are acceptable); the failing assertions look partly misleading.",
+  "questions_answered": [
+    "Matches front; no back straps; blurred face.",
+    "17 loops none visible; 9 parts plausible.",
+    "4421/5500 tris, 256 px, 1.8 m.",
+    "All colours pass except trouser navy share.",
+    "Validate passes; humanoid-mappable.",
+    "Eyes faint, nose faint, mouth absent."
+  ],
+  "images_seen": [
+    "01_approved_concept.png",
+    "02_front.png",
+    "03_right.png",
+    "04_back.png",
+    "05_top.png",
+    "06_clay_front.png",
+    "07_wireframe_front.png",
+    "08_closeup_front.png",
+    "09_closeup_back.png"
+  ]
+}

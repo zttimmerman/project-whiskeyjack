@@ -1,0 +1,25 @@
+{
+  "verdict": "escalate",
+  "summary": "The dodge roll is clean, but the tunic skirt and hem edges stretch up to 5.4x during the tuck (4.381 vs 1.0).",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "major",
+      "observation": "Stretch above 3x through the tucked roll (0.17-0.38 s) on long waist-to-hem skirt edges, front and back; skirt vertices split between Spine and the thighs/shins as the legs fold.",
+      "evidence": "assertion 'skin stretch (edge length vs bind pose)'; 04_stretch_detail.png; 03_plots.png"
+    }
+  ],
+  "escalation_reason": "The failing stretch comes from the spike's garment-shell weighting (the tunic skirt follows the thighs; skirt_reweight is off for player_p2parts), not the clip; no library_change or concept refine fixes it. The user decides whether to grade the tunic shell like skirt_reweight (Hips/Spine to thighs, no shin) and re-run, or accept/stop the approach.",
+  "questions_answered": [
+    "In place: Hips peak 0.19, end 0.04.",
+    "Feet plant only at landing (exempt).",
+    "No broken pose; stretch only in close-up.",
+    "3 pass; stretch 4.381 fails."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png",
+    "04_stretch_detail.png"
+  ]
+}

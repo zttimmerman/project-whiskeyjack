@@ -130,6 +130,16 @@ static func gait(points: Dictionary, root: Array) -> Dictionary:
 	return out
 
 
+# One line of each foot's lift and swing in body heights (metres are in the metrics) (the motion review's plots header);
+# whether a foot is under the art bible's gait limits is the judge's assertion, so this only reports
+static func gait_line(gait: Dictionary, height: float) -> String:
+	var parts := []
+	for side: String in gait:
+		var g: Dictionary = gait[side]
+		parts.append("%s %.3f / %.3f" % [side.replace("_", " "), g["lift_bh"], g["swing_bh"]])
+	return "Gait, lift / swing per foot in body heights (%.2f m): %s" % [height, ";  ".join(parts)]
+
+
 # Central difference at sample f. The last sample is the clip's end (t = length); a looping clip's end
 # is its start, so its ends difference across the seam, and a one-shot clip's are one-sided.
 static func velocity(points: Array, f: int, t: Array, looping: bool) -> Vector3:
