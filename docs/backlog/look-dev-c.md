@@ -1,13 +1,13 @@
 ---
 id: look-dev-c
 title: "Look-dev C: a PS3-class PBR player from Tripo v3.1 (paid, about 85 credits)"
-status: in-progress
+status: in-review
 kind: spike
 targets: []
 after: [spike-look-dev]
 phase: C
 branch: spike/look-dev-c
-pr: null
+pr: 52
 updated: 2026-10-03
 ---
 ## Goal
