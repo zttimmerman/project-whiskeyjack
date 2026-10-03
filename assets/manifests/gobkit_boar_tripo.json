@@ -1048,5 +1048,91 @@
     "sha256": "2b068ce3f3dc69675434f4e38ce1f81411fffd2703b7c925948b661b73939b15"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-10-03T00:53:56+00:00"
+  "updated_at": "2026-10-03T01:17:48+00:00",
+  "judgments": [
+    {
+      "kind": "verdict",
+      "stage": "motion:preset_quadruped_walk",
+      "recorded_at": "2026-10-03T01:17:48+00:00",
+      "packet": "assets/manifests/gobkit_boar_tripo/judge/motion-preset_quadruped_walk-1/packet.json",
+      "packet_sha256": "f48549bf43de1208191222a6563e570dab4a06223b18e83383c358fe596e4a3c",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "preset_quadruped_walk",
+        "source": "res://assets/meshes/gobkit_boar_tripo.glb (the model's own clip)",
+        "model": "res://assets/meshes/gobkit_boar_tripo.glb",
+        "metrics_file": {
+          "path": ".tripo-out/gobkit_boar_tripo/motion/preset_quadruped_walk_metrics.json",
+          "sha256": "dfba5c3db0f926bdcb35777a3c1c8ac3f18abe13272b52b1b32b4199f0f6953b"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/gobkit_boar_tripo/judge/motion-preset_quadruped_walk-1/01_frame_strip.png",
+          "sha256": "f27d81521d0f8b394a5d0ba0f3040a366f7a5474cb4dc5d3aefab8b6a95187ab",
+          "source": ".tripo-out/gobkit_boar_tripo/motion/preset_quadruped_walk_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/gobkit_boar_tripo/judge/motion-preset_quadruped_walk-1/02_onion_skin.png",
+          "sha256": "458665d851fa3ae8cd2bfe03a6c38790e00cea4211c61dc32c8793b8c04ddb4a",
+          "source": ".tripo-out/gobkit_boar_tripo/motion/preset_quadruped_walk_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/gobkit_boar_tripo/judge/motion-preset_quadruped_walk-1/03_plots.png",
+          "sha256": "7a5dd5bf319df8fe0e43a3e18101cc23c4aa0f5b02d016d311461f2d5bf3660e",
+          "source": ".tripo-out/gobkit_boar_tripo/motion/preset_quadruped_walk_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/gobkit_boar_tripo/judge/motion-preset_quadruped_walk-1/04_stretch_detail.png",
+          "sha256": "055659572ccfe9f5b666c6a45dcdad709abc3aaca66a339ea1cf33a795c71acc",
+          "source": ".tripo-out/gobkit_boar_tripo/motion/preset_quadruped_walk_stretch.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/gobkit_boar_tripo/judge/motion-preset_quadruped_walk-1/01_frame_strip.png",
+        "assets/manifests/gobkit_boar_tripo/judge/motion-preset_quadruped_walk-1/02_onion_skin.png",
+        "assets/manifests/gobkit_boar_tripo/judge/motion-preset_quadruped_walk-1/03_plots.png",
+        "assets/manifests/gobkit_boar_tripo/judge/motion-preset_quadruped_walk-1/04_stretch_detail.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "The viewer's-right eye pinches into a wedge with skin edges stretched up to 1.69x around both eyes, visible in the 3/4 row frames 4-13.",
+          "evidence": "04_stretch_detail.png; 01_frame_strip.png; edge_stretch_max 0.685 on bone_1"
+        },
+        {
+          "check": "motion",
+          "severity": "minor",
+          "observation": "Foot slide p90 0.449 just under 0.5, back-foot spikes up to 1.13 m/s mostly in swing phases.",
+          "evidence": "03_plots.png"
+        },
+        {
+          "check": "other",
+          "severity": "major",
+          "observation": "(Orchestrator, from the step-3 analysis; the judge didn't flag it) The front legs never lift or swing: Tripo's preset keyed only the back legs, the head chain and the root bob, and a still foot counts as planted with no slide.",
+          "evidence": "PR #48 motion review per-foot slide (front 0.074/0.074 m/s); 01_frame_strip.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "The eye warp comes from Tripo's v2.5 skin weights, not the clip; the frozen front legs come from the preset. The user decides whether to accept it as the spike's comparison baseline.",
+      "summary": "The walk stays in place and every assertion passes, but the boar's eye on the viewer's right warps into a wedge during the stride, and changing the clip options can't fix that.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-preset_quadruped_walk",
+      "recorded_at": "2026-10-03T01:17:48+00:00",
+      "decision": "User 2026-10-02: accept as the spike-agent-animation baseline only (never shipped); known defects: right-eye warp from Tripo's v2.5 weights, frozen front legs from the preset"
+    }
+  ]
 }

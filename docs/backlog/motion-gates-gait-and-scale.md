@@ -1,7 +1,7 @@
 ---
 id: motion-gates-gait-and-scale
 title: "Motion gates that catch frozen legs and scale with the creature"
-status: proposed
+status: ready
 kind: chore
 targets: []
 after: [spike-agent-animation]
@@ -27,3 +27,7 @@ The Tripo baseline walk (spike-agent-animation step 3) passes every numeric moti
 ## Serves
 
 The agent-authored clips' gates (spike-agent-animation steps 5–6) and the Sett-boar.
+
+## Decision
+
+User 2026-10-02: do both before step 4 of `spike-agent-animation`: a gait check (every foot lifts and swings in walk/run clips) and slide limits relative to body size, calibrated so humanoid results are unchanged (an art-bible tolerance change).
