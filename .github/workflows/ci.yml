@@ -88,6 +88,8 @@ jobs:
         run: python3 tests/tools/test_judge_motion.py
       - name: Test the brief's parts schema (scripts/pipeline.py)
         run: python3 tests/tools/test_brief_parts.py
+      - name: Test the brief's smooth_shading flag (scripts/pipeline.py)
+        run: python3 tests/tools/test_brief_shading.py
       - name: Run scripts/godot_validate.gd on every asset with a brief, plus the assets/sources.json check (no Blender renders)
         run: python3 ci/validate_assets.py
       - name: Test the 3D texture import settings and check the committed ones (scripts/tools/texture_imports.py)
