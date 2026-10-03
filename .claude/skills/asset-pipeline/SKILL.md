@@ -214,6 +214,7 @@ Every stage records the SHA-256 of its inputs (brief, source GLB, spend records,
 - **Pivot:** `pivot: source` keeps the kit's origin, which is its snap point (KayKit stairs start at their front edge). `base` and `center` recentre as usual.
 - **Scale:** `source_scale` is the pack's uniform scale into metres, which keeps every piece on one grid. `target_size_m` instead fits the piece to a size.
 - **Atlas:** `atlas` and `atlas_source` are for kits that share one texture atlas.
+- **Derived:** `derived_from: <sourced asset id>` marks a sourced asset a vendor reworked (the Gobkit boar rigged and animated by Tripo: `gobkit_boar_tripo`). Its `source_file` may then be the vendor output under `.tripo-out/`, and its `sources.json` entry needs a `derived` record: `from`, and `steps` with each one's `tool`, `type`, `task_id` and `credits` (paid steps still go through the tripo skill).
 
 **Stages:**
 - concept, multiview and rig report "not needed".
