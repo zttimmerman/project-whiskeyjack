@@ -1,13 +1,13 @@
 ---
 id: art-rules-b2
 title: "Adopt the look-dev B2 rules: 1024 px character textures, smooth character shading, B2 lighting"
-status: ready
+status: in-review
 kind: feature
 targets: []
 after: [decide-art-direction]
 phase: C
-branch: null
-pr: null
+branch: feature/art-rules-b2
+pr: 51
 updated: 2026-10-02
 ---
 ## Goal
