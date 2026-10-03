@@ -1,4 +1,4 @@
-# Trial: body plus garment shells, with weight transfer (Phase 0, 2026-10-02)
+# Trial: body plus garment shells, with weight transfer (Phases 0 and 0b, 2026-10-02)
 
 **Outcome: partly works, and not the way the item planned it.** On the paid P2 player (`player` attempt-2 and rig-2, built as the separate asset `player_p2parts`; the shipped P1 player is untouched), keeping the rig's own weights on the body shells and copying weights onto the garment shell from them closes every seam to under 1 cm and stretches less than P1 in 5 of 6 clips. The planned weight source, a voxel proxy of all the shells, fails: it fuses the legs at the crotch and stretches them 21–40×. Two acceptance checks still fail (poke-through at the collar, and the mesh judge's holes and colour assertions, which are P2's own). Spend: 0 credits.
 
@@ -52,3 +52,29 @@ Each cell: edge stretch max (×) / seam gap max (cm) / vertices poking through t
 The industry pattern works when the source is a continuous body: garments copy from the body, and the body keeps its weights. The voxel proxy, which was meant to stand in for that body, was the wrong weight source. Phase 1's plan (segment plus complete into a body, tunic and boots, then rig the completed body) is that pattern: the completed body is the `keep` shell and the garments `transfer` from it, which is what this code does now. The remaining work is free: a transfer that blends from a shell's own weights to the source's near the contact, which would close the collar poke without dragging the hair onto the neck.
 
 Reproduce: `python3 scripts/pipeline.py player_p2parts --stage all` (inputs in `.tripo-out/player_p2parts/`, copies of the player's attempt-2 and rig-2), then the motion review on `res://assets/meshes/player_p2parts.glb` with `--library res://data/animations/player_library.tres --ground-speed run=5.0`.
+
+## Phase 0b (free; the judge escalated all 7 Phase 0 packets)
+
+The judge's shared finding: the tunic follows the thighs, so the skirt opens at the crotch and the hem, and skin shows. Three changes, all in the committed brief:
+- **Tunic graded:** `skirt_reweight` runs on the body shell only (part 1's `skirt: true`) and grades 187 vertices. The boot cuffs are no longer caught.
+- **Head and legs are covers** (`cover: true`, a new part key). The 18 body faces they fully hide, mainly the collar inside the head's neck, are removed, so they can't poke through. `HIDE_RAY_M` went from 2 to 3.5 cm, because the neck sits 2.7 cm out.
+- **Metric fix:** the poke test no longer counts a shell's backside facing the skin (the harness straps' undersides).
+
+Each cell: stretch (×) / seam gap (cm) / poke-through vertices (worst, cm). The Phase 0 poke column used the old metric, so it includes the strap undersides.
+
+| Clip | P1 stretch | Phase 0 | **Phase 0b** |
+|---|---|---|---|
+| idle | 3.03 | 1.85 / 0.52 / 4 (2.8) | **1.85 / 0.52 / 2 (0.5)** |
+| run | 4.56 | 2.35 / 0.59 / 6 (1.6) | **2.35 / 0.59 / 4 (0.6)** |
+| dodge_roll | 3.88 | 4.38 / 0.61 / 4 (3.2) | **4.38 / 0.61 / 2 (0.3)** |
+| attack_light | 4.63 | 1.60 / 0.62 / 7 (2.1) | **1.96 / 0.62 / 4 (2.1)** |
+| attack_heavy | 4.98 | 3.22 / 0.63 / 7 (4.6) | **3.22 / 0.63 / 5 (2.7)** |
+| death | 3.61 | 2.42 / 0.71 / 5 (1.1) | **2.42 / 0.71 / 3 (1.1)** |
+
+4,421 triangles. The collar is fixed. The 2–5 vertices left are all at one spot on the front chest straps (1.13 m), 2.85 cm from the nearest body vertex, where the nearest-vertex plane test is coarsest; they may be a metric artefact, and need a look in the strips. Stretch stays below P1 in 5 of 6 clips. Its peak is Tripo's own Spine weighting on the belt, not the tunic: grading the tunic didn't move the peak (attack_light rose 1.60 → 1.96, at Hips).
+
+**The skin in the slit is texture, not weights.** The faces showing skin through the tunic slit are the leg shells' tops: Tripo painted 48 faces at 0.6–0.7 m in skin tones, where they're hidden at bind. The body shell has no skin-coloured faces there. Any slit that opens shows them, so the fix is an albedo overlay in the trouser colour (`p2parts-leg-top-albedo`). The death clip's final pose keeps its 1.40 m bind deviation, the same as P1's death.
+
+**Mesh verdict follow-ups:** the faint face and the missing back straps are concept-level and unchanged. The "long spike edges" in the wireframe aren't defects. The longest edge on the cleaned GLB is 0.20 m (vertical boot-shaft edges; p99 0.153 m), and P1's is 0.187 m (p99 0.158 m).
+
+**Recommendation:** start `player-model-rework` from P2 with the transfer (`player_p2parts`), once the leg-top albedo is fixed and the user has seen it in play next to P1. It holds together better than P1 at no further credit cost; its remaining defects are texture (leg tops, faint face) and concept (back straps). Phase 1 isn't needed for the weights.
