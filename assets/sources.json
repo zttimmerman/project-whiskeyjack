@@ -72,6 +72,73 @@
       "source_file": ".downloads/gobkit_animal_b/gobkit-animalB-pack/Boar.glb",
       "source_sha256": "91d9c55dbf9bba1d2f4f7a110b341c6645b9077bb160a1f01abdc47dd1712fee"
     },
+    "gobkit_boar_tripo": {
+      "pack": "gobkit_animal_b",
+      "source_url": "https://gobkit.com/freebies/animalB/gobkit-animalB-pack.zip",
+      "author": "Gobkit / Alsomind Tech Co., Ltd.",
+      "license": "CC0-1.0",
+      "pack_version": "Vol. 2 (zip sha256 a5d73ab6)",
+      "source_file": ".tripo-out/gobkit_Boar/retarget-2/tripo-out/retarget-2-efe9c3f0/model.glb",
+      "source_sha256": "e87225929244537dd546f87a26c66de315770051ec748017860026b0c592ea4b",
+      "derived": {
+        "from": "gobkit_Boar",
+        "input": {
+          "file": ".tripo-out/gobkit_Boar/boar_meshonly.glb",
+          "sha256": "0b539396afa357ba1ecb34f5a506d23ddbe56ad59211a853c6acc0cfe59e8759",
+          "note": "assets/meshes/gobkit_Boar.glb with its skin and clips stripped (same 380 triangles and bounds)"
+        },
+        "steps": [
+          {
+            "tool": "tripo",
+            "type": "animate_prerigcheck",
+            "task_id": "20ba0fa8-0532-4ce5-a0ef-46305da7c740",
+            "credits": 0,
+            "note": "riggable: false (quadruped); run 2 (0a3a9cb1-61f9-41f3-991c-f53d7bb713bb) agreed"
+          },
+          {
+            "tool": "tripo",
+            "type": "animate_rig",
+            "task_id": "60a6ac1f-d000-485d-9a2e-0139b5d8de5b",
+            "credits": 25,
+            "params": {
+              "rig_type": "quadruped",
+              "model": "v2.5-20260210"
+            },
+            "output_sha256": "0a41b2af00f1eb6204965f50b5ac2f076a7ae230e3b5d9abb476891f73cce6ef",
+            "note": "run against the rig check at the user's request (2026-10-02); 17 bones"
+          },
+          {
+            "tool": "tripo",
+            "type": "animate_retarget",
+            "task_id": "4f0479c5-95c6-480e-b569-ffa1f566233e",
+            "credits": 0,
+            "params": {
+              "animations": [
+                "preset:quadruped:walk",
+                "preset:slash"
+              ],
+              "animate_in_place": true
+            },
+            "note": "failed at 99%, credits refunded"
+          },
+          {
+            "tool": "tripo",
+            "type": "animate_retarget",
+            "task_id": "efe9c3f0-0700-4f95-8ecd-b41542573751",
+            "credits": 10,
+            "params": {
+              "animations": [
+                "preset:quadruped:walk"
+              ],
+              "animate_in_place": true
+            },
+            "output_sha256": "e87225929244537dd546f87a26c66de315770051ec748017860026b0c592ea4b"
+          }
+        ],
+        "tripo_cli_version": "0.5.1",
+        "total_credits": 35
+      }
+    },
     "kaykit_dungeon_barrel_large": {
       "pack": "kaykit_dungeon_remastered",
       "source_url": "https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0/archive/b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07.zip",

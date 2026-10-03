@@ -210,6 +210,36 @@ def is_sourced(brief):
     return brief.get("source") == "download"
 
 
+def source_file_ok(brief):
+    """A sourced asset's file is a download under .downloads/, or, for a derived asset (brief
+    `derived_from`: a sourced asset a vendor reworked, such as Tripo rigging a CC0 creature), the vendor's
+    output under the gitignored .tripo-out/. Either way it's a local, uncommitted file in a known format."""
+    v = brief.get("source_file")
+    roots = (".downloads/", ".tripo-out/") if brief.get("derived_from") else (".downloads/",)
+    return isinstance(v, str) and v.startswith(roots) and Path(v).suffix.lower() in SOURCE_FORMATS
+
+
+def derived_errors(aid, brief, entry):
+    """A derived asset's sources.json entry records `derived`: {"from": <asset id>, "steps": [{tool, type,
+    task_id, credits}, ...]}, so the vendor work and its cost stay traceable to the CC0 original."""
+    d = entry.get("derived")
+    if not brief.get("derived_from"):
+        return [f"{aid}: assets/sources.json has a 'derived' record but the brief has no derived_from"] if d else []
+    if not isinstance(d, dict):
+        return [f"{aid}: derived asset needs a 'derived' record in assets/sources.json (from, steps)"]
+    errs = []
+    if d.get("from") != brief["derived_from"]:
+        errs.append(f"{aid}: sources.json says derived from {d.get('from')!r}, the brief {brief['derived_from']!r}")
+    steps = d.get("steps")
+    if not (isinstance(steps, list) and steps):
+        errs.append(f"{aid}: derived record needs at least one step")
+    for i, st in enumerate(steps or []):
+        missing = [k for k in ("tool", "type", "task_id", "credits") if not isinstance(st, dict) or k not in st]
+        if missing:
+            errs.append(f"{aid}: derived step {i} lacks {missing}")
+    return errs
+
+
 def orientation(brief):
     """How the clean stage orients a prop: generated props align their principal axis to +Z; sourced
     kit pieces keep the kit's axes (a wall or stair is authored on the kit's grid, facing -Y in Blender)."""
@@ -315,9 +345,10 @@ def load_brief(asset_id):
         need("source_url", lambda v: isinstance(v, str) and v.startswith("https://"), "an https URL")
         need("author", lambda v: isinstance(v, str) and v.strip(), "non-empty text")
         need("license", lambda v: isinstance(v, str) and v.strip(), "an SPDX licence id")
-        need("source_file", lambda v: isinstance(v, str) and v.startswith(".downloads/")
-             and Path(v).suffix.lower() in SOURCE_FORMATS,
-             f"a path under .downloads/<pack>/ ending in one of {sorted(SOURCE_FORMATS)}")
+        need("source_file", lambda v: source_file_ok(b),
+             f"a path under .downloads/<pack>/ (or .tripo-out/ with derived_from) ending in one of {sorted(SOURCE_FORMATS)}")
+        if "derived_from" in b and not (isinstance(b["derived_from"], str) and b["derived_from"].strip()):
+            errors.append("'derived_from' must name the sourced asset this one was derived from")
         need("pivot", lambda v: v in ("base", "center", "source"), "base, center or source (keep the kit's origin)")
         if b.get("type") == "character":
             errors.append("sourced characters aren't supported: rigging a downloaded character is the user's call")
@@ -522,6 +553,7 @@ def source_errors(brief, sources=None, check_files=True):
     for k in ("pack", "source_url", "author", "license", "source_file"):
         if entry.get(k) != brief.get(k):
             errs.append(f"{aid}: brief {k} {brief.get(k)!r} doesn't match assets/sources.json {entry.get(k)!r}")
+    errs += derived_errors(aid, brief, entry)
     if entry.get("source_sha256") and not re.fullmatch(r"[0-9a-f]{64}", entry["source_sha256"]):
         errs.append(f"{aid}: source_sha256 isn't a SHA-256")
     src = ROOT / brief["source_file"]

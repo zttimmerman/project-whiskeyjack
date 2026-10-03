@@ -1,0 +1,19 @@
+# Derived spike asset (spike-agent-animation step 3): the CC0 Gobkit boar (gobkit_Boar) rigged and animated by Tripo.
+# Budget from docs/art-bible.md, "Sourced props (kit dressing)" (the same line as gobkit_Boar): the art bible is the only source for these numbers.
+asset_id: gobkit_boar_tripo
+type: prop
+source: download
+derived_from: gobkit_Boar
+pack: gobkit_animal_b
+source_url: "https://gobkit.com/freebies/animalB/gobkit-animalB-pack.zip"
+author: "Gobkit / Alsomind Tech Co., Ltd."
+license: CC0-1.0
+source_file: .tripo-out/gobkit_Boar/retarget-2/tripo-out/retarget-2-efe9c3f0/model.glb
+brief: "The Tripo baseline of spike-agent-animation (docs/backlog/spike-agent-animation.md, step 3): the shipped gobkit_Boar mesh with its skin stripped, rigged by Tripo v2.5 (quadruped, 17 bones; Tripo rescaled it to 1 m long) and given Tripo's preset:quadruped:walk in place. Provenance and costs in assets/sources.json (derived). Its limb map is data/rigs/gobkit_tripo_limbs.tres. Not placed in any level. Imported as a prop because sourced characters and creature briefs are not supported yet (sourced-creature-brief); it keeps Tripo's rig and walk."
+prompt: "A chibi low-poly boar: a round brown body on four short stub legs, a big head with a snout, tusks and ears, and a small tail; rigged by Tripo (17 bones) with one walk clip."
+triangle_budget: 1320
+texture_size: 128
+source_scale: 1.0
+pivot: source
+orientation: source
+palette: [Saddle Leather, Barrow Oak, Peat Black, Old Bone]

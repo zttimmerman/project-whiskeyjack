@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="LimbMap" format=3]
+
+[ext_resource type="Script" uid="uid://cmy31jw515p8r" path="res://scripts/review/LimbMap.gd" id="1_limbmap"]
+
+[resource]
+script = ExtResource("1_limbmap")
+body_plan = "quadruped"
+root = "tripo__Root"
+feet = {"front_left": ["tripo__0_Left_Limb_0"], "front_right": ["tripo__0_Right_Limb_0"], "back_left": ["tripo__1_Left_Limb_1"], "back_right": ["tripo__1_Right_Limb_1"]}
+hands = {"snout": "bone_2", "tail": "tripo__Spine_0"}
+tips = {"bone_2": Vector3(-0.0708, 0.2407, 0.0676), "tripo__0_Left_Limb_0": Vector3(0.0048, 0.1302, 0.0051), "tripo__0_Right_Limb_0": Vector3(0.0041, 0.1233, -0.0098), "tripo__1_Left_Limb_1": Vector3(-0.0142, 0.1296, 0.002), "tripo__1_Right_Limb_1": Vector3(-0.0176, 0.1392, -0.0119)}

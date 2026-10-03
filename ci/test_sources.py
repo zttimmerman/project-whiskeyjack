@@ -19,6 +19,7 @@ BRIEF = {"asset_id": "kit_crate", "source": "download", "pack": "kit", "source_u
          "author": "Someone", "license": "CC0-1.0", "source_file": ".downloads/kit/crate.glb"}
 ENTRY = {"pack": "kit", "source_url": "https://example.org/kit.zip", "author": "Someone", "license": "CC0-1.0",
          "pack_version": "1.0", "source_file": ".downloads/kit/crate.glb", "source_sha256": SHA}
+DERIVED = {"from": "kit_crate_raw", "steps": [{"tool": "tripo", "type": "animate_rig", "task_id": "t1", "credits": 25}]}
 SOURCES = {"packs": {"kit": {"license": "CC0-1.0"}}, "assets": {"kit_crate": ENTRY}}
 
 
@@ -64,6 +65,35 @@ class SourceRules(unittest.TestCase):
 
     def test_generated_assets_need_no_entry(self):
         self.assertEqual(P.source_errors({"asset_id": "player", "type": "character"}, SOURCES), [])
+
+    # A derived asset (spike-agent-animation): a sourced asset reworked by a vendor (Tripo's rig and
+    # retarget of the CC0 Gobkit boar). Its file is in the gitignored .tripo-out/, and its entry records
+    # what it came from and each paid step.
+    def test_derived_entry_passes(self):
+        brief = {**BRIEF, "derived_from": "kit_crate_raw", "source_file": ".tripo-out/kit_crate/model.glb"}
+        s = sources(source_file=".tripo-out/kit_crate/model.glb", derived=DERIVED)
+        self.assertEqual(P.source_errors(brief, s, check_files=False), [])
+
+    def test_derived_entry_needs_its_record(self):
+        brief = {**BRIEF, "derived_from": "kit_crate_raw", "source_file": ".tripo-out/kit_crate/model.glb"}
+        errs = P.source_errors(brief, sources(source_file=".tripo-out/kit_crate/model.glb"), check_files=False)
+        self.assertTrue(any("derived" in e for e in errs), errs)
+
+    def test_derived_record_must_name_the_brief_source(self):
+        brief = {**BRIEF, "derived_from": "kit_crate_raw", "source_file": ".tripo-out/kit_crate/model.glb"}
+        s = sources(source_file=".tripo-out/kit_crate/model.glb", derived={**DERIVED, "from": "other"})
+        self.assertTrue(any("derived from" in e for e in P.source_errors(brief, s, check_files=False)))
+
+    def test_derived_steps_need_task_and_credits(self):
+        brief = {**BRIEF, "derived_from": "kit_crate_raw", "source_file": ".tripo-out/kit_crate/model.glb"}
+        s = sources(source_file=".tripo-out/kit_crate/model.glb", derived={**DERIVED, "steps": [{"type": "rig"}]})
+        self.assertTrue(any("step" in e for e in P.source_errors(brief, s, check_files=False)))
+
+    def test_source_file_location(self):
+        self.assertTrue(P.source_file_ok({"source_file": ".downloads/kit/crate.glb"}))
+        self.assertFalse(P.source_file_ok({"source_file": ".tripo-out/kit_crate/model.glb"}))
+        self.assertTrue(P.source_file_ok({"source_file": ".tripo-out/kit_crate/model.glb", "derived_from": "kit_crate_raw"}))
+        self.assertFalse(P.source_file_ok({"source_file": "assets/meshes/crate.glb", "derived_from": "kit_crate_raw"}))
 
     def test_committed_manifest_passes(self):
         self.assertEqual(P.sources_manifest_errors(), [])

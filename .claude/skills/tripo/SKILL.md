@@ -46,6 +46,10 @@ From https://developers.tripo3d.ai/en/pricing (checked 2026-09-27; re-check if a
 | 2026-09-27 | rig-check (`tripo anim check`), twice | none | 0 | **0** | 0 |
 | 2026-09-27 | auto-rig, biped, `--spec mixamo` (ignored: returned Tripo's limb rig) | v2.5-20260210 requested (not echoed in task input) | 25 | **25** | 25 |
 | 2026-09-27 | auto-rig, biped, `--spec mixamo` (**honoured**: `mixamorig:` names, full chains) | v1.0-20240301 requested (not echoed in task input) | 25 | **25** | 25 |
+| 2026-10-02 | rig-check, quadruped (Gobkit boar, mesh only), twice: **`riggable: false`** | none (the check is model-independent) | 0 | **0** | 0 |
+| 2026-10-02 | auto-rig, quadruped, run against the check's `riggable: false` (succeeded: 17 bones, model rescaled to 1 m long) | v2.5-20260210 | 25 | **25** | 25 |
+| 2026-10-02 | retarget `preset:quadruped:walk` + `preset:slash` in one task, in place: **failed at 99%, refunded** | v2.5 rig | 20 (unconfirmed, 10 per animation) | **0** | 0 |
+| 2026-10-02 | retarget `preset:quadruped:walk` alone, in place (animated only the back legs, the head chain and the root bob) | v2.5 rig | 10 (unconfirmed) | **10** | 10 |
 
 The pricing-page table below undercounted P1 by half. The page has H-, P- and Splat-series tabs; this table was read from its flattened text and is most likely the **H-series** price. Estimate P-series work from the observed-costs table, and add each new operation type to it after its first run.
 
