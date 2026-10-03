@@ -232,4 +232,4 @@ func _timing(room: String, variant: String) -> void:
 func _stats(values: Array[float]) -> Dictionary:
 	var s := values.duplicate()
 	s.sort()
-	return {"median": snappedf(s[s.size() / 2], 0.001), "p95": snappedf(s[int(s.size() * 0.95)], 0.001)}
+	return {"median": snappedf(s[int(s.size() / 2.0)], 0.001), "p95": snappedf(s[int(s.size() * 0.95)], 0.001)}
