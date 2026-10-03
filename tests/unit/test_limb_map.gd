@@ -4,7 +4,8 @@ extends GdUnitTestSuite
 # (foot slide, scripts/review/foot_slide.gd) and its game-path pass (scripts/review/game_path.gd) treat
 # as feet, hands and the root, for any body plan. The humanoid map is the default, so every humanoid
 # result stays as it was; a quadruped (the Gobkit boar, spike-agent-animation) gets four feet whose
-# contact points are its stub legs' soles.
+# contact points are its stub legs' soles. The same boar rigged by Tripo (gobkit_boar_tripo, the spike's
+# baseline) has Tripo's 17 bones and its own map.
 
 const FootSlide := preload("res://scripts/review/foot_slide.gd")
 const GamePath := preload("res://scripts/review/game_path.gd")
@@ -12,6 +13,8 @@ const HUMANOID := "res://data/rigs/humanoid_limbs.tres"
 const GOBKIT := "res://data/rigs/gobkit_limbs.tres"
 const PLAYER := "res://assets/meshes/player.glb"
 const BOAR := "res://assets/meshes/gobkit_Boar.glb"
+const GOBKIT_TRIPO := "res://data/rigs/gobkit_tripo_limbs.tres"
+const BOAR_TRIPO := "res://assets/meshes/gobkit_boar_tripo.glb"
 const SOLE_BAND := 0.01  # m: a sole's vertices are within this of its lowest one
 
 
@@ -26,7 +29,7 @@ func _pos(sk: Skeleton3D, bone: String) -> Vector3:
 	return (sk.global_transform * sk.get_bone_global_pose(sk.find_bone(bone))).origin
 
 
-# The centre of each bone's sole: the bind-pose vertices it dominates that lie within SOLE_BAND of its
+# The centre of each bone's sole: the rest-pose (skinned) vertices it dominates that lie within SOLE_BAND of its
 # lowest one, in world space
 func _soles(root: Node3D, sk: Skeleton3D) -> Dictionary:
 	var verts_by_bone := {}
@@ -42,10 +45,14 @@ func _soles(root: Node3D, sk: Skeleton3D) -> Dictionary:
 			for k in stride:
 				if weights[v * stride + k] > weights[v * stride + best]:
 					best = k
-			var bone := mi.skin.get_bind_name(bones[v * stride + best])
+			var bind := bones[v * stride + best]
+			var bone := mi.skin.get_bind_name(bind)
 			if not verts_by_bone.has(bone):
 				verts_by_bone[bone] = []
-			verts_by_bone[bone].append(sk.global_transform * verts[v])
+			# Skinned at rest: Tripo's rig binds the mesh under an offset armature, so a vertex's
+			# mesh-space position isn't where it renders
+			var at_rest := sk.get_bone_global_pose(sk.find_bone(bone)) * mi.skin.get_bind_pose(bind)
+			verts_by_bone[bone].append(sk.global_transform * at_rest * verts[v])
 	var out := {}
 	for bone: String in verts_by_bone:
 		var pts: Array = verts_by_bone[bone]
@@ -132,3 +139,46 @@ func test_quadruped_game_path_limbs() -> void:
 	var limbs := GamePath.limb_points(inst["root"], inst["sk"], lm)
 	assert_array(limbs.keys()).is_equal(lm.limbs().keys())
 	assert_array(limbs.keys()).contains(["front_left_foot", "back_right_foot"])
+
+
+# Tripo's v2.5 quadruped rig on the same mesh: the boar faces +Z, its left is +X; the front legs are
+# Tripo's 0_ chains (an upper bone_4/bone_6 and a leaf Limb_0), the back legs its 1_ chains (Limb_0, leaf
+# Limb_1). Every foot's leaf bone ends at the sole, so each has a tip.
+func test_tripo_quadruped_has_four_feet() -> void:
+	var lm: LimbMap = load(GOBKIT_TRIPO)
+	assert_str(lm.body_plan).is_equal("quadruped")
+	assert_array(lm.feet.keys()).is_equal(["front_left", "front_right", "back_left", "back_right"])
+	var inst := _spawn(BOAR_TRIPO)
+	var sk: Skeleton3D = inst["sk"]
+	assert_int(sk.find_bone(lm.root)).is_greater_equal(0)
+	var feet := FootSlide.feet(sk, lm)
+	for side: String in lm.feet:
+		for bone: String in lm.feet[side]:
+			assert_int(sk.find_bone(bone)).is_greater_equal(0)
+		var p: Vector3 = feet[side][0]
+		assert_bool(p.z > 0.0).is_equal(side.begins_with("front"))
+		assert_bool(p.x > 0.0).is_equal(side.ends_with("left"))
+	for part: String in lm.hands:
+		assert_int(sk.find_bone(lm.hands[part])).is_greater_equal(0)
+
+
+func test_tripo_quadruped_tips_are_the_soles() -> void:
+	var lm: LimbMap = load(GOBKIT_TRIPO)
+	var inst := _spawn(BOAR_TRIPO)
+	var sk: Skeleton3D = inst["sk"]
+	var soles := _soles(inst["root"], sk)
+	var feet := FootSlide.feet(sk, lm)
+	for side: String in lm.feet:
+		var bone: String = lm.feet[side][0]
+		assert_bool(lm.tips.has(bone)).is_true()
+		var tip: Vector3 = feet[side][0]
+		assert_float(tip.distance_to(soles[bone])).is_less(0.01)
+		assert_float(tip.y).is_equal_approx(0.0, 0.005)
+
+
+func test_tripo_quadruped_game_path_limbs() -> void:
+	var lm: LimbMap = load(GOBKIT_TRIPO)
+	var inst := _spawn(BOAR_TRIPO)
+	var limbs := GamePath.limb_points(inst["root"], inst["sk"], lm)
+	assert_array(limbs.keys()).is_equal(lm.limbs().keys())
+	assert_array(limbs.keys()).contains(["snout", "front_left_foot", "back_right_foot"])
