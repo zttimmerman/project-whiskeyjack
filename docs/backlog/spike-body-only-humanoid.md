@@ -1,7 +1,7 @@
 ---
 id: spike-body-only-humanoid
 title: "Spike: body plus separate clothing shells, with weight transfer"
-status: in-review
+status: done
 kind: spike
 targets: []
 after: []
@@ -48,6 +48,9 @@ Commit the code if it works and the findings (a `docs/trials/` note) if it doesn
 `player-model-rework`; the skin-stretch metric (3–5× on the player today).
 
 ## Outcome
+
+**Final (user, 2026-10-02):** P2 with weight transfer was playtested and not adopted: more clipping than P1 and little visual gain. P1 stays the player. The tools (parts schema with keep/transfer/rigid/cover, weight transfer, hide-covered-body, the seam-gap metric, shell overlays) are merged for the eventual player rework. True body-plus-separate-clothing (Phase 1, segment + complete) was never tried; it waits on the look-dev art direction.
+
 
 **Phase 0 partly works, but not by the planned route** (`docs/trials/body-only-humanoid.md`; 0 credits). The P2 player was built as the separate asset `player_p2parts`, and the shipped P1 player is untouched.
 - **The planned voxel proxy fails.** It closes the seams, but it fuses the legs at the crotch: stretch 21–40×, with either Data Transfer or the reimplemented inpainting (numpy CG, no scipy).

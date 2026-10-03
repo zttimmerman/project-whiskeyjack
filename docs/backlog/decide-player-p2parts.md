@@ -1,7 +1,7 @@
 ---
 id: decide-player-p2parts
 title: "Decide: P2 with weight transfer, P1, or Phase 1 for the player rework"
-status: needs-user
+status: done
 kind: decision
 targets: []
 after: [spike-body-only-humanoid]
@@ -23,3 +23,7 @@ Phase 0 made the paid P2 player hold together: seams under 1 cm, and edge stretc
 ## Recommendation
 
 Option 1: it's free, its seams hold under 1 cm, it stretches less than P1 in 5 of 6 clips, and its remaining defects are texture and concept, not weights. Hold Phase 1 until the user has seen option 1 in play.
+
+## Outcome
+
+Decided by the user (2026-10-02): keep P1 as the player; don't adopt P2 with transfer. The player rework waits on the look-dev spike's art direction.

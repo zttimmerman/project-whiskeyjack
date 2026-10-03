@@ -1428,7 +1428,7 @@
     "sha256": "bc5906ed34ed018a5653d5ee319b960a11f5ce1124e75981658280d319f167ae"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-10-03T01:23:35+00:00",
+  "updated_at": "2026-10-03T01:29:32+00:00",
   "judgments": [
     {
       "kind": "verdict",
@@ -2628,6 +2628,48 @@
       "escalation_reason": "Unrelated fixes (back straps, face detail at 256 px, whether shell loops are acceptable); the failing assertions look partly misleading.",
       "summary": "The body and garment shells match the concept front-on and are in budget, but holes (17>10) and trouser navy kept (5.2%<6.3%) fail, the face is blurred, the back has no crossing straps, and the wireframe shows stray long edges.",
       "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "resolution",
+      "stage": "mesh",
+      "recorded_at": "2026-10-03T01:29:31+00:00",
+      "decision": "User 2026-10-02: not adopted; P1 stays the player (P2 with transfer showed more clipping and little visual gain in play). Spike asset kept as evidence for the weight-transfer tools."
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-idle",
+      "recorded_at": "2026-10-03T01:29:31+00:00",
+      "decision": "User 2026-10-02: not adopted; P1 stays the player (P2 with transfer showed more clipping and little visual gain in play). Spike asset kept as evidence for the weight-transfer tools."
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-run",
+      "recorded_at": "2026-10-03T01:29:31+00:00",
+      "decision": "User 2026-10-02: not adopted; P1 stays the player (P2 with transfer showed more clipping and little visual gain in play). Spike asset kept as evidence for the weight-transfer tools."
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-dodge_roll",
+      "recorded_at": "2026-10-03T01:29:31+00:00",
+      "decision": "User 2026-10-02: not adopted; P1 stays the player (P2 with transfer showed more clipping and little visual gain in play). Spike asset kept as evidence for the weight-transfer tools."
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-attack_light",
+      "recorded_at": "2026-10-03T01:29:32+00:00",
+      "decision": "User 2026-10-02: not adopted; P1 stays the player (P2 with transfer showed more clipping and little visual gain in play). Spike asset kept as evidence for the weight-transfer tools."
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-attack_heavy",
+      "recorded_at": "2026-10-03T01:29:32+00:00",
+      "decision": "User 2026-10-02: not adopted; P1 stays the player (P2 with transfer showed more clipping and little visual gain in play). Spike asset kept as evidence for the weight-transfer tools."
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-death",
+      "recorded_at": "2026-10-03T01:29:32+00:00",
+      "decision": "User 2026-10-02: not adopted; P1 stays the player (P2 with transfer showed more clipping and little visual gain in play). Spike asset kept as evidence for the weight-transfer tools."
     }
   ]
 }

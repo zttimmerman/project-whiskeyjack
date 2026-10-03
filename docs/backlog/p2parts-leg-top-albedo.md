@@ -1,7 +1,7 @@
 ---
 id: p2parts-leg-top-albedo
 title: "Paint player_p2parts' leg tops in the trouser colour (skin shows in the tunic slit)"
-status: in-review
+status: done
 kind: asset
 targets: []
 after: [decide-player-p2parts]
@@ -26,3 +26,7 @@ No skin-toned texels on the leg shells above the boots. The run and attack strip
 ## Serves
 
 `player-model-rework`, if `decide-player-p2parts` picks P2.
+
+## Outcome
+
+Merged in PR #47: scripts/make_shell_overlay.py repaints the leg-shell tops in the trouser colour (no skin-toned faces below 1 m). Used only by the spike asset, which wasn't adopted.

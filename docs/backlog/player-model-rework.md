@@ -4,7 +4,7 @@ title: "Rework the player model"
 status: proposed
 kind: asset
 targets: [read_char_contrast_min]
-after: [spike-body-only-humanoid]
+after: [spike-look-dev, spike-body-only-humanoid]
 phase: C
 branch: null
 pr: null
