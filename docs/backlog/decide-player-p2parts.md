@@ -10,6 +10,10 @@ branch: null
 pr: null
 updated: 2026-10-02
 ---
+## Goal
+
+Decide whether the player rework starts from P2 with weight transfer, Phase 1 (segment + complete), or stays on P1, after the body-only spike's Phase 0/0b.
+
 ## Question
 
 Phase 0 made the paid P2 player hold together: seams under 1 cm, and edge stretch below P1 in 5 of 6 clips (`docs/trials/body-only-humanoid.md`). Does `player-model-rework` start from it, stay on P1, or go to Phase 1 (paid segmentation and completion)?
