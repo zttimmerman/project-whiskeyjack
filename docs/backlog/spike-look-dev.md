@@ -1,13 +1,13 @@
 ---
 id: spike-look-dev
 title: "Spike: look development — settle the art direction (A today, B limits lifted, C PS3+)"
-status: ready
+status: done
 kind: spike
 targets: []
 after: []
 phase: C
-branch: null
-pr: null
+branch: spike/look-dev
+pr: 50
 updated: 2026-10-02
 ---
 ## Goal
@@ -31,3 +31,7 @@ Stop after A and B with a comparison sheet and a short write-up; the user decide
 ## Serves
 
 The art bible, `player-model-rework`, Phase C kit choice (a kit in the chosen style instead of KayKit).
+
+## Outcome
+
+A and B done at 0 credits (`docs/trials/look-dev.md`; tools in `scenes/lookdev/` and `scripts/lookdev/`; nothing shipped changed). **256 px is what loses the face:** even smooth-shaded, the 256 px albedo smears the eyes and nose; 512 px brings them back and 1024 px is close to the 2048 px source. Smooth shading removes the facets but needs better lighting to hold up. **B2 lighting** (warmer ambient, filmic tonemap, depth fog, warmer torches with a steeper falloff) is the biggest change from the gameplay camera and runs in Compatibility. **Forward+ alone changes 0.3% of the image**; its SSAO and torch shadows are subtle. The crypt brush shell sits with the smooth player better than the KayKit room. Every variant runs at 1–4 ms a frame (M2 Pro, 1280×720; Forward+ locks to 120 Hz at 2560×1440). The rule changes are `decide-art-direction` (needs-user). **C is prepared, not run:** v3.1 with PBR from the approved multiview-1 sheet, then the v1.0 rig, both commands dry-run valid, about 85 credits (55–95, unconfirmed), in `look-dev-c` (needs-user).

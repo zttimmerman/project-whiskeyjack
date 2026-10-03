@@ -1,0 +1,862 @@
+[
+  {
+    "adapter": "Apple M2 Pro",
+    "frames": 600,
+    "gameplay": {
+      "frame_ms": {
+        "median": 1.917,
+        "p95": 3.103
+      },
+      "render_cpu_ms": {
+        "median": 0.213,
+        "p95": 0.278
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "overview": {
+      "frame_ms": {
+        "median": 1.73,
+        "p95": 2.931
+      },
+      "render_cpu_ms": {
+        "median": 0.133,
+        "p95": 0.19
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "renderer": "gl_compatibility",
+    "room": "crypt",
+    "variant": "A",
+    "viewport_px": [
+      1280,
+      720
+    ],
+    "window": [
+      1280,
+      720
+    ]
+  },
+  {
+    "adapter": "Apple M2 Pro",
+    "frames": 600,
+    "gameplay": {
+      "frame_ms": {
+        "median": 2.449,
+        "p95": 4.132
+      },
+      "render_cpu_ms": {
+        "median": 0.237,
+        "p95": 0.364
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "overview": {
+      "frame_ms": {
+        "median": 2.85,
+        "p95": 3.68
+      },
+      "render_cpu_ms": {
+        "median": 0.155,
+        "p95": 0.249
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "renderer": "gl_compatibility",
+    "room": "crypt",
+    "variant": "A",
+    "viewport_px": [
+      2560,
+      1440
+    ],
+    "window": [
+      2560,
+      1440
+    ]
+  },
+  {
+    "adapter": "Apple M2 Pro",
+    "frames": 600,
+    "gameplay": {
+      "frame_ms": {
+        "median": 1.962,
+        "p95": 3.321
+      },
+      "render_cpu_ms": {
+        "median": 0.219,
+        "p95": 0.282
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "overview": {
+      "frame_ms": {
+        "median": 1.743,
+        "p95": 2.734
+      },
+      "render_cpu_ms": {
+        "median": 0.134,
+        "p95": 0.175
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "renderer": "gl_compatibility",
+    "room": "crypt",
+    "variant": "B1",
+    "viewport_px": [
+      1280,
+      720
+    ],
+    "window": [
+      1280,
+      720
+    ]
+  },
+  {
+    "adapter": "Apple M2 Pro",
+    "frames": 600,
+    "gameplay": {
+      "frame_ms": {
+        "median": 2.497,
+        "p95": 4.01
+      },
+      "render_cpu_ms": {
+        "median": 0.242,
+        "p95": 0.344
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "overview": {
+      "frame_ms": {
+        "median": 2.751,
+        "p95": 3.696
+      },
+      "render_cpu_ms": {
+        "median": 0.15,
+        "p95": 0.221
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "renderer": "gl_compatibility",
+    "room": "crypt",
+    "variant": "B1",
+    "viewport_px": [
+      2560,
+      1440
+    ],
+    "window": [
+      2560,
+      1440
+    ]
+  },
+  {
+    "adapter": "Apple M2 Pro",
+    "frames": 600,
+    "gameplay": {
+      "frame_ms": {
+        "median": 1.255,
+        "p95": 2.234
+      },
+      "render_cpu_ms": {
+        "median": 0.212,
+        "p95": 0.263
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "overview": {
+      "frame_ms": {
+        "median": 1.228,
+        "p95": 1.896
+      },
+      "render_cpu_ms": {
+        "median": 0.13,
+        "p95": 0.159
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "renderer": "gl_compatibility",
+    "room": "crypt",
+    "variant": "B2",
+    "viewport_px": [
+      1280,
+      720
+    ],
+    "window": [
+      1280,
+      720
+    ]
+  },
+  {
+    "adapter": "Apple M2 Pro",
+    "frames": 600,
+    "gameplay": {
+      "frame_ms": {
+        "median": 2.777,
+        "p95": 4.09
+      },
+      "render_cpu_ms": {
+        "median": 0.222,
+        "p95": 0.287
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "overview": {
+      "frame_ms": {
+        "median": 3.268,
+        "p95": 4.483
+      },
+      "render_cpu_ms": {
+        "median": 0.136,
+        "p95": 0.199
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "renderer": "gl_compatibility",
+    "room": "crypt",
+    "variant": "B2",
+    "viewport_px": [
+      2560,
+      1440
+    ],
+    "window": [
+      2560,
+      1440
+    ]
+  },
+  {
+    "adapter": "Apple M2 Pro (Apple8)",
+    "frames": 600,
+    "gameplay": {
+      "frame_ms": {
+        "median": 1.759,
+        "p95": 4.238
+      },
+      "render_cpu_ms": {
+        "median": 0.062,
+        "p95": 0.107
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "overview": {
+      "frame_ms": {
+        "median": 1.738,
+        "p95": 4.582
+      },
+      "render_cpu_ms": {
+        "median": 0.05,
+        "p95": 0.085
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "renderer": "forward_plus",
+    "room": "crypt",
+    "variant": "B3",
+    "viewport_px": [
+      1280,
+      720
+    ],
+    "window": [
+      1280,
+      720
+    ]
+  },
+  {
+    "adapter": "Apple M2 Pro (Apple8)",
+    "frames": 600,
+    "gameplay": {
+      "frame_ms": {
+        "median": 8.333,
+        "p95": 8.448
+      },
+      "render_cpu_ms": {
+        "median": 0.115,
+        "p95": 0.194
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "overview": {
+      "frame_ms": {
+        "median": 8.336,
+        "p95": 8.466
+      },
+      "render_cpu_ms": {
+        "median": 0.104,
+        "p95": 0.184
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "renderer": "forward_plus",
+    "room": "crypt",
+    "variant": "B3",
+    "viewport_px": [
+      2560,
+      1440
+    ],
+    "window": [
+      2560,
+      1440
+    ]
+  },
+  {
+    "adapter": "Apple M2 Pro (Apple8)",
+    "frames": 600,
+    "gameplay": {
+      "frame_ms": {
+        "median": 1.942,
+        "p95": 4.776
+      },
+      "render_cpu_ms": {
+        "median": 0.135,
+        "p95": 0.204
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "overview": {
+      "frame_ms": {
+        "median": 1.95,
+        "p95": 7.286
+      },
+      "render_cpu_ms": {
+        "median": 0.131,
+        "p95": 0.2
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "renderer": "forward_plus",
+    "room": "crypt",
+    "variant": "B3plus",
+    "viewport_px": [
+      1280,
+      720
+    ],
+    "window": [
+      1280,
+      720
+    ]
+  },
+  {
+    "adapter": "Apple M2 Pro (Apple8)",
+    "frames": 600,
+    "gameplay": {
+      "frame_ms": {
+        "median": 8.336,
+        "p95": 8.552
+      },
+      "render_cpu_ms": {
+        "median": 0.277,
+        "p95": 0.351
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "overview": {
+      "frame_ms": {
+        "median": 8.339,
+        "p95": 8.541
+      },
+      "render_cpu_ms": {
+        "median": 0.255,
+        "p95": 0.329
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "renderer": "forward_plus",
+    "room": "crypt",
+    "variant": "B3plus",
+    "viewport_px": [
+      2560,
+      1440
+    ],
+    "window": [
+      2560,
+      1440
+    ]
+  },
+  {
+    "adapter": "Apple M2 Pro",
+    "frames": 600,
+    "gameplay": {
+      "frame_ms": {
+        "median": 1.095,
+        "p95": 2.124
+      },
+      "render_cpu_ms": {
+        "median": 0.18,
+        "p95": 0.219
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "overview": {
+      "frame_ms": {
+        "median": 2.454,
+        "p95": 4.645
+      },
+      "render_cpu_ms": {
+        "median": 1.488,
+        "p95": 1.656
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "renderer": "gl_compatibility",
+    "room": "level1",
+    "variant": "A",
+    "viewport_px": [
+      1280,
+      720
+    ],
+    "window": [
+      1280,
+      720
+    ]
+  },
+  {
+    "adapter": "Apple M2 Pro",
+    "frames": 600,
+    "gameplay": {
+      "frame_ms": {
+        "median": 2.088,
+        "p95": 3.625
+      },
+      "render_cpu_ms": {
+        "median": 0.208,
+        "p95": 0.279
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "overview": {
+      "frame_ms": {
+        "median": 4.153,
+        "p95": 6.239
+      },
+      "render_cpu_ms": {
+        "median": 1.628,
+        "p95": 2.21
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "renderer": "gl_compatibility",
+    "room": "level1",
+    "variant": "A",
+    "viewport_px": [
+      2560,
+      1440
+    ],
+    "window": [
+      2560,
+      1440
+    ]
+  },
+  {
+    "adapter": "Apple M2 Pro",
+    "frames": 600,
+    "gameplay": {
+      "frame_ms": {
+        "median": 1.591,
+        "p95": 3.174
+      },
+      "render_cpu_ms": {
+        "median": 0.207,
+        "p95": 0.28
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "overview": {
+      "frame_ms": {
+        "median": 3.232,
+        "p95": 5.487
+      },
+      "render_cpu_ms": {
+        "median": 1.656,
+        "p95": 2.015
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "renderer": "gl_compatibility",
+    "room": "level1",
+    "variant": "B1",
+    "viewport_px": [
+      1280,
+      720
+    ],
+    "window": [
+      1280,
+      720
+    ]
+  },
+  {
+    "adapter": "Apple M2 Pro",
+    "frames": 600,
+    "gameplay": {
+      "frame_ms": {
+        "median": 2.19,
+        "p95": 3.664
+      },
+      "render_cpu_ms": {
+        "median": 0.216,
+        "p95": 0.357
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "overview": {
+      "frame_ms": {
+        "median": 4.529,
+        "p95": 6.48
+      },
+      "render_cpu_ms": {
+        "median": 1.773,
+        "p95": 2.377
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "renderer": "gl_compatibility",
+    "room": "level1",
+    "variant": "B1",
+    "viewport_px": [
+      2560,
+      1440
+    ],
+    "window": [
+      2560,
+      1440
+    ]
+  },
+  {
+    "adapter": "Apple M2 Pro",
+    "frames": 600,
+    "gameplay": {
+      "frame_ms": {
+        "median": 1.755,
+        "p95": 3.514
+      },
+      "render_cpu_ms": {
+        "median": 0.209,
+        "p95": 0.308
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "overview": {
+      "frame_ms": {
+        "median": 3.441,
+        "p95": 5.266
+      },
+      "render_cpu_ms": {
+        "median": 1.668,
+        "p95": 2.006
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "renderer": "gl_compatibility",
+    "room": "level1",
+    "variant": "B2",
+    "viewport_px": [
+      1280,
+      720
+    ],
+    "window": [
+      1280,
+      720
+    ]
+  },
+  {
+    "adapter": "Apple M2 Pro",
+    "frames": 600,
+    "gameplay": {
+      "frame_ms": {
+        "median": 2.065,
+        "p95": 3.958
+      },
+      "render_cpu_ms": {
+        "median": 0.204,
+        "p95": 0.256
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "overview": {
+      "frame_ms": {
+        "median": 3.897,
+        "p95": 6.77
+      },
+      "render_cpu_ms": {
+        "median": 1.687,
+        "p95": 2.235
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "renderer": "gl_compatibility",
+    "room": "level1",
+    "variant": "B2",
+    "viewport_px": [
+      2560,
+      1440
+    ],
+    "window": [
+      2560,
+      1440
+    ]
+  },
+  {
+    "adapter": "Apple M2 Pro (Apple8)",
+    "frames": 600,
+    "gameplay": {
+      "frame_ms": {
+        "median": 1.276,
+        "p95": 6.699
+      },
+      "render_cpu_ms": {
+        "median": 0.041,
+        "p95": 0.062
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "overview": {
+      "frame_ms": {
+        "median": 0.918,
+        "p95": 3.847
+      },
+      "render_cpu_ms": {
+        "median": 0.055,
+        "p95": 0.078
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "renderer": "forward_plus",
+    "room": "level1",
+    "variant": "B3",
+    "viewport_px": [
+      1280,
+      720
+    ],
+    "window": [
+      1280,
+      720
+    ]
+  },
+  {
+    "adapter": "Apple M2 Pro (Apple8)",
+    "frames": 600,
+    "gameplay": {
+      "frame_ms": {
+        "median": 8.338,
+        "p95": 8.685
+      },
+      "render_cpu_ms": {
+        "median": 0.058,
+        "p95": 0.095
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "overview": {
+      "frame_ms": {
+        "median": 8.335,
+        "p95": 8.478
+      },
+      "render_cpu_ms": {
+        "median": 0.128,
+        "p95": 0.176
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "renderer": "forward_plus",
+    "room": "level1",
+    "variant": "B3",
+    "viewport_px": [
+      2560,
+      1440
+    ],
+    "window": [
+      2560,
+      1440
+    ]
+  },
+  {
+    "adapter": "Apple M2 Pro (Apple8)",
+    "frames": 600,
+    "gameplay": {
+      "frame_ms": {
+        "median": 2.271,
+        "p95": 7.963
+      },
+      "render_cpu_ms": {
+        "median": 0.224,
+        "p95": 0.307
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "overview": {
+      "frame_ms": {
+        "median": 4.22,
+        "p95": 11.271
+      },
+      "render_cpu_ms": {
+        "median": 0.514,
+        "p95": 0.624
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "renderer": "forward_plus",
+    "room": "level1",
+    "variant": "B3plus",
+    "viewport_px": [
+      1280,
+      720
+    ],
+    "window": [
+      1280,
+      720
+    ]
+  },
+  {
+    "adapter": "Apple M2 Pro (Apple8)",
+    "frames": 600,
+    "gameplay": {
+      "frame_ms": {
+        "median": 8.316,
+        "p95": 8.609
+      },
+      "render_cpu_ms": {
+        "median": 0.352,
+        "p95": 0.429
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "overview": {
+      "frame_ms": {
+        "median": 8.345,
+        "p95": 8.694
+      },
+      "render_cpu_ms": {
+        "median": 0.638,
+        "p95": 0.742
+      },
+      "render_gpu_ms": {
+        "median": 0.0,
+        "p95": 0.0
+      }
+    },
+    "renderer": "forward_plus",
+    "room": "level1",
+    "variant": "B3plus",
+    "viewport_px": [
+      2560,
+      1440
+    ],
+    "window": [
+      2560,
+      1440
+    ]
+  }
+]
