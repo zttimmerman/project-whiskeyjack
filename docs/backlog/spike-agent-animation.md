@@ -7,7 +7,7 @@ targets: []
 after: []
 phase: C
 branch: spike/agent-animation-baseline
-pr: null
+pr: 48
 updated: 2026-10-02
 ---
 ## Goal
