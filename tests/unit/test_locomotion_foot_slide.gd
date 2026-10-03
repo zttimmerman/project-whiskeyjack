@@ -1,7 +1,8 @@
 extends GdUnitTestSuite
 
 # Each character's `run` clip at the speed its scene moves it: planted feet may slide no more than the
-# art bible's motion_foot_slide_mps (docs/art-bible.md → Judge tolerances, the only source). Measured
+# art bible's motion_foot_slide_bhps, in body heights per second (docs/art-bible.md → Judge tolerances, the
+# only source; every humanoid is 1.8 m, where it is the old 0.5 m/s). Measured
 # as the motion review measures it (scripts/review/foot_slide.gd), on the bones, so it runs headless.
 # A gameplay speed and a clip's playback (build_animation_library.gd) that drift apart fail here.
 # Locomotion follows the clip (the asset-pipeline skill → Locomotion rule): fix a failure by moving the
@@ -21,7 +22,7 @@ func _tolerance(key: String) -> float:
 
 
 # p90 foot slide of the scene's `run` clip at the scene's own gameplay speed, on a fresh copy of its
-# model at the origin (facing +Z, as in the motion review)
+# model at the origin (facing +Z, as in the motion review), in body heights per second
 func _run_slide(scene_path: String, model_node: String, speed: float) -> float:
 	var scene: Node = auto_free((load(scene_path) as PackedScene).instantiate())
 	var model_path: String = scene.get_node(model_node).scene_file_path
@@ -44,7 +45,9 @@ func _run_slide(scene_path: String, model_node: String, speed: float) -> float:
 		ap.seek(t[-1], true)
 		samples.append(FootSlide.feet(sk))
 	var looping := clip.loop_mode != Animation.LOOP_NONE
-	return FootSlide.measure(t, samples, speed, looping)["foot_slide_p90_mps"]
+	var height := FootSlide.body_height(sk, model)
+	var fs := FootSlide.measure(t, samples, speed, looping, height / FootSlide.REFERENCE_HEIGHT)
+	return fs["foot_slide_p90_mps"] / height
 
 
 func _stats_speed(scene_path: String) -> float:
@@ -55,16 +58,16 @@ func _stats_speed(scene_path: String) -> float:
 func test_player_run_foot_slide() -> void:
 	var player: Node = auto_free((load("res://scenes/player/Player.tscn") as PackedScene).instantiate())
 	var slide := _run_slide("res://scenes/player/Player.tscn", "PlayerModel", player.get("move_speed"))
-	assert_float(slide).is_less_equal(_tolerance("motion_foot_slide_mps"))
+	assert_float(slide).is_less_equal(_tolerance("motion_foot_slide_bhps"))
 
 
 func test_frontfile_run_foot_slide() -> void:
 	var path := "res://scenes/enemies/BaseEnemy.tscn"
 	var slide := _run_slide(path, "SkeletonModel", _stats_speed(path))
-	assert_float(slide).is_less_equal(_tolerance("motion_foot_slide_mps"))
+	assert_float(slide).is_less_equal(_tolerance("motion_foot_slide_bhps"))
 
 
 func test_backfile_run_foot_slide() -> void:
 	var path := "res://scenes/enemies/ArcherEnemy.tscn"
 	var slide := _run_slide(path, "SkeletonModel", _stats_speed(path))
-	assert_float(slide).is_less_equal(_tolerance("motion_foot_slide_mps"))
+	assert_float(slide).is_less_equal(_tolerance("motion_foot_slide_bhps"))
