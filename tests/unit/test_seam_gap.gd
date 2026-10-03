@@ -82,3 +82,12 @@ func test_covered_vertex_poking_out() -> void:
 	var p: Array = SeamGap.poke(posed, normals, cov, SeamGap.POKE_M)
 	assert_int(p[0]).is_equal(1)
 	assert_float(p[1]).is_equal_approx(0.005, 0.0005)
+
+
+func test_backside_facing_the_cover_is_not_covered() -> void:
+	# A strap's underside lies against the skin with its normal pointing in (-Z), toward the body: it's
+	# the strap's own back, not skin under a garment, so it never counts as poking out
+	var verts := PackedVector3Array([Vector3(0, 0, 0), Vector3(0, 0, 0.01)])
+	var normals := PackedVector3Array([Vector3(0, 0, -1), Vector3(0, 0, 1)])
+	var shell := PackedInt32Array([0, 1])
+	assert_int(SeamGap.covered(verts, normals, shell, SeamGap.COVER_M).size()).is_equal(0)

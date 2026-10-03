@@ -92,6 +92,13 @@ class PartsErrors(unittest.TestCase):
         self.assertTrue(self.errors([part]))
         self.assertEqual(self.errors([part], skirt_reweight=True), [])
 
+    def test_cover(self):
+        # cover: a shell that hides the body faces it fully covers, without being offset (a head over the collar)
+        self.assertEqual(self.errors([{"select": "rank 1", "bind": "keep"},
+                                      {"select": "rank 2", "bind": "keep", "cover": True},
+                                      {"select": "rank 3", "bind": "transfer"}]), [])
+        self.assertTrue(self.errors([{"select": "rank 1", "bind": "transfer", "cover": "yes"}]))
+
     def test_unknown_key(self):
         self.assertTrue(self.errors([{"select": "rank 1", "bind": "transfer", "weld": True}]))
 
