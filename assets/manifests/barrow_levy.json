@@ -2318,7 +2318,7 @@
     "sha256": "837c11808ef109257bfb4f191cf7f4493303982daa4d50911aa3babc16ffd01c"
   },
   "total_cost_credits": 155,
-  "updated_at": "2026-10-03T03:37:51+00:00",
+  "updated_at": "2026-10-03T03:54:04+00:00",
   "concept_approval": {
     "attempt": "concept-3",
     "image": {
@@ -3214,6 +3214,130 @@
       "escalation_reason": null,
       "summary": "The Back-file stagger is a short in-place recoil from a forward lean to upright, with no drift, foot slide, broken pose or stretch, and all four assertions pass.",
       "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-10-03T03:54:04+00:00",
+      "packet": "assets/manifests/barrow_levy/judge/mesh-1/packet.json",
+      "packet_sha256": "5e697afa038fd93ab598bd03a4b96eeb9a8640c5344874a2a7d680bc9373c325",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/barrow_levy.glb",
+        "sha256": "59145dd318dd0887b8e45081af1940f33544317fca0e2f11e5d7837829814487",
+        "concept": {
+          "path": ".tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png",
+          "sha256": "d62266500028543ed1fc0600b1bf974f74c07ba35be79684b580dd40be22f3f2"
+        }
+      },
+      "images": [
+        {
+          "role": "approved_concept",
+          "path": "assets/manifests/barrow_levy/judge/mesh-1/01_approved_concept.png",
+          "sha256": "812c02afbac64302de9f0fe25bc6e91f3ca67317ad547d849677ffc7e2b329b2",
+          "source": ".tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png"
+        },
+        {
+          "role": "front",
+          "path": "assets/manifests/barrow_levy/judge/mesh-1/02_front.png",
+          "sha256": "1a645d540814ac1a466d88b6bd08d99601c2eb65a418f92ebbf596b2c63ed70b",
+          "source": "assets/manifests/barrow_levy/judge/mesh-1/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/barrow_levy/judge/mesh-1/03_right.png",
+          "sha256": "e80cf859330a2a6e120bc0a533085f6aee888c81b5c0b43923c263b1e552d94c",
+          "source": "assets/manifests/barrow_levy/judge/mesh-1/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/barrow_levy/judge/mesh-1/04_back.png",
+          "sha256": "d68cb652dd21a8a487b143e9a9f603244a2be8f17fe9d7ab0ce5c0e34453c50f",
+          "source": "assets/manifests/barrow_levy/judge/mesh-1/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/barrow_levy/judge/mesh-1/05_top.png",
+          "sha256": "45044ebba2d06445863d68e4a76cdf6231c336e71c6c81ae775ddc7d58fa494f",
+          "source": "assets/manifests/barrow_levy/judge/mesh-1/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/barrow_levy/judge/mesh-1/06_clay_front.png",
+          "sha256": "88b06fce6c0ab36f30f2061348357925bbfdc842790c4028e77257e0887e2cb1",
+          "source": "assets/manifests/barrow_levy/judge/mesh-1/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/barrow_levy/judge/mesh-1/07_wireframe_front.png",
+          "sha256": "b7aea1e0d2fe26dc872892171b19f6efd023212ebcc97f95fd7521abb1cd3f44",
+          "source": "assets/manifests/barrow_levy/judge/mesh-1/work/views/wireframe_front.png"
+        },
+        {
+          "role": "closeup_front",
+          "path": "assets/manifests/barrow_levy/judge/mesh-1/08_closeup_front.png",
+          "sha256": "9d471fd4a589c57cb9ade74ee0e097caac5a80d6d8759053df0bd6735a3cb83d",
+          "source": "assets/manifests/barrow_levy/judge/mesh-1/work/views/closeup_front.png"
+        },
+        {
+          "role": "closeup_back",
+          "path": "assets/manifests/barrow_levy/judge/mesh-1/09_closeup_back.png",
+          "sha256": "8527ec9b8a021c84c5e51439b92390b357629b2ac98f32a9e0d068e3fcd7d039",
+          "source": "assets/manifests/barrow_levy/judge/mesh-1/work/views/closeup_back.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/barrow_levy/judge/mesh-1/01_approved_concept.png",
+        "assets/manifests/barrow_levy/judge/mesh-1/02_front.png",
+        "assets/manifests/barrow_levy/judge/mesh-1/03_right.png",
+        "assets/manifests/barrow_levy/judge/mesh-1/04_back.png",
+        "assets/manifests/barrow_levy/judge/mesh-1/05_top.png",
+        "assets/manifests/barrow_levy/judge/mesh-1/06_clay_front.png",
+        "assets/manifests/barrow_levy/judge/mesh-1/07_wireframe_front.png",
+        "assets/manifests/barrow_levy/judge/mesh-1/08_closeup_front.png",
+        "assets/manifests/barrow_levy/judge/mesh-1/09_closeup_back.png"
+      ],
+      "assertions_failed": [
+        "concept color #613430 kept in the texture",
+        "concept color #613430 found in the texture",
+        "concept color #CCB790 kept in the texture",
+        "concept color #CCB790 found in the texture",
+        "concept color #9D8B6F kept in the texture"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "color",
+          "severity": "major",
+          "observation": "The concept's pale bone #CCB790 (29%) merged into #B6A281; the bone renders greyish olive-tan, darker and less yellow than the concept.",
+          "evidence": "assertions 'concept color #CCB790'"
+        },
+        {
+          "check": "color",
+          "severity": "major",
+          "observation": "The maroon strap #613430 fell to 1.6%; the harness renders near-black brown rather than red-brown, possibly closer to the brief's Saddle Leather.",
+          "evidence": "assertions 'concept color #613430'"
+        },
+        {
+          "check": "color",
+          "severity": "minor",
+          "observation": "#9D8B6F kept 0.047 vs 0.061; hue matches.",
+          "evidence": "assertion 'concept color #9D8B6F kept'"
+        },
+        {
+          "check": "concept_match",
+          "severity": "minor",
+          "observation": "Peat-brown joint stains faint; belt buckle a small dark block.",
+          "evidence": "01_approved_concept.png vs 02_front.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "All 5 failures are colour assertions, partly misleading; 4 failed identically at 256 px. The fix is a clean-stage colour change or the user accepting the colours.",
+      "summary": "Geometry, budget, texture size and rig pass, but 5 concept-colour assertions fail; partly the clustering method, partly a real shift (bone greyer and darker, harness near-black).",
+      "next": "surface to the user: the escalation reason and findings"
     }
   ]
 }
