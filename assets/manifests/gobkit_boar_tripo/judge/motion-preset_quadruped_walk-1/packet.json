@@ -1,0 +1,239 @@
+{
+  "asset_id": "gobkit_boar_tripo",
+  "stage": "motion:preset_quadruped_walk",
+  "created_at": "2026-10-03T00:55:10+00:00",
+  "replay": null,
+  "packet_dir": "assets/manifests/gobkit_boar_tripo/judge/motion-preset_quadruped_walk-1",
+  "brief": {
+    "type": "prop",
+    "brief": "The Tripo baseline of spike-agent-animation (docs/backlog/spike-agent-animation.md, step 3): the shipped gobkit_Boar mesh with its skin stripped, rigged by Tripo v2.5 (quadruped, 17 bones; Tripo rescaled it to 1 m long) and given Tripo's preset:quadruped:walk in place. Provenance and costs in assets/sources.json (derived). Its limb map is data/rigs/gobkit_tripo_limbs.tres. Not placed in any level. Imported as a prop because sourced characters and creature briefs are not supported yet (sourced-creature-brief); it keeps Tripo's rig and walk.",
+    "prompt": "A chibi low-poly boar: a round brown body on four short stub legs, a big head with a snout, tusks and ears, and a small tail; rigged by Tripo (17 bones) with one walk clip.",
+    "face_limit": null,
+    "triangle_budget": 1320,
+    "texture_size": 128,
+    "target_size_m": null,
+    "pivot": "source",
+    "tip_end": null,
+    "rigid_parts": null,
+    "skirt_reweight": null,
+    "source": "download",
+    "source_scale": 1.0,
+    "orientation": "source"
+  },
+  "brief_palette": {
+    "Saddle Leather": {
+      "hex": "#4A2A10",
+      "plain": "dark reddish-brown"
+    },
+    "Barrow Oak": {
+      "hex": "#8C5933",
+      "plain": "warm mid-brown"
+    },
+    "Peat Black": {
+      "hex": "#2E2926",
+      "plain": "very dark brown-black"
+    },
+    "Old Bone": {
+      "hex": "#CCB484",
+      "plain": "pale yellowed beige"
+    }
+  },
+  "art_bible": {
+    "brief_section": null,
+    "form_block": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art.",
+    "concept_lighting_block": "Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights.",
+    "tolerances": "## Judge tolerances\n\nThe numeric assertions the asset judge checks (`scripts/judge.py`, which reads this table; nothing else holds these numbers). \u0394E is CIE76 in Lab. Each value is set on principle and checked against the replays in `assets/manifests/judge_replays/`: the known-bad inputs fail, and where a shipped asset or clip fails too, it's a real finding recorded in `docs/decisions.md`, not a reason to loosen the limit.\n\n| Check | Limit | Applies to | Why |\n|---|---|---|---|\n| `concept_palette_de` | 25 | concept | A brief palette color counts as present when one of the concept's main colors (\u2265 3% of the figure) sits within this distance. Loose on purpose: the player's approved \"deep dark teal\" rendered as navy #14313F. |\n| `color_min_share` | 0.05 | model, mesh | Colors covering less of the concept (or texture) than this are details, not checked. |\n| `color_kept_ratio` | 0.33 | model, mesh | A concept color must keep at least this fraction of its concept share in the texture, or the model lost it. |\n| `color_dab_after` | 5 | model, mesh | Hue/saturation distance (Lab a, b) between a corrected texture cluster and its concept color. |\n| `palette_de_before` | 20 | model, mesh | Concept-less assets (sourced ones measured over their UV footprint): distance before correction for a palette group covering at least `color_min_share`. Correction can repaint a wrong color: blade attempt 1's olive-green blade grouped under Old Bone (27.5 \u0394E) and came out bone-colored. |\n| `palette_de_after` | 12 | model, mesh | Concept-less assets: distance between a corrected palette group's median and its palette color. |\n| `mesh_max_holes` | 10 | model, mesh (generated) | Open boundary loops after welding. Fewer are reported for the judge to weigh (the blade's 4 grip slits are recorded and accepted). |\n| `mesh_kit_max_loops_per_part` | 2 | mesh (**sourced kits**, the rule for them instead of `mesh_max_holes`) | Open boundary loops on any one welded part. Kit pieces are open-backed shells: a KayKit wall is a body plus 22 raised blocks set flush on its face, each open at the back (23 loops), and a barrel hoop is an open band (2). Allowed only where no loop is visible from the judge's views, which is the judge's call. |\n| `motion_root_travel_m` | 0.15 | death, in-place clips | Horizontal Hips travel from the first frame. The pre-fix `Death01` travelled 0.45\u20130.51 m; shipped idles and runs stay under 0.07. |\n| `motion_foot_slide_mps` | 0.5 | in-place clips | 90th-percentile ground-relative speed of a planted foot (near its lowest point and not moving vertically), at the clip's gameplay speed: 10% of the player's run. Reported only for action clips (attacks and rolls pivot on planted feet on purpose) and deaths (the feet kick out as the body collapses onto its pinned Hips; `Death01` can't meet both this and the travel limit, since keeping 30% of its travel still slid 0.80 m/s). |\n| `motion_bind_deviation_m` | 1.8 | every clip | Largest vertex displacement from the bind pose in the Hips frame; a character's height, because no attached vertex gets that far from the hips. Normal clips reach 0.5\u20131.6 (arms swinging from the T-pose). |\n| `motion_edge_stretch` | 1.0 | every clip | Largest relative length change of any mesh edge of at least 1 cm from the bind pose: an edge has doubled. Rigid-part characters read 0. |\n| `motion_handover_snap_mps` | 5 | every clip's game handovers (motion review game-path pass); adopted by the user 2026-10-01, asserted by the judge | Across a handover played the game's way (`play()` with the scene's blend settings, per physics frame, cut-short one-shots at four phases, enemy windups posed as `BaseEnemy` poses them), how much faster any hand or foot moves, in the character's own frame, than it ever moves in either clip on its own. 5 m/s is a one-frame pop of about 8 cm at 60 fps. Hard cuts (no blend time) read 16\u201369 m/s on most handovers; with the per-transition blend times in the character scenes every handover reads 4.3 or less (worst: Back-file attack to stagger). `tests/unit/test_anim_blends.gd` holds every game handover to this limit. |"
+  },
+  "design_notes": [],
+  "images": [
+    {
+      "role": "frame_strip",
+      "path": "assets/manifests/gobkit_boar_tripo/judge/motion-preset_quadruped_walk-1/01_frame_strip.png",
+      "sha256": "f27d81521d0f8b394a5d0ba0f3040a366f7a5474cb4dc5d3aefab8b6a95187ab",
+      "source": ".tripo-out/gobkit_boar_tripo/motion/preset_quadruped_walk_strip.png",
+      "source_sha256": "4a154bbd3fd2856d3341d13c4ab858fde0f63e693f75601fc4ff69db6fb4c776",
+      "size": [
+        2380,
+        500
+      ]
+    },
+    {
+      "role": "onion_skin",
+      "path": "assets/manifests/gobkit_boar_tripo/judge/motion-preset_quadruped_walk-1/02_onion_skin.png",
+      "sha256": "458665d851fa3ae8cd2bfe03a6c38790e00cea4211c61dc32c8793b8c04ddb4a",
+      "source": ".tripo-out/gobkit_boar_tripo/motion/preset_quadruped_walk_onion.png",
+      "source_sha256": "d11d1ecbb3ce5e6cb25396154f3711024ba45b246f255697fb106cdcea3423d8",
+      "size": [
+        1600,
+        707
+      ]
+    },
+    {
+      "role": "plots",
+      "path": "assets/manifests/gobkit_boar_tripo/judge/motion-preset_quadruped_walk-1/03_plots.png",
+      "sha256": "7a5dd5bf319df8fe0e43a3e18101cc23c4aa0f5b02d016d311461f2d5bf3660e",
+      "source": ".tripo-out/gobkit_boar_tripo/motion/preset_quadruped_walk_plots.png",
+      "source_sha256": "92ae4e69b2350a07bd83627a0617cee6df1f841d758b838bc803fce91dc45559",
+      "size": [
+        1600,
+        1000
+      ]
+    },
+    {
+      "role": "stretch_detail",
+      "path": "assets/manifests/gobkit_boar_tripo/judge/motion-preset_quadruped_walk-1/04_stretch_detail.png",
+      "sha256": "055659572ccfe9f5b666c6a45dcdad709abc3aaca66a339ea1cf33a795c71acc",
+      "source": ".tripo-out/gobkit_boar_tripo/motion/preset_quadruped_walk_stretch.png",
+      "source_sha256": "5c35634bb1ad4d17dd1897d9e21ff58f60932fc076210dd1e28c96913894761e",
+      "size": [
+        1600,
+        697
+      ]
+    }
+  ],
+  "metrics": {
+    "motion": {
+      "bind_deviation_max_m": 0.089,
+      "bind_deviation_p99_m": 0.079,
+      "bind_deviation_worst_bone": "tripo__1_Left_Limb_1",
+      "clip": "preset_quadruped_walk",
+      "contact_frames": 296,
+      "contact_height_m": 0.03,
+      "edge_stretch_max": 0.685,
+      "edge_stretch_p99": 0.337,
+      "edge_stretch_worst_bone": "bone_1",
+      "edges": 873,
+      "foot_slide_max_mps": 1.126,
+      "foot_slide_p90_mps": 0.449,
+      "fps": 30.0,
+      "frames_sampled": 79,
+      "game_path": {
+        "fps": 60.0,
+        "handover_snap_mps": 0.0,
+        "handover_snap_worst": "",
+        "handovers": [],
+        "scene": null,
+        "settle_error_max_m": 0.0,
+        "wrong_clip_frames": 0
+      },
+      "ground_speed_mps": 0.0,
+      "kind": "in_place",
+      "length_s": 2.583,
+      "limbs": {
+        "body_plan": "quadruped",
+        "feet": [
+          "front_left",
+          "front_right",
+          "back_left",
+          "back_right"
+        ],
+        "map": "res://data/rigs/gobkit_tripo_limbs.tres",
+        "root": "tripo__Root"
+      },
+      "model": "res://assets/meshes/gobkit_boar_tripo.glb",
+      "root_travel_final_m": 0.0,
+      "root_travel_max_m": 0.011,
+      "source": "res://assets/meshes/gobkit_boar_tripo.glb (the model's own clip)",
+      "strip_times_s": [
+        0.0,
+        0.199,
+        0.397,
+        0.596,
+        0.795,
+        0.994,
+        1.192,
+        1.391,
+        1.59,
+        1.788,
+        1.987,
+        2.186,
+        2.385,
+        2.583
+      ],
+      "vertices": 589
+    }
+  },
+  "assertions": [
+    {
+      "name": "root stays in place (horizontal hips travel)",
+      "passed": true,
+      "value": 0.011,
+      "limit": 0.15,
+      "detail": "final offset 0.0 m"
+    },
+    {
+      "name": "planted feet don't slide",
+      "passed": true,
+      "value": 0.449,
+      "limit": 0.5,
+      "detail": "90th percentile ground-relative foot speed over 296 contact frames at ground speed 0.0 m/s"
+    },
+    {
+      "name": "vertex deviation from bind pose (Hips frame)",
+      "passed": true,
+      "value": 0.089,
+      "limit": 1.8,
+      "detail": "p99 0.079 m; worst vertex on tripo__1_Left_Limb_1"
+    },
+    {
+      "name": "skin stretch (edge length vs bind pose)",
+      "passed": true,
+      "value": 0.685,
+      "limit": 1.0,
+      "detail": "p99 0.337; worst edge on bone_1"
+    },
+    {
+      "name": "the expected clip plays through the game's play path",
+      "passed": true,
+      "value": 0,
+      "limit": 0,
+      "detail": "frames with another clip current or the clip not advancing, over 0 handovers (None); settle error max 0.0 m"
+    }
+  ],
+  "questions": [
+    "Onion skin: does the body stay where the clip intends (in place for in-place and death clips), or does it drift, fling or slide?",
+    "Plots: do the planted feet hold still relative to the ground (foot speed near zero while the foot is in contact), and does the root follow the gameplay speed?",
+    "Frame strip: any broken pose: limbs through the body, arms behind the back where the clip doesn't intend it, twisted or collapsed joints, stretched skin?",
+    "Do the numeric assertions pass? Tie each failing one to what you see in the images."
+  ],
+  "escalate_rules": [
+    "Open style or taste questions (is it appealing, is the silhouette strong enough, is this the right design) are not yours: escalate them.",
+    "A deliberate, recorded design change (see design_notes) is not a defect: don't flag it again, but say so if the asset contradicts the note.",
+    "When the evidence can't settle a question (the view that would show it is missing), escalate rather than guess.",
+    "Revise only when one concrete edit would fix every blocker and major finding. Otherwise escalate."
+  ],
+  "refine_budget": {
+    "per_stage": 1,
+    "used": 0
+  },
+  "tool_versions": {
+    "python": "3.14.7",
+    "blender": "Blender 5.0.1",
+    "godot": "4.7.2.stable.official.ed1daf0bf",
+    "tripo": "0.5.1"
+  },
+  "sourcing": {
+    "note": "sourced, no concept: judge against the brief's prompt and palette",
+    "colors": "palette metrics cover only the texels this piece's UVs sample (on a shared atlas, not the whole atlas); correction may darken as well as lift",
+    "holes": "open boundary loops are allowed per part up to mesh_kit_max_loops_per_part, only where none is visible in the views: check the views for any gap",
+    "pack": "gobkit_animal_b",
+    "source_url": "https://gobkit.com/freebies/animalB/gobkit-animalB-pack.zip",
+    "author": "Gobkit / Alsomind Tech Co., Ltd.",
+    "license": "CC0-1.0",
+    "source_file": ".tripo-out/gobkit_Boar/retarget-2/tripo-out/retarget-2-efe9c3f0/model.glb",
+    "orientation": "source",
+    "pivot": "source",
+    "atlas": null
+  },
+  "subject": {
+    "kind": "animation clip",
+    "clip": "preset_quadruped_walk",
+    "source": "res://assets/meshes/gobkit_boar_tripo.glb (the model's own clip)",
+    "model": "res://assets/meshes/gobkit_boar_tripo.glb",
+    "metrics_file": {
+      "path": ".tripo-out/gobkit_boar_tripo/motion/preset_quadruped_walk_metrics.json",
+      "sha256": "dfba5c3db0f926bdcb35777a3c1c8ac3f18abe13272b52b1b32b4199f0f6953b"
+    }
+  },
+  "assertions_failed": 0
+}
