@@ -1,0 +1,1095 @@
+{
+  "asset_id": "gobkit_Boar",
+  "stages": {
+    "concept": {
+      "status": "ok",
+      "timestamp": "2026-10-02T21:24:50+00:00",
+      "inputs": [],
+      "outputs": [],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "not needed: sourced asset (source: download); no concept, colour correction uses the palette",
+      "actual_cost_credits": 0
+    },
+    "multiview": {
+      "status": "ok",
+      "timestamp": "2026-10-02T21:24:51+00:00",
+      "inputs": [],
+      "outputs": [],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "not needed: sourced asset (source: download); no concept, colour correction uses the palette",
+      "actual_cost_credits": 0
+    },
+    "model": {
+      "status": "ok",
+      "timestamp": "2026-10-02T21:34:59+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/gobkit_Boar.yaml",
+          "sha256": "be27d5d168ca2d61710abe66d4484660d5db6e9c29955f4bef7d99d919b26ad9"
+        },
+        {
+          "path": "assets/sources.json",
+          "sha256": "0cee5844dd4bb776a03e0e909e805fd654bd3e5366c2ef0497eac248116b658c"
+        },
+        {
+          "path": ".downloads/gobkit_animal_b/gobkit-animalB-pack/Boar.glb",
+          "sha256": "91d9c55dbf9bba1d2f4f7a110b341c6645b9077bb160a1f01abdc47dd1712fee"
+        }
+      ],
+      "outputs": [
+        {
+          "path": ".downloads/gobkit_animal_b/gobkit-animalB-pack/Boar.glb",
+          "sha256": "91d9c55dbf9bba1d2f4f7a110b341c6645b9077bb160a1f01abdc47dd1712fee"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "sourced .downloads/gobkit_animal_b/gobkit-animalB-pack/Boar.glb (CC0-1.0, Gobkit / Alsomind Tech Co., Ltd., gobkit_animal_b Vol. 2 (zip sha256 a5d73ab6))",
+      "actual_cost_credits": 0,
+      "prompt": null,
+      "params": null,
+      "source": {
+        "pack": "gobkit_animal_b",
+        "source_url": "https://gobkit.com/freebies/animalB/gobkit-animalB-pack.zip",
+        "author": "Gobkit / Alsomind Tech Co., Ltd.",
+        "license": "CC0-1.0",
+        "pack_version": "Vol. 2 (zip sha256 a5d73ab6)",
+        "source_file": ".downloads/gobkit_animal_b/gobkit-animalB-pack/Boar.glb",
+        "source_sha256": "91d9c55dbf9bba1d2f4f7a110b341c6645b9077bb160a1f01abdc47dd1712fee"
+      }
+    },
+    "clean": {
+      "status": "ok",
+      "timestamp": "2026-10-02T21:35:01+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/gobkit_Boar.yaml",
+          "sha256": "be27d5d168ca2d61710abe66d4484660d5db6e9c29955f4bef7d99d919b26ad9"
+        },
+        {
+          "path": ".downloads/gobkit_animal_b/gobkit-animalB-pack/Boar.glb",
+          "sha256": "91d9c55dbf9bba1d2f4f7a110b341c6645b9077bb160a1f01abdc47dd1712fee"
+        },
+        {
+          "path": "scripts/blender_cleanup.py",
+          "sha256": "f086b86646ddb53b94860fa87aaf2216a5e29773985cf93675056f711ea06d78"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "assets/meshes/gobkit_Boar.glb",
+          "sha256": "43c3932aad49dfdc466f317fff905d10e05020cbf4ca155f959ae2810e74de23"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "exported assets/meshes/gobkit_Boar.glb",
+      "actual_cost_credits": 0,
+      "params": {
+        "asset_id": "gobkit_Boar",
+        "type": "prop",
+        "face_limit": null,
+        "triangle_budget": 1320,
+        "texture_size": 128,
+        "target_size_m": null,
+        "pivot": "source",
+        "palette": [
+          "Saddle Leather",
+          "Barrow Oak",
+          "Peat Black",
+          "Old Bone"
+        ],
+        "socket_map": null,
+        "bone_map": null,
+        "animations": null,
+        "exclude_objects": null,
+        "tip_end": null,
+        "rigid_parts": null,
+        "skirt_reweight": null,
+        "source": "download",
+        "source_scale": 1.0,
+        "orientation": "source",
+        "source_forward": null,
+        "palette_targets": {
+          "Saddle Leather": "#4A2A10",
+          "Barrow Oak": "#8C5933",
+          "Peat Black": "#2E2926",
+          "Old Bone": "#CCB484"
+        },
+        "reference_image": null,
+        "texture_overlays": []
+      },
+      "report": {
+        "status": "pass",
+        "errors": [],
+        "warnings": [
+          "material 'lambert1': albedo baked from a node chain (Cycles EMIT bake)"
+        ],
+        "blender_version": "5.0.1",
+        "input": "/Users/zach/Documents/repos/project-whiskeyjack-animspike/.downloads/gobkit_animal_b/gobkit-animalB-pack/Boar.glb",
+        "output": "/Users/zach/Documents/repos/project-whiskeyjack-animspike/assets/meshes/gobkit_Boar.glb",
+        "materials": [
+          {
+            "name": "lambert1",
+            "stripped": "normal, roughness, metallic, specular, emission and occlusion inputs are not carried over",
+            "converted_from": "principled",
+            "texture": "lambert1_albedo",
+            "alpha": false
+          }
+        ],
+        "textures": [
+          {
+            "name": "lambert1_albedo",
+            "size_before": [
+              128,
+              128
+            ],
+            "size_after": [
+              128,
+              128
+            ]
+          }
+        ],
+        "removed_objects": [
+          "Icosphere (bone display shape created by the importer)"
+        ],
+        "gltf_bind_pose": "node rest (not guessed from the inverse bind matrices)",
+        "input_format": "glb",
+        "rigged": true,
+        "armatures": [
+          {
+            "name": "RootNode",
+            "bones": [
+              "Root",
+              "Hips",
+              "LeftLegB",
+              "LeftLegF",
+              "RightLegB",
+              "RightLegF",
+              "Spine",
+              "Tail",
+              "Mouth",
+              "RightEar",
+              "LeftEar",
+              "Head",
+              "RightHand",
+              "LeftHand",
+              "RightEye",
+              "LeftEye"
+            ]
+          }
+        ],
+        "transform": {
+          "pivot": "source",
+          "size_before_m": [
+            3.1553,
+            4.5739,
+            3.5256
+          ],
+          "orientation": "source (kept the kit's axes)",
+          "scale_factor": 1.0,
+          "size_after_m": [
+            3.1553,
+            4.5739,
+            3.5256
+          ],
+          "true_dims_m": {
+            "x": 3.1553,
+            "y": 4.5739,
+            "z": 3.5256
+          },
+          "true_length_m": 3.5256,
+          "min_after": [
+            -1.5777,
+            -2.2751,
+            -0.0475
+          ]
+        },
+        "mesh_health": {
+          "totals": {
+            "as_imported": {
+              "vertices": 796,
+              "edges": 971,
+              "faces": 380,
+              "triangles": 380,
+              "quads": 0,
+              "ngons": 0,
+              "non_manifold_edges": 0,
+              "boundary_edges": 802,
+              "boundary_loops": 205,
+              "wire_edges": 0,
+              "loose_vertices": 0,
+              "degenerate_faces": 0,
+              "zero_length_edges": 0,
+              "quad_ratio": 0.0,
+              "triangle_ratio": 1.0
+            },
+            "welded": {
+              "vertices": 246,
+              "edges": 606,
+              "faces": 380,
+              "triangles": 380,
+              "quads": 0,
+              "ngons": 0,
+              "non_manifold_edges": 0,
+              "boundary_edges": 72,
+              "boundary_loops": 12,
+              "wire_edges": 0,
+              "loose_vertices": 0,
+              "degenerate_faces": 0,
+              "zero_length_edges": 0,
+              "part_count": 17,
+              "parts": [
+                {
+                  "triangles": 84,
+                  "vertices": 44,
+                  "size_m": [
+                    3.1553,
+                    3.3648,
+                    2.9869
+                  ],
+                  "boundary_loops": 0
+                },
+                {
+                  "triangles": 56,
+                  "vertices": 33,
+                  "size_m": [
+                    2.1918,
+                    1.0595,
+                    1.2247
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 30,
+                  "vertices": 22,
+                  "size_m": [
+                    0.8126,
+                    0.3112,
+                    0.8351
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 30,
+                  "vertices": 22,
+                  "size_m": [
+                    0.8126,
+                    0.3112,
+                    0.8351
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 28,
+                  "vertices": 17,
+                  "size_m": [
+                    0.2293,
+                    0.7683,
+                    0.3526
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 18,
+                  "vertices": 12,
+                  "size_m": [
+                    0.5715,
+                    0.5715,
+                    1.5889
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 18,
+                  "vertices": 12,
+                  "size_m": [
+                    0.5715,
+                    0.5715,
+                    1.5889
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 18,
+                  "vertices": 12,
+                  "size_m": [
+                    0.5715,
+                    0.5715,
+                    1.5889
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 18,
+                  "vertices": 12,
+                  "size_m": [
+                    0.5715,
+                    0.5715,
+                    1.5889
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 12,
+                  "vertices": 8,
+                  "size_m": [
+                    0.532,
+                    0.3158,
+                    0.7408
+                  ],
+                  "boundary_loops": 0
+                },
+                {
+                  "triangles": 12,
+                  "vertices": 8,
+                  "size_m": [
+                    0.532,
+                    0.3158,
+                    0.7408
+                  ],
+                  "boundary_loops": 0
+                },
+                {
+                  "triangles": 12,
+                  "vertices": 9,
+                  "size_m": [
+                    0.4346,
+                    0.6669,
+                    0.2805
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 12,
+                  "vertices": 9,
+                  "size_m": [
+                    0.4346,
+                    0.6669,
+                    0.2805
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 12,
+                  "vertices": 8,
+                  "size_m": [
+                    0.1763,
+                    0.2968,
+                    0.3998
+                  ],
+                  "boundary_loops": 0
+                },
+                {
+                  "triangles": 12,
+                  "vertices": 8,
+                  "size_m": [
+                    0.1218,
+                    0.208,
+                    0.2757
+                  ],
+                  "boundary_loops": 0
+                },
+                {
+                  "triangles": 4,
+                  "vertices": 6,
+                  "size_m": [
+                    0.2011,
+                    0.0381,
+                    0.2327
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 4,
+                  "vertices": 6,
+                  "size_m": [
+                    0.2011,
+                    0.0381,
+                    0.2327
+                  ],
+                  "boundary_loops": 1
+                }
+              ],
+              "quad_ratio": 0.0,
+              "triangle_ratio": 1.0
+            }
+          },
+          "per_mesh": [
+            {
+              "mesh": "Boar",
+              "as_imported": {
+                "vertices": 796,
+                "edges": 971,
+                "faces": 380,
+                "triangles": 380,
+                "quads": 0,
+                "ngons": 0,
+                "quad_ratio": 0.0,
+                "triangle_ratio": 1.0,
+                "non_manifold_edges": 0,
+                "boundary_edges": 802,
+                "boundary_loops": 205,
+                "wire_edges": 0,
+                "loose_vertices": 0,
+                "degenerate_faces": 0,
+                "zero_length_edges": 0
+              },
+              "welded": {
+                "vertices": 246,
+                "edges": 606,
+                "faces": 380,
+                "triangles": 380,
+                "quads": 0,
+                "ngons": 0,
+                "quad_ratio": 0.0,
+                "triangle_ratio": 1.0,
+                "non_manifold_edges": 0,
+                "boundary_edges": 72,
+                "boundary_loops": 12,
+                "wire_edges": 0,
+                "loose_vertices": 0,
+                "degenerate_faces": 0,
+                "zero_length_edges": 0,
+                "parts": [
+                  {
+                    "triangles": 84,
+                    "vertices": 44,
+                    "size_m": [
+                      3.1553,
+                      3.3648,
+                      2.9869
+                    ],
+                    "boundary_loops": 0
+                  },
+                  {
+                    "triangles": 56,
+                    "vertices": 33,
+                    "size_m": [
+                      2.1918,
+                      1.0595,
+                      1.2247
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 30,
+                    "vertices": 22,
+                    "size_m": [
+                      0.8126,
+                      0.3112,
+                      0.8351
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 30,
+                    "vertices": 22,
+                    "size_m": [
+                      0.8126,
+                      0.3112,
+                      0.8351
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 28,
+                    "vertices": 17,
+                    "size_m": [
+                      0.2293,
+                      0.7683,
+                      0.3526
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 18,
+                    "vertices": 12,
+                    "size_m": [
+                      0.5715,
+                      0.5715,
+                      1.5889
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 18,
+                    "vertices": 12,
+                    "size_m": [
+                      0.5715,
+                      0.5715,
+                      1.5889
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 18,
+                    "vertices": 12,
+                    "size_m": [
+                      0.5715,
+                      0.5715,
+                      1.5889
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 18,
+                    "vertices": 12,
+                    "size_m": [
+                      0.5715,
+                      0.5715,
+                      1.5889
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 12,
+                    "vertices": 8,
+                    "size_m": [
+                      0.532,
+                      0.3158,
+                      0.7408
+                    ],
+                    "boundary_loops": 0
+                  },
+                  {
+                    "triangles": 12,
+                    "vertices": 8,
+                    "size_m": [
+                      0.532,
+                      0.3158,
+                      0.7408
+                    ],
+                    "boundary_loops": 0
+                  },
+                  {
+                    "triangles": 12,
+                    "vertices": 9,
+                    "size_m": [
+                      0.4346,
+                      0.6669,
+                      0.2805
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 12,
+                    "vertices": 9,
+                    "size_m": [
+                      0.4346,
+                      0.6669,
+                      0.2805
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 12,
+                    "vertices": 8,
+                    "size_m": [
+                      0.1763,
+                      0.2968,
+                      0.3998
+                    ],
+                    "boundary_loops": 0
+                  },
+                  {
+                    "triangles": 12,
+                    "vertices": 8,
+                    "size_m": [
+                      0.1218,
+                      0.208,
+                      0.2757
+                    ],
+                    "boundary_loops": 0
+                  },
+                  {
+                    "triangles": 4,
+                    "vertices": 6,
+                    "size_m": [
+                      0.2011,
+                      0.0381,
+                      0.2327
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 4,
+                    "vertices": 6,
+                    "size_m": [
+                      0.2011,
+                      0.0381,
+                      0.2327
+                    ],
+                    "boundary_loops": 1
+                  }
+                ],
+                "part_count": 17
+              }
+            }
+          ],
+          "weld_distance_m": 1e-05,
+          "note": "baseline only; nothing fails on these yet"
+        },
+        "palette_correction": [
+          {
+            "image": "lambert1_albedo",
+            "size": [
+              128,
+              128
+            ],
+            "lightness": "lifted or lowered (sourced asset)",
+            "measured_over": {
+              "texels": 394,
+              "of": 16384,
+              "mask": "the asset's UV footprint"
+            },
+            "groups": [
+              {
+                "color": "Saddle Leather",
+                "target": "#4A2A10",
+                "share": 0.5305,
+                "median_before": "#5D352A",
+                "delta_e_before": 11.1,
+                "applied": true,
+                "median_after": "#4A2A10",
+                "delta_e_after": 0.0
+              },
+              {
+                "color": "Barrow Oak",
+                "target": "#8C5933",
+                "share": 0.2056,
+                "median_before": "#844027",
+                "delta_e_before": 12.8,
+                "applied": true,
+                "median_after": "#8C5933",
+                "delta_e_after": 0.0
+              },
+              {
+                "color": "Peat Black",
+                "target": "#2E2926",
+                "share": 0.2081,
+                "median_before": "#3B3439",
+                "delta_e_before": 7.5,
+                "applied": true,
+                "median_after": "#2D2927",
+                "delta_e_after": 1.0
+              },
+              {
+                "color": "Old Bone",
+                "target": "#CCB484",
+                "share": 0.0558,
+                "median_before": "#E4E0D4",
+                "delta_e_before": 26.0,
+                "applied": true,
+                "median_after": "#CCB484",
+                "delta_e_after": 0.0
+              }
+            ]
+          }
+        ],
+        "shading": {
+          "angle_deg": 30.0,
+          "welded_vertices_removed": 548,
+          "custom_normals_cleared": [
+            "Boar"
+          ],
+          "welded": "same_weights"
+        },
+        "triangle_count": 380,
+        "triangle_budget": 1320,
+        "vertex_metrics": {
+          "split_at_seams": 248,
+          "welded": 246,
+          "note": "metrics only; the budget is in triangles"
+        },
+        "animations": [
+          "attack",
+          "dead",
+          "idle",
+          "walk"
+        ],
+        "exported": {
+          "images": 1,
+          "materials": [
+            {
+              "name": "lambert1",
+              "alphaMode": "OPAQUE",
+              "base_color_texture": true
+            }
+          ],
+          "animations": 4,
+          "skins": 1
+        }
+      }
+    },
+    "validate": {
+      "status": "ok",
+      "timestamp": "2026-10-02T21:35:02+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/gobkit_Boar.yaml",
+          "sha256": "be27d5d168ca2d61710abe66d4484660d5db6e9c29955f4bef7d99d919b26ad9"
+        },
+        {
+          "path": "assets/meshes/gobkit_Boar.glb",
+          "sha256": "43c3932aad49dfdc466f317fff905d10e05020cbf4ca155f959ae2810e74de23"
+        },
+        {
+          "path": "scripts/godot_validate.gd",
+          "sha256": "7990d0b422dad7def4ba5cbef89d9632cd29cc3edddc28143757e982988985c9"
+        },
+        {
+          "path": "scripts/blender_views.py",
+          "sha256": "9ca1b243e3bb4d5ab1247b718cd1a0e1648e89e2683dacf2a71d3eede55a6388"
+        },
+        {
+          "path": "assets/sources.json",
+          "sha256": "0cee5844dd4bb776a03e0e909e805fd654bd3e5366c2ef0497eac248116b658c"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "assets/manifests/gobkit_Boar/front.png",
+          "sha256": "21d25ad655267ef07782ebb2c095d499409c75fd6f2a7fdb5f4dd251a06e2787"
+        },
+        {
+          "path": "assets/manifests/gobkit_Boar/right.png",
+          "sha256": "a70e53ae8c374c0975a9ef06e5520a3c81d4b5a543e98602af86f57808d6b678"
+        },
+        {
+          "path": "assets/manifests/gobkit_Boar/back.png",
+          "sha256": "373d80848042a4a642e348f882794a5fc71a2cecd0ec6506b305c32fcfa4c248"
+        },
+        {
+          "path": "assets/manifests/gobkit_Boar/top.png",
+          "sha256": "37803b8dfbc3396a0f5c5b2b632ae5cd626cfbd30540f588eb020a38be591d58"
+        },
+        {
+          "path": "assets/manifests/gobkit_Boar/clay_front.png",
+          "sha256": "23d745ef096c02475ebe1958b11b22e11dc324dd84053191df208435f688019d"
+        },
+        {
+          "path": "assets/manifests/gobkit_Boar/wireframe_front.png",
+          "sha256": "083bc7ed1287756185864e0616a47b179b2604cc5449f9448c044bc7d7d66f8b"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "all checks passed",
+      "actual_cost_credits": 0,
+      "params": {
+        "asset_id": "gobkit_Boar",
+        "type": "prop",
+        "face_limit": null,
+        "triangle_budget": 1320,
+        "texture_size": 128,
+        "target_size_m": null,
+        "pivot": "source",
+        "palette": [
+          "Saddle Leather",
+          "Barrow Oak",
+          "Peat Black",
+          "Old Bone"
+        ],
+        "socket_map": null,
+        "bone_map": null,
+        "animations": null,
+        "exclude_objects": null,
+        "tip_end": null,
+        "rigid_parts": null,
+        "skirt_reweight": null,
+        "source": "download",
+        "source_scale": 1.0,
+        "orientation": "source",
+        "blender_triangle_count": 380
+      },
+      "report": {
+        "animations": {
+          "expected": [],
+          "missing": [],
+          "present": [
+            "attack",
+            "dead",
+            "idle",
+            "walk"
+          ]
+        },
+        "errors": [],
+        "godot_version": "4.7.2-stable (official)",
+        "import_method": "GLTFDocument (runtime); editor import settings such as a BoneMap don't apply",
+        "materials": [
+          {
+            "albedo_texture": [
+              128,
+              128
+            ],
+            "extra_maps": [],
+            "mesh": "Boar",
+            "metallic": 0.0,
+            "metallic_specular": 0.0,
+            "roughness": 1.0,
+            "specular_mode": "schlick_ggx",
+            "surface": 0,
+            "transparency": "disabled",
+            "unshaded": false
+          }
+        ],
+        "rig": {
+          "bone_count": 16,
+          "bones": [
+            "Root",
+            "Hips",
+            "LeftLegB",
+            "LeftLegF",
+            "RightLegB",
+            "RightLegF",
+            "Spine",
+            "Tail",
+            "Mouth",
+            "RightEar",
+            "LeftEar",
+            "Head",
+            "RightHand",
+            "LeftHand",
+            "RightEye",
+            "LeftEye"
+          ],
+          "exact_profile_name_matches": [
+            "Root",
+            "Hips",
+            "Spine",
+            "Head",
+            "RightHand",
+            "LeftHand",
+            "RightEye",
+            "LeftEye"
+          ],
+          "humanoid_mappable": false,
+          "mapping_method": "name heuristic; confirm in the editor's BoneMap before retargeting",
+          "missing_required": [
+            "LeftShoulder",
+            "LeftUpperArm",
+            "LeftLowerArm",
+            "RightShoulder",
+            "RightUpperArm",
+            "RightLowerArm",
+            "LeftUpperLeg",
+            "LeftLowerLeg",
+            "LeftFoot",
+            "RightUpperLeg",
+            "RightLowerLeg",
+            "RightFoot"
+          ],
+          "profile": "SkeletonProfileHumanoid (56 bones, 17 required)",
+          "proposed_bone_map": {
+            "Head": "Head",
+            "Hips": "Hips",
+            "LeftHand": "LeftHand",
+            "RightHand": "RightHand",
+            "Spine": "Spine"
+          },
+          "skeleton": true,
+          "skeleton_path": "RootNode/Skeleton3D",
+          "unmapped_bones": [
+            "Root",
+            "LeftLegB",
+            "LeftLegF",
+            "RightLegB",
+            "RightLegF",
+            "Tail",
+            "Mouth",
+            "RightEar",
+            "LeftEar",
+            "RightEye",
+            "LeftEye"
+          ]
+        },
+        "status": "pass",
+        "textures": {
+          "count": 1,
+          "max_allowed": 128,
+          "sizes": [
+            [
+              128,
+              128
+            ]
+          ]
+        },
+        "triangles": {
+          "blender_count": 380.0,
+          "budget": 1320,
+          "count": 380
+        },
+        "vertex_metrics": {
+          "gpu_count": 589,
+          "note": "metrics only; the budget is in triangles"
+        },
+        "warnings": [
+          "prop has a Skeleton3D",
+          "gross check: holes: 12 open boundary loops after welding"
+        ],
+        "views": {
+          "status": "ok",
+          "views": {
+            "front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-animspike/assets/manifests/gobkit_Boar/front.png",
+              "coverage": 0.5543
+            },
+            "right": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-animspike/assets/manifests/gobkit_Boar/right.png",
+              "coverage": 0.3497
+            },
+            "back": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-animspike/assets/manifests/gobkit_Boar/back.png",
+              "coverage": 0.5543
+            },
+            "top": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-animspike/assets/manifests/gobkit_Boar/top.png",
+              "coverage": 0.3444
+            },
+            "clay_front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-animspike/assets/manifests/gobkit_Boar/clay_front.png",
+              "coverage": 0.5543
+            },
+            "wireframe_front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-animspike/assets/manifests/gobkit_Boar/wireframe_front.png",
+              "coverage": 0.1156
+            }
+          },
+          "errors": [],
+          "triangles": 380,
+          "pieces_welded": 17
+        },
+        "gross_flags": [
+          "holes: 12 open boundary loops after welding"
+        ]
+      }
+    }
+  },
+  "brief": {
+    "path": "assets/briefs/gobkit_Boar.yaml",
+    "sha256": "be27d5d168ca2d61710abe66d4484660d5db6e9c29955f4bef7d99d919b26ad9"
+  },
+  "total_cost_credits": 0,
+  "updated_at": "2026-10-02T23:32:45+00:00",
+  "judgments": [
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-10-02T21:45:39+00:00",
+      "packet": "assets/manifests/gobkit_Boar/judge/mesh-1/packet.json",
+      "packet_sha256": "94dba5f5338aa9d6326fa88ed1ce5ef8ad9d940db200dd61eaacde6c41e8271c",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/gobkit_Boar.glb",
+        "sha256": "43c3932aad49dfdc466f317fff905d10e05020cbf4ca155f959ae2810e74de23",
+        "concept": null
+      },
+      "images": [
+        {
+          "role": "front",
+          "path": "assets/manifests/gobkit_Boar/judge/mesh-1/01_front.png",
+          "sha256": "e4da137088099b2bb87c4623fae362346443f4ef53a89bcd49a418e12fa1bfeb",
+          "source": "assets/manifests/gobkit_Boar/judge/mesh-1/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/gobkit_Boar/judge/mesh-1/02_right.png",
+          "sha256": "2324e4e9f4985d3dfc394c0d15104e3db6d8dc1899add0bbd2ce62d458b2d29f",
+          "source": "assets/manifests/gobkit_Boar/judge/mesh-1/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/gobkit_Boar/judge/mesh-1/03_back.png",
+          "sha256": "b45404f3dcabc1927d7cffa9a37ff795d03b5964c2825cfa1b39c7bc3579853d",
+          "source": "assets/manifests/gobkit_Boar/judge/mesh-1/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/gobkit_Boar/judge/mesh-1/04_top.png",
+          "sha256": "e67de0df1ee6a58d0dadfbe8545d729d075e7ea168aeae20fe690011bc933675",
+          "source": "assets/manifests/gobkit_Boar/judge/mesh-1/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/gobkit_Boar/judge/mesh-1/05_clay_front.png",
+          "sha256": "f9650cffaa8400ecaf8d6f3bc865cf36092acdf13c497f373690e95d6e0b48c7",
+          "source": "assets/manifests/gobkit_Boar/judge/mesh-1/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/gobkit_Boar/judge/mesh-1/06_wireframe_front.png",
+          "sha256": "0c2ef45c4c52747b28a86d2446ccfc162f0f40d55eb8c2a6dc5eacedadf0e629",
+          "source": "assets/manifests/gobkit_Boar/judge/mesh-1/work/views/wireframe_front.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/gobkit_Boar/judge/mesh-1/01_front.png",
+        "assets/manifests/gobkit_Boar/judge/mesh-1/02_right.png",
+        "assets/manifests/gobkit_Boar/judge/mesh-1/03_back.png",
+        "assets/manifests/gobkit_Boar/judge/mesh-1/04_top.png",
+        "assets/manifests/gobkit_Boar/judge/mesh-1/05_clay_front.png",
+        "assets/manifests/gobkit_Boar/judge/mesh-1/06_wireframe_front.png"
+      ],
+      "assertions_failed": [
+        "palette color Old Bone close before correction"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "color",
+          "severity": "major",
+          "observation": "The source's pale group (median #E4E0D4, 6% of the UV footprint) is 26.0 dE from Old Bone #CCB484, over the 20 limit. Correction repainted it to Old Bone exactly; in the views this group is the eye-ring whites and the tusks, which now read as pale yellowed beige, plausible for tusks and eye whites. Whether to accept it is the user's call.",
+          "evidence": "assertion 'palette color Old Bone close before correction'; metrics.color_vs_palette; 01_front.png, 02_right.png"
+        },
+        {
+          "check": "other",
+          "severity": "minor",
+          "observation": "Source scale is very large for a boar: about 3.2 x 4.6 x 3.5 m at source_scale 1.0; only matters if used in the game.",
+          "evidence": "metrics.mesh.true_dims_m"
+        },
+        {
+          "check": "other",
+          "severity": "minor",
+          "observation": "A small extra hair tuft on top of the head the prompt doesn't mention; harmless.",
+          "evidence": "01_front.png, 02_right.png, 04_top.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "The only failing assertion is Old Bone's distance before correction (26.0 vs 20); the near-white eye rings and tusks were plausibly meant to become bone-coloured and look right. No refine or reroll applies to a sourced CC0 mesh. The user decides whether to accept the repaint or exempt this sourced asset from the check.",
+      "summary": "The Gobkit boar matches the brief and is within budget with no visible holes, but the 'Old Bone close before correction' assertion fails (26.0 > 20): the source's near-white eye rings and tusks were repainted to Old Bone, which looks intended but is a call for the user.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "resolution",
+      "stage": "mesh",
+      "recorded_at": "2026-10-02T23:32:45+00:00",
+      "decision": "User 2026-10-02: accept; the source's near-white eye rings and tusks repainted to Old Bone read correctly as bone (test subject for spike-agent-animation)"
+    }
+  ]
+}

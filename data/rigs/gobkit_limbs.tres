@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="LimbMap" format=3]
+
+[ext_resource type="Script" uid="uid://cmy31jw515p8r" path="res://scripts/review/LimbMap.gd" id="1_limbmap"]
+
+[resource]
+script = ExtResource("1_limbmap")
+body_plan = "quadruped"
+root = "Hips"
+feet = {"front_left": ["LeftLegF"], "front_right": ["RightLegF"], "back_left": ["LeftLegB"], "back_right": ["RightLegB"]}
+hands = {"snout": "Mouth"}
+tips = {"LeftLegB": Vector3(0, 1.589, 0), "LeftLegF": Vector3(0, 1.589, 0), "RightLegB": Vector3(0, 1.589, 0), "RightLegF": Vector3(0, 1.589, 0)}

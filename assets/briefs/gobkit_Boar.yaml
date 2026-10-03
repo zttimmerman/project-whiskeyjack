@@ -1,0 +1,18 @@
+# Written by scripts/tools/import_pack.py (pack gobkit_animal_b; provenance in assets/sources.json).
+# Budget from docs/art-bible.md, "Sourced props (kit dressing)": the art bible is the only source for these numbers.
+asset_id: gobkit_Boar
+type: prop
+source: download
+pack: gobkit_animal_b
+source_url: "https://gobkit.com/freebies/animalB/gobkit-animalB-pack.zip"
+author: "Gobkit / Alsomind Tech Co., Ltd."
+license: CC0-1.0
+source_file: .downloads/gobkit_animal_b/gobkit-animalB-pack/Boar.glb
+brief: "The subject of spike-agent-animation (docs/backlog/spike-agent-animation.md): a CC0 rigged quadruped from Gobkit Free Animal Pack Vol. 2, for the per-rig limb map (data/rigs/gobkit_limbs.tres) and the motion review. Not placed in any level. Imported as a prop because sourced characters are not supported; it keeps its own 16-bone rig and clips."
+prompt: "A chibi low-poly boar: a round brown body on four short stub legs, a big head with a snout, tusks and ears, and a small tail; rigged (16 bones) with idle, attack, dead and walk clips."
+triangle_budget: 1320
+texture_size: 128
+source_scale: 1.0
+pivot: source
+orientation: source
+palette: [Saddle Leather, Barrow Oak, Peat Black, Old Bone]
