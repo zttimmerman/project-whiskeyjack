@@ -132,10 +132,10 @@ static func gait(points: Dictionary, root: Array) -> Dictionary:
 
 # One line of each foot's lift and swing in body heights (metres are in the metrics) (the motion review's plots header);
 # whether a foot is under the art bible's gait limits is the judge's assertion, so this only reports
-static func gait_line(gait: Dictionary, height: float) -> String:
+static func gait_line(feet_gait: Dictionary, height: float) -> String:
 	var parts := []
-	for side: String in gait:
-		var g: Dictionary = gait[side]
+	for side: String in feet_gait:
+		var g: Dictionary = feet_gait[side]
 		parts.append("%s %.3f / %.3f" % [side.replace("_", " "), g["lift_bh"], g["swing_bh"]])
 	return "Gait, lift / swing per foot in body heights (%.2f m): %s" % [height, ";  ".join(parts)]
 
