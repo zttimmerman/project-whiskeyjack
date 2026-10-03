@@ -372,11 +372,11 @@
     },
     "clean": {
       "status": "ok",
-      "timestamp": "2026-09-28T02:30:37+00:00",
+      "timestamp": "2026-10-03T03:37:38+00:00",
       "inputs": [
         {
           "path": "assets/briefs/barrow_levy.yaml",
-          "sha256": "cc5d3c68aa78e5aa2f8def1a6437af599d1a00d9d901bbe9e036a5193d6dc203"
+          "sha256": "837c11808ef109257bfb4f191cf7f4493303982daa4d50911aa3babc16ffd01c"
         },
         {
           "path": ".tripo-out/barrow_levy/rig-2/tripo-out/rig-2-974e2d40/model.glb",
@@ -384,7 +384,7 @@
         },
         {
           "path": "scripts/blender_cleanup.py",
-          "sha256": "41f70e42f2d0f10c0cc372afbd1ab7f8e5391e069387a1a69caecf8780057fac"
+          "sha256": "f65428190ef7958ab0142b740e69ccbb406ba85c4766e83399c95a1db9c2a7f1"
         },
         {
           "path": ".tripo-out/barrow_levy/rig-2/tripo-out/rig-2-974e2d40/task.json",
@@ -398,13 +398,13 @@
       "outputs": [
         {
           "path": "assets/meshes/barrow_levy.glb",
-          "sha256": "7869032a3bf8af8412b7b80c2694863e9e55fbf8de9a0b5561a912c83742e422"
+          "sha256": "59145dd318dd0887b8e45081af1940f33544317fca0e2f11e5d7837829814487"
         }
       ],
       "tool_versions": {
         "python": "3.14.7",
         "blender": "Blender 5.0.1",
-        "godot": "4.6.1.stable.official.14d19694e",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
         "tripo": "0.5.1"
       },
       "message": "exported assets/meshes/barrow_levy.glb",
@@ -414,7 +414,7 @@
         "type": "character",
         "face_limit": 5000,
         "triangle_budget": 5500,
-        "texture_size": 256,
+        "texture_size": 1024,
         "target_size_m": 1.8,
         "pivot": "base",
         "palette": [
@@ -424,6 +424,7 @@
           "Signal Red"
         ],
         "socket_map": "data/rigs/barrow_levy_sockets.tres",
+        "bone_map": "data/rigs/mixamorig_bone_map.tres",
         "animations": [
           "idle",
           "run",
@@ -435,6 +436,12 @@
         "tip_end": null,
         "rigid_parts": true,
         "skirt_reweight": null,
+        "smooth_shading": null,
+        "parts": null,
+        "parts_transfer": null,
+        "source": null,
+        "source_scale": null,
+        "orientation": "principal_axis",
         "source_forward": {
           "axis": "+x",
           "source": "Tripo API default (.tripo-out/barrow_levy/rig-2/tripo-out/rig-2-974e2d40/task.json sets no export_orientation)"
@@ -445,7 +452,7 @@
           "Blackened Iron": "#242424",
           "Signal Red": "#C71F14"
         },
-        "reference_image": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png",
+        "reference_image": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/.tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png",
         "texture_overlays": []
       },
       "report": {
@@ -453,8 +460,8 @@
         "errors": [],
         "warnings": [],
         "blender_version": "5.0.1",
-        "input": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/barrow_levy/rig-2/tripo-out/rig-2-974e2d40/model.glb",
-        "output": "/Users/zach/Documents/repos/project-whiskeyjack/assets/meshes/barrow_levy.glb",
+        "input": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/.tripo-out/barrow_levy/rig-2/tripo-out/rig-2-974e2d40/model.glb",
+        "output": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/meshes/barrow_levy.glb",
         "materials": [
           {
             "name": "tripo_material_3b290be3-59a9-423a-9598-d746d1330ecd",
@@ -472,14 +479,15 @@
               2048
             ],
             "size_after": [
-              256,
-              256
+              1024,
+              1024
             ]
           }
         ],
         "removed_objects": [
           "Icosphere (bone display shape created by the importer)"
         ],
+        "input_format": "glb",
         "rigged": true,
         "armatures": [
           {
@@ -594,7 +602,8 @@
                     0.0881,
                     0.0509,
                     0.3523
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 490,
@@ -603,7 +612,8 @@
                     0.1526,
                     0.1742,
                     0.1292
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 402,
@@ -612,7 +622,8 @@
                     0.1018,
                     0.1585,
                     0.1213
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 232,
@@ -621,7 +632,8 @@
                     0.135,
                     0.0998,
                     0.1233
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 204,
@@ -630,7 +642,8 @@
                     0.0783,
                     0.0685,
                     0.09
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 204,
@@ -639,7 +652,8 @@
                     0.0783,
                     0.0685,
                     0.09
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 176,
@@ -648,7 +662,8 @@
                     0.0509,
                     0.0665,
                     0.2466
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 176,
@@ -657,7 +672,8 @@
                     0.0509,
                     0.0665,
                     0.2446
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 164,
@@ -666,7 +682,8 @@
                     0.0685,
                     0.1448,
                     0.1526
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 164,
@@ -675,7 +692,8 @@
                     0.0685,
                     0.1448,
                     0.1526
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 150,
@@ -684,7 +702,8 @@
                     0.0509,
                     0.0587,
                     0.2387
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 150,
@@ -693,7 +712,8 @@
                     0.0509,
                     0.0587,
                     0.2387
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 130,
@@ -702,7 +722,8 @@
                     0.0431,
                     0.1311,
                     0.1311
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 130,
@@ -711,7 +732,8 @@
                     0.0411,
                     0.1311,
                     0.1311
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 128,
@@ -720,7 +742,8 @@
                     0.184,
                     0.1859,
                     0.0333
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 124,
@@ -729,7 +752,8 @@
                     0.1781,
                     0.1566,
                     0.2603
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 124,
@@ -738,7 +762,8 @@
                     0.1781,
                     0.1546,
                     0.2622
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 100,
@@ -747,7 +772,8 @@
                     0.0665,
                     0.0881,
                     0.0744
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 72,
@@ -756,7 +782,8 @@
                     0.1526,
                     0.0744,
                     0.0861
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 68,
@@ -765,7 +792,8 @@
                     0.1252,
                     0.0587,
                     0.0411
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 68,
@@ -774,7 +802,8 @@
                     0.1233,
                     0.0587,
                     0.0411
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 68,
@@ -783,7 +812,8 @@
                     0.1526,
                     0.0763,
                     0.0841
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 60,
@@ -792,7 +822,8 @@
                     0.0607,
                     0.0802,
                     0.0861
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 60,
@@ -801,7 +832,8 @@
                     0.0607,
                     0.0802,
                     0.0861
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 52,
@@ -810,7 +842,8 @@
                     0.1429,
                     0.0724,
                     0.0822
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 52,
@@ -819,7 +852,8 @@
                     0.1292,
                     0.0665,
                     0.0763
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 52,
@@ -828,7 +862,8 @@
                     0.1448,
                     0.0724,
                     0.0822
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 52,
@@ -837,7 +872,8 @@
                     0.1272,
                     0.0646,
                     0.0744
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 48,
@@ -846,7 +882,8 @@
                     0.0098,
                     0.0626,
                     0.045
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 44,
@@ -855,7 +892,8 @@
                     0.0685,
                     0.0294,
                     0.0372
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 44,
@@ -864,7 +902,8 @@
                     0.0685,
                     0.0313,
                     0.0372
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 28,
@@ -873,7 +912,8 @@
                     0.0059,
                     0.0372,
                     0.0352
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 28,
@@ -882,7 +922,8 @@
                     0.0078,
                     0.0352,
                     0.0352
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 22,
@@ -891,7 +932,8 @@
                     0.0333,
                     0.0176,
                     0.0176
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 22,
@@ -900,7 +942,8 @@
                     0.0333,
                     0.0176,
                     0.0157
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 16,
@@ -909,7 +952,8 @@
                     0.002,
                     0.0117,
                     0.0059
-                  ]
+                  ],
+                  "boundary_loops": 0
                 }
               ],
               "quad_ratio": 0.0,
@@ -960,7 +1004,8 @@
                       0.0881,
                       0.0509,
                       0.3523
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 490,
@@ -969,7 +1014,8 @@
                       0.1526,
                       0.1742,
                       0.1292
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 402,
@@ -978,7 +1024,8 @@
                       0.1018,
                       0.1585,
                       0.1213
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 232,
@@ -987,7 +1034,8 @@
                       0.135,
                       0.0998,
                       0.1233
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 204,
@@ -996,7 +1044,8 @@
                       0.0783,
                       0.0685,
                       0.09
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 204,
@@ -1005,7 +1054,8 @@
                       0.0783,
                       0.0685,
                       0.09
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 176,
@@ -1014,7 +1064,8 @@
                       0.0509,
                       0.0665,
                       0.2466
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 176,
@@ -1023,7 +1074,8 @@
                       0.0509,
                       0.0665,
                       0.2446
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 164,
@@ -1032,7 +1084,8 @@
                       0.0685,
                       0.1448,
                       0.1526
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 164,
@@ -1041,7 +1094,8 @@
                       0.0685,
                       0.1448,
                       0.1526
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 150,
@@ -1050,7 +1104,8 @@
                       0.0509,
                       0.0587,
                       0.2387
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 150,
@@ -1059,7 +1114,8 @@
                       0.0509,
                       0.0587,
                       0.2387
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 130,
@@ -1068,7 +1124,8 @@
                       0.0431,
                       0.1311,
                       0.1311
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 130,
@@ -1077,7 +1134,8 @@
                       0.0411,
                       0.1311,
                       0.1311
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 128,
@@ -1086,7 +1144,8 @@
                       0.184,
                       0.1859,
                       0.0333
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 124,
@@ -1095,7 +1154,8 @@
                       0.1781,
                       0.1566,
                       0.2603
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 124,
@@ -1104,7 +1164,8 @@
                       0.1781,
                       0.1546,
                       0.2622
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 100,
@@ -1113,7 +1174,8 @@
                       0.0665,
                       0.0881,
                       0.0744
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 72,
@@ -1122,7 +1184,8 @@
                       0.1526,
                       0.0744,
                       0.0861
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 68,
@@ -1131,7 +1194,8 @@
                       0.1252,
                       0.0587,
                       0.0411
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 68,
@@ -1140,7 +1204,8 @@
                       0.1233,
                       0.0587,
                       0.0411
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 68,
@@ -1149,7 +1214,8 @@
                       0.1526,
                       0.0763,
                       0.0841
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 60,
@@ -1158,7 +1224,8 @@
                       0.0607,
                       0.0802,
                       0.0861
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 60,
@@ -1167,7 +1234,8 @@
                       0.0607,
                       0.0802,
                       0.0861
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 52,
@@ -1176,7 +1244,8 @@
                       0.1429,
                       0.0724,
                       0.0822
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 52,
@@ -1185,7 +1254,8 @@
                       0.1292,
                       0.0665,
                       0.0763
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 52,
@@ -1194,7 +1264,8 @@
                       0.1448,
                       0.0724,
                       0.0822
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 52,
@@ -1203,7 +1274,8 @@
                       0.1272,
                       0.0646,
                       0.0744
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 48,
@@ -1212,7 +1284,8 @@
                       0.0098,
                       0.0626,
                       0.045
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 44,
@@ -1221,7 +1294,8 @@
                       0.0685,
                       0.0294,
                       0.0372
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 44,
@@ -1230,7 +1304,8 @@
                       0.0685,
                       0.0313,
                       0.0372
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 28,
@@ -1239,7 +1314,8 @@
                       0.0059,
                       0.0372,
                       0.0352
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 28,
@@ -1248,7 +1324,8 @@
                       0.0078,
                       0.0352,
                       0.0352
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 22,
@@ -1257,7 +1334,8 @@
                       0.0333,
                       0.0176,
                       0.0176
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 22,
@@ -1266,7 +1344,8 @@
                       0.0333,
                       0.0176,
                       0.0157
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 16,
@@ -1275,7 +1354,8 @@
                       0.002,
                       0.0117,
                       0.0059
-                    ]
+                    ],
+                    "boundary_loops": 0
                   }
                 ],
                 "part_count": 36
@@ -1289,21 +1369,21 @@
           {
             "image": "Color_3b290be3-59a9-423a-9598-d746d1330ecd",
             "size": [
-              256,
-              256
+              1024,
+              1024
             ],
             "method": "approved concept (hue and saturation restored; lightness lifted to the matched concept tone, never lowered)",
-            "reference": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png",
+            "reference": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/.tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png",
             "concept_background": "#787576",
             "clusters": [
               {
                 "concept": "#B6A281",
                 "concept_share": 0.223,
-                "texture_before": "#A69A84",
-                "texture_share": 0.672,
+                "texture_before": "#A69B84",
+                "texture_share": 0.694,
                 "delta_e_before": 7.5,
                 "applied": true,
-                "texture_after": "#B6A382",
+                "texture_after": "#B5A382",
                 "delta_ab_after": 0.3,
                 "lightness": [
                   64.2,
@@ -1315,90 +1395,90 @@
               {
                 "concept": "#260E0D",
                 "concept_share": 0.001,
-                "texture_before": "#36271F",
+                "texture_before": "#31221B",
                 "texture_share": 0.001,
-                "delta_e_before": 12.9,
+                "delta_e_before": 10.9,
                 "applied": false,
                 "reason": "covers 0.1% of the texture"
               },
               {
                 "concept": "#613430",
                 "concept_share": 0.133,
-                "texture_before": "#5D362E",
-                "texture_share": 0.021,
-                "delta_e_before": 2.5,
+                "texture_before": "#5C342E",
+                "texture_share": 0.016,
+                "delta_e_before": 2.6,
                 "applied": false,
-                "reason": "covers 2.1% of the texture"
+                "reason": "covers 1.6% of the texture"
               },
               {
                 "concept": "#7A6854",
                 "concept_share": 0.081,
-                "texture_before": "#7C6954",
-                "texture_share": 0.055,
-                "delta_e_before": 1.0,
+                "texture_before": "#7A6752",
+                "texture_share": 0.044,
+                "delta_e_before": 0.8,
                 "applied": true,
-                "texture_after": "#7A6954",
+                "texture_after": "#796852",
                 "delta_ab_after": 0.5,
                 "lightness": [
-                  45.6,
-                  45.6,
+                  44.9,
+                  45.1,
                   45.2
                 ],
-                "delta_ab_before": 1.0
+                "delta_ab_before": 0.7
               },
               {
                 "concept": "#CCB790",
                 "concept_share": 0.286,
-                "texture_before": "#CCB790",
-                "texture_share": 0.0,
-                "delta_e_before": 0.0,
+                "texture_before": "#B2AB96",
+                "texture_share": 0.001,
+                "delta_e_before": 12.1,
                 "applied": false,
-                "reason": "covers 0.0% of the texture"
+                "reason": "covers 0.1% of the texture"
               },
               {
                 "concept": "#5B473B",
                 "concept_share": 0.077,
-                "texture_before": "#684F3C",
+                "texture_before": "#654E3A",
                 "texture_share": 0.059,
-                "delta_e_before": 6.2,
+                "delta_e_before": 6.0,
                 "applied": true,
-                "texture_after": "#645043",
-                "delta_ab_after": 0.9,
+                "texture_after": "#634F42",
+                "delta_ab_after": 0.8,
                 "lightness": [
-                  35.8,
-                  35.8,
+                  35.1,
+                  35.1,
                   31.9
                 ],
-                "delta_ab_before": 4.9
+                "delta_ab_before": 5.1
               },
               {
                 "concept": "#9D8B6F",
                 "concept_share": 0.186,
-                "texture_before": "#94846E",
-                "texture_share": 0.064,
+                "texture_before": "#93846E",
+                "texture_share": 0.047,
                 "delta_e_before": 4.5,
                 "applied": true,
                 "texture_after": "#9E8C6F",
-                "delta_ab_after": 0.3,
+                "delta_ab_after": 0.5,
                 "lightness": [
-                  56.0,
+                  55.9,
                   59.1,
                   58.8
                 ],
-                "delta_ab_before": 3.5
+                "delta_ab_before": 3.4
               },
               {
                 "concept": "#422220",
                 "concept_share": 0.013,
                 "texture_before": "#4B1B16",
-                "texture_share": 0.129,
+                "texture_share": 0.139,
                 "delta_e_before": 10.0,
                 "applied": true,
-                "texture_after": "#41221F",
-                "delta_ab_after": 0.2,
+                "texture_after": "#42221F",
+                "delta_ab_after": 0.4,
                 "lightness": [
-                  17.3,
                   17.2,
+                  17.3,
                   17.6
                 ],
                 "delta_ab_before": 10.0
@@ -1828,23 +1908,23 @@
     },
     "validate": {
       "status": "ok",
-      "timestamp": "2026-09-28T03:36:20+00:00",
+      "timestamp": "2026-10-03T03:37:51+00:00",
       "inputs": [
         {
           "path": "assets/briefs/barrow_levy.yaml",
-          "sha256": "e3c912c2d51344044c0821f976f228a9e696dd91507c20577536912144ece15a"
+          "sha256": "837c11808ef109257bfb4f191cf7f4493303982daa4d50911aa3babc16ffd01c"
         },
         {
           "path": "assets/meshes/barrow_levy.glb",
-          "sha256": "7869032a3bf8af8412b7b80c2694863e9e55fbf8de9a0b5561a912c83742e422"
+          "sha256": "59145dd318dd0887b8e45081af1940f33544317fca0e2f11e5d7837829814487"
         },
         {
           "path": "scripts/godot_validate.gd",
-          "sha256": "b6e15053c4219818c4d819d9d64720b11aa7cddbef876e106eee74cbca31e554"
+          "sha256": "7990d0b422dad7def4ba5cbef89d9632cd29cc3edddc28143757e982988985c9"
         },
         {
           "path": "scripts/blender_views.py",
-          "sha256": "debc0bfee9633437a28f041585e1422ec94aa009a068e18c0826528ed36d9d85"
+          "sha256": "9ca1b243e3bb4d5ab1247b718cd1a0e1648e89e2683dacf2a71d3eede55a6388"
         },
         {
           "path": "data/rigs/barrow_levy_sockets.tres",
@@ -1858,33 +1938,33 @@
       "outputs": [
         {
           "path": "assets/manifests/barrow_levy/front.png",
-          "sha256": "8b2d3f36ab8d1db8b1af249bda15c86734cb9d3b5b43c29c55cbf95573ab6398"
+          "sha256": "2137ce2b9e5513ebacb982020264f8a29e356a11caae4098c3474e2614ae0a22"
         },
         {
           "path": "assets/manifests/barrow_levy/right.png",
-          "sha256": "38d80e60ad94c07cdac1a90582aba5e4db17eb909486b6d346eb64b50636ff0c"
+          "sha256": "7684035dbdc6785368a47e6ce30038379c2b5a4f74c65606eba1307a2785f370"
         },
         {
           "path": "assets/manifests/barrow_levy/back.png",
-          "sha256": "a0025c5f835112abe84746e30efff182be172782051224754b13d8f49af1642e"
+          "sha256": "7f0f51b38d915c6675601e87b71206e85551fdee7ee3aec504339cc10b07438a"
         },
         {
           "path": "assets/manifests/barrow_levy/top.png",
-          "sha256": "819e97175523fe05f211e107a4a18237feab874bc26e463f6f936de924890e73"
+          "sha256": "c9d65e2ef259c8a6688aa197f566bba0cd0051619fc2ae83bd3e6ed8ae66c72d"
         },
         {
           "path": "assets/manifests/barrow_levy/clay_front.png",
-          "sha256": "7d0d931ef036acf6c362accf87efa8932a748c09e70c3fe3dc33796483da6644"
+          "sha256": "0126b5bfb9e5bbaf9d6816d424e5bc1aedb663b62d65f3602f9848ca8fa3556e"
         },
         {
           "path": "assets/manifests/barrow_levy/wireframe_front.png",
-          "sha256": "b631668b5f6b9c6ff05246f1ac4dcf70d976b7c10cc4a74a86dc01b6e8aa7396"
+          "sha256": "5da8ffa9d285dd0f94deccfd2154ce777452eebcc886b097787014cb72d38ff0"
         }
       ],
       "tool_versions": {
         "python": "3.14.7",
         "blender": "Blender 5.0.1",
-        "godot": "4.6.1.stable.official.14d19694e",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
         "tripo": "0.5.1"
       },
       "message": "all checks passed",
@@ -1894,7 +1974,7 @@
         "type": "character",
         "face_limit": 5000,
         "triangle_budget": 5500,
-        "texture_size": 256,
+        "texture_size": 1024,
         "target_size_m": 1.8,
         "pivot": "base",
         "palette": [
@@ -1916,6 +1996,12 @@
         "tip_end": null,
         "rigid_parts": true,
         "skirt_reweight": null,
+        "smooth_shading": null,
+        "parts": null,
+        "parts_transfer": null,
+        "source": null,
+        "source_scale": null,
+        "orientation": "principal_axis",
         "blender_triangle_count": 5046
       },
       "report": {
@@ -1937,13 +2023,13 @@
           "present": []
         },
         "errors": [],
-        "godot_version": "4.6.1-stable (official)",
+        "godot_version": "4.7.2-stable (official)",
         "import_method": "GLTFDocument (runtime); editor import settings such as a BoneMap don't apply",
         "materials": [
           {
             "albedo_texture": [
-              256,
-              256
+              1024,
+              1024
             ],
             "extra_maps": [],
             "mesh": "tripo_node_3b290be3-59a9-423a-9598-d746d",
@@ -2035,11 +2121,11 @@
         "status": "pass",
         "textures": {
           "count": 1,
-          "max_allowed": 256,
+          "max_allowed": 1024,
           "sizes": [
             [
-              256,
-              256
+              1024,
+              1024
             ]
           ]
         },
@@ -2059,27 +2145,27 @@
           "status": "ok",
           "views": {
             "front": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/barrow_levy/front.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/manifests/barrow_levy/front.png",
               "coverage": 0.1039
             },
             "right": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/barrow_levy/right.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/manifests/barrow_levy/right.png",
               "coverage": 0.0642
             },
             "back": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/barrow_levy/back.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/manifests/barrow_levy/back.png",
               "coverage": 0.1039
             },
             "top": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/barrow_levy/top.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/manifests/barrow_levy/top.png",
               "coverage": 0.0736
             },
             "clay_front": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/barrow_levy/clay_front.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/manifests/barrow_levy/clay_front.png",
               "coverage": 0.1039
             },
             "wireframe_front": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/barrow_levy/wireframe_front.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/manifests/barrow_levy/wireframe_front.png",
               "coverage": 0.1085
             }
           },
@@ -2229,10 +2315,10 @@
   },
   "brief": {
     "path": "assets/briefs/barrow_levy.yaml",
-    "sha256": "e3c912c2d51344044c0821f976f228a9e696dd91507c20577536912144ece15a"
+    "sha256": "837c11808ef109257bfb4f191cf7f4493303982daa4d50911aa3babc16ffd01c"
   },
   "total_cost_credits": 155,
-  "updated_at": "2026-10-02T04:07:57+00:00",
+  "updated_at": "2026-10-03T03:37:51+00:00",
   "concept_approval": {
     "attempt": "concept-3",
     "image": {
