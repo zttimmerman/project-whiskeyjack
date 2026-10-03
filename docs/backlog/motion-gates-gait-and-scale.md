@@ -1,13 +1,13 @@
 ---
 id: motion-gates-gait-and-scale
 title: "Motion gates that catch frozen legs and scale with the creature"
-status: ready
+status: done
 kind: chore
 targets: []
 after: [spike-agent-animation]
 phase: C
-branch: null
-pr: null
+branch: feature/motion-gates-gait-scale
+pr: 49
 updated: 2026-10-02
 ---
 ## Goal
@@ -31,3 +31,7 @@ The agent-authored clips' gates (spike-agent-animation steps 5–6) and the Sett
 ## Decision
 
 User 2026-10-02: do both before step 4 of `spike-agent-animation`: a gait check (every foot lifts and swings in walk/run clips) and slide limits relative to body size, calibrated so humanoid results are unchanged (an art-bible tolerance change).
+
+## Outcome
+
+PR #49. Gait check: in a locomotion clip every foot must lift (`motion_gait_lift_bh` 0.005) and swing (`motion_gait_swing_bh` 0.05). Travel, slide and bind deviation are per body height, where body height is the bind-pose height and every humanoid is 1.8 m. Tripo's boar walk fails the gait check on both front feet, and it fails slide at 0.376 bh/s. The Gobkit walk passes the gait check and still fails slide. Humanoid metric values and every assertion outcome are unchanged: the old keys are identical and the game_path files byte-identical. The files themselves gained new keys. The gait numbers wait on `decide-gait-thresholds`.
