@@ -184,8 +184,8 @@ func _floor_height(at: Vector3) -> float:
 func _floor_luminance(img: Image, cam: Camera3D, floor_y: float, player_mask: Dictionary) -> Dictionary:
 	var space := _level.get_world_3d().direct_space_state
 	var values: Array[float] = []
-	for y in range(GRID_PX / 2, img.get_height(), GRID_PX):
-		for x in range(GRID_PX / 2, img.get_width(), GRID_PX):
+	for y in range(GRID_PX >> 1, img.get_height(), GRID_PX):
+		for x in range(GRID_PX >> 1, img.get_width(), GRID_PX):
 			if player_mask.has(Vector2i(x, y)):
 				continue
 			var px := Vector2(x, y)
