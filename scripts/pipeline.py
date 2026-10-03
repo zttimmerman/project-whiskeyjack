@@ -216,7 +216,7 @@ def orientation(brief):
     return brief.get("orientation") or ("source" if is_sourced(brief) else "principal_axis")
 
 
-PART_KEYS = ("select", "bind", "offset_mm", "skirt")
+PART_KEYS = ("select", "bind", "offset_mm", "skirt", "cover")
 PART_MAX_OFFSET_MM = 10
 # How the proxy takes the rig's weights: Blender's Data Transfer, or matched-then-inpainted (blender_cleanup.py)
 PART_TRANSFERS = ("data_transfer", "inpaint")
@@ -268,8 +268,9 @@ def parts_errors(b):
         bind = p.get("bind")
         if not (bind in ("keep", "transfer") or (isinstance(bind, str) and re.fullmatch(r"rigid:[A-Za-z0-9_:]+", bind))):
             errors.append(f"part {k}: bind must be keep, transfer or rigid:<bone> (got {bind!r})")
-        if "skirt" in p and not isinstance(p["skirt"], bool):
-            errors.append(f"part {k}: skirt must be true or false")
+        for flag in ("skirt", "cover"):
+            if flag in p and not isinstance(p[flag], bool):
+                errors.append(f"part {k}: {flag} must be true or false")
         if p.get("skirt") and not b.get("skirt_reweight"):
             errors.append(f"part {k}: skirt marks the shells skirt_reweight grades; the brief doesn't set skirt_reweight")
         off = p.get("offset_mm", 0)

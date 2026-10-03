@@ -225,7 +225,7 @@ static func touching(verts: PackedVector3Array, shell: PackedInt32Array, radius:
 
 
 # Pairs (flat inner, outer): vertices under another shell at bind, each with the nearest vertex of the
-# shell covering it (within radius) whose normal points away from it
+# shell covering it (within radius) whose normal points away from it, both facing the same way
 static func covered(
 	verts: PackedVector3Array, normals: PackedVector3Array, shell: PackedInt32Array, radius: float
 ) -> PackedInt32Array:
@@ -233,7 +233,8 @@ static func covered(
 	var out := PackedInt32Array()
 	for v in verts.size():
 		var u := _nearest_other(v, verts, shell, grid, radius)
-		if u >= 0 and (verts[v] - verts[u]).dot(normals[u]) < 0.0:
+		# Under the cover, and facing the same way: a backside facing the skin (a strap's underside) isn't covered
+		if u >= 0 and (verts[v] - verts[u]).dot(normals[u]) < 0.0 and normals[v].dot(normals[u]) > 0.0:
 			out.append(v)
 			out.append(u)
 	return out

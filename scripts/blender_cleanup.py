@@ -300,7 +300,8 @@ PROXY_MATCH_M = 0.02       # m: inpaint only: a proxy vertex this close to a sou
 PROXY_MATCH_DEG = 35.0     # inpaint only: ...and only if their normals agree within this angle
 PROXY_CONFLICT = 0.25      # inpaint only: shells within PROXY_MATCH_M disagreeing by more (L1/2) are a seam
 INPAINT_ITERS = 400        # conjugate-gradient steps for the harmonic fill
-HIDE_RAY_M = 0.02          # m: a body face is covered when every sample's outward ray meets a garment this close
+HIDE_RAY_M = 0.035         # m: a body face is covered when every sample's outward ray meets a cover this close
+                           # (the P2 head shell's neck sits 2.7 cm outside the body's collar)
 WEIGHT_MIN = 0.01          # weights below this are dropped after a transfer
 MAX_INFLUENCES = 4         # glTF's one joint set; Godot skins with 4 by default
 
@@ -728,55 +729,70 @@ def parts_weight_transfer(meshes, arms, parts, method, report):
     return shells
 
 
-def hide_covered_body(shells, report):
-    """Removes body faces that garments fully cover: every sample (the face's corners and center,
-    lifted 0.5 mm off it) must meet the inside of a garment (offset_mm > 0) within HIDE_RAY_M along the
-    face's outward normal. Covered skin can only poke through, and its triangles are better spent
-    elsewhere. The limit is tight on purpose: under a flared hem the gap is wider and the legs stay."""
+def _bvh_of(shells):
     from mathutils.bvhtree import BVHTree
-    garments = [sh for sh in shells if (sh["spec"].get("offset_mm") or 0) > 0]
-    body = [sh for sh in shells if sh["spec"]["bind"] in ("keep", "transfer") and not (sh["spec"].get("offset_mm") or 0)]
-    info = {"ray_m": HIDE_RAY_M, "faces_removed": 0, "triangles_removed": 0}
-    if not garments or not body:
-        report["hide_covered_body"] = info
-        return
     co, tris = [], []
-    for sh in garments:
+    for sh in shells:
         o = sh["mesh"]
-        base = len(co)
         idx = {}
         for i in sh["verts"]:
-            idx[i] = base + len(idx)
+            idx[i] = len(co)
             co.append(o.matrix_world @ o.data.vertices[i].co)
         for f in sh["faces"]:
             tris.append([idx[i] for i in o.data.polygons[f].vertices])
-    bvh = BVHTree.FromPolygons(co, tris)
-    for o in {sh["mesh"] for sh in body}:
-        me = o.data
-        rot = o.matrix_world.to_3x3()
-        drop = []
-        for sh in (x for x in body if x["mesh"] is o):
-            for f in sh["faces"]:
-                poly = me.polygons[f]
-                n = (rot @ poly.normal).normalized()
-                pts = [o.matrix_world @ me.vertices[i].co for i in poly.vertices] + [o.matrix_world @ poly.center]
-                ok = True
-                for p in pts:
-                    hit, hn, _, d = bvh.ray_cast(p + n * 0.0005, n, HIDE_RAY_M)
-                    if hit is None or hn.dot(n) <= 0:  # must meet the garment from inside
-                        ok = False
-                        break
-                if ok:
-                    drop.append(f)
+    return BVHTree.FromPolygons(co, tris)
+
+
+def _covered_faces(targets, covers):
+    """{mesh name: face indices} of the targets' faces whose every sample (corners and center, lifted
+    0.5 mm off the face) meets the inside of a cover within HIDE_RAY_M along the face's outward normal."""
+    bvh = _bvh_of(covers)
+    out = {}
+    for sh in targets:
+        o = sh["mesh"]
+        me, rot = o.data, o.matrix_world.to_3x3()
+        for f in sh["faces"]:
+            poly = me.polygons[f]
+            n = (rot @ poly.normal).normalized()
+            pts = [o.matrix_world @ me.vertices[i].co for i in poly.vertices] + [o.matrix_world @ poly.center]
+            if all((lambda hit: hit[0] is not None and hit[1].dot(n) > 0)(bvh.ray_cast(p + n * 0.0005, n, HIDE_RAY_M))
+                   for p in pts):
+                out.setdefault(o.name, []).append(f)
+    return out
+
+
+def hide_covered_body(shells, report):
+    """Removes faces nobody can see at bind, which can only poke through in motion:
+    - body faces a cover fully hides (a garment with offset_mm > 0, or a part marked cover, such as the
+      head shell over the collar or the legs over the thighs inside the tunic);
+    - garment faces (offset_mm > 0) buried under the body (P2's back straps run inside the tunic).
+    A face is covered when every sample meets the inside of the other shell within HIDE_RAY_M along its
+    outward normal; under a flared hem the gap is wider, so the legs there stay."""
+    covers = [sh for sh in shells if (sh["spec"].get("offset_mm") or 0) > 0 or sh["spec"].get("cover")]
+    garments = [sh for sh in shells if (sh["spec"].get("offset_mm") or 0) > 0]
+    body = [sh for sh in shells if sh["spec"]["bind"] in ("keep", "transfer") and sh not in covers]
+    info = {"ray_m": HIDE_RAY_M, "faces_removed": 0, "triangles_removed": 0, "body_faces_removed": 0,
+            "garment_faces_removed": 0}
+    drops = {}
+    if covers and body:
+        for name, fs in _covered_faces(body, covers).items():
+            drops.setdefault(name, set()).update(fs)
+            info["body_faces_removed"] += len(fs)
+    if garments and body:
+        for name, fs in _covered_faces(garments, body).items():
+            drops.setdefault(name, set()).update(fs)
+            info["garment_faces_removed"] += len(fs)
+    for o in {sh["mesh"] for sh in shells}:
+        drop = drops.get(o.name)
         if not drop:
             continue
+        me = o.data
         info["triangles_removed"] += sum(me.polygons[f].loop_total - 2 for f in drop)
         info["faces_removed"] += len(drop)
         bm = bmesh.new()
         bm.from_mesh(me)
         bm.faces.ensure_lookup_table()
-        dropset = set(drop)
-        bmesh.ops.delete(bm, geom=[f for f in bm.faces if f.index in dropset], context="FACES")
+        bmesh.ops.delete(bm, geom=[f for f in bm.faces if f.index in drop], context="FACES")
         bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
         bm.to_mesh(me)
         bm.free()
