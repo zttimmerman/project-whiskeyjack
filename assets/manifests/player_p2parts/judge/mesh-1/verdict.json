@@ -1,0 +1,56 @@
+{
+  "verdict": "escalate",
+  "summary": "The mesh follows the concept closely and is within budget, but holes (17 > 10) and trouser navy kept (0.052 < 0.063) fail, the back has no crossing straps, and the face is faint; the holes may be an artefact of the shell construction.",
+  "findings": [
+    {
+      "check": "other",
+      "severity": "major",
+      "observation": "17 open loops (7 on the main part, 1-3 per garment part), consistent with open-hemmed shells; none visible.",
+      "evidence": "assertion 'holes'; metrics.mesh.parts"
+    },
+    {
+      "check": "color",
+      "severity": "minor",
+      "observation": "Trouser navy keeps 5.2% vs 6.3% but still reads navy.",
+      "evidence": "assertion 'concept color #0B1C2C kept'"
+    },
+    {
+      "check": "missing",
+      "severity": "major",
+      "observation": "No crossing back straps (brief identity mark); the concept is front-only.",
+      "evidence": "04_back.png, 09_closeup_back.png"
+    },
+    {
+      "check": "missing",
+      "severity": "major",
+      "observation": "Faint face: eye smudges, wedge nose, barely visible mouth.",
+      "evidence": "08_closeup_front.png"
+    },
+    {
+      "check": "malformed",
+      "severity": "minor",
+      "observation": "Hair-thin wireframe lines at waist, hands and crown; probably degenerate triangles. (Orchestrator: the 0b agent measured the longest edge at 0.20 m vs P1's 0.187, so no real spikes.)",
+      "evidence": "07_wireframe_front.png"
+    }
+  ],
+  "escalation_reason": "Holes may be expected for shell construction; back straps are a brief-vs-concept question; the faint face needs the user's check. No single concept edit settles all three.",
+  "questions_answered": [
+    "Mostly matches; no back straps; faint face.",
+    "No visible holes; 17 loops; 9 parts.",
+    "Yes: 4421/5500 tris, one 256 texture, 1.8 m.",
+    "Trouser navy short but visible.",
+    "Validate passes; humanoid-mappable.",
+    "Eyes faint, nose present, mouth faint."
+  ],
+  "images_seen": [
+    "01_approved_concept.png",
+    "02_front.png",
+    "03_right.png",
+    "04_back.png",
+    "05_top.png",
+    "06_clay_front.png",
+    "07_wireframe_front.png",
+    "08_closeup_front.png",
+    "09_closeup_back.png"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "verdict": "escalate",
+  "summary": "The run stays in place with clean handovers, but skin stretch fails (2.35 vs 1.0) from the garment weighting splitting the tunic and stretching the harness, and foot slide is 0.553 vs 0.5 (shared run clip).",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "major",
+      "observation": "At t=0.73 s the tunic front splits around the forward thigh and the inner leg shows; belt and harness stretch vertically (Spine) while the hem follows the thighs. Foot slide 0.553 over short 3-frame contacts comes from the shared run clip, not visible.",
+      "evidence": "assertion 'skin stretch (edge length vs bind pose)'; 04_stretch_detail.png; 03_plots.png"
+    }
+  ],
+  "escalation_reason": "The failing stretch comes from the spike's garment-shell weighting (the tunic skirt follows the thighs; skirt_reweight is off for player_p2parts), not the clip; no library_change or concept refine fixes it. The user decides whether to grade the tunic shell like skirt_reweight (Hips/Spine to thighs, no shin) and re-run, or accept/stop the approach.",
+  "questions_answered": [
+    "In place: Hips 0.033 m.",
+    "Foot slide p90 0.553 (just over).",
+    "Tunic front parts around the striding leg.",
+    "4 pass; stretch 2.35 and foot slide 0.553 fail."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png",
+    "04_stretch_detail.png"
+  ]
+}

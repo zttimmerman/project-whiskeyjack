@@ -1,0 +1,25 @@
+{
+  "verdict": "escalate",
+  "summary": "attack_light stays in place with clean handovers, but skin stretch fails at 1.957 on the tunic shell over the hips and thighs at the deep crouch.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "major",
+      "observation": "At t=0.17 s Hips-bound tunic edges stretch 2.2-3.0x from harness to waist and down the skirt; the skirt smears over the bent knee rather than tearing.",
+      "evidence": "assertion 'skin stretch'; 04_stretch_detail.png; 03_plots.png"
+    }
+  ],
+  "escalation_reason": "The failing stretch comes from the Phase 0b garment-shell weights (Tripo's Spine weighting on the belt/tunic and the Hips/thigh grading), not the clip; library_change, reroll and refine_concept don't apply. The user decides whether to rework the transfer, accept it for the spike, or keep P1.",
+  "questions_answered": [
+    "In place.",
+    "Right foot sweeps into the lunge (exempt).",
+    "Skirt smears over the knee.",
+    "3 of 4 pass (snap 4.8/5); stretch 1.957."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png",
+    "04_stretch_detail.png"
+  ]
+}

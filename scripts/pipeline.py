@@ -101,6 +101,22 @@ def _parse_scalar(text):
     return text
 
 
+def _parse_mapping(text, path, line_no):
+    """One `- {key: value, ...}` list item (the brief's `parts`). Values split from keys at the first
+    colon-space, so a value may hold a colon (`bind: rigid:Head`); values may not hold commas."""
+    if not text.endswith("}"):
+        raise PipelineError(f"{path}:{line_no}: inline mapping must close on the same line")
+    out = {}
+    for field in filter(None, (f.strip() for f in text[1:-1].split(","))):
+        key, sep, value = field.partition(": ")
+        if not sep or not re.fullmatch(r"[a-z_][a-z0-9_]*", key):
+            raise PipelineError(f"{path}:{line_no}: expected 'key: value' in {text}")
+        if key in out:
+            raise PipelineError(f"{path}:{line_no}: duplicate key '{key}' in {text}")
+        out[key] = _parse_scalar(value)
+    return out
+
+
 def parse_brief_yaml(text, path):
     data, lines, i = {}, text.splitlines(), 0
     while i < len(lines):
@@ -127,8 +143,9 @@ def parse_brief_yaml(text, path):
         elif rest == "":
             items = []
             while i < len(lines) and re.match(r"^\s+- ", lines[i]):
-                items.append(_parse_scalar(lines[i].strip()[2:]))
+                item = lines[i].strip()[2:].strip()
                 i += 1
+                items.append(_parse_mapping(item, path, i) if item.startswith("{") else _parse_scalar(item))
             data[key] = items
         elif rest.startswith("["):
             if not rest.endswith("]"):
@@ -229,6 +246,73 @@ def orientation(brief):
     return brief.get("orientation") or ("source" if is_sourced(brief) else "principal_axis")
 
 
+PART_KEYS = ("select", "bind", "offset_mm", "skirt", "cover")
+PART_MAX_OFFSET_MM = 10
+# How the proxy takes the rig's weights: Blender's Data Transfer, or matched-then-inpainted (blender_cleanup.py)
+PART_TRANSFERS = ("data_transfer", "inpaint")
+
+
+def part_ranks(select):
+    """Size ranks (1 = the shell with most triangles) from a part's `select`: `rank 1`, `rank 3-4`, `rank 2,5`."""
+    m = re.fullmatch(r"rank ([0-9,\- ]+)", str(select).strip())
+    if not m:
+        raise PipelineError(f"part select {select!r} must be 'rank <n>', 'rank <a>-<b>' or 'rank <a>,<b>'")
+    ranks = []
+    for piece in m.group(1).replace(" ", "").split(","):
+        lo, _, hi = piece.partition("-")
+        if not lo.isdigit() or (hi and not hi.isdigit()):
+            raise PipelineError(f"part select {select!r}: bad rank {piece!r}")
+        a, b = int(lo), int(hi or lo)
+        if a < 1 or b < a:
+            raise PipelineError(f"part select {select!r}: ranks start at 1 and run low to high")
+        ranks.extend(range(a, b + 1))
+    return ranks
+
+
+def parts_errors(b):
+    """Errors in a brief's `parts`: characters built from separate shells (a body plus garment shells).
+    The clean stage keeps the rig's weights on keep shells, copies weights onto transfer shells from the
+    keep shells (or, with none, from one continuous voxel proxy of the transfer shells), and binds
+    rigid:<bone> shells at weight 1.0. CLAUDE.md -> Rigging & Animation, fourth exception."""
+    parts = b.get("parts")
+    if parts is None:
+        return []
+    if b.get("type") != "character":
+        return ["'parts' applies to characters only"]
+    if b.get("rigid_parts"):
+        return ["'parts' and 'rigid_parts' are two ways to bind shells; use one"]
+    if not (isinstance(parts, list) and parts and all(isinstance(p, dict) for p in parts)):
+        return ["'parts' must be a list of {select, bind, offset_mm} mappings"]
+    errors, seen = [], {}
+    for k, p in enumerate(parts, 1):
+        extra = sorted(set(p) - set(PART_KEYS))
+        if extra:
+            errors.append(f"part {k}: unknown keys {extra} (allowed: {list(PART_KEYS)})")
+        try:
+            for r in part_ranks(p.get("select")):
+                if r in seen:
+                    errors.append(f"part {k}: rank {r} is already selected by part {seen[r]}")
+                seen[r] = k
+        except PipelineError as e:
+            errors.append(f"part {k}: {e}")
+        bind = p.get("bind")
+        if not (bind in ("keep", "transfer") or (isinstance(bind, str) and re.fullmatch(r"rigid:[A-Za-z0-9_:]+", bind))):
+            errors.append(f"part {k}: bind must be keep, transfer or rigid:<bone> (got {bind!r})")
+        for flag in ("skirt", "cover"):
+            if flag in p and not isinstance(p[flag], bool):
+                errors.append(f"part {k}: {flag} must be true or false")
+        if p.get("skirt") and not b.get("skirt_reweight"):
+            errors.append(f"part {k}: skirt marks the shells skirt_reweight grades; the brief doesn't set skirt_reweight")
+        off = p.get("offset_mm", 0)
+        if not (isinstance(off, (int, float)) and not isinstance(off, bool) and 0 <= off <= PART_MAX_OFFSET_MM):
+            errors.append(f"part {k}: offset_mm must be 0-{PART_MAX_OFFSET_MM} (got {off!r})")
+    if b.get("parts_transfer", "data_transfer") not in PART_TRANSFERS:
+        errors.append(f"'parts_transfer' must be one of {list(PART_TRANSFERS)} (got {b['parts_transfer']!r})")
+    if not any(p.get("bind") == "transfer" for p in parts):
+        errors.append("parts: at least one part must bind by transfer (keep and rigid shells need nothing done)")
+    return errors
+
+
 def load_brief(asset_id):
     path = BRIEFS / f"{asset_id}.yaml"
     if not path.exists():
@@ -302,6 +386,7 @@ def load_brief(asset_id):
             errors.append(f"'{flag}' must be true or false")
         if b.get(flag) and b.get("type") != "character":
             errors.append(f"'{flag}' applies to characters only")
+    errors.extend(parts_errors(b))
     for opt in ("animations", "exclude_objects", "texture_overlays"):
         if opt in b and not (isinstance(b[opt], list) and all(isinstance(x, str) for x in b[opt])):
             errors.append(f"'{opt}' must be a list of names")
@@ -859,7 +944,7 @@ def stage_model(brief, m, args):
 def stage_params(brief):
     keys = ("asset_id", "type", "face_limit", "triangle_budget", "texture_size", "target_size_m", "pivot",
             "palette", "socket_map", "bone_map", "animations", "exclude_objects", "tip_end", "rigid_parts", "skirt_reweight",
-            "source", "source_scale")
+            "parts", "parts_transfer", "source", "source_scale")
     return {**{k: brief.get(k) for k in keys}, "orientation": orientation(brief)}
 
 
