@@ -6,8 +6,8 @@ kind: spike
 targets: []
 after: []
 phase: C
-branch: spike/agent-animation
-pr: 46
+branch: spike/agent-animation-baseline
+pr: null
 updated: 2026-10-02
 ---
 ## Goal
@@ -41,7 +41,7 @@ Non-humanoid enemies (the Sett-boar first); possibly humanoid gaps the packs don
 
 ## Progress
 
-**Steps 1 and 2 done (free), on `spike/agent-animation`. Step 3 is next and needs the user (paid).**
+**Steps 1–3 done** (1–2 in PR #46; 3 on `spike/agent-animation-baseline`). **Step 4 waits on the user:** two reference videos (Kling or Seedance, about $1–3), on the user's video account.
 
 1. **Limb map.** `scripts/review/LimbMap.gd` (feet with contact candidates, hands or striking parts, root bone, bone-space `tips` for leaf bones, a body-plan label). Its defaults are the humanoid map (also `data/rigs/humanoid_limbs.tres`). `foot_slide.gd` measures any number of feet, `game_path.gd` watches the map's limbs, and the motion review takes `--limbs` and `--own-clips`. judge.py needed no change (it reads metric keys, which stay the same). **Humanoid results are byte-identical:** the motion review for the player, Front-file and Back-file on main and on the branch wrote the same 19 metrics and game_path JSON files (SHA-256 compared). `tests/run.sh` passed (171 cases), and so did all six replays and the CI Python checks.
 2. **CC0 quadruped:** the Gobkit boar (`assets/meshes/gobkit_Boar.glb`, Gobkit Free Animal Pack Vol. 2, CC0-1.0; licence file and zip hashed in `assets/sources.json`). It's chibi and low-poly: 380 triangles, 16 bones, four single-bone stub legs, and its own idle, attack, dead and walk clips. It went through `import_pack.py`, which needed a cleanup fix: Blender's bind-pose guess pitched the rig 90° nose-down, so sourced glTFs now import at their own node rest. Its map is `data/rigs/gobkit_limbs.tres`: four feet at their soles (tips tested against the mesh), the snout, and Hips. Results from the motion review on its own clips at ground speed 0:
@@ -53,5 +53,21 @@ Non-humanoid enemies (the Sett-boar first); possibly humanoid gaps the packs don
 
    The gates read all four feet and the snout. **The shipped walk fails foot slide**, which makes it a fair baseline to beat.
 
-**Step 3 needs:** the user's OK for the Tripo spend (about 10 credits, through the tripo skill). It also needs a decision on the subject. Tripo's `quadruped:walk` preset animates a Tripo-rigged model, so either the boar mesh gets rigged by Tripo (rig model `v2.5-20260210`, `--rig-type quadruped`; the dry run gives the price), producing a new skeleton that needs a second limb map, or a Tripo creature is generated instead. Separately, a game-sized subject needs a `source_scale` (about 0.3 for a 1 m boar). Open: `sourced-rigged-creatures`.
+3. **Baseline (Tripo, 35 credits, each run confirmed by the user).** Tripo's rig check said the boar mesh is `riggable: false` (quadruped); at the user's request the v2.5 creature rig ran anyway on a mesh-only copy (25 credits) and returned 17 bones: `tripo::Root`, front legs `bone_4/6` → `0_*_Limb_0`, back legs `1_*_Limb_0/1`, a head chain `Head_0/1` that also parents the tail (`Spine_0`), and Tripo rescaled the boar to 1 m long (0.77 m tall). Walk + slash in one retarget failed at 99% (refunded); `preset:quadruped:walk` alone took 10. It's `assets/meshes/gobkit_boar_tripo.glb`, a **derived** sourced prop (`derived_from: gobkit_Boar`; the pipeline now takes a derived asset's file from `.tripo-out/` and needs a `derived` record in `assets/sources.json` with every task id and cost; the prop workaround stays until `sourced-creature-brief`). Its map is `data/rigs/gobkit_tripo_limbs.tres` (soles tested on the skinned rest pose). Motion review at ground speed 0, both looped:
+
+   | | Tripo walk (1.0 m long, 2.58 s) | Gobkit walk (4.6 m long, 1.21 s) |
+   |---|---|---|
+   | root travel max | 0.011 m | 0.000 m |
+   | slide p90, all feet | 0.449 m/s (passes the 0.5 limit) | 1.877 m/s (fails) |
+   | front left / right p90 | 0.074 / 0.074 (**frozen**: 0 lift, 0 stride) | 1.882 / 2.225 |
+   | back left / right p90 | 0.661 / 0.706 (lift 0.02–0.03 m) | 0.587 / 0.892 |
+   | per body length (p90 ÷ length) | 0.45 /s | 0.41 /s |
+   | edge stretch max (p99) | 0.685 (0.337), on the face around the eyes | 0.000 (rigid parts) |
+   | bind deviation max | 0.089 m | 0.424 m |
+
+   The strip shows the back legs shuffling and kicking, the front legs locked, a head bob that also waves the tail, and the face skin pulling round the eyes. **The Tripo walk passes every numeric gate but isn't a walk:** Tripo's preset drove only the back legs, the head chain and the root bob (6 tracks), so the frozen front feet read as planted with no slide. The gates use absolute metres, so a 1 m boar passes what a 4.6 m one fails; per body length the two slide about the same. Proposed: `motion-gates-gait-and-scale`. Judge packet: `assets/manifests/gobkit_boar_tripo/judge/motion-preset_quadruped_walk-1/packet.json` (the orchestrator runs the judge).
+
+**Step 4 needs:** the user's video account (Kling or Seedance) and their OK for about $1–3.
+
+**Earlier, step 3 needed:** the user's OK for the Tripo spend (about 10 credits, through the tripo skill). It also needs a decision on the subject. Tripo's `quadruped:walk` preset animates a Tripo-rigged model, so either the boar mesh gets rigged by Tripo (rig model `v2.5-20260210`, `--rig-type quadruped`; the dry run gives the price), producing a new skeleton that needs a second limb map, or a Tripo creature is generated instead. Separately, a game-sized subject needs a `source_scale` (about 0.3 for a 1 m boar). Open: `sourced-rigged-creatures`.
 
