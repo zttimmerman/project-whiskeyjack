@@ -6,9 +6,9 @@ kind: spike
 targets: []
 after: [spike-look-dev]
 phase: C
-branch: null
+branch: spike/look-dev-c
 pr: null
-updated: 2026-10-02
+updated: 2026-10-03
 ---
 ## Goal
 
@@ -40,3 +40,7 @@ Decide `decide-art-direction` first. If B at 1024 px with B2 lighting satisfies 
 ## Serves
 
 The art direction (`decide-art-direction`), `player-model-rework`.
+
+## Outcome
+
+Run 2026-10-02 for 55 credits (model 30, rig 25; balance 420 → 365). C as delivered is **1,434,038 triangles** (261× the 5,500 budget) with three 2048 px PBR maps (base colour, metallic-roughness, normal). Built as C-PBR (Forward+), C-albedo (1024 px, Compatibility, B2 lighting) and C-budget (decimated to 20k) under gitignored `assets/lookdev/` by `scripts/lookdev/build_c.sh`; it retargets through the shipped BoneMap unchanged. **C barely shows over B2:** nothing from the gameplay camera, a rounder face and finer hair spikes in the close-up, and PBR adds highlights, not form. It costs 80–120 MB of VRAM per character, a 57 MB GLB, and up to about 1 ms a frame on this Mac (within noise). Decimating it breaks the UVs and the skin (run stretch 33 against B1's 4.6). Recommendation: stay at B2, and try a face-limited v3.1 (`look-dev-c-face-limit`, paid) if the face shape matters. Write-up and sheets: `docs/trials/look-dev.md` → Variant C.
