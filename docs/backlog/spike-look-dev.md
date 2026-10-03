@@ -1,7 +1,7 @@
 ---
 id: spike-look-dev
 title: "Spike: look development — settle the art direction (A today, B limits lifted, C PS3+)"
-status: in-review
+status: done
 kind: spike
 targets: []
 after: []

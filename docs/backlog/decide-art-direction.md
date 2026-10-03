@@ -1,7 +1,7 @@
 ---
 id: decide-art-direction
 title: "Decide: which art-bible look rules change after the look-dev spike"
-status: needs-user
+status: done
 kind: decision
 targets: []
 after: [spike-look-dev]
@@ -28,3 +28,7 @@ Which of the spike's proposed rule changes does the art bible adopt? Evidence: a
 ## Recommendation
 
 1024 px characters, smooth character shading, the B2 lighting standard, and stay on Compatibility. Smooth shading needs the B2 lighting (under today's lighting the flat facets catch the fill light and A reads brighter), so adopt 2 and 3 together. The proposed art-bible text is in `docs/trials/look-dev.md` → Proposed art-bible changes.
+
+## Outcome
+
+Decided by the user (2026-10-02), adopting all four proposals: (1) character textures 1024 px (512 the floor), still albedo only; (2) smooth shading on continuous-skin characters (props, kit pieces and rigid-part characters keep the 30° flat rule); (3) the B2 lighting standard (warmer ambient, filmic tonemap, depth fog, torch range ~7 m with steeper falloff, dim cool key), staying on Compatibility; (4) move away from KayKit (toy-like) toward brush-built shells and a kit closer to the chosen look. Implementation: `art-rules-b2`; kit replacement: `kit-replacement`. Variant C was approved and is running (`look-dev-c`).

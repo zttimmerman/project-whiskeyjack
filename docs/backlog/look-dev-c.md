@@ -1,7 +1,7 @@
 ---
 id: look-dev-c
 title: "Look-dev C: a PS3-class PBR player from Tripo v3.1 (paid, about 85 credits)"
-status: needs-user
+status: in-progress
 kind: spike
 targets: []
 after: [spike-look-dev]
