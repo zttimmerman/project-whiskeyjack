@@ -5,7 +5,7 @@ extends Node
 # shipped game; every variant is applied at runtime to an instanced copy of the level.
 # Windowed (headless can't render), as a scene so the project's autoloads load:
 #   godot --always-on-top --fixed-fps 30 --path . res://scenes/lookdev/LookDev.tscn -- \
-#       --variant A|B1|B2|B3|B3plus --room level1|crypt --mode stills|timing --out <dir> [--size WxH]
+#       --variant A|B1|B2|B3|B3plus --room level1|crypt --mode stills|timing|mem --out <dir> [--size WxH]
 #       [--model res://assets/lookdev/player_b1_1024.glb]  (another B1 build, e.g. SIZE=1024 build_b1.sh)
 # B3 and B3plus need `--rendering-method forward_plus` on the command line (the project stays on
 # Compatibility); scripts/lookdev/run_lookdev.sh passes it.
@@ -16,11 +16,22 @@ extends Node
 #           with a steeper falloff, a dimmer cool key
 #   B3      B2 under Forward+
 #   B3plus  B3 + what only Forward+ draws: SSAO, volumetric fog, torch shadows
+#   C-albedo the Tripo v3.1 player (docs/backlog/look-dev-c.md, scripts/lookdev/build_c.sh), 1.43M triangles,
+#           albedo only at 1024 px, smooth, with B2 lighting (assets/lookdev/player_c.glb): what our rules
+#           would ship from it, budget aside
+#   C-PBR   the same mesh with its PBR maps as delivered (base colour, metallic-roughness, normal, 2048 px)
+#           and Godot's default specular, B2 lighting, under Forward+ (assets/lookdev/player_c_pbr.glb)
+#   C-budget C-albedo collapse-decimated to about 20k triangles (assets/lookdev/player_c_budget.glb)
 # stills writes <out>/<room>_<shot>_<variant>.png and, for level1, a turntable's frames to
 # <out>/turntable_<variant>/; timing writes <out>/timing_<room>_<variant>.json.
 
 const SETTLE_FRAMES := 30
 const B1_MODEL := "res://assets/lookdev/player_b1.glb"
+const C_MODELS := {
+	"C-albedo": "res://assets/lookdev/player_c.glb",
+	"C-PBR": "res://assets/lookdev/player_c_pbr.glb",
+	"C-budget": "res://assets/lookdev/player_c_budget.glb",
+}
 const TIMING_WARMUP := 120
 const TIMING_FRAMES := 600
 const TURNTABLE_FRAMES := 90
@@ -58,7 +69,7 @@ func _ready() -> void:
 	var ui := _level.get_node_or_null("CanvasLayer")
 	if ui:
 		ui.visible = false
-	if variant in ["B2", "B3", "B3plus"]:
+	if variant in ["B2", "B3", "B3plus"] or C_MODELS.has(variant):
 		_apply_lighting(variant == "B3plus")
 	print("LOOKDEV variant=%s room=%s renderer=%s" % [variant, room, RenderingServer.get_current_rendering_method()])
 	for i in SETTLE_FRAMES:
@@ -67,6 +78,8 @@ func _ready() -> void:
 	add_child(_cam)
 	if _args.get("mode", "stills") == "timing":
 		await _timing(room, variant)
+	elif _args["mode"] == "mem":
+		await _memory(room, variant)
 	else:
 		await _stills(room, variant)
 	get_tree().quit()
@@ -76,8 +89,11 @@ func _ready() -> void:
 ## (it holds the shared animation library), so Player.gd drives it exactly as it drives the shipped model.
 func _swap_player_model() -> void:
 	var old: Node3D = _player.get_node("PlayerModel")
-	var path: String = _args.get("model", B1_MODEL)
+	var variant: String = _args.get("variant", "A")
+	var path: String = _args.get("model", C_MODELS.get(variant, B1_MODEL))
 	var model: Node3D = (load(path) as PackedScene).instantiate()
+	if variant == "C-PBR":
+		_restore_specular(model)
 	model.transform = old.transform
 	var anim := old.get_node("AnimationPlayer")
 	old.remove_child(anim)
@@ -88,6 +104,19 @@ func _swap_player_model() -> void:
 	_player.add_child(model)
 	_player.move_child(model, index)
 	model.add_child(anim)
+
+
+## C-PBR is shown as delivered: the stylized_materials import extension zeroes specular on every imported
+## material, so put Godot's default (0.5) back on this one.
+func _restore_specular(model: Node3D) -> void:
+	for node in model.find_children("*", "MeshInstance3D", true, false):
+		var mi := node as MeshInstance3D
+		for i in mi.mesh.get_surface_count():
+			var mat := mi.mesh.surface_get_material(i) as BaseMaterial3D
+			if mat:
+				mat = mat.duplicate()
+				mat.metallic_specular = 0.5
+				mi.set_surface_override_material(i, mat)
 
 
 func _apply_lighting(forward_extras: bool) -> void:
@@ -223,6 +252,31 @@ func _timing(room: String, variant: String) -> void:
 		result[view] = {"frame_ms": _stats(wall), "render_cpu_ms": _stats(cpu), "render_gpu_ms": _stats(gpu)}
 	var tag: String = ("_" + _args["size"]) if _args.has("size") else ""
 	var path: String = _args["out"].path_join("timing_%s_%s%s.json" % [room, variant, tag])
+	var f := FileAccess.open(path, FileAccess.WRITE)
+	f.store_string(JSON.stringify(result, "  "))
+	f.close()
+	print("SAVED ", path)
+
+
+## The renderer's own memory counters and the gameplay camera's draw counts, after the scene settles:
+## what each player variant adds to VRAM (texture and buffer memory) and to the triangles drawn.
+func _memory(room: String, variant: String) -> void:
+	for i in 10:
+		await RenderingServer.frame_post_draw
+	var mb := func(v: int) -> float: return snappedf(v / 1048576.0, 0.01)
+	var result := {
+		"variant": variant,
+		"room": room,
+		"renderer": RenderingServer.get_current_rendering_method(),
+		"video_mem_mb": mb.call(RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_VIDEO_MEM_USED)),
+		"texture_mem_mb": mb.call(RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TEXTURE_MEM_USED)),
+		"buffer_mem_mb": mb.call(RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_BUFFER_MEM_USED)),
+		"primitives_in_frame":
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME),
+		"draw_calls_in_frame":
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),
+	}
+	var path: String = _args["out"].path_join("mem_%s_%s.json" % [room, variant])
 	var f := FileAccess.open(path, FileAccess.WRITE)
 	f.store_string(JSON.stringify(result, "  "))
 	f.close()
