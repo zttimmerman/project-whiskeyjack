@@ -1,0 +1,1052 @@
+{
+  "asset_id": "gobkit_boar_tripo",
+  "stages": {
+    "concept": {
+      "status": "ok",
+      "timestamp": "2026-10-03T00:50:45+00:00",
+      "inputs": [],
+      "outputs": [],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "not needed: sourced asset (source: download); no concept, colour correction uses the palette",
+      "actual_cost_credits": 0
+    },
+    "multiview": {
+      "status": "ok",
+      "timestamp": "2026-10-03T00:50:46+00:00",
+      "inputs": [],
+      "outputs": [],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "not needed: sourced asset (source: download); no concept, colour correction uses the palette",
+      "actual_cost_credits": 0
+    },
+    "model": {
+      "status": "ok",
+      "timestamp": "2026-10-03T00:50:46+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/gobkit_boar_tripo.yaml",
+          "sha256": "2b068ce3f3dc69675434f4e38ce1f81411fffd2703b7c925948b661b73939b15"
+        },
+        {
+          "path": "assets/sources.json",
+          "sha256": "01d1441a9da6ffe5f599f4f698a9818ce6b4cf2b47f6a009c8f53fa2da97c757"
+        },
+        {
+          "path": ".tripo-out/gobkit_Boar/retarget-2/tripo-out/retarget-2-efe9c3f0/model.glb",
+          "sha256": "e87225929244537dd546f87a26c66de315770051ec748017860026b0c592ea4b"
+        }
+      ],
+      "outputs": [
+        {
+          "path": ".tripo-out/gobkit_Boar/retarget-2/tripo-out/retarget-2-efe9c3f0/model.glb",
+          "sha256": "e87225929244537dd546f87a26c66de315770051ec748017860026b0c592ea4b"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "sourced .tripo-out/gobkit_Boar/retarget-2/tripo-out/retarget-2-efe9c3f0/model.glb (CC0-1.0, Gobkit / Alsomind Tech Co., Ltd., gobkit_animal_b Vol. 2 (zip sha256 a5d73ab6))",
+      "actual_cost_credits": 0,
+      "prompt": null,
+      "params": null,
+      "source": {
+        "pack": "gobkit_animal_b",
+        "source_url": "https://gobkit.com/freebies/animalB/gobkit-animalB-pack.zip",
+        "author": "Gobkit / Alsomind Tech Co., Ltd.",
+        "license": "CC0-1.0",
+        "pack_version": "Vol. 2 (zip sha256 a5d73ab6)",
+        "source_file": ".tripo-out/gobkit_Boar/retarget-2/tripo-out/retarget-2-efe9c3f0/model.glb",
+        "source_sha256": "e87225929244537dd546f87a26c66de315770051ec748017860026b0c592ea4b",
+        "derived": {
+          "from": "gobkit_Boar",
+          "input": {
+            "file": ".tripo-out/gobkit_Boar/boar_meshonly.glb",
+            "sha256": "0b539396afa357ba1ecb34f5a506d23ddbe56ad59211a853c6acc0cfe59e8759",
+            "note": "assets/meshes/gobkit_Boar.glb with its skin and clips stripped (same 380 triangles and bounds)"
+          },
+          "steps": [
+            {
+              "tool": "tripo",
+              "type": "animate_prerigcheck",
+              "task_id": "20ba0fa8-0532-4ce5-a0ef-46305da7c740",
+              "credits": 0,
+              "note": "riggable: false (quadruped); run 2 (0a3a9cb1-61f9-41f3-991c-f53d7bb713bb) agreed"
+            },
+            {
+              "tool": "tripo",
+              "type": "animate_rig",
+              "task_id": "60a6ac1f-d000-485d-9a2e-0139b5d8de5b",
+              "credits": 25,
+              "params": {
+                "rig_type": "quadruped",
+                "model": "v2.5-20260210"
+              },
+              "output_sha256": "0a41b2af00f1eb6204965f50b5ac2f076a7ae230e3b5d9abb476891f73cce6ef",
+              "note": "run against the rig check at the user's request (2026-10-02); 17 bones"
+            },
+            {
+              "tool": "tripo",
+              "type": "animate_retarget",
+              "task_id": "4f0479c5-95c6-480e-b569-ffa1f566233e",
+              "credits": 0,
+              "params": {
+                "animations": [
+                  "preset:quadruped:walk",
+                  "preset:slash"
+                ],
+                "animate_in_place": true
+              },
+              "note": "failed at 99%, credits refunded"
+            },
+            {
+              "tool": "tripo",
+              "type": "animate_retarget",
+              "task_id": "efe9c3f0-0700-4f95-8ecd-b41542573751",
+              "credits": 10,
+              "params": {
+                "animations": [
+                  "preset:quadruped:walk"
+                ],
+                "animate_in_place": true
+              },
+              "output_sha256": "e87225929244537dd546f87a26c66de315770051ec748017860026b0c592ea4b"
+            }
+          ],
+          "tripo_cli_version": "0.5.1",
+          "total_credits": 35
+        }
+      }
+    },
+    "clean": {
+      "status": "ok",
+      "timestamp": "2026-10-03T00:50:47+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/gobkit_boar_tripo.yaml",
+          "sha256": "2b068ce3f3dc69675434f4e38ce1f81411fffd2703b7c925948b661b73939b15"
+        },
+        {
+          "path": ".tripo-out/gobkit_Boar/retarget-2/tripo-out/retarget-2-efe9c3f0/model.glb",
+          "sha256": "e87225929244537dd546f87a26c66de315770051ec748017860026b0c592ea4b"
+        },
+        {
+          "path": "scripts/blender_cleanup.py",
+          "sha256": "f086b86646ddb53b94860fa87aaf2216a5e29773985cf93675056f711ea06d78"
+        },
+        {
+          "path": ".tripo-out/gobkit_Boar/retarget-2/tripo-out/retarget-2-efe9c3f0/task.json",
+          "sha256": "a5b1bd24409acb01007d57b4dcd8a14d818430352313ba3249d6f9b98729ef6c"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "assets/meshes/gobkit_boar_tripo.glb",
+          "sha256": "bc636839248d3508121006eec5063877521c70d506e15edd7515a794f93f0019"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "exported assets/meshes/gobkit_boar_tripo.glb",
+      "actual_cost_credits": 0,
+      "params": {
+        "asset_id": "gobkit_boar_tripo",
+        "type": "prop",
+        "face_limit": null,
+        "triangle_budget": 1320,
+        "texture_size": 128,
+        "target_size_m": null,
+        "pivot": "source",
+        "palette": [
+          "Saddle Leather",
+          "Barrow Oak",
+          "Peat Black",
+          "Old Bone"
+        ],
+        "socket_map": null,
+        "bone_map": null,
+        "animations": null,
+        "exclude_objects": null,
+        "tip_end": null,
+        "rigid_parts": null,
+        "skirt_reweight": null,
+        "source": "download",
+        "source_scale": 1.0,
+        "orientation": "source",
+        "source_forward": {
+          "axis": "+x",
+          "source": "Tripo API default (.tripo-out/gobkit_Boar/retarget-2/tripo-out/retarget-2-efe9c3f0/task.json sets no export_orientation)"
+        },
+        "palette_targets": {
+          "Saddle Leather": "#4A2A10",
+          "Barrow Oak": "#8C5933",
+          "Peat Black": "#2E2926",
+          "Old Bone": "#CCB484"
+        },
+        "reference_image": null,
+        "texture_overlays": []
+      },
+      "report": {
+        "status": "pass",
+        "errors": [],
+        "warnings": [],
+        "blender_version": "5.0.1",
+        "input": "/Users/zach/Documents/repos/project-whiskeyjack-animbase/.tripo-out/gobkit_Boar/retarget-2/tripo-out/retarget-2-efe9c3f0/model.glb",
+        "output": "/Users/zach/Documents/repos/project-whiskeyjack-animbase/assets/meshes/gobkit_boar_tripo.glb",
+        "materials": [
+          {
+            "name": "lambert1",
+            "stripped": "normal, roughness, metallic, specular, emission and occlusion inputs are not carried over",
+            "converted_from": "principled",
+            "texture": "lambert1_albedo",
+            "alpha": false
+          }
+        ],
+        "textures": [
+          {
+            "name": "lambert1_albedo",
+            "size_before": [
+              128,
+              128
+            ],
+            "size_after": [
+              128,
+              128
+            ]
+          }
+        ],
+        "removed_objects": [
+          "Icosphere (bone display shape created by the importer)"
+        ],
+        "gltf_bind_pose": "node rest (not guessed from the inverse bind matrices)",
+        "input_format": "glb",
+        "rigged": true,
+        "armatures": [
+          {
+            "name": "Armature",
+            "bones": [
+              "tripo::Root",
+              "bone_1",
+              "bone_2",
+              "bone_3",
+              "bone_4",
+              "tripo::0_Right_Limb_0",
+              "bone_6",
+              "tripo::0_Left_Limb_0",
+              "tripo::1_Right_Limb_0",
+              "tripo::1_Right_Limb_1",
+              "tripo::1_Left_Limb_0",
+              "tripo::1_Left_Limb_1",
+              "tripo::Head_0",
+              "bone_13",
+              "tripo::Spine_0",
+              "tripo::Head_1",
+              "bone_16"
+            ]
+          }
+        ],
+        "transform": {
+          "pivot": "source",
+          "size_before_m": [
+            0.6899,
+            1.0,
+            0.7708
+          ],
+          "orientation": "source (kept the kit's axes)",
+          "scale_factor": 1.0,
+          "size_after_m": [
+            0.6899,
+            1.0,
+            0.7708
+          ],
+          "true_dims_m": {
+            "x": 0.6899,
+            "y": 1.0,
+            "z": 0.7708
+          },
+          "true_length_m": 0.7708,
+          "min_after": [
+            -0.3449,
+            -0.5,
+            -0.0
+          ]
+        },
+        "mesh_health": {
+          "totals": {
+            "as_imported": {
+              "vertices": 333,
+              "edges": 675,
+              "faces": 380,
+              "triangles": 380,
+              "quads": 0,
+              "ngons": 0,
+              "non_manifold_edges": 0,
+              "boundary_edges": 210,
+              "boundary_loops": 34,
+              "wire_edges": 0,
+              "loose_vertices": 0,
+              "degenerate_faces": 0,
+              "zero_length_edges": 0,
+              "quad_ratio": 0.0,
+              "triangle_ratio": 1.0
+            },
+            "welded": {
+              "vertices": 246,
+              "edges": 606,
+              "faces": 380,
+              "triangles": 380,
+              "quads": 0,
+              "ngons": 0,
+              "non_manifold_edges": 0,
+              "boundary_edges": 72,
+              "boundary_loops": 12,
+              "wire_edges": 0,
+              "loose_vertices": 0,
+              "degenerate_faces": 0,
+              "zero_length_edges": 0,
+              "part_count": 17,
+              "parts": [
+                {
+                  "triangles": 84,
+                  "vertices": 44,
+                  "size_m": [
+                    0.6899,
+                    0.7356,
+                    0.653
+                  ],
+                  "boundary_loops": 0
+                },
+                {
+                  "triangles": 56,
+                  "vertices": 33,
+                  "size_m": [
+                    0.4792,
+                    0.2316,
+                    0.2678
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 30,
+                  "vertices": 22,
+                  "size_m": [
+                    0.1777,
+                    0.068,
+                    0.1826
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 30,
+                  "vertices": 22,
+                  "size_m": [
+                    0.1777,
+                    0.068,
+                    0.1826
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 28,
+                  "vertices": 17,
+                  "size_m": [
+                    0.0501,
+                    0.168,
+                    0.0771
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 18,
+                  "vertices": 12,
+                  "size_m": [
+                    0.125,
+                    0.125,
+                    0.3474
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 18,
+                  "vertices": 12,
+                  "size_m": [
+                    0.125,
+                    0.125,
+                    0.3474
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 18,
+                  "vertices": 12,
+                  "size_m": [
+                    0.125,
+                    0.125,
+                    0.3474
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 18,
+                  "vertices": 12,
+                  "size_m": [
+                    0.125,
+                    0.125,
+                    0.3474
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 12,
+                  "vertices": 8,
+                  "size_m": [
+                    0.1163,
+                    0.069,
+                    0.162
+                  ],
+                  "boundary_loops": 0
+                },
+                {
+                  "triangles": 12,
+                  "vertices": 8,
+                  "size_m": [
+                    0.1163,
+                    0.069,
+                    0.162
+                  ],
+                  "boundary_loops": 0
+                },
+                {
+                  "triangles": 12,
+                  "vertices": 9,
+                  "size_m": [
+                    0.095,
+                    0.1458,
+                    0.0613
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 12,
+                  "vertices": 9,
+                  "size_m": [
+                    0.095,
+                    0.1458,
+                    0.0613
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 12,
+                  "vertices": 8,
+                  "size_m": [
+                    0.0386,
+                    0.0649,
+                    0.0874
+                  ],
+                  "boundary_loops": 0
+                },
+                {
+                  "triangles": 12,
+                  "vertices": 8,
+                  "size_m": [
+                    0.0266,
+                    0.0455,
+                    0.0603
+                  ],
+                  "boundary_loops": 0
+                },
+                {
+                  "triangles": 4,
+                  "vertices": 6,
+                  "size_m": [
+                    0.044,
+                    0.0083,
+                    0.0509
+                  ],
+                  "boundary_loops": 1
+                },
+                {
+                  "triangles": 4,
+                  "vertices": 6,
+                  "size_m": [
+                    0.044,
+                    0.0083,
+                    0.0509
+                  ],
+                  "boundary_loops": 1
+                }
+              ],
+              "quad_ratio": 0.0,
+              "triangle_ratio": 1.0
+            }
+          },
+          "per_mesh": [
+            {
+              "mesh": "Boar",
+              "as_imported": {
+                "vertices": 333,
+                "edges": 675,
+                "faces": 380,
+                "triangles": 380,
+                "quads": 0,
+                "ngons": 0,
+                "quad_ratio": 0.0,
+                "triangle_ratio": 1.0,
+                "non_manifold_edges": 0,
+                "boundary_edges": 210,
+                "boundary_loops": 34,
+                "wire_edges": 0,
+                "loose_vertices": 0,
+                "degenerate_faces": 0,
+                "zero_length_edges": 0
+              },
+              "welded": {
+                "vertices": 246,
+                "edges": 606,
+                "faces": 380,
+                "triangles": 380,
+                "quads": 0,
+                "ngons": 0,
+                "quad_ratio": 0.0,
+                "triangle_ratio": 1.0,
+                "non_manifold_edges": 0,
+                "boundary_edges": 72,
+                "boundary_loops": 12,
+                "wire_edges": 0,
+                "loose_vertices": 0,
+                "degenerate_faces": 0,
+                "zero_length_edges": 0,
+                "parts": [
+                  {
+                    "triangles": 84,
+                    "vertices": 44,
+                    "size_m": [
+                      0.6899,
+                      0.7356,
+                      0.653
+                    ],
+                    "boundary_loops": 0
+                  },
+                  {
+                    "triangles": 56,
+                    "vertices": 33,
+                    "size_m": [
+                      0.4792,
+                      0.2316,
+                      0.2678
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 30,
+                    "vertices": 22,
+                    "size_m": [
+                      0.1777,
+                      0.068,
+                      0.1826
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 30,
+                    "vertices": 22,
+                    "size_m": [
+                      0.1777,
+                      0.068,
+                      0.1826
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 28,
+                    "vertices": 17,
+                    "size_m": [
+                      0.0501,
+                      0.168,
+                      0.0771
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 18,
+                    "vertices": 12,
+                    "size_m": [
+                      0.125,
+                      0.125,
+                      0.3474
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 18,
+                    "vertices": 12,
+                    "size_m": [
+                      0.125,
+                      0.125,
+                      0.3474
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 18,
+                    "vertices": 12,
+                    "size_m": [
+                      0.125,
+                      0.125,
+                      0.3474
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 18,
+                    "vertices": 12,
+                    "size_m": [
+                      0.125,
+                      0.125,
+                      0.3474
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 12,
+                    "vertices": 8,
+                    "size_m": [
+                      0.1163,
+                      0.069,
+                      0.162
+                    ],
+                    "boundary_loops": 0
+                  },
+                  {
+                    "triangles": 12,
+                    "vertices": 8,
+                    "size_m": [
+                      0.1163,
+                      0.069,
+                      0.162
+                    ],
+                    "boundary_loops": 0
+                  },
+                  {
+                    "triangles": 12,
+                    "vertices": 9,
+                    "size_m": [
+                      0.095,
+                      0.1458,
+                      0.0613
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 12,
+                    "vertices": 9,
+                    "size_m": [
+                      0.095,
+                      0.1458,
+                      0.0613
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 12,
+                    "vertices": 8,
+                    "size_m": [
+                      0.0386,
+                      0.0649,
+                      0.0874
+                    ],
+                    "boundary_loops": 0
+                  },
+                  {
+                    "triangles": 12,
+                    "vertices": 8,
+                    "size_m": [
+                      0.0266,
+                      0.0455,
+                      0.0603
+                    ],
+                    "boundary_loops": 0
+                  },
+                  {
+                    "triangles": 4,
+                    "vertices": 6,
+                    "size_m": [
+                      0.044,
+                      0.0083,
+                      0.0509
+                    ],
+                    "boundary_loops": 1
+                  },
+                  {
+                    "triangles": 4,
+                    "vertices": 6,
+                    "size_m": [
+                      0.044,
+                      0.0083,
+                      0.0509
+                    ],
+                    "boundary_loops": 1
+                  }
+                ],
+                "part_count": 17
+              }
+            }
+          ],
+          "weld_distance_m": 1e-05,
+          "note": "baseline only; nothing fails on these yet"
+        },
+        "palette_correction": [
+          {
+            "image": "lambert1_albedo",
+            "size": [
+              128,
+              128
+            ],
+            "lightness": "lifted or lowered (sourced asset)",
+            "measured_over": {
+              "texels": 394,
+              "of": 16384,
+              "mask": "the asset's UV footprint"
+            },
+            "groups": [
+              {
+                "color": "Saddle Leather",
+                "target": "#4A2A10",
+                "share": 0.5711,
+                "median_before": "#492A10",
+                "delta_e_before": 0.9,
+                "applied": true,
+                "median_after": "#4A2A10",
+                "delta_e_after": 0.0
+              },
+              {
+                "color": "Barrow Oak",
+                "target": "#8C5933",
+                "share": 0.2208,
+                "median_before": "#8A5833",
+                "delta_e_before": 1.0,
+                "applied": true,
+                "median_after": "#8C5933",
+                "delta_e_after": 0.0
+              },
+              {
+                "color": "Peat Black",
+                "target": "#2E2926",
+                "share": 0.1523,
+                "median_before": "#242222",
+                "delta_e_before": 4.4,
+                "applied": true,
+                "median_after": "#2E2926",
+                "delta_e_after": 0.0
+              },
+              {
+                "color": "Old Bone",
+                "target": "#CCB484",
+                "share": 0.0558,
+                "median_before": "#CCB484",
+                "delta_e_before": 0.3,
+                "applied": true,
+                "median_after": "#CCB484",
+                "delta_e_after": 0.0
+              }
+            ]
+          }
+        ],
+        "shading": {
+          "angle_deg": 30.0,
+          "welded_vertices_removed": 87,
+          "custom_normals_cleared": [
+            "Boar"
+          ],
+          "welded": "same_weights"
+        },
+        "triangle_count": 380,
+        "triangle_budget": 1320,
+        "vertex_metrics": {
+          "split_at_seams": 246,
+          "welded": 246,
+          "note": "metrics only; the budget is in triangles"
+        },
+        "animations": [
+          "preset:quadruped:walk"
+        ],
+        "exported": {
+          "images": 1,
+          "materials": [
+            {
+              "name": "lambert1",
+              "alphaMode": "OPAQUE",
+              "base_color_texture": true
+            }
+          ],
+          "animations": 1,
+          "skins": 1
+        }
+      }
+    },
+    "validate": {
+      "status": "ok",
+      "timestamp": "2026-10-03T00:51:00+00:00",
+      "inputs": [
+        {
+          "path": "assets/briefs/gobkit_boar_tripo.yaml",
+          "sha256": "2b068ce3f3dc69675434f4e38ce1f81411fffd2703b7c925948b661b73939b15"
+        },
+        {
+          "path": "assets/meshes/gobkit_boar_tripo.glb",
+          "sha256": "bc636839248d3508121006eec5063877521c70d506e15edd7515a794f93f0019"
+        },
+        {
+          "path": "scripts/godot_validate.gd",
+          "sha256": "7990d0b422dad7def4ba5cbef89d9632cd29cc3edddc28143757e982988985c9"
+        },
+        {
+          "path": "scripts/blender_views.py",
+          "sha256": "9ca1b243e3bb4d5ab1247b718cd1a0e1648e89e2683dacf2a71d3eede55a6388"
+        },
+        {
+          "path": "assets/sources.json",
+          "sha256": "01d1441a9da6ffe5f599f4f698a9818ce6b4cf2b47f6a009c8f53fa2da97c757"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "assets/manifests/gobkit_boar_tripo/front.png",
+          "sha256": "c3a7ff9e8a72e5ba7ac76add083d36f0106dc14a8057aadeb3ee1589993ed3fb"
+        },
+        {
+          "path": "assets/manifests/gobkit_boar_tripo/right.png",
+          "sha256": "ec1002d21062badcb189aaaf1167115a2ab6c092a9ccac601abb38f581e88542"
+        },
+        {
+          "path": "assets/manifests/gobkit_boar_tripo/back.png",
+          "sha256": "025923bb8cd0409da2e72022bbb230dd64ca20fd75d7e6925200abf7283a59d5"
+        },
+        {
+          "path": "assets/manifests/gobkit_boar_tripo/top.png",
+          "sha256": "fefb31cc4f4d0ec8a0322482d5877a91d4ca1cffebeb6ea570d839bc0d3e7cdc"
+        },
+        {
+          "path": "assets/manifests/gobkit_boar_tripo/clay_front.png",
+          "sha256": "cbbac0d33d706991c83ffb04a6a681a8f45cbbde00e9cac550d037531f82e568"
+        },
+        {
+          "path": "assets/manifests/gobkit_boar_tripo/wireframe_front.png",
+          "sha256": "fadd2f3766cc3027bf852b47e4199317ee104d328b8d01d9a6ca15a379fe11cd"
+        }
+      ],
+      "tool_versions": {
+        "python": "3.14.7",
+        "blender": "Blender 5.0.1",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
+        "tripo": "0.5.1"
+      },
+      "message": "all checks passed",
+      "actual_cost_credits": 0,
+      "params": {
+        "asset_id": "gobkit_boar_tripo",
+        "type": "prop",
+        "face_limit": null,
+        "triangle_budget": 1320,
+        "texture_size": 128,
+        "target_size_m": null,
+        "pivot": "source",
+        "palette": [
+          "Saddle Leather",
+          "Barrow Oak",
+          "Peat Black",
+          "Old Bone"
+        ],
+        "socket_map": null,
+        "bone_map": null,
+        "animations": null,
+        "exclude_objects": null,
+        "tip_end": null,
+        "rigid_parts": null,
+        "skirt_reweight": null,
+        "source": "download",
+        "source_scale": 1.0,
+        "orientation": "source",
+        "blender_triangle_count": 380
+      },
+      "report": {
+        "animations": {
+          "expected": [],
+          "missing": [],
+          "present": [
+            "preset_quadruped_walk"
+          ]
+        },
+        "errors": [],
+        "godot_version": "4.7.2-stable (official)",
+        "import_method": "GLTFDocument (runtime); editor import settings such as a BoneMap don't apply",
+        "materials": [
+          {
+            "albedo_texture": [
+              128,
+              128
+            ],
+            "extra_maps": [],
+            "mesh": "Boar",
+            "metallic": 0.0,
+            "metallic_specular": 0.0,
+            "roughness": 1.0,
+            "specular_mode": "schlick_ggx",
+            "surface": 0,
+            "transparency": "disabled",
+            "unshaded": false
+          }
+        ],
+        "rig": {
+          "bone_count": 17,
+          "bones": [
+            "tripo__Root",
+            "bone_1",
+            "bone_2",
+            "bone_3",
+            "bone_4",
+            "tripo__0_Right_Limb_0",
+            "bone_6",
+            "tripo__0_Left_Limb_0",
+            "tripo__1_Right_Limb_0",
+            "tripo__1_Right_Limb_1",
+            "tripo__1_Left_Limb_0",
+            "tripo__1_Left_Limb_1",
+            "tripo__Head_0",
+            "bone_13",
+            "tripo__Spine_0",
+            "tripo__Head_1",
+            "bone_16"
+          ],
+          "exact_profile_name_matches": [],
+          "humanoid_mappable": false,
+          "mapping_method": "name heuristic; confirm in the editor's BoneMap before retargeting",
+          "missing_required": [
+            "Hips",
+            "Spine",
+            "Head",
+            "LeftShoulder",
+            "LeftUpperArm",
+            "LeftLowerArm",
+            "LeftHand",
+            "RightShoulder",
+            "RightUpperArm",
+            "RightLowerArm",
+            "RightHand",
+            "LeftUpperLeg",
+            "LeftLowerLeg",
+            "LeftFoot",
+            "RightUpperLeg",
+            "RightLowerLeg",
+            "RightFoot"
+          ],
+          "profile": "SkeletonProfileHumanoid (56 bones, 17 required)",
+          "proposed_bone_map": {},
+          "skeleton": true,
+          "skeleton_path": "Armature/Skeleton3D",
+          "unmapped_bones": [
+            "tripo__Root",
+            "bone_1",
+            "bone_2",
+            "bone_3",
+            "bone_4",
+            "tripo__0_Right_Limb_0",
+            "bone_6",
+            "tripo__0_Left_Limb_0",
+            "tripo__1_Right_Limb_0",
+            "tripo__1_Right_Limb_1",
+            "tripo__1_Left_Limb_0",
+            "tripo__1_Left_Limb_1",
+            "tripo__Head_0",
+            "bone_13",
+            "tripo__Spine_0",
+            "tripo__Head_1",
+            "bone_16"
+          ]
+        },
+        "status": "pass",
+        "textures": {
+          "count": 1,
+          "max_allowed": 128,
+          "sizes": [
+            [
+              128,
+              128
+            ]
+          ]
+        },
+        "triangles": {
+          "blender_count": 380.0,
+          "budget": 1320,
+          "count": 380
+        },
+        "vertex_metrics": {
+          "gpu_count": 589,
+          "note": "metrics only; the budget is in triangles"
+        },
+        "warnings": [
+          "prop has a Skeleton3D",
+          "gross check: holes: 12 open boundary loops after welding"
+        ],
+        "views": {
+          "status": "ok",
+          "views": {
+            "front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-animbase/assets/manifests/gobkit_boar_tripo/front.png",
+              "coverage": 0.5543
+            },
+            "right": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-animbase/assets/manifests/gobkit_boar_tripo/right.png",
+              "coverage": 0.3497
+            },
+            "back": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-animbase/assets/manifests/gobkit_boar_tripo/back.png",
+              "coverage": 0.5543
+            },
+            "top": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-animbase/assets/manifests/gobkit_boar_tripo/top.png",
+              "coverage": 0.3444
+            },
+            "clay_front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-animbase/assets/manifests/gobkit_boar_tripo/clay_front.png",
+              "coverage": 0.5543
+            },
+            "wireframe_front": {
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-animbase/assets/manifests/gobkit_boar_tripo/wireframe_front.png",
+              "coverage": 0.1156
+            }
+          },
+          "errors": [],
+          "triangles": 380,
+          "pieces_welded": 17
+        },
+        "gross_flags": [
+          "holes: 12 open boundary loops after welding"
+        ]
+      }
+    }
+  },
+  "brief": {
+    "path": "assets/briefs/gobkit_boar_tripo.yaml",
+    "sha256": "2b068ce3f3dc69675434f4e38ce1f81411fffd2703b7c925948b661b73939b15"
+  },
+  "total_cost_credits": 0,
+  "updated_at": "2026-10-03T00:53:56+00:00"
+}
