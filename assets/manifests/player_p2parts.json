@@ -1428,7 +1428,7 @@
     "sha256": "bc5906ed34ed018a5653d5ee319b960a11f5ce1124e75981658280d319f167ae"
   },
   "total_cost_credits": 0,
-  "updated_at": "2026-10-03T01:04:31+00:00",
+  "updated_at": "2026-10-03T01:23:35+00:00",
   "judgments": [
     {
       "kind": "verdict",
@@ -2500,6 +2500,133 @@
       "revise": null,
       "escalation_reason": "The failing stretch comes from the Phase 0b garment-shell weights (Tripo's Spine weighting on the belt/tunic and the Hips/thigh grading), not the clip; library_change, reroll and refine_concept don't apply. The user decides whether to rework the transfer, accept it for the spike, or keep P1.",
       "summary": "Death stays in place and plays cleanly, but skin stretch fails (2.425) at the waist and tunic, and stays ~1.1-1.2 lying down.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-10-03T01:23:35+00:00",
+      "packet": "assets/manifests/player_p2parts/judge/mesh-3/packet.json",
+      "packet_sha256": "a35ff9795d34f75b67ec51a7311c55efb7044eb3fc13521ddda3049b5f2bdbf1",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/player_p2parts.glb",
+        "sha256": "3d98f1bfdb55b4580a0b44f66d637c0a043f66af5eb83c9369007244501a9eef",
+        "concept": {
+          "path": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+          "sha256": "e92b55a11a671ace6e50e37e78578afaa6a2e46e7d230da2da61ef368c2e9f98"
+        }
+      },
+      "images": [
+        {
+          "role": "approved_concept",
+          "path": "assets/manifests/player_p2parts/judge/mesh-3/01_approved_concept.png",
+          "sha256": "c489317c17b7d21da9d8bc493eab7a50cbdb13f7855a9d485539534444ad21a1",
+          "source": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png"
+        },
+        {
+          "role": "front",
+          "path": "assets/manifests/player_p2parts/judge/mesh-3/02_front.png",
+          "sha256": "5a2798adfcc97b66bc388c170e0f080f32ef15ef149906b63a45290a9fec0da5",
+          "source": "assets/manifests/player_p2parts/judge/mesh-3/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/player_p2parts/judge/mesh-3/03_right.png",
+          "sha256": "31cadc69e8e85c58460a73b3575ed648497609ec3726b4f06be78a8b5da83cbb",
+          "source": "assets/manifests/player_p2parts/judge/mesh-3/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/player_p2parts/judge/mesh-3/04_back.png",
+          "sha256": "8609d68074e9c50903897f651160f40e1419bc36dbb9ea73616dea5a40e94a21",
+          "source": "assets/manifests/player_p2parts/judge/mesh-3/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/player_p2parts/judge/mesh-3/05_top.png",
+          "sha256": "3f965a4d4d380c3eceeb4260e8bb93137e86fe445fcd6c6eeaaaa71ea77104bc",
+          "source": "assets/manifests/player_p2parts/judge/mesh-3/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/player_p2parts/judge/mesh-3/06_clay_front.png",
+          "sha256": "91e978542dcc5db186e19b3844ca7f966bd957d7bef4c71f50b3ea38ed391fdc",
+          "source": "assets/manifests/player_p2parts/judge/mesh-3/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/player_p2parts/judge/mesh-3/07_wireframe_front.png",
+          "sha256": "5d52ff920ad6c29d7477fc04caea949ef5c42e2a14642d7c1ef0bfd782f4798a",
+          "source": "assets/manifests/player_p2parts/judge/mesh-3/work/views/wireframe_front.png"
+        },
+        {
+          "role": "closeup_front",
+          "path": "assets/manifests/player_p2parts/judge/mesh-3/08_closeup_front.png",
+          "sha256": "c9ad6f5ead194e9dd4484bd340fa92101fbe3217a35fd4b99f2bee076bb88d23",
+          "source": "assets/manifests/player_p2parts/judge/mesh-3/work/views/closeup_front.png"
+        },
+        {
+          "role": "closeup_back",
+          "path": "assets/manifests/player_p2parts/judge/mesh-3/09_closeup_back.png",
+          "sha256": "7c4da04c7980c88ff6f02aed5221e1b88801d54b07b0f6c4ddff18c7b2544e81",
+          "source": "assets/manifests/player_p2parts/judge/mesh-3/work/views/closeup_back.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player_p2parts/judge/mesh-3/01_approved_concept.png",
+        "assets/manifests/player_p2parts/judge/mesh-3/02_front.png",
+        "assets/manifests/player_p2parts/judge/mesh-3/03_right.png",
+        "assets/manifests/player_p2parts/judge/mesh-3/04_back.png",
+        "assets/manifests/player_p2parts/judge/mesh-3/05_top.png",
+        "assets/manifests/player_p2parts/judge/mesh-3/06_clay_front.png",
+        "assets/manifests/player_p2parts/judge/mesh-3/07_wireframe_front.png",
+        "assets/manifests/player_p2parts/judge/mesh-3/08_closeup_front.png",
+        "assets/manifests/player_p2parts/judge/mesh-3/09_closeup_back.png"
+      ],
+      "assertions_failed": [
+        "holes (welded boundary loops)",
+        "concept color #0B1C2C kept in the texture"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "missing",
+          "severity": "major",
+          "observation": "No crossing back straps (brief identity mark); the concept is front-only.",
+          "evidence": "04_back.png, 09_closeup_back.png"
+        },
+        {
+          "check": "missing",
+          "severity": "major",
+          "observation": "Eyes blurry smudges, mouth effectively absent; nose a faceted wedge.",
+          "evidence": "08_closeup_front.png vs 01_approved_concept.png"
+        },
+        {
+          "check": "malformed",
+          "severity": "major",
+          "observation": "17 loops vs 10 (7 body, 3 harness, 1 per other part), possibly by design for open shells; none visible.",
+          "evidence": "assertion 'holes'; metrics.mesh.parts"
+        },
+        {
+          "check": "color",
+          "severity": "minor",
+          "observation": "Trouser navy kept 5.2% vs 6.3%, yet visibly present; the measurement looks misleading.",
+          "evidence": "assertion 'concept color #0B1C2C kept'"
+        },
+        {
+          "check": "malformed",
+          "severity": "minor",
+          "observation": "Stray long wireframe edges at the waist and spikes at hands/head, not in shaded views. (Orchestrator: measured longest edge 0.20 m vs P1's 0.187 in Phase 0b; a wireframe-render artefact.)",
+          "evidence": "07_wireframe_front.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "Unrelated fixes (back straps, face detail at 256 px, whether shell loops are acceptable); the failing assertions look partly misleading.",
+      "summary": "The body and garment shells match the concept front-on and are in budget, but holes (17>10) and trouser navy kept (5.2%<6.3%) fail, the face is blurred, the back has no crossing straps, and the wireframe shows stray long edges.",
       "next": "surface to the user: the escalation reason and findings"
     }
   ]
