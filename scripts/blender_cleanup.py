@@ -15,7 +15,8 @@ Imports the GLB and then:
   sourced assets are measured over their UV footprint and may be darkened as well as lifted),
   then composites the brief's texture_overlays (e.g. a mouth line) over it;
 - replaces imported smooth normals with flat shading above SMOOTH_ANGLE_DEG (welding UV-seam
-  splits first on unrigged meshes, so the angle test sees real edges);
+  splits first on unrigged meshes, so the angle test sees real edges); continuous-skin characters
+  (brief: smooth_shading) keep the generator's smooth normals instead;
 - aligns props along their principal axis and fails if the residual tilt exceeds PROP_AXIS_TOLERANCE_DEG;
 - finds the prop's tip (the thinner end), flips it to the brief's tip_end, and fails if it still doesn't match;
 - rigid-part characters (brief: rigid_parts) only: binds each disconnected part at weight 1.0 to its nearest bone;
@@ -842,6 +843,14 @@ def flat_shade_by_angle(meshes, weld, report):
         me.update()
     info["welded"] = weld or "none"
     report["shading"] = info
+
+
+def keep_source_normals(meshes, report):
+    """Continuous-skin characters (brief: smooth_shading): the generator's own normals stay, so the skin
+    shades smooth (art bible -> Shading; at 256 px and faceted the player's face smeared, docs/trials/look-dev.md).
+    Nothing is welded or re-split, so vertices, weights and the triangle count are untouched."""
+    report["shading"] = {"mode": "source normals kept (smooth_shading)",
+                         "custom_normals": [o.name for o in meshes if o.data.has_custom_normals]}
 
 
 def principal_axes(points):
@@ -1725,7 +1734,10 @@ def run(args, params, report):
     if params.get("parts"):
         # Last: it deletes faces and vertices, so every weight step before it sees the full mesh
         hide_covered_body(shells, report)
-    flat_shade_by_angle(meshes, weld="same_weights" if rigged else "all", report=report)
+    if params.get("smooth_shading"):
+        keep_source_normals(meshes, report)
+    else:
+        flat_shade_by_angle(meshes, weld="same_weights" if rigged else "all", report=report)
 
     # Budget is in triangles (n-gon = n-2). Vertex counts are metrics only: they move with UV-seam splits.
     dg = bpy.context.evaluated_depsgraph_get()

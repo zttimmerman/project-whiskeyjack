@@ -313,6 +313,21 @@ def parts_errors(b):
     return errors
 
 
+def shading_errors(b):
+    """Brief `smooth_shading: true` (art bible -> Shading): a continuous-skin character keeps the generator's
+    smooth normals instead of the flat-over-30-degrees rule. Props, kit pieces and rigid-part characters
+    stay flat (smooth hard surfaces read as inflated plastic: the Barrow-levy's belt looked like a tube)."""
+    if "smooth_shading" not in b:
+        return []
+    if not isinstance(b["smooth_shading"], bool):
+        return ["'smooth_shading' must be true or false"]
+    if b["smooth_shading"] and b.get("type") != "character":
+        return ["'smooth_shading' applies to continuous-skin characters only; props and kit pieces stay flat"]
+    if b["smooth_shading"] and b.get("rigid_parts"):
+        return ["'smooth_shading' is for continuous-skin characters; rigid-part characters stay flat-shaded"]
+    return []
+
+
 def load_brief(asset_id):
     path = BRIEFS / f"{asset_id}.yaml"
     if not path.exists():
@@ -387,6 +402,7 @@ def load_brief(asset_id):
         if b.get(flag) and b.get("type") != "character":
             errors.append(f"'{flag}' applies to characters only")
     errors.extend(parts_errors(b))
+    errors.extend(shading_errors(b))
     for opt in ("animations", "exclude_objects", "texture_overlays"):
         if opt in b and not (isinstance(b[opt], list) and all(isinstance(x, str) for x in b[opt])):
             errors.append(f"'{opt}' must be a list of names")
@@ -944,7 +960,7 @@ def stage_model(brief, m, args):
 def stage_params(brief):
     keys = ("asset_id", "type", "face_limit", "triangle_budget", "texture_size", "target_size_m", "pivot",
             "palette", "socket_map", "bone_map", "animations", "exclude_objects", "tip_end", "rigid_parts", "skirt_reweight",
-            "parts", "parts_transfer", "source", "source_scale")
+            "smooth_shading", "parts", "parts_transfer", "source", "source_scale")
     return {**{k: brief.get(k) for k in keys}, "orientation": orientation(brief)}
 
 
