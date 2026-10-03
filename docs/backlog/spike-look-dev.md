@@ -1,13 +1,13 @@
 ---
 id: spike-look-dev
 title: "Spike: look development — settle the art direction (A today, B limits lifted, C PS3+)"
-status: in-progress
+status: in-review
 kind: spike
 targets: []
 after: []
 phase: C
 branch: spike/look-dev
-pr: null
+pr: 50
 updated: 2026-10-02
 ---
 ## Goal
