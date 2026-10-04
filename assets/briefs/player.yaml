@@ -13,7 +13,7 @@ prompt: |
 face_limit: 5000
 tripo_model: P1-20260311
 triangle_budget: 5500
-texture_size: 256
+texture_size: 1024
 target_size_m: 1.8
 pivot: base
 palette: [Garrison Teal, Saddle Leather, Blackened Iron, Tarnished Gold]
@@ -23,5 +23,7 @@ animations: [idle, run, dodge_roll, attack_light, attack_heavy, death]
 texture_overlays: [assets/overlays/player_mouth.png]
 # The knee-length tunic skirt: Hips at the waist grading to the thighs at the hem, no shin weight.
 skirt_reweight: true
+# Continuous skin: the clean stage keeps Tripo's smooth normals (art bible -> Shading, adopted 2026-10-02).
+smooth_shading: true
 # Retarget: the GLB's import settings use this BoneMap (bones renamed to SkeletonProfileHumanoid names)
 bone_map: data/rigs/mixamorig_bone_map.tres

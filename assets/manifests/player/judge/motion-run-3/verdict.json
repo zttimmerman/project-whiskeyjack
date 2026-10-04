@@ -1,0 +1,26 @@
+{
+  "verdict": "escalate",
+  "summary": "run plays in place with no broken poses or handover snaps; skin stretch fails at 4.56x (limit 1.0) in the skirt/knee region, matching the accepted pre-existing stretch.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "major",
+      "observation": "Worst LeftUpperLeg at the tunic hem's inner edge and knee/boot-top, front and back; no visible tearing at gameplay distance.",
+      "evidence": "assertion 'skin stretch (edge length vs bind pose)'; 04_stretch_detail.png; 03_plots.png"
+    }
+  ],
+  "escalation_reason": "The only failing assertion is the player's pre-existing skirt skin stretch (tunic hem, inner thighs, knees and boot tops), which the user accepted on 2026-10-02; it isn't in the packet's design notes, so the judge can't pass it. No library change fixes stretch from the skin weights.",
+  "questions_answered": [
+    "In place: Hips 0.033 m.",
+    "Feet hold: p90 0.345.",
+    "Both feet step (lift 0.37/0.36 m, swing 1.16/1.14 m).",
+    "No broken poses.",
+    "7 of 8 pass."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png",
+    "04_stretch_detail.png"
+  ]
+}

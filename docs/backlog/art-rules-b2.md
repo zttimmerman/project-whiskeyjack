@@ -1,14 +1,14 @@
 ---
 id: art-rules-b2
 title: "Adopt the look-dev B2 rules: 1024 px character textures, smooth character shading, B2 lighting"
-status: ready
+status: done
 kind: feature
 targets: []
 after: [decide-art-direction]
 phase: C
-branch: null
-pr: null
-updated: 2026-10-02
+branch: feature/art-rules-b2
+pr: 51
+updated: 2026-10-03
 ---
 ## Goal
 
@@ -28,3 +28,7 @@ Apply the art-bible changes the user adopted on 2026-10-02 (`decide-art-directio
 ## Serves
 
 The art direction; `player-model-rework`.
+
+## Outcome
+
+Merged in PR #51 (user playtested: 'looks better for sure', 2026-10-03): 1024 px character albedo, the smooth_shading brief flag for continuous-skin characters, the B2 lighting standard in Level 1, Level 2 and the crypt, the art bible updated; player and levy re-cleaned; the accepted skirt stretch is a design note so judges don't re-flag it.
