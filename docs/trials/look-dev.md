@@ -89,7 +89,7 @@ Proposed text for the art bible's Textures and Shading lines, if the user agrees
 > - **Textures:** albedo (base color) only, one texture per asset, or vertex colors. Characters 1024×1024 (512 minimum: at 256 the face smears, `docs/trials/look-dev.md`); props and kit pieces 128×128 to 256×256. No normal, roughness, metallic, occlusion, emissive or specular maps.
 > - **Shading:** continuous-skin characters keep the generator's smooth normals. Props, kit pieces and rigid-part characters are flat-shaded wherever faces meet at more than 30°, and smooth below that (smooth-shaded hard surfaces read as inflated plastic: the Barrow-levy's belt looked like a tube).
 
-## C, prepared but not run (PS3+ target, paid)
+## C, as prepared (PS3+ target, paid; run 2026-10-02, results in Variant C below)
 
 A player from Tripo's default high-detail model (v3.1) with PBR materials, from the **already-approved multiview sheet** (multiview-1), so no concept or multiview spend. The dry runs below are free (no network) and both returned `valid: true`:
 
@@ -105,11 +105,89 @@ tripo make .tripo-out/player/multiview-1/tripo-out/tripo-out-player-concept-1-tr
 
 What C needs besides the credits: a variant clean that keeps the PBR maps and the high triangle count (both break today's art-bible rules, so it lives under `assets/lookdev/` like B), Forward+ (or Compatibility with its simpler PBR) for the comparison, and a check that the v1.0 rigger accepts a mesh without a `face_limit`. Rendering it through `LookDev.tscn` is one more `--model` argument.
 
+## Variant C (run 2026-10-02): Tripo v3.1 with PBR
+
+**Outcome: C buys very little over B2 that the camera can see, at about 260 times the triangle budget.** From the gameplay camera and the 3/4 shot, C-albedo and B2 are hard to tell apart; the difference shows only in the face close-up, and it's shape, not detail: a rounder jaw, finer hair spikes and a cleaner neckline. The 1.43 million triangles are mostly smooth surface, since v3.1 tessellates the same stylized design densely and doesn't model extra detail. Full PBR (C-PBR) adds a sheen on the hair and rim highlights on the leather; its normal map is nearly flat. Decimating to 20k triangles (C-budget) keeps the shape but breaks the UVs and the weights: dark seam specks on the face, and skin stretch 5–7 times B1's. Spend: 55 credits (the model 30, the rig 25; balance 420 → 365), plus the earlier free rig-checks. **Recommendation: stay at B2.** Spend the budget headroom on texture (done: 1024 px) and on a face-limited v3.1 trial, not on PS3-class meshes.
+
+### What was built
+
+Same multiview-1 sheet as the shipped player, so no concept or multiview spend. `tripo make … --model v3.1-20260211 --param pbr=true --param texture=true` (no `face_limit`), then `tripo anim rig` with v1.0 (biped, mixamo spec, 23 joints, the same skeleton as P1, so `data/rigs/mixamorig_bone_map.tres` retargets it unchanged).
+
+**C as delivered:** one mesh, **1,434,038 triangles** (740,608 vertices; 716,982 welded, one connected shell), one material with **three 2048×2048 maps**: base colour (JPEG), metallic-roughness (JPEG; mostly rough and non-metal, mean roughness 0.86, metallic 0.05, with metal patches on the buckles and bracers) and a tangent-space normal map (PNG, nearly flat apart from a few creases). No occlusion or emissive map. The download is 43 MB, the rigged one 57 MB.
+
+| Variant | Mesh | Material | Lighting, renderer |
+|---|---|---|---|
+| **C-PBR** | `assets/lookdev/player_c_pbr.glb`: the rigged download through the clean stage (facing, 1.8 m, skirt reweight), source normals kept | as delivered: base colour, metallic-roughness and normal maps at 2048 px, no colour correction; Godot's default specular (0.5) put back, since our import extension zeroes it | B2, **Forward+** |
+| **C-albedo** | `player_c.glb`: the same 1.43M-triangle mesh | albedo only at **1024 px**, colour-corrected toward concept-1 like B1, specular 0 | B2, Compatibility |
+| **C-budget** | `player_c_budget.glb`: collapse-decimated to **19,998 triangles** before the clean (spike only; the pipeline never decimates a rigged mesh) | as C-albedo | B2, Compatibility |
+
+Built by `scripts/lookdev/build_c.sh` (gitignored outputs); `LookDev.tscn` takes `--variant C-albedo|C-PBR|C-budget`.
+
+### Sheets (A | B2 | C-albedo | C-PBR | C-budget)
+
+| Shot | Level 1 (KayKit) | Crypt trial (brush shell) |
+|---|---|---|
+| Gameplay camera | [c_level1_gameplay](look-dev/c_level1_gameplay.jpg) | [c_crypt_gameplay](look-dev/c_crypt_gameplay.jpg) |
+| Face close-up | [c_level1_face](look-dev/c_level1_face.jpg) | [c_crypt_face](look-dev/c_crypt_face.jpg) |
+| Full body, 3/4 | [c_level1_body34](look-dev/c_level1_body34.jpg) | [c_crypt_body34](look-dev/c_crypt_body34.jpg) |
+| Room | [c_level1_room](look-dev/c_level1_room.jpg) | [c_crypt_room](look-dev/c_crypt_room.jpg) |
+
+Turntables: [C-albedo](look-dev/turntable_C-albedo.mp4), [C-PBR](look-dev/turntable_C-PBR.mp4) (A and B2 above).
+
+![face close-up, B2 | C-albedo | C-PBR | C-budget](look-dev/c_face_closeup.jpg)
+
+### What C buys over B2
+
+- **The face close-up, a little.** The cheeks and jaw are rounder and the hair spikes thinner and sharper at the tips; the eyes and brows read the same as B2's (the texture carries them in both). The nose is still a painted line, not geometry.
+- **Nothing from the gameplay camera.** In both rooms the player is a few hundred pixels tall; B2 and C-albedo differ only in the hair's outline.
+- **PBR: highlights, not form.** C-PBR's metallic-roughness map gives the hair and leather a sheen and the buckles a glint under the torches; the normal map adds almost nothing because the mesh already carries the shape. It also pushes the look toward realism, against the art bible's "albedo-only over realism".
+- **At a budget, the advantage goes.** C-budget at 20k triangles looks like B2 with seam specks: collapse decimation smears the UVs (thin dark lines across the face and tunic). A face-limited generation would avoid that, but wasn't run (it's paid).
+
+### What C costs
+
+| | A (shipped) | B2 | C-budget | C-albedo | C-PBR |
+|---|---|---|---|---|---|
+| Triangles (art bible: 5,500) | 4,893 | 4,893 | 19,998 (3.6×) | 1,434,038 (261×) | 1,434,038 (261×) |
+| Textures | 1 × 256 | 1 × 2048 | 1 × 1024 | 1 × 1024 | 3 × 2048 (PBR) |
+| GLB on disk | 0.51 MB | 3.4 MB | 1.8 MB | 56.5 MB | 57.6 MB |
+| VRAM, whole Level 1 scene (Compatibility) | 72.8 MB | 75.4 MB | 74.2 MB | 156.5 MB | — |
+| VRAM, Forward+ | — | 240.3 MB | — | — | 360.7 MB |
+| Primitives drawn, gameplay camera | 13,656 | 13,656 | 28,761 | 188,017 | 188,017 |
+
+- **VRAM** is the renderer's own counter for the whole scene (`--mode mem`). C's mesh adds about 83 MB of buffers (the mesh, its auto-generated LODs and shadow mesh); C-PBR's two extra 2048 maps add about 40 MB of textures. **Per C-tier character that's 80–120 MB** (instances of one mesh share it), so ten different characters on screen is around 1 GB, against 3–7 MB for ten B2 characters at 1024 px.
+- **Frame time** (M2 Pro, as before; median ms, gameplay / room overview; [timing_c.json](look-dev/timing_c.json)): Level 1 at 1280×720: A 2.3 / 4.8, B2 1.9 / 5.5, C-albedo 2.7 / 3.5, C-PBR 2.1 / 1.9, C-budget 2.3 / 4.3. Crypt at 1280×720: A 2.1 / 2.0, B2 2.2 / 2.1, C-albedo 2.9 / 1.8, C-PBR 1.6 / 1.7, C-budget 2.3 / 2.2. At 2560×1440 Compatibility stays at 3–6.5 ms and Forward+ is capped at 8.3 ms (vsync, as before). **One C player costs at most about 1 ms on this Mac**, within the ±1 ms noise; the auto LODs draw about 175k of its 1.43M triangles at gameplay distance. A scene of C-tier enemies would multiply that, and it was not tested.
+- **Repo and pipeline:** a 57 MB GLB per character can't be committed as our assets are (Git LFS or an external store would be needed), the two full-resolution builds (clean and import) took 94 s together against B1's 48 s alone, and the motion review can't measure the mesh (below).
+- **Credits:** 30 for the model and 25 for the rig, against 50 + 25 for P1 at `face_limit` 5,000. The model is cheaper than P1 was.
+- **Renderer:** C-PBR was shown under Forward+, as the item asked; Compatibility also draws metallic-roughness and normal maps, and Forward+ adds only what B3plus showed (SSAO, volumetric fog, shadowed omni lights). Forward+'s VRAM is about 165 MB higher for the same scene before any asset changes (B2: 240 against 75 MB).
+
+### Animation and skinning
+
+The retarget works unchanged: the v1.0 rig is the same 23-joint mixamo skeleton, so the shipped player's BoneMap and Fix Silhouette import settings drive the library on C: idle and run were reviewed, and the game-path pass played every handover on the full mesh (the run strip is in `.tripo-out/lookdev_c/motion/player_c_budget/`). Skin stretch from the motion review (`motion_review.tscn --clips idle,run --ground-speed run=5.0`; art bible `motion_edge_stretch` ≤ 1.0):
+
+| Model | Idle stretch max (p99) | Run stretch max (p99) | Worst bone | Edges measured |
+|---|---|---|---|---|
+| B1 (P1, smooth) | 3.03 (0.51) | 4.56 (0.59) | LeftUpperLeg | 10,490 |
+| C-budget (20k) | 14.87 (1.26) | 32.99 (1.58) | RightUpperLeg | 37,122 |
+| C full (1.43M) | 0.014 (0.0) | not finished | Chest | 2,174,498 |
+
+- **Full C can't be measured by today's review:** its edges are about 2 mm, under the review's 1 cm floor (`MIN_EDGE`), so the stretch reads near zero. The CPU-skinned review also takes about 4 minutes a clip at 740k vertices, and the run clip stalled while the window was in the background. Lowering the floor would make it comparable.
+- **C-budget's stretch is decimation plus the skirt.** The worst edges sit at the skirt hem and the top of the boots, where the skirt reweight meets the knee, and the front slit tears open in the run. The weights are the v1.0 rigger's, interpolated by the decimation: the same weakness as P1 (`player-model-rework`), made worse by the decimation's long thin triangles.
+- **What higher fidelity shows:** a smoother, denser mesh hides no facets, so the skirt's stretch and the knee crease show more plainly on C than on A, as B already suggested. The v1.0 rigger is the limit, not the mesh: C has the same skeleton and the same auto-weights.
+
+### Recommendation and what the art bible would change
+
+1. **Stay at B2 (recommended).** The B rules already adopted (1024 px character albedo, smooth shading for characters, B2 lighting, Compatibility) stand unchanged. C's only visible gain, the face's shape at dialogue distance, is worth a paid trial of **v3.1 at a game budget** (`face_limit` 10–20k, generated rather than decimated), which might keep C's shape without its UV and weight damage. The art bible doesn't change.
+2. **A C-tier for hero characters only** (the player and named NPCs at dialogue distance). The art bible would need a second character budget (for example `face_limit` 15,000, so 16,500 triangles), a named hero list, and the motion review's `MIN_EDGE` made relative to edge length. Albedo only at 1024 px still; no PBR. Enemies and props stay at today's budgets.
+3. **C-tier everywhere** (1M+ triangles and PBR). The art bible would drop triangle budgets as hard ceilings (or move them to LOD targets), allow metallic-roughness and normal maps, drop "albedo-only over realism" from the Style line, move the renderer to Forward+, and move the GLBs to Git LFS. That is a different game's art direction, and the sheets don't show a gain from the gameplay camera that would justify it.
+
 ## Reproduce
 
 ```
 scripts/lookdev/build_b1.sh                  # assets/lookdev/player_b1.glb (2048 px); SIZE=256|512|1024 for the others
 scripts/lookdev/run_lookdev.sh               # every variant's stills, turntable and timings, then the sheets in .tripo-out/lookdev/sheets
+scripts/lookdev/build_c.sh                   # assets/lookdev/player_c{,_pbr,_budget}.glb from .tripo-out/player_c (v3.1 + rig-1)
+VARIANTS="A B2 C-albedo C-PBR C-budget" scripts/lookdev/run_lookdev.sh .tripo-out/lookdev_c   # the C sheets
+# VRAM: godot --path . res://scenes/lookdev/LookDev.tscn -- --variant <v> --room level1 --mode mem --out <dir>
 ```
 
 The sources are the gitignored Tripo downloads in `.tripo-out/player/` (the builder falls back to the main checkout's). Windowed, on the Mac, hands off while it runs.

@@ -13,13 +13,13 @@ GODOT="${GODOT_BIN:-/Applications/Godot.app/Contents/MacOS/Godot}"
 OUT="${1:-$ROOT/.tripo-out/lookdev}"
 SHOTS="$OUT/shots"
 mkdir -p "$SHOTS" "$OUT/sheets"
-VARIANTS="A B1 B2 B3 B3plus"
+VARIANTS="${VARIANTS:-A B1 B2 B3 B3plus}"  # variant C: VARIANTS="A B2 C-albedo C-PBR C-budget"
 font=/System/Library/Fonts/Supplemental/Arial.ttf
 
 run() {  # variant room mode [extra godot args]
 	local v="$1" room="$2" mode="$3"; shift 3
 	local extra=()
-	case "$v" in B3*) extra=(--rendering-method forward_plus) ;; esac
+	case "$v" in B3* | C-PBR) extra=(--rendering-method forward_plus) ;; esac
 	[ "$mode" = stills ] && extra+=(--fixed-fps 30)
 	echo "== $v $room $mode"
 	timeout 600 "$GODOT" --always-on-top ${extra[@]+"${extra[@]}"} --path "$ROOT" res://scenes/lookdev/LookDev.tscn -- \
