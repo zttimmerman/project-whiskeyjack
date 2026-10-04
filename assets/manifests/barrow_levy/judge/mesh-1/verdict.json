@@ -1,0 +1,50 @@
+{
+  "verdict": "escalate",
+  "summary": "Geometry, budget, texture size and rig pass, but 5 concept-colour assertions fail; partly the clustering method, partly a real shift (bone greyer and darker, harness near-black).",
+  "findings": [
+    {
+      "check": "color",
+      "severity": "major",
+      "observation": "The concept's pale bone #CCB790 (29%) merged into #B6A281; the bone renders greyish olive-tan, darker and less yellow than the concept.",
+      "evidence": "assertions 'concept color #CCB790'"
+    },
+    {
+      "check": "color",
+      "severity": "major",
+      "observation": "The maroon strap #613430 fell to 1.6%; the harness renders near-black brown rather than red-brown, possibly closer to the brief's Saddle Leather.",
+      "evidence": "assertions 'concept color #613430'"
+    },
+    {
+      "check": "color",
+      "severity": "minor",
+      "observation": "#9D8B6F kept 0.047 vs 0.061; hue matches.",
+      "evidence": "assertion 'concept color #9D8B6F kept'"
+    },
+    {
+      "check": "concept_match",
+      "severity": "minor",
+      "observation": "Peat-brown joint stains faint; belt buckle a small dark block.",
+      "evidence": "01_approved_concept.png vs 02_front.png"
+    }
+  ],
+  "escalation_reason": "All 5 failures are colour assertions, partly misleading; 4 failed identically at 256 px. The fix is a clean-stage colour change or the user accepting the colours.",
+  "questions_answered": [
+    "All parts present; bone darker/greyer, straps near-black.",
+    "No holes; 36 rigid parts.",
+    "5046/5500 tris, 1024 px, 1.8 m.",
+    "5 colour assertions fail.",
+    "Validate passes; hands resolve.",
+    "Eyes, nose, mouth present."
+  ],
+  "images_seen": [
+    "01_approved_concept.png",
+    "02_front.png",
+    "03_right.png",
+    "04_back.png",
+    "05_top.png",
+    "06_clay_front.png",
+    "07_wireframe_front.png",
+    "08_closeup_front.png",
+    "09_closeup_back.png"
+  ]
+}

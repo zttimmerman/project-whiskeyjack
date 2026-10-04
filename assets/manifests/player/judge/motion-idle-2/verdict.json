@@ -1,0 +1,26 @@
+{
+  "verdict": "escalate",
+  "summary": "idle plays in place with no broken poses or handover snaps; skin stretch fails at 3.03x (limit 1.0) in the skirt/knee region, matching the accepted pre-existing stretch.",
+  "findings": [
+    {
+      "check": "motion",
+      "severity": "major",
+      "observation": "Worst LeftUpperLeg; the 12 worst edges sit where the boot tops, trousers and tunic hem meet at both knees; no visible tear. The stretch-detail header (4.03x) and the metric (3.033) disagree.",
+      "evidence": "assertion 'skin stretch (edge length vs bind pose)'; 04_stretch_detail.png; 03_plots.png"
+    }
+  ],
+  "escalation_reason": "The only failing assertion is the player's pre-existing skirt skin stretch (tunic hem, inner thighs, knees and boot tops), which the user accepted on 2026-10-02; it isn't in the packet's design notes, so the judge can't pass it. No library change fixes stretch from the skin weights.",
+  "questions_answered": [
+    "In place: Hips 0.053 m.",
+    "Feet p90 0.014.",
+    "Not locomotion.",
+    "No broken pose.",
+    "5 of 6 pass."
+  ],
+  "images_seen": [
+    "01_frame_strip.png",
+    "02_onion_skin.png",
+    "03_plots.png",
+    "04_stretch_detail.png"
+  ]
+}

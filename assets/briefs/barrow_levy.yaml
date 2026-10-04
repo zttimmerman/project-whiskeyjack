@@ -13,7 +13,7 @@ prompt: |
 face_limit: 5000
 tripo_model: P1-20260311
 triangle_budget: 5500
-texture_size: 256
+texture_size: 1024
 target_size_m: 1.8
 pivot: base
 palette: [Old Bone, Saddle Leather, Blackened Iron, Signal Red]
@@ -21,5 +21,6 @@ socket_map: data/rigs/barrow_levy_sockets.tres
 animations: [idle, run, attack, stagger, death]
 # A skeleton is built from separate rigid bones: each part is bound whole to its nearest bone.
 rigid_parts: true
+# Rigid parts, so no smooth_shading: it stays flat over 30 degrees (art bible -> Shading).
 # Retarget: the GLB's import settings use this BoneMap (bones renamed to SkeletonProfileHumanoid names)
 bone_map: data/rigs/mixamorig_bone_map.tres

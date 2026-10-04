@@ -12,15 +12,25 @@
 [ext_resource type="NavigationMesh" uid="uid://cfuwwtlncg4hy" path="res://scenes/world/trials/CryptTrial_navmesh.tres" id="navmesh_baked"]
 
 [sub_resource type="Environment" id="Environment_crypt"]
+background_mode = 1
+background_color = Color(0.03, 0.025, 0.02, 1)
 ambient_light_source = 2
-ambient_light_color = Color(0.4509804, 0.41960785, 0.4, 1)
-ambient_light_energy = 0.5
+ambient_light_color = Color(0.56, 0.5, 0.45, 1)
+ambient_light_energy = 0.8
+tonemap_mode = 2
+tonemap_exposure = 1.15
+fog_enabled = true
+fog_light_color = Color(0.12, 0.09, 0.07, 1)
+fog_density = 0.03
+fog_sky_affect = 0.0
 
 [node name="CryptTrial" type="Node3D"]
 script = ExtResource("1_script")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.866, -0.25, 0.433, 0, 0.866, 0.5, -0.5, -0.433, 0.75, 0, 10, 0)
+light_color = Color(0.78, 0.84, 1, 1)
+light_energy = 0.55
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_crypt")

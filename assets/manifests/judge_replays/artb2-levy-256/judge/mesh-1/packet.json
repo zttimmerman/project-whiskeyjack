@@ -1,0 +1,776 @@
+{
+  "asset_id": "barrow_levy",
+  "stage": "mesh",
+  "created_at": "2026-10-03T03:38:07+00:00",
+  "replay": "artb2-levy-256",
+  "packet_dir": "assets/manifests/judge_replays/artb2-levy-256/judge/mesh-1",
+  "brief": {
+    "type": "character",
+    "brief": "The slice's only enemy model, used for both Front-file (melee) and Back-file\n(archer) variants. Posture and the held prop carry the read; Back-file adds a\nSignal Red wrap material variant.",
+    "prompt": "A humanoid skeleton in Old Bone, stained peat-brown at the joints, with a clearly\nreadable skull and ribcage, wearing a rotted leather harness in Saddle Leather: a belt\nat the waist and two straps crossing the chest and back. Empty hands, T-pose.",
+    "face_limit": 5000,
+    "triangle_budget": 5500,
+    "texture_size": 1024,
+    "target_size_m": 1.8,
+    "pivot": "base",
+    "tip_end": null,
+    "rigid_parts": true,
+    "skirt_reweight": null,
+    "source": null,
+    "source_scale": null,
+    "orientation": null
+  },
+  "brief_palette": {
+    "Old Bone": {
+      "hex": "#CCB484",
+      "plain": "pale yellowed beige"
+    },
+    "Saddle Leather": {
+      "hex": "#4A2A10",
+      "plain": "dark reddish-brown"
+    },
+    "Blackened Iron": {
+      "hex": "#242424",
+      "plain": "near-black charcoal"
+    },
+    "Signal Red": {
+      "hex": "#C71F14",
+      "plain": "vivid scarlet red"
+    }
+  },
+  "art_bible": {
+    "brief_section": "## Brief: Barrow-levy \u2014 skeleton (Front-file and Back-file)\n\n- **File / Source:** `assets/meshes/barrow_levy.glb`, **generated with Tripo from this brief**. This is the pilot for the Tripo path. It replaces the shipped Sketchfab `archer_enemy.glb` (1,277 vertices, a 28-bone rig with rest-pose defects; see `docs/audit.md`), which stays in the game until the new mesh passes the pipeline.\n- **Role:** the slice's only enemy model: Front-file melee (\u00d75) and Back-file archer (\u00d72).\n- **Silhouette:** Front-file hunched forward with a blade; Back-file upright with a bow. Posture and the held prop carry the read.\n- **Budget:** \u2264 5,500 triangles (Tripo `face_limit` 5,000 + 10%); albedo at 1024\u00d71024 (256\u00d7256 until 2026-10-02). Rigid parts, so it stays flat-shaded.\n- **Palette:** Old Bone \u00b7 Saddle Leather harness scraps \u00b7 Blackened Iron (via props) \u00b7 **Back-file only:** Signal Red rag wraps on the forearms and brow.\n- **Back-file variant:** a second albedo, `barrow_levy_backfile_baseColor.png` (1024\u00b2, like the base albedo), identical except for the painted Signal Red wraps. It's applied as a material override in `ArcherEnemy.tscn`, so there's no second mesh.\n- **Materials & wear:** peat-stained joints, cracked bone and rotted leather, all painted in the albedo. The root tendrils and wool scraps are lore (`docs/world/05-bestiary.md`), not geometry, and are kept out of the prompt.\n- **Rig / attachment:** the new rig must map onto `SkeletonProfileHumanoid`; pipeline stage 4 proposes the `BoneMap`. Sockets `hand_r` (blade) and `hand_l` (bow) are mapped to bones **only** in `data/rigs/barrow_levy_sockets.tres`, which still names the Sketchfab bones: update that file for the new rig, and nothing else. Stage 4 fails until the sockets resolve.\n- **Rig order:** raw Tripo download \u2192 Tripo auto-rig (`v1.0-20240301`, humanoid) \u2192 clean (see the player brief). **Rigid rebind** (`rigid_parts: true`): each of the 35 separate bone pieces is bound at weight 1.0 to its nearest bone. **Known quirk:** Tripo puts the Foot bones at floor level, so the feet bind to ToeBase, which is Foot's child and follows it rigidly. Quaternius drives Foot, not the toes, so it doesn't read at gameplay distance.\n- **Scale & pivot:** 1.8 m tall, feet at origin, facing \u2212Y in Blender. The model node keeps `Transform3D(-1,0,0,0,1,0,0,0,-1,0,-0.9,0)`.\n- **Animation:** the code plays `idle`, `run`, `attack`, `stagger`, `death` for **both** variants. The library must provide a melee `attack` for Front-file and a bow-draw `attack` for Back-file, remapped per variant. Built: each variant has its own library over the shared clips (asset-pipeline skill \u2192 Animation library). Front-file: `Sword_Idle` (hunched), `Jog_Fwd_Loop`, `Sword_Attack` (an overhead cut, for its readable lead-in). Back-file: `Idle_Loop` and `Walk_Loop` (upright), plus **`Spell_Simple_Enter` (the bow arm raised to aim) as a stand-in for the bow draw**. Neither Standard pack has a bow clip; they're in a UAL2 tier not bought yet.\n- **Prompt:** FORM block + *\"A humanoid skeleton in Old Bone, stained peat-brown at the joints, with a clearly readable skull and ribcage, wearing a rotted leather harness in Saddle Leather: a belt at the waist and two straps crossing the chest and back. Empty hands, T-pose.\"*\n- **Accept when:** the retarget plays all 5 clips on both variants; Back-file is distinguishable from Front-file at 15 m in the Level 1 corridor with props hidden; budget still met.\n- **Cost:** 1 Tripo generation, plus one per rejected attempt. The Back-file texture and the bone map are manual or scripted work.",
+    "form_block": "Stylized low-poly 3D game asset with a clean, readable silhouette and slightly exaggerated proportions. Flat color blocking with minimal fine surface detail, matte hand-painted albedo-only texture, restricted muted palette. No photorealism, no glossy PBR shine, no pixel art.",
+    "concept_lighting_block": "Flat, even, shadowless lighting from all sides on a plain, uniform mid-grey background. Every surface shows its true base color at the same brightness, front and back, with no cast shadows and no highlights.",
+    "tolerances": "## Judge tolerances\n\nThe numeric assertions the asset judge checks (`scripts/judge.py`, which reads this table; nothing else holds these numbers). \u0394E is CIE76 in Lab. Each value is set on principle and checked against the replays in `assets/manifests/judge_replays/`: the known-bad inputs fail, and where a shipped asset or clip fails too, it's a real finding recorded in `docs/decisions.md`, not a reason to loosen the limit.\n\n| Check | Limit | Applies to | Why |\n|---|---|---|---|\n| `concept_palette_de` | 25 | concept | A brief palette color counts as present when one of the concept's main colors (\u2265 3% of the figure) sits within this distance. Loose on purpose: the player's approved \"deep dark teal\" rendered as navy #14313F. |\n| `color_min_share` | 0.05 | model, mesh | Colors covering less of the concept (or texture) than this are details, not checked. |\n| `color_kept_ratio` | 0.33 | model, mesh | A concept color must keep at least this fraction of its concept share in the texture, or the model lost it. |\n| `color_dab_after` | 5 | model, mesh | Hue/saturation distance (Lab a, b) between a corrected texture cluster and its concept color. |\n| `palette_de_before` | 20 | model, mesh | Concept-less assets (sourced ones measured over their UV footprint): distance before correction for a palette group covering at least `color_min_share`. Correction can repaint a wrong color: blade attempt 1's olive-green blade grouped under Old Bone (27.5 \u0394E) and came out bone-colored. |\n| `palette_de_after` | 12 | model, mesh | Concept-less assets: distance between a corrected palette group's median and its palette color. |\n| `mesh_max_holes` | 10 | model, mesh (generated) | Open boundary loops after welding. Fewer are reported for the judge to weigh (the blade's 4 grip slits are recorded and accepted). |\n| `mesh_kit_max_loops_per_part` | 2 | mesh (**sourced kits**, the rule for them instead of `mesh_max_holes`) | Open boundary loops on any one welded part. Kit pieces are open-backed shells: a KayKit wall is a body plus 22 raised blocks set flush on its face, each open at the back (23 loops), and a barrel hoop is an open band (2). Allowed only where no loop is visible from the judge's views, which is the judge's call. |\n| `motion_root_travel_bh` | 0.0834 | death, in-place clips | Horizontal root (Hips) travel from the first frame, in body heights (see the note below the table): 0.15 m on a humanoid. The pre-fix `Death01` travelled 0.45\u20130.51 m; shipped idles and runs stay under 0.07 m. |\n| `motion_foot_slide_bhps` | 0.2778 | in-place clips | 90th-percentile ground-relative speed of a planted foot (near its lowest point and not moving vertically), at the clip's gameplay speed, in body heights per second: 0.5 m/s on a humanoid, 10% of the player's run. Reported only for action clips (attacks and rolls pivot on planted feet on purpose) and deaths (the feet kick out as the body collapses onto its pinned Hips; `Death01` can't meet both this and the travel limit, since keeping 30% of its travel still slid 0.80 m/s). Per body height the 1 m Tripo boar's walk (0.38) and the 4.6 m Gobkit one (0.53) both fail, as they look; in metres the small one passed. |\n| `motion_bind_deviation_bh` | 1.0 | every clip | Largest vertex displacement from the bind pose in the root's (Hips) frame, in body heights: a character's height (1.8 m on a humanoid), because no attached vertex gets that far from the hips. Normal humanoid clips reach 0.5\u20131.6 m (arms swinging from the T-pose). |\n| `motion_gait_lift_bh` | 0.005 | locomotion clips (a walk, run, jog, trot, gallop or sprint, or `--locomotion`) | Every foot in the limb map lifts at least this far above its contact level (its lowest point in the clip) once per cycle, in body heights: 9 mm on a humanoid. A liveness floor, not a step height: the Gobkit walk's stub legs shuffle at 0.008\u20130.015, humanoid runs lift 0.12\u20130.21. Tripo's quadruped walk froze the boar's front feet (0 lift), and a frozen foot reads as planted with no slide, so no other gate saw it. |\n| `motion_gait_swing_bh` | 0.05 | locomotion clips | Every foot swings at least this far relative to the root once per cycle (the widest horizontal distance between two of its root-relative positions), in body heights: 9 cm on a humanoid. The Gobkit walk reaches 0.09\u20130.25, humanoid runs 0.39\u20130.77; Tripo's frozen front feet 0. |\n| `motion_edge_stretch` | 1.0 | every clip | Largest relative length change of any mesh edge of at least 1 cm from the bind pose: an edge has doubled. Rigid-part characters read 0. |\n| `motion_handover_snap_mps` | 5 | every clip's game handovers (motion review game-path pass); adopted by the user 2026-10-01, asserted by the judge | Across a handover played the game's way (`play()` with the scene's blend settings, per physics frame, cut-short one-shots at four phases, enemy windups posed as `BaseEnemy` poses them), how much faster any hand or foot moves, in the character's own frame, than it ever moves in either clip on its own. 5 m/s is a one-frame pop of about 8 cm at 60 fps. Hard cuts (no blend time) read 16\u201369 m/s on most handovers; with the per-transition blend times in the character scenes every handover reads 4.3 or less (worst: Back-file attack to stagger). `tests/unit/test_anim_blends.gd` holds every game handover to this limit. |\n\n**Motion limits per body height** (adopted by the user 2026-10-02, `motion-gates-gait-and-scale`). Root travel, foot slide and bind deviation are measured in body heights: the rig's height in the bind pose (the vertical extent of its skinned mesh, `body_height_m` in the motion metrics), so a creature is held to the same gait whatever its size. Every humanoid character is 1.8 m tall, so its limits are the metre values these replaced, and its results didn't change: `motion_root_travel_m` 0.15, `motion_foot_slide_mps` 0.5, `motion_bind_deviation_m` 1.8 (each relative limit is the metre value over 1.8, rounded up). The motion review's contact thresholds (3 cm above the lowest point, 0.25 m/s vertical) scale the same way. Height rather than length, because a humanoid's length is its height and the two boars' heights keep their lengths' ratio (3.53 / 0.77 m against 4.6 / 1.0 m). `motion_handover_snap_mps` stays in m/s until a creature's handovers are measured."
+  },
+  "design_notes": [],
+  "images": [
+    {
+      "role": "approved_concept",
+      "path": "assets/manifests/judge_replays/artb2-levy-256/judge/mesh-1/01_approved_concept.png",
+      "sha256": "812c02afbac64302de9f0fe25bc6e91f3ca67317ad547d849677ffc7e2b329b2",
+      "source": ".tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png",
+      "source_sha256": "d62266500028543ed1fc0600b1bf974f74c07ba35be79684b580dd40be22f3f2",
+      "size": [
+        765,
+        1024
+      ]
+    },
+    {
+      "role": "front",
+      "path": "assets/manifests/judge_replays/artb2-levy-256/judge/mesh-1/02_front.png",
+      "sha256": "faab609393d211403ad57898378db492375a4af8127c5803d89fbe58f82d199d",
+      "source": "assets/manifests/judge_replays/artb2-levy-256/judge/mesh-1/work/views/front.png",
+      "source_sha256": "faab609393d211403ad57898378db492375a4af8127c5803d89fbe58f82d199d",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "right",
+      "path": "assets/manifests/judge_replays/artb2-levy-256/judge/mesh-1/03_right.png",
+      "sha256": "e883983f4220d1bf72e93758706b07e6cc61e168737daef34787d4012ee745c9",
+      "source": "assets/manifests/judge_replays/artb2-levy-256/judge/mesh-1/work/views/right.png",
+      "source_sha256": "e883983f4220d1bf72e93758706b07e6cc61e168737daef34787d4012ee745c9",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "back",
+      "path": "assets/manifests/judge_replays/artb2-levy-256/judge/mesh-1/04_back.png",
+      "sha256": "e3f16d8c7cec762616fe2953ca71c582c0e50fbdcd679ffbff578d19276f5c06",
+      "source": "assets/manifests/judge_replays/artb2-levy-256/judge/mesh-1/work/views/back.png",
+      "source_sha256": "e3f16d8c7cec762616fe2953ca71c582c0e50fbdcd679ffbff578d19276f5c06",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "top",
+      "path": "assets/manifests/judge_replays/artb2-levy-256/judge/mesh-1/05_top.png",
+      "sha256": "14266ed6a02d02337a1670d21f984f5fc7ce4ba28480f4f72796b205f8526ed2",
+      "source": "assets/manifests/judge_replays/artb2-levy-256/judge/mesh-1/work/views/top.png",
+      "source_sha256": "14266ed6a02d02337a1670d21f984f5fc7ce4ba28480f4f72796b205f8526ed2",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "clay_front",
+      "path": "assets/manifests/judge_replays/artb2-levy-256/judge/mesh-1/06_clay_front.png",
+      "sha256": "079eb95a285b1e243c8c5bde47cd71fb04b2e05686733b35a80875612d63cc0d",
+      "source": "assets/manifests/judge_replays/artb2-levy-256/judge/mesh-1/work/views/clay_front.png",
+      "source_sha256": "079eb95a285b1e243c8c5bde47cd71fb04b2e05686733b35a80875612d63cc0d",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "wireframe_front",
+      "path": "assets/manifests/judge_replays/artb2-levy-256/judge/mesh-1/07_wireframe_front.png",
+      "sha256": "ed4aa77a5612bfbc6adcf5023787ff2e967022f457a0f33475108e9f1503366b",
+      "source": "assets/manifests/judge_replays/artb2-levy-256/judge/mesh-1/work/views/wireframe_front.png",
+      "source_sha256": "ed4aa77a5612bfbc6adcf5023787ff2e967022f457a0f33475108e9f1503366b",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "closeup_front",
+      "path": "assets/manifests/judge_replays/artb2-levy-256/judge/mesh-1/08_closeup_front.png",
+      "sha256": "95b6bef3daf3c78f25ca5291e42103d4dfafd967540a58dc5897ef2f78b1f40a",
+      "source": "assets/manifests/judge_replays/artb2-levy-256/judge/mesh-1/work/views/closeup_front.png",
+      "source_sha256": "95b6bef3daf3c78f25ca5291e42103d4dfafd967540a58dc5897ef2f78b1f40a",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "role": "closeup_back",
+      "path": "assets/manifests/judge_replays/artb2-levy-256/judge/mesh-1/09_closeup_back.png",
+      "sha256": "c7a0e0ea3bf07012e8cf9f7ec71c80f6dae5a0109a31e451ae13d72774e1c602",
+      "source": "assets/manifests/judge_replays/artb2-levy-256/judge/mesh-1/work/views/closeup_back.png",
+      "source_sha256": "c7a0e0ea3bf07012e8cf9f7ec71c80f6dae5a0109a31e451ae13d72774e1c602",
+      "size": [
+        512,
+        512
+      ]
+    }
+  ],
+  "metrics": {
+    "mesh": {
+      "triangles": 5046,
+      "triangle_budget": 5500,
+      "texture_sizes": [
+        [
+          256,
+          256
+        ]
+      ],
+      "part_count": 36,
+      "parts": [
+        {
+          "triangles": 942,
+          "size_m": [
+            0.0881,
+            0.0509,
+            0.3523
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 490,
+          "size_m": [
+            0.1526,
+            0.1742,
+            0.1292
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 402,
+          "size_m": [
+            0.1018,
+            0.1585,
+            0.1213
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 232,
+          "size_m": [
+            0.135,
+            0.0998,
+            0.1233
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 204,
+          "size_m": [
+            0.0783,
+            0.0685,
+            0.09
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 204,
+          "size_m": [
+            0.0783,
+            0.0685,
+            0.09
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 176,
+          "size_m": [
+            0.0509,
+            0.0665,
+            0.2466
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 176,
+          "size_m": [
+            0.0509,
+            0.0665,
+            0.2446
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 164,
+          "size_m": [
+            0.0685,
+            0.1448,
+            0.1526
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 164,
+          "size_m": [
+            0.0685,
+            0.1448,
+            0.1526
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 150,
+          "size_m": [
+            0.0509,
+            0.0587,
+            0.2387
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 150,
+          "size_m": [
+            0.0509,
+            0.0587,
+            0.2387
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 130,
+          "size_m": [
+            0.0431,
+            0.1311,
+            0.1311
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 130,
+          "size_m": [
+            0.0411,
+            0.1311,
+            0.1311
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 128,
+          "size_m": [
+            0.184,
+            0.1859,
+            0.0333
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 124,
+          "size_m": [
+            0.1781,
+            0.1566,
+            0.2603
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 124,
+          "size_m": [
+            0.1781,
+            0.1546,
+            0.2622
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 100,
+          "size_m": [
+            0.0665,
+            0.0881,
+            0.0744
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 72,
+          "size_m": [
+            0.1526,
+            0.0744,
+            0.0861
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 68,
+          "size_m": [
+            0.1252,
+            0.0587,
+            0.0411
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 68,
+          "size_m": [
+            0.1233,
+            0.0587,
+            0.0411
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 68,
+          "size_m": [
+            0.1526,
+            0.0763,
+            0.0841
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 60,
+          "size_m": [
+            0.0607,
+            0.0802,
+            0.0861
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 60,
+          "size_m": [
+            0.0607,
+            0.0802,
+            0.0861
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 52,
+          "size_m": [
+            0.1429,
+            0.0724,
+            0.0822
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 52,
+          "size_m": [
+            0.1292,
+            0.0665,
+            0.0763
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 52,
+          "size_m": [
+            0.1448,
+            0.0724,
+            0.0822
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 52,
+          "size_m": [
+            0.1272,
+            0.0646,
+            0.0744
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 48,
+          "size_m": [
+            0.0098,
+            0.0626,
+            0.045
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 44,
+          "size_m": [
+            0.0685,
+            0.0294,
+            0.0372
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 44,
+          "size_m": [
+            0.0685,
+            0.0313,
+            0.0372
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 28,
+          "size_m": [
+            0.0059,
+            0.0372,
+            0.0352
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 28,
+          "size_m": [
+            0.0078,
+            0.0352,
+            0.0352
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 22,
+          "size_m": [
+            0.0333,
+            0.0176,
+            0.0176
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 22,
+          "size_m": [
+            0.0333,
+            0.0176,
+            0.0157
+          ],
+          "boundary_loops": null
+        },
+        {
+          "triangles": 16,
+          "size_m": [
+            0.002,
+            0.0117,
+            0.0059
+          ],
+          "boundary_loops": null
+        }
+      ],
+      "holes_boundary_loops": 0,
+      "non_manifold_edges": 7,
+      "true_dims_m": {
+        "x": 1.4125,
+        "y": 0.3558,
+        "z": 1.8
+      },
+      "true_length_m": 1.8,
+      "target_size_m": 1.8,
+      "source_scale": null,
+      "clean_warnings": [],
+      "clean_errors": [],
+      "view_coverage": {
+        "front": 0.1039,
+        "right": 0.0642,
+        "back": 0.1039,
+        "top": 0.0736,
+        "closeup_front": 0.3462,
+        "closeup_back": 0.3462,
+        "clay_front": 0.1039,
+        "wireframe_front": 0.1085
+      }
+    },
+    "color_vs_concept": [
+      [
+        {
+          "concept": "#B6A281",
+          "concept_share": 0.223,
+          "texture_before": "#A69A84",
+          "texture_share": 0.672,
+          "texture_after": "#B6A382",
+          "delta_e_before": 7.5,
+          "delta_ab_after": 0.3,
+          "applied": true,
+          "reason": null
+        },
+        {
+          "concept": "#260E0D",
+          "concept_share": 0.001,
+          "texture_before": "#36271F",
+          "texture_share": 0.001,
+          "texture_after": null,
+          "delta_e_before": 12.9,
+          "delta_ab_after": null,
+          "applied": false,
+          "reason": "covers 0.1% of the texture"
+        },
+        {
+          "concept": "#613430",
+          "concept_share": 0.133,
+          "texture_before": "#5D362E",
+          "texture_share": 0.021,
+          "texture_after": null,
+          "delta_e_before": 2.5,
+          "delta_ab_after": null,
+          "applied": false,
+          "reason": "covers 2.1% of the texture"
+        },
+        {
+          "concept": "#7A6854",
+          "concept_share": 0.081,
+          "texture_before": "#7C6954",
+          "texture_share": 0.055,
+          "texture_after": "#7A6954",
+          "delta_e_before": 1.0,
+          "delta_ab_after": 0.5,
+          "applied": true,
+          "reason": null
+        },
+        {
+          "concept": "#CCB790",
+          "concept_share": 0.286,
+          "texture_before": "#CCB790",
+          "texture_share": 0.0,
+          "texture_after": null,
+          "delta_e_before": 0.0,
+          "delta_ab_after": null,
+          "applied": false,
+          "reason": "covers 0.0% of the texture"
+        },
+        {
+          "concept": "#5B473B",
+          "concept_share": 0.077,
+          "texture_before": "#684F3C",
+          "texture_share": 0.059,
+          "texture_after": "#645043",
+          "delta_e_before": 6.2,
+          "delta_ab_after": 0.9,
+          "applied": true,
+          "reason": null
+        },
+        {
+          "concept": "#9D8B6F",
+          "concept_share": 0.186,
+          "texture_before": "#94846E",
+          "texture_share": 0.064,
+          "texture_after": "#9E8C6F",
+          "delta_e_before": 4.5,
+          "delta_ab_after": 0.3,
+          "applied": true,
+          "reason": null
+        },
+        {
+          "concept": "#422220",
+          "concept_share": 0.013,
+          "texture_before": "#4B1B16",
+          "texture_share": 0.129,
+          "texture_after": "#41221F",
+          "delta_e_before": 10.0,
+          "delta_ab_after": 0.2,
+          "applied": true,
+          "reason": null
+        }
+      ]
+    ],
+    "validate": {
+      "status": "pass",
+      "errors": [],
+      "warnings": [
+        "animations missing (they'll come from the shared library): [\"idle\", \"run\", \"attack\", \"stagger\", \"death\"]"
+      ],
+      "humanoid_mappable": true,
+      "missing_required": [],
+      "sockets": {
+        "hand_l": {
+          "bone": "LeftHand",
+          "found": true,
+          "skeleton_bone": "mixamorig_LeftHand"
+        },
+        "hand_r": {
+          "bone": "RightHand",
+          "found": true,
+          "skeleton_bone": "mixamorig_RightHand"
+        }
+      }
+    }
+  },
+  "assertions": [
+    {
+      "name": "triangles within budget",
+      "passed": true,
+      "value": 5046,
+      "limit": 5500,
+      "detail": "art bible: triangles after triangulation, summed across the GLB"
+    },
+    {
+      "name": "one albedo texture at the brief's size",
+      "passed": true,
+      "value": [
+        [
+          256,
+          256
+        ]
+      ],
+      "limit": 1024,
+      "detail": ""
+    },
+    {
+      "name": "holes (welded boundary loops)",
+      "passed": true,
+      "value": 0,
+      "limit": 10.0,
+      "detail": "open boundary loops after welding at 0.01 mm"
+    },
+    {
+      "name": "concept color #B6A281 kept in the texture",
+      "passed": true,
+      "value": 0.672,
+      "limit": 0.074,
+      "detail": "covers 22% of the concept"
+    },
+    {
+      "name": "concept color #B6A281 matched after correction",
+      "passed": true,
+      "value": 0.3,
+      "limit": 5.0,
+      "detail": "hue/saturation distance (Lab a, b) after correction"
+    },
+    {
+      "name": "concept color #613430 kept in the texture",
+      "passed": false,
+      "value": 0.021,
+      "limit": 0.044,
+      "detail": "covers 13% of the concept"
+    },
+    {
+      "name": "concept color #613430 found in the texture",
+      "passed": false,
+      "value": 2.5,
+      "limit": "applied",
+      "detail": "covers 2.1% of the texture"
+    },
+    {
+      "name": "concept color #7A6854 kept in the texture",
+      "passed": true,
+      "value": 0.055,
+      "limit": 0.027,
+      "detail": "covers 8% of the concept"
+    },
+    {
+      "name": "concept color #7A6854 matched after correction",
+      "passed": true,
+      "value": 0.5,
+      "limit": 5.0,
+      "detail": "hue/saturation distance (Lab a, b) after correction"
+    },
+    {
+      "name": "concept color #CCB790 kept in the texture",
+      "passed": false,
+      "value": 0.0,
+      "limit": 0.094,
+      "detail": "covers 29% of the concept"
+    },
+    {
+      "name": "concept color #CCB790 found in the texture",
+      "passed": false,
+      "value": 0.0,
+      "limit": "applied",
+      "detail": "covers 0.0% of the texture"
+    },
+    {
+      "name": "concept color #5B473B kept in the texture",
+      "passed": true,
+      "value": 0.059,
+      "limit": 0.025,
+      "detail": "covers 8% of the concept"
+    },
+    {
+      "name": "concept color #5B473B matched after correction",
+      "passed": true,
+      "value": 0.9,
+      "limit": 5.0,
+      "detail": "hue/saturation distance (Lab a, b) after correction"
+    },
+    {
+      "name": "concept color #9D8B6F kept in the texture",
+      "passed": true,
+      "value": 0.064,
+      "limit": 0.061,
+      "detail": "covers 19% of the concept"
+    },
+    {
+      "name": "concept color #9D8B6F matched after correction",
+      "passed": true,
+      "value": 0.3,
+      "limit": 5.0,
+      "detail": "hue/saturation distance (Lab a, b) after correction"
+    },
+    {
+      "name": "validate stage passed",
+      "passed": true,
+      "value": "pass",
+      "limit": "pass",
+      "detail": ""
+    }
+  ],
+  "questions": [
+    "Does the mesh match the approved concept (or, with no concept, the brief's prompt) part for part? List each named element as present, absent or changed.",
+    "Is anything missing or malformed: holes, fused limbs or parts that should be separate, separate pieces that should be one (see the part list), spikes, floating fragments, extra props?",
+    "Budget and scale: do the triangle, texture and size assertions pass?",
+    "Colors: do the color assertions pass? Name any concept or palette color the texture lost, or a large area in a color the brief doesn't ask for.",
+    "Rigged characters: does the validate report map every required humanoid bone, and do the sockets resolve?",
+    "Face (characters): in the closeups (or the concept), list the eyes, nose and mouth, each as clearly present, faint, or absent. A faint or absent feature the concept shows is a missing finding."
+  ],
+  "escalate_rules": [
+    "Open style or taste questions (is it appealing, is the silhouette strong enough, is this the right design) are not yours: escalate them.",
+    "A deliberate, recorded design change (see design_notes) is not a defect: don't flag it again, but say so if the asset contradicts the note.",
+    "When the evidence can't settle a question (the view that would show it is missing), escalate rather than guess.",
+    "Revise only when one concrete edit would fix every blocker and major finding. Otherwise escalate."
+  ],
+  "refine_budget": {
+    "per_stage": 1,
+    "used": 0
+  },
+  "tool_versions": {
+    "python": "3.14.7",
+    "blender": "Blender 5.0.1",
+    "godot": "4.7.2.stable.official.ed1daf0bf",
+    "tripo": "0.5.1"
+  },
+  "subject": {
+    "kind": "shipped mesh",
+    "path": "assets/meshes/barrow_levy.glb",
+    "sha256": "7869032a3bf8af8412b7b80c2694863e9e55fbf8de9a0b5561a912c83742e422",
+    "concept": {
+      "path": ".tripo-out/barrow_levy/concept-3/tripo-out/tripo-out-barrow-levy-concept-2-308a5daa/generated_image.png",
+      "sha256": "d62266500028543ed1fc0600b1bf974f74c07ba35be79684b580dd40be22f3f2"
+    }
+  },
+  "assertions_failed": 4
+}

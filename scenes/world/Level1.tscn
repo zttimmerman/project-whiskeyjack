@@ -24,9 +24,17 @@
 [ext_resource type="PackedScene" uid="uid://7lydti5iiesp" path="res://scenes/world/kit/KitBarrelStack.tscn" id="k_stack"]
 
 [sub_resource type="Environment" id="Environment_level1"]
+background_mode = 1
+background_color = Color(0.03, 0.025, 0.02, 1)
 ambient_light_source = 2
-ambient_light_color = Color(0.4509804, 0.41960785, 0.4, 1)
-ambient_light_energy = 0.5
+ambient_light_color = Color(0.56, 0.5, 0.45, 1)
+ambient_light_energy = 0.8
+tonemap_mode = 2
+tonemap_exposure = 1.15
+fog_enabled = true
+fog_light_color = Color(0.12, 0.09, 0.07, 1)
+fog_density = 0.03
+fog_sky_affect = 0.0
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_questadvance"]
 size = Vector3(1, 3, 4)
@@ -42,6 +50,8 @@ script = ExtResource("1_script")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1325910861]
 transform = Transform3D(0.866, -0.25, 0.433, 0, 0.866, 0.5, -0.5, -0.433, 0.75, 0, 10, 0)
+light_color = Color(0.78, 0.84, 1, 1)
+light_energy = 0.55
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_level1")
@@ -497,104 +507,130 @@ transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6, 2.8, -3)
 
 [node name="TorchStartWLight" type="OmniLight3D" parent="Torches"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 3.1, -3)
-light_color = Color(1, 0.85, 0.6, 1)
-light_energy = 0.5
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 1.6
+omni_range = 7.0
+omni_attenuation = 1.6
 
 [node name="TorchStartEN" parent="Torches" instance=ExtResource("10_torch")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 6, 2.8, -3)
 
 [node name="TorchStartENLight" type="OmniLight3D" parent="Torches"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 3.1, -3)
-light_color = Color(1, 0.85, 0.6, 1)
-light_energy = 0.5
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 1.6
+omni_range = 7.0
+omni_attenuation = 1.6
 
 [node name="TorchStartES" parent="Torches" instance=ExtResource("10_torch")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 6, 2.8, 3)
 
 [node name="TorchStartESLight" type="OmniLight3D" parent="Torches"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 3.1, 3)
-light_color = Color(1, 0.85, 0.6, 1)
-light_energy = 0.5
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 1.6
+omni_range = 7.0
+omni_attenuation = 1.6
 
 [node name="TorchCorridorA" parent="Torches" instance=ExtResource("10_torch")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 2.8, -1.95)
 
 [node name="TorchCorridorALight" type="OmniLight3D" parent="Torches"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 3.1, -1.45)
-light_color = Color(1, 0.85, 0.6, 1)
-light_energy = 0.5
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 1.6
+omni_range = 7.0
+omni_attenuation = 1.6
 
 [node name="TorchCentralPillar" parent="Torches" instance=ExtResource("10_torch")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 2.8, -2.45)
 
 [node name="TorchCentralPillarLight" type="OmniLight3D" parent="Torches"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 3.1, -1.95)
-light_color = Color(1, 0.85, 0.6, 1)
-light_energy = 0.5
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 1.6
+omni_range = 7.0
+omni_attenuation = 1.6
 
 [node name="TorchCentralN" parent="Torches" instance=ExtResource("10_torch")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 2.8, -8)
 
 [node name="TorchCentralNLight" type="OmniLight3D" parent="Torches"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 3.1, -7.5)
-light_color = Color(1, 0.85, 0.6, 1)
-light_energy = 0.5
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 1.6
+omni_range = 7.0
+omni_attenuation = 1.6
 
 [node name="TorchCentralE" parent="Torches" instance=ExtResource("10_torch")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 32, 2.8, 0)
 
 [node name="TorchCentralELight" type="OmniLight3D" parent="Torches"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.5, 3.1, 0)
-light_color = Color(1, 0.85, 0.6, 1)
-light_energy = 0.5
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 1.6
+omni_range = 7.0
+omni_attenuation = 1.6
 
 [node name="TorchCentralS" parent="Torches" instance=ExtResource("10_torch")]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 20, 2.8, 8)
 
 [node name="TorchCentralSLight" type="OmniLight3D" parent="Torches"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 3.1, 7.5)
-light_color = Color(1, 0.85, 0.6, 1)
-light_energy = 0.5
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 1.6
+omni_range = 7.0
+omni_attenuation = 1.6
 
 [node name="TorchCorridorB" parent="Torches" instance=ExtResource("10_torch")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 22.05, 2.8, 13)
 
 [node name="TorchCorridorBLight" type="OmniLight3D" parent="Torches"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.55, 3.1, 13)
-light_color = Color(1, 0.85, 0.6, 1)
-light_energy = 0.5
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 1.6
+omni_range = 7.0
+omni_attenuation = 1.6
 
 [node name="TorchExitW" parent="Torches" instance=ExtResource("10_torch")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 2.8, 24)
 
 [node name="TorchExitWLight" type="OmniLight3D" parent="Torches"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.5, 3.1, 24)
-light_color = Color(1, 0.85, 0.6, 1)
-light_energy = 0.5
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 1.6
+omni_range = 7.0
+omni_attenuation = 1.6
 
 [node name="TorchExitE" parent="Torches" instance=ExtResource("10_torch")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 30, 2.8, 24)
 
 [node name="TorchExitELight" type="OmniLight3D" parent="Torches"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.5, 3.1, 24)
-light_color = Color(1, 0.85, 0.6, 1)
-light_energy = 0.5
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 1.6
+omni_range = 7.0
+omni_attenuation = 1.6
 
 [node name="TorchExitDoorL" parent="Torches" instance=ExtResource("10_torch")]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 21.8, 2.8, 30)
 
 [node name="TorchExitDoorLLight" type="OmniLight3D" parent="Torches"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.8, 3.1, 29.5)
-light_color = Color(1, 0.85, 0.6, 1)
-light_energy = 0.5
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 1.6
+omni_range = 7.0
+omni_attenuation = 1.6
 
 [node name="TorchExitDoorR" parent="Torches" instance=ExtResource("10_torch")]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 26.2, 2.8, 30)
 
 [node name="TorchExitDoorRLight" type="OmniLight3D" parent="Torches"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.2, 3.1, 29.5)
-light_color = Color(1, 0.85, 0.6, 1)
-light_energy = 0.5
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 1.6
+omni_range = 7.0
+omni_attenuation = 1.6
 
 [node name="Player" parent="." unique_id=1126046969 instance=ExtResource("2_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)

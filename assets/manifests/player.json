@@ -361,11 +361,11 @@
     },
     "clean": {
       "status": "ok",
-      "timestamp": "2026-09-28T21:47:07+00:00",
+      "timestamp": "2026-10-03T03:36:35+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player.yaml",
-          "sha256": "ee9664699c8771285f584c5351ad7868007de99a1ab2bf7385fca6d4ebcc849b"
+          "sha256": "919450602b376aaefdd2d8e3aed1df88403a6469799f56072102a2137b9acdd8"
         },
         {
           "path": ".tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/model.glb",
@@ -373,7 +373,7 @@
         },
         {
           "path": "scripts/blender_cleanup.py",
-          "sha256": "9eefccd91bc8f3e81c819903a6d2838716a4ccc0e95d3f681147dfa2b65fb0fe"
+          "sha256": "f65428190ef7958ab0142b740e69ccbb406ba85c4766e83399c95a1db9c2a7f1"
         },
         {
           "path": ".tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/task.json",
@@ -385,23 +385,23 @@
         },
         {
           "path": "assets/overlays/player_mouth.png",
-          "sha256": "ad40db84b412035c867629510d3505e53a4f3044d14110a9e88242672fbb409c"
+          "sha256": "ec50451731b36932906d9d04456b0c5c94de7f7fb20c279a2e99eaa25d3b7fe0"
         },
         {
           "path": "assets/overlays/player_mouth.json",
-          "sha256": "fb7f7dc5f4a7abf98b5f9334f2d22f2a0cc4f7ea56de2764cb661ef360c353d9"
+          "sha256": "c1a64b7c2aefdd8505d344d2180e1f55baa9c2b9d74ab927a2d30d88b3806604"
         }
       ],
       "outputs": [
         {
           "path": "assets/meshes/player.glb",
-          "sha256": "acbd75c9f85b278841e0cd5e716ce73c3728b6453598ca1592a3f4fd30001a14"
+          "sha256": "d28ffcb38a4600c50640f2dd8bd366f73beb1a7ebdcb7b89c9de0830f1dc8c7b"
         }
       ],
       "tool_versions": {
         "python": "3.14.7",
         "blender": "Blender 5.0.1",
-        "godot": "4.6.1.stable.official.14d19694e",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
         "tripo": "0.5.1"
       },
       "message": "exported assets/meshes/player.glb",
@@ -411,7 +411,7 @@
         "type": "character",
         "face_limit": 5000,
         "triangle_budget": 5500,
-        "texture_size": 256,
+        "texture_size": 1024,
         "target_size_m": 1.8,
         "pivot": "base",
         "palette": [
@@ -434,6 +434,12 @@
         "tip_end": null,
         "rigid_parts": null,
         "skirt_reweight": true,
+        "smooth_shading": true,
+        "parts": null,
+        "parts_transfer": null,
+        "source": null,
+        "source_scale": null,
+        "orientation": "principal_axis",
         "source_forward": {
           "axis": "+x",
           "source": "Tripo API default (.tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/task.json sets no export_orientation)"
@@ -444,9 +450,9 @@
           "Blackened Iron": "#242424",
           "Tarnished Gold": "#E6BF1A"
         },
-        "reference_image": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+        "reference_image": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/.tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
         "texture_overlays": [
-          "/Users/zach/Documents/repos/project-whiskeyjack/assets/overlays/player_mouth.png"
+          "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/overlays/player_mouth.png"
         ]
       },
       "report": {
@@ -454,8 +460,8 @@
         "errors": [],
         "warnings": [],
         "blender_version": "5.0.1",
-        "input": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/model.glb",
-        "output": "/Users/zach/Documents/repos/project-whiskeyjack/assets/meshes/player.glb",
+        "input": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/.tripo-out/player/rig-1/tripo-out/rig-3-ba787f8d/model.glb",
+        "output": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/meshes/player.glb",
         "materials": [
           {
             "name": "tripo_material_e2b61bb2-f8dc-43c6-8eea-39854366cb6d",
@@ -473,14 +479,15 @@
               2048
             ],
             "size_after": [
-              256,
-              256
+              1024,
+              1024
             ]
           }
         ],
         "removed_objects": [
           "Icosphere (bone display shape created by the importer)"
         ],
+        "input_format": "glb",
         "rigged": true,
         "armatures": [
           {
@@ -595,7 +602,8 @@
                     0.2211,
                     1.0,
                     0.9883
-                  ]
+                  ],
+                  "boundary_loops": 2
                 },
                 {
                   "triangles": 50,
@@ -604,7 +612,8 @@
                     0.0157,
                     0.0372,
                     0.0078
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 50,
@@ -613,7 +622,8 @@
                     0.0157,
                     0.0372,
                     0.0078
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 42,
@@ -622,7 +632,8 @@
                     0.0078,
                     0.0117,
                     0.0137
-                  ]
+                  ],
+                  "boundary_loops": 0
                 },
                 {
                   "triangles": 38,
@@ -631,7 +642,8 @@
                     0.0078,
                     0.0137,
                     0.0137
-                  ]
+                  ],
+                  "boundary_loops": 0
                 }
               ],
               "quad_ratio": 0.0,
@@ -682,7 +694,8 @@
                       0.2211,
                       1.0,
                       0.9883
-                    ]
+                    ],
+                    "boundary_loops": 2
                   },
                   {
                     "triangles": 50,
@@ -691,7 +704,8 @@
                       0.0157,
                       0.0372,
                       0.0078
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 50,
@@ -700,7 +714,8 @@
                       0.0157,
                       0.0372,
                       0.0078
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 42,
@@ -709,7 +724,8 @@
                       0.0078,
                       0.0117,
                       0.0137
-                    ]
+                    ],
+                    "boundary_loops": 0
                   },
                   {
                     "triangles": 38,
@@ -718,7 +734,8 @@
                       0.0078,
                       0.0137,
                       0.0137
-                    ]
+                    ],
+                    "boundary_loops": 0
                   }
                 ],
                 "part_count": 5
@@ -732,69 +749,69 @@
           {
             "image": "Color_e2b61bb2-f8dc-43c6-8eea-39854366cb6d",
             "size": [
-              256,
-              256
+              1024,
+              1024
             ],
             "method": "approved concept (hue and saturation restored; lightness lifted to the matched concept tone, never lowered)",
-            "reference": "/Users/zach/Documents/repos/project-whiskeyjack/.tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+            "reference": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/.tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
             "concept_background": "#8B8B8B",
             "clusters": [
               {
                 "concept": "#14313F",
                 "concept_share": 0.32,
-                "texture_before": "#032C3F",
-                "texture_share": 0.351,
-                "delta_e_before": 4.5,
+                "texture_before": "#022D40",
+                "texture_share": 0.354,
+                "delta_e_before": 4.6,
                 "applied": true,
                 "texture_after": "#13303E",
-                "delta_ab_after": 0.3,
+                "delta_ab_after": 0.2,
                 "lightness": [
                   16.6,
                   18.5,
                   18.8
                 ],
-                "delta_ab_before": 3.9
+                "delta_ab_before": 4.1
               },
               {
                 "concept": "#BC9781",
                 "concept_share": 0.058,
-                "texture_before": "#AC9386",
-                "texture_share": 0.078,
-                "delta_e_before": 7.9,
+                "texture_before": "#AE9587",
+                "texture_share": 0.089,
+                "delta_e_before": 7.6,
                 "applied": true,
-                "texture_after": "#BE9983",
+                "texture_after": "#BD9882",
                 "delta_ab_after": 0.1,
                 "lightness": [
-                  62.9,
-                  66.2,
+                  63.4,
+                  65.8,
                   65.4
                 ],
-                "delta_ab_before": 7.5
+                "delta_ab_before": 7.4
               },
               {
                 "concept": "#646064",
                 "concept_share": 0.004,
-                "texture_before": "#5B4444",
-                "texture_share": 0.016,
-                "delta_e_before": 13.8,
+                "texture_before": "#584242",
+                "texture_share": 0.009,
+                "delta_e_before": 14.3,
                 "applied": false,
-                "reason": "covers 1.6% of the texture"
+                "reason": "covers 0.9% of the texture"
               },
               {
                 "concept": "#957468",
                 "concept_share": 0.03,
-                "texture_before": "#7F6E68",
-                "texture_share": 0.023,
-                "delta_e_before": 9.2,
+                "texture_before": "#82716B",
+                "texture_share": 0.014,
+                "delta_e_before": 8.7,
                 "applied": false,
-                "reason": "covers 2.3% of the texture"
+                "reason": "covers 1.4% of the texture"
               },
               {
                 "concept": "#45282B",
                 "concept_share": 0.231,
-                "texture_before": "#441B21",
-                "texture_share": 0.246,
-                "delta_e_before": 7.8,
+                "texture_before": "#441A21",
+                "texture_share": 0.253,
+                "delta_e_before": 7.9,
                 "applied": true,
                 "texture_after": "#432629",
                 "delta_ab_after": 0.4,
@@ -803,44 +820,44 @@
                   19.0,
                   19.8
                 ],
-                "delta_ab_before": 6.8
+                "delta_ab_before": 7.0
               },
               {
                 "concept": "#2C1D25",
                 "concept_share": 0.145,
-                "texture_before": "#281A21",
-                "texture_share": 0.159,
-                "delta_e_before": 1.6,
+                "texture_before": "#281920",
+                "texture_share": 0.156,
+                "delta_e_before": 2.0,
                 "applied": true,
-                "texture_after": "#2B1A22",
-                "delta_ab_after": 1.3,
+                "texture_after": "#2C1A22",
+                "delta_ab_after": 1.4,
                 "lightness": [
-                  11.3,
-                  11.7,
+                  10.9,
+                  12.0,
                   12.7
                 ],
-                "delta_ab_before": 0.8
+                "delta_ab_before": 1.0
               },
               {
                 "concept": "#383C43",
                 "concept_share": 0.021,
-                "texture_before": "#354149",
-                "texture_share": 0.029,
-                "delta_e_before": 3.4,
+                "texture_before": "#333E46",
+                "texture_share": 0.025,
+                "delta_e_before": 2.9,
                 "applied": false,
-                "reason": "covers 2.9% of the texture"
+                "reason": "covers 2.5% of the texture"
               },
               {
                 "concept": "#0B1C2C",
                 "concept_share": 0.19,
                 "texture_before": "#03122A",
-                "texture_share": 0.098,
-                "delta_e_before": 7.2,
+                "texture_share": 0.099,
+                "delta_e_before": 7.4,
                 "applied": true,
                 "texture_after": "#071929",
-                "delta_ab_after": 0.4,
+                "delta_ab_after": 0.3,
                 "lightness": [
-                  5.7,
+                  5.5,
                   8.0,
                   9.5
                 ],
@@ -851,8 +868,8 @@
         ],
         "overlays": [
           {
-            "overlay": "/Users/zach/Documents/repos/project-whiskeyjack/assets/overlays/player_mouth.png",
-            "pixels": 19
+            "overlay": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/overlays/player_mouth.png",
+            "pixels": 195
           }
         ],
         "skirt_reweight": {
@@ -864,17 +881,15 @@
           "method": "vertices between knee and waist, further than 0.085 m from both thigh bones: Hips at the waist grading linearly to the thighs at the hem, split by inverse squared distance; no shin weight. Within 0.025 m inside that radius, blended linearly from the vertex's own weights"
         },
         "shading": {
-          "angle_deg": 30.0,
-          "welded_vertices_removed": 4062,
-          "custom_normals_cleared": [
+          "mode": "source normals kept (smooth_shading)",
+          "custom_normals": [
             "tripo_node_e2b61bb2-f8dc-43c6-8eea-39854"
-          ],
-          "welded": "same_weights"
+          ]
         },
         "triangle_count": 4893,
         "triangle_budget": 5500,
         "vertex_metrics": {
-          "split_at_seams": 2502,
+          "split_at_seams": 6564,
           "welded": 2481,
           "note": "metrics only; the budget is in triangles"
         },
@@ -895,19 +910,19 @@
     },
     "validate": {
       "status": "ok",
-      "timestamp": "2026-09-28T21:48:16+00:00",
+      "timestamp": "2026-10-03T03:36:46+00:00",
       "inputs": [
         {
           "path": "assets/briefs/player.yaml",
-          "sha256": "ee9664699c8771285f584c5351ad7868007de99a1ab2bf7385fca6d4ebcc849b"
+          "sha256": "919450602b376aaefdd2d8e3aed1df88403a6469799f56072102a2137b9acdd8"
         },
         {
           "path": "assets/meshes/player.glb",
-          "sha256": "acbd75c9f85b278841e0cd5e716ce73c3728b6453598ca1592a3f4fd30001a14"
+          "sha256": "d28ffcb38a4600c50640f2dd8bd366f73beb1a7ebdcb7b89c9de0830f1dc8c7b"
         },
         {
           "path": "scripts/godot_validate.gd",
-          "sha256": "b6e15053c4219818c4d819d9d64720b11aa7cddbef876e106eee74cbca31e554"
+          "sha256": "7990d0b422dad7def4ba5cbef89d9632cd29cc3edddc28143757e982988985c9"
         },
         {
           "path": "scripts/blender_views.py",
@@ -921,33 +936,33 @@
       "outputs": [
         {
           "path": "assets/manifests/player/front.png",
-          "sha256": "0d9dcae8109c5d692bafc5358ccb674363aa00c4f976ed4c2d5bc86f0d2d1335"
+          "sha256": "2d0449f08318e8c58dfc668aa0067e3c340c7c641c158f886d340052c817ae26"
         },
         {
           "path": "assets/manifests/player/right.png",
-          "sha256": "28c85e3b76af356734658d9dd565f435c1c1109590e6962a56380874abceb74f"
+          "sha256": "9c5c143524e70404dd2d7bbb2ebb650c849d6628461ded2532be870771d5338f"
         },
         {
           "path": "assets/manifests/player/back.png",
-          "sha256": "dfee172f02f7f7f8cc3453ec9ec63d89621d5277480cf4cdeb800e70da7b9716"
+          "sha256": "d757f5e735ff7fdc71f041cdf758f740bcb60bae98733087d0e3e72e5acf705c"
         },
         {
           "path": "assets/manifests/player/top.png",
-          "sha256": "b0725daf8dc5c4a76ca0c8c9b797336bf1775cc8699c77fa3a0cca06e024534e"
+          "sha256": "9a89958d89361674003cc22db699c0d5ac6b4e47820e54dda4dadb388b09729b"
         },
         {
           "path": "assets/manifests/player/clay_front.png",
-          "sha256": "eda74a7ccce3732b9c97e6421117f21ce6ffadad8c19cf39d9e0e35b7c595043"
+          "sha256": "0d847ec828fc6b7f8ef26da43346bf6e51b4b58d1d8cc5d1d5efb2118ffab759"
         },
         {
           "path": "assets/manifests/player/wireframe_front.png",
-          "sha256": "fe3c3bf771bc03deb75216e5124fc2aa54f4dccb56901d04cb6b8c7ee6d9dae3"
+          "sha256": "7cbaa3193958e997739ca142a38707c2f9f3a40c04d8417c7e4d3476a9abf790"
         }
       ],
       "tool_versions": {
         "python": "3.14.7",
         "blender": "Blender 5.0.1",
-        "godot": "4.6.1.stable.official.14d19694e",
+        "godot": "4.7.2.stable.official.ed1daf0bf",
         "tripo": "0.5.1"
       },
       "message": "all checks passed",
@@ -957,7 +972,7 @@
         "type": "character",
         "face_limit": 5000,
         "triangle_budget": 5500,
-        "texture_size": 256,
+        "texture_size": 1024,
         "target_size_m": 1.8,
         "pivot": "base",
         "palette": [
@@ -980,6 +995,12 @@
         "tip_end": null,
         "rigid_parts": null,
         "skirt_reweight": true,
+        "smooth_shading": true,
+        "parts": null,
+        "parts_transfer": null,
+        "source": null,
+        "source_scale": null,
+        "orientation": "principal_axis",
         "blender_triangle_count": 4893
       },
       "report": {
@@ -1003,13 +1024,13 @@
           "present": []
         },
         "errors": [],
-        "godot_version": "4.6.1-stable (official)",
+        "godot_version": "4.7.2-stable (official)",
         "import_method": "GLTFDocument (runtime); editor import settings such as a BoneMap don't apply",
         "materials": [
           {
             "albedo_texture": [
-              256,
-              256
+              1024,
+              1024
             ],
             "extra_maps": [],
             "mesh": "tripo_node_e2b61bb2-f8dc-43c6-8eea-39854",
@@ -1089,11 +1110,11 @@
         "status": "pass",
         "textures": {
           "count": 1,
-          "max_allowed": 256,
+          "max_allowed": 1024,
           "sizes": [
             [
-              256,
-              256
+              1024,
+              1024
             ]
           ]
         },
@@ -1103,7 +1124,7 @@
           "count": 4893
         },
         "vertex_metrics": {
-          "gpu_count": 7242,
+          "gpu_count": 6571,
           "note": "metrics only; the budget is in triangles"
         },
         "warnings": [
@@ -1114,28 +1135,28 @@
           "status": "ok",
           "views": {
             "front": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/player/front.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/manifests/player/front.png",
               "coverage": 0.1776
             },
             "right": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/player/right.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/manifests/player/right.png",
               "coverage": 0.1099
             },
             "back": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/player/back.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/manifests/player/back.png",
               "coverage": 0.1776
             },
             "top": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/player/top.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/manifests/player/top.png",
               "coverage": 0.079
             },
             "clay_front": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/player/clay_front.png",
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/manifests/player/clay_front.png",
               "coverage": 0.1776
             },
             "wireframe_front": {
-              "path": "/Users/zach/Documents/repos/project-whiskeyjack/assets/manifests/player/wireframe_front.png",
-              "coverage": 0.159
+              "path": "/Users/zach/Documents/repos/project-whiskeyjack-artb2/assets/manifests/player/wireframe_front.png",
+              "coverage": 0.1571
             }
           },
           "errors": [],
@@ -1150,10 +1171,10 @@
   },
   "brief": {
     "path": "assets/briefs/player.yaml",
-    "sha256": "ee9664699c8771285f584c5351ad7868007de99a1ab2bf7385fca6d4ebcc849b"
+    "sha256": "919450602b376aaefdd2d8e3aed1df88403a6469799f56072102a2137b9acdd8"
   },
   "total_cost_credits": 100,
-  "updated_at": "2026-10-02T04:22:42+00:00",
+  "updated_at": "2026-10-03T03:54:04+00:00",
   "concept_approval": {
     "attempt": "concept-1",
     "image": {
@@ -1853,6 +1874,556 @@
       "stage": "motion-death",
       "recorded_at": "2026-10-02T04:22:42+00:00",
       "decision": "User 2026-10-02: accept the skirt stretch for now (pre-existing skirt_reweight tunic/thigh boundary, mostly hidden at gameplay distance); the player model gets reworked after the Tripo P2.0 research"
+    },
+    {
+      "kind": "verdict",
+      "stage": "mesh",
+      "recorded_at": "2026-10-03T03:54:03+00:00",
+      "packet": "assets/manifests/player/judge/mesh-2/packet.json",
+      "packet_sha256": "cd2a8aab896e7cacb5bc8cdafcfcde60217df0a96dc454451d954f2aefe13515",
+      "subject": {
+        "kind": "shipped mesh",
+        "path": "assets/meshes/player.glb",
+        "sha256": "d28ffcb38a4600c50640f2dd8bd366f73beb1a7ebdcb7b89c9de0830f1dc8c7b",
+        "concept": {
+          "path": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png",
+          "sha256": "e92b55a11a671ace6e50e37e78578afaa6a2e46e7d230da2da61ef368c2e9f98"
+        }
+      },
+      "images": [
+        {
+          "role": "approved_concept",
+          "path": "assets/manifests/player/judge/mesh-2/01_approved_concept.png",
+          "sha256": "c489317c17b7d21da9d8bc493eab7a50cbdb13f7855a9d485539534444ad21a1",
+          "source": ".tripo-out/player/concept-1/tripo-out/stylized-low-poly-3d-game-asset-4-f98a43b0/generated_image.png"
+        },
+        {
+          "role": "front",
+          "path": "assets/manifests/player/judge/mesh-2/02_front.png",
+          "sha256": "bdeee2fc82e81437154dedc377bcb0ec5bbdd31ff1ea9aa96359a8771d511c44",
+          "source": "assets/manifests/player/judge/mesh-2/work/views/front.png"
+        },
+        {
+          "role": "right",
+          "path": "assets/manifests/player/judge/mesh-2/03_right.png",
+          "sha256": "ed977f43c455ae5233c59d93e49da6db5a9394a5515a1d24ff838457c34f3b01",
+          "source": "assets/manifests/player/judge/mesh-2/work/views/right.png"
+        },
+        {
+          "role": "back",
+          "path": "assets/manifests/player/judge/mesh-2/04_back.png",
+          "sha256": "fe3d7c3c038330b8087e77f6a9b79a12e3a9acf3642b807714e81a337a0504e9",
+          "source": "assets/manifests/player/judge/mesh-2/work/views/back.png"
+        },
+        {
+          "role": "top",
+          "path": "assets/manifests/player/judge/mesh-2/05_top.png",
+          "sha256": "5287d11bb5321df1524c03739f0a30d0dfe594f0d78f3cca528a31a4fcdac3c1",
+          "source": "assets/manifests/player/judge/mesh-2/work/views/top.png"
+        },
+        {
+          "role": "clay_front",
+          "path": "assets/manifests/player/judge/mesh-2/06_clay_front.png",
+          "sha256": "a71c6ad04a8e695421d781c88b6f31c42eb071dc83a0154a85b9dd401617e355",
+          "source": "assets/manifests/player/judge/mesh-2/work/views/clay_front.png"
+        },
+        {
+          "role": "wireframe_front",
+          "path": "assets/manifests/player/judge/mesh-2/07_wireframe_front.png",
+          "sha256": "e2d43f7228aa145141e56731a6f78b6373410daded5899c4269ea8c7edc41231",
+          "source": "assets/manifests/player/judge/mesh-2/work/views/wireframe_front.png"
+        },
+        {
+          "role": "closeup_front",
+          "path": "assets/manifests/player/judge/mesh-2/08_closeup_front.png",
+          "sha256": "d4c9594e6901d975f276843ba8d0c6e9f2a9871e32bfabcc6c96f321c9f07967",
+          "source": "assets/manifests/player/judge/mesh-2/work/views/closeup_front.png"
+        },
+        {
+          "role": "closeup_back",
+          "path": "assets/manifests/player/judge/mesh-2/09_closeup_back.png",
+          "sha256": "a8ed04182518435cf5e2c4f9d32da5183e754ffe87827e65964145e3b3905e2a",
+          "source": "assets/manifests/player/judge/mesh-2/work/views/closeup_back.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player/judge/mesh-2/01_approved_concept.png",
+        "assets/manifests/player/judge/mesh-2/02_front.png",
+        "assets/manifests/player/judge/mesh-2/03_right.png",
+        "assets/manifests/player/judge/mesh-2/04_back.png",
+        "assets/manifests/player/judge/mesh-2/05_top.png",
+        "assets/manifests/player/judge/mesh-2/06_clay_front.png",
+        "assets/manifests/player/judge/mesh-2/07_wireframe_front.png",
+        "assets/manifests/player/judge/mesh-2/08_closeup_front.png",
+        "assets/manifests/player/judge/mesh-2/09_closeup_back.png"
+      ],
+      "assertions_failed": [],
+      "judge_verdict": "pass",
+      "verdict": "pass",
+      "override": null,
+      "action": "proceed",
+      "findings": [
+        {
+          "check": "malformed",
+          "severity": "minor",
+          "observation": "Thin stray wireframe lines at belt height and the boot tops, not in shaded views; probably the 13 non-manifold edges or seam slivers.",
+          "evidence": "07_wireframe_front.png"
+        },
+        {
+          "check": "concept_match",
+          "severity": "minor",
+          "observation": "The nose shows only as a faint shading line; eyes, brows and the overlay mouth read clearly.",
+          "evidence": "08_closeup_front.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": null,
+      "summary": "The re-cleaned player at 1024 px with smooth shading matches the approved concept part for part, and every assertion passes.",
+      "next": "proceed to the next stage"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:idle",
+      "recorded_at": "2026-10-03T03:54:03+00:00",
+      "packet": "assets/manifests/player/judge/motion-idle-2/packet.json",
+      "packet_sha256": "2c6483e6c554e4b5f35a82ed300d6893015bc036369b2d3a2d2bad61540fad55",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "idle",
+        "source": "res://data/animations/player_library.tres:idle",
+        "model": "res://assets/meshes/player.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player/motion/idle_metrics.json",
+          "sha256": "ab70f1741ea5c5e88f893982dfca45618e74f73b2e41aab7c9dd7f09ae427f5a"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/player/judge/motion-idle-2/01_frame_strip.png",
+          "sha256": "3aa89f3c7e57c3e91dccf21c55be166b908fe3a92051ccf74a23eef283937efc",
+          "source": ".tripo-out/player/motion/idle_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/player/judge/motion-idle-2/02_onion_skin.png",
+          "sha256": "056032400378eb6dc93cfb3a3356e148d842c30da346dddf59900c093caa1696",
+          "source": ".tripo-out/player/motion/idle_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/player/judge/motion-idle-2/03_plots.png",
+          "sha256": "a5d1d99e94351e4179b01449b5883ae8b5e1eeb8550844fd3489c3b464450615",
+          "source": ".tripo-out/player/motion/idle_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/player/judge/motion-idle-2/04_stretch_detail.png",
+          "sha256": "2dd5f015dbb64aed8e88a8dfad01c5d2353116e8a771b5dec2069a1997e52b1f",
+          "source": ".tripo-out/player/motion/idle_stretch.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player/judge/motion-idle-2/01_frame_strip.png",
+        "assets/manifests/player/judge/motion-idle-2/02_onion_skin.png",
+        "assets/manifests/player/judge/motion-idle-2/03_plots.png",
+        "assets/manifests/player/judge/motion-idle-2/04_stretch_detail.png"
+      ],
+      "assertions_failed": [
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "Worst LeftUpperLeg; the 12 worst edges sit where the boot tops, trousers and tunic hem meet at both knees; no visible tear. The stretch-detail header (4.03x) and the metric (3.033) disagree.",
+          "evidence": "assertion 'skin stretch (edge length vs bind pose)'; 04_stretch_detail.png; 03_plots.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "The only failing assertion is the player's pre-existing skirt skin stretch (tunic hem, inner thighs, knees and boot tops), which the user accepted on 2026-10-02; it isn't in the packet's design notes, so the judge can't pass it. No library change fixes stretch from the skin weights.",
+      "summary": "idle plays in place with no broken poses or handover snaps; skin stretch fails at 3.03x (limit 1.0) in the skirt/knee region, matching the accepted pre-existing stretch.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:run",
+      "recorded_at": "2026-10-03T03:54:04+00:00",
+      "packet": "assets/manifests/player/judge/motion-run-3/packet.json",
+      "packet_sha256": "26ebb2900bd763b67ce9f3298e3d2e812520589406416087c4cf9310c47bce76",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "run",
+        "source": "res://data/animations/player_library.tres:run",
+        "model": "res://assets/meshes/player.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player/motion/run_metrics.json",
+          "sha256": "c66e8853e66145e76b6379af9af84ec7dd79a9f62f4b8f3764a8b4c853cc3cf1"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/player/judge/motion-run-3/01_frame_strip.png",
+          "sha256": "f6469ecd3a159d5985f94369136a4c092818a2c2a7874b5bba7446875e504864",
+          "source": ".tripo-out/player/motion/run_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/player/judge/motion-run-3/02_onion_skin.png",
+          "sha256": "6942e0456b077c8f411580e02b2689c77282674e18f0e0695f091782facd99dd",
+          "source": ".tripo-out/player/motion/run_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/player/judge/motion-run-3/03_plots.png",
+          "sha256": "7363f9f8eca3e03b947bc94add6cef202e1772a938dc78597a8e58d9cdd6def2",
+          "source": ".tripo-out/player/motion/run_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/player/judge/motion-run-3/04_stretch_detail.png",
+          "sha256": "c7270fea6f09e3cbfd1679894337284ae5552ee1e0fc8c63037f53118d4509c7",
+          "source": ".tripo-out/player/motion/run_stretch.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player/judge/motion-run-3/01_frame_strip.png",
+        "assets/manifests/player/judge/motion-run-3/02_onion_skin.png",
+        "assets/manifests/player/judge/motion-run-3/03_plots.png",
+        "assets/manifests/player/judge/motion-run-3/04_stretch_detail.png"
+      ],
+      "assertions_failed": [
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "Worst LeftUpperLeg at the tunic hem's inner edge and knee/boot-top, front and back; no visible tearing at gameplay distance.",
+          "evidence": "assertion 'skin stretch (edge length vs bind pose)'; 04_stretch_detail.png; 03_plots.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "The only failing assertion is the player's pre-existing skirt skin stretch (tunic hem, inner thighs, knees and boot tops), which the user accepted on 2026-10-02; it isn't in the packet's design notes, so the judge can't pass it. No library change fixes stretch from the skin weights.",
+      "summary": "run plays in place with no broken poses or handover snaps; skin stretch fails at 4.56x (limit 1.0) in the skirt/knee region, matching the accepted pre-existing stretch.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:dodge_roll",
+      "recorded_at": "2026-10-03T03:54:04+00:00",
+      "packet": "assets/manifests/player/judge/motion-dodge_roll-2/packet.json",
+      "packet_sha256": "0be84bfd3867611afb4027c8b38adef05afce5a456fedd82a36f024abaafdb3f",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "dodge_roll",
+        "source": "res://data/animations/player_library.tres:dodge_roll",
+        "model": "res://assets/meshes/player.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player/motion/dodge_roll_metrics.json",
+          "sha256": "0f646e3f3f161a6706546813b9c6a7c1de51fab1e8d0ff67c01d1c7ddc79010d"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/player/judge/motion-dodge_roll-2/01_frame_strip.png",
+          "sha256": "8b264f0eb361193db4741b4b8d50021203a8a2e4805498a3995e1f8d404e55c1",
+          "source": ".tripo-out/player/motion/dodge_roll_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/player/judge/motion-dodge_roll-2/02_onion_skin.png",
+          "sha256": "f722e37f1a46a5101f6ee075854b81fed515b7285dd8c9d3a59a6d762a7aebe2",
+          "source": ".tripo-out/player/motion/dodge_roll_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/player/judge/motion-dodge_roll-2/03_plots.png",
+          "sha256": "c210fcf74808ba9c88cb7c091aaaf9cd20b4f31f48f17dc98eeac7bfdf48e3fa",
+          "source": ".tripo-out/player/motion/dodge_roll_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/player/judge/motion-dodge_roll-2/04_stretch_detail.png",
+          "sha256": "de1bf50c2ebf4b88cb5b255c678d67acf7d9f78b0e23df033a1ed62852cab004",
+          "source": ".tripo-out/player/motion/dodge_roll_stretch.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player/judge/motion-dodge_roll-2/01_frame_strip.png",
+        "assets/manifests/player/judge/motion-dodge_roll-2/02_onion_skin.png",
+        "assets/manifests/player/judge/motion-dodge_roll-2/03_plots.png",
+        "assets/manifests/player/judge/motion-dodge_roll-2/04_stretch_detail.png"
+      ],
+      "assertions_failed": [
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "Skirt across the crotch and inner thighs in the crouching recovery (0.30-0.50 s), worst edge 4.88x on LeftUpperLeg; the skirt fans wide over the bent legs.",
+          "evidence": "assertion 'skin stretch (edge length vs bind pose)'; 04_stretch_detail.png; 03_plots.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "The only failing assertion is the player's pre-existing skirt skin stretch (tunic hem, inner thighs, knees and boot tops), which the user accepted on 2026-10-02; it isn't in the packet's design notes, so the judge can't pass it. No library change fixes stretch from the skin weights.",
+      "summary": "dodge_roll plays in place with no broken poses or handover snaps; skin stretch fails at 3.88x (limit 1.0) in the skirt/knee region, matching the accepted pre-existing stretch.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:attack_light",
+      "recorded_at": "2026-10-03T03:54:04+00:00",
+      "packet": "assets/manifests/player/judge/motion-attack_light-2/packet.json",
+      "packet_sha256": "de9da8559e7368a6aee97d91e6e50c97056bcf494f781988d9c4760a4aa30013",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "attack_light",
+        "source": "res://data/animations/player_library.tres:attack_light",
+        "model": "res://assets/meshes/player.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player/motion/attack_light_metrics.json",
+          "sha256": "5f0f2901c721fa4a851b669ab19dfbeb4201dd5854965325df242d31cc404b72"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/player/judge/motion-attack_light-2/01_frame_strip.png",
+          "sha256": "899032115b044c4a12a5f666c837d97c64e4dec2ebd44c7b1039f4fe090ebb3a",
+          "source": ".tripo-out/player/motion/attack_light_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/player/judge/motion-attack_light-2/02_onion_skin.png",
+          "sha256": "f43c9644198c9aeab5e421aa38b7dd1770feb174d76f0b69f593bbffad193238",
+          "source": ".tripo-out/player/motion/attack_light_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/player/judge/motion-attack_light-2/03_plots.png",
+          "sha256": "0b8b09ac877329bd862c8910ab10fd11bb978b551555f6f01cdefcfc954d0344",
+          "source": ".tripo-out/player/motion/attack_light_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/player/judge/motion-attack_light-2/04_stretch_detail.png",
+          "sha256": "15a35dab5ac2a267c1280b1c61f7087f167df3abe86513dac301f10df92c57dd",
+          "source": ".tripo-out/player/motion/attack_light_stretch.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player/judge/motion-attack_light-2/01_frame_strip.png",
+        "assets/manifests/player/judge/motion-attack_light-2/02_onion_skin.png",
+        "assets/manifests/player/judge/motion-attack_light-2/03_plots.png",
+        "assets/manifests/player/judge/motion-attack_light-2/04_stretch_detail.png"
+      ],
+      "assertions_failed": [
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "Edges up to 5.6x where the tunic hem meets the boots and thighs at both knees in the deep lunge (t=0.30 s); reads as a dark smeared under-hem at gameplay distance.",
+          "evidence": "assertion 'skin stretch (edge length vs bind pose)'; 04_stretch_detail.png; 03_plots.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "The only failing assertion is the player's pre-existing skirt skin stretch (tunic hem, inner thighs, knees and boot tops), which the user accepted on 2026-10-02; it isn't in the packet's design notes, so the judge can't pass it. No library change fixes stretch from the skin weights.",
+      "summary": "attack_light plays in place with no broken poses or handover snaps; skin stretch fails at 4.63x (limit 1.0) in the skirt/knee region, matching the accepted pre-existing stretch.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:attack_heavy",
+      "recorded_at": "2026-10-03T03:54:04+00:00",
+      "packet": "assets/manifests/player/judge/motion-attack_heavy-2/packet.json",
+      "packet_sha256": "d265a6199fe899ec343cadd14c4d52f7f16628b39d858caaed081fed970981c6",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "attack_heavy",
+        "source": "res://data/animations/player_library.tres:attack_heavy",
+        "model": "res://assets/meshes/player.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player/motion/attack_heavy_metrics.json",
+          "sha256": "da5634e7380613bac4582ea5751031ca2d52d09e28d1bb5e5089a9b3d701302f"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/player/judge/motion-attack_heavy-2/01_frame_strip.png",
+          "sha256": "2fd903a6ebf94e650db23dead41258c77c84b4b2994432f7f3b00899a1ffa519",
+          "source": ".tripo-out/player/motion/attack_heavy_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/player/judge/motion-attack_heavy-2/02_onion_skin.png",
+          "sha256": "48f76658a05b4eabec71134d6e48cf803af116783eb5279d61256bd45b566700",
+          "source": ".tripo-out/player/motion/attack_heavy_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/player/judge/motion-attack_heavy-2/03_plots.png",
+          "sha256": "90c7229d54cabc76094068e8000d87f300c21ddfb992b633a8ac5fa22ff9bf3c",
+          "source": ".tripo-out/player/motion/attack_heavy_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/player/judge/motion-attack_heavy-2/04_stretch_detail.png",
+          "sha256": "24776d97e951b73522793f3a734a270d071e5cdaf9aa606c3e0f50298cbeba06",
+          "source": ".tripo-out/player/motion/attack_heavy_stretch.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player/judge/motion-attack_heavy-2/01_frame_strip.png",
+        "assets/manifests/player/judge/motion-attack_heavy-2/02_onion_skin.png",
+        "assets/manifests/player/judge/motion-attack_heavy-2/03_plots.png",
+        "assets/manifests/player/judge/motion-attack_heavy-2/04_stretch_detail.png"
+      ],
+      "assertions_failed": [
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "Inner knees where the tunic hem meets the boots, both legs, in the deep lunges (worst 5.98x at t=0.03 s); ~1.7x standing.",
+          "evidence": "assertion 'skin stretch (edge length vs bind pose)'; 04_stretch_detail.png; 03_plots.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "The only failing assertion is the player's pre-existing skirt skin stretch (tunic hem, inner thighs, knees and boot tops), which the user accepted on 2026-10-02; it isn't in the packet's design notes, so the judge can't pass it. No library change fixes stretch from the skin weights.",
+      "summary": "attack_heavy plays in place with no broken poses or handover snaps; skin stretch fails at 4.98x (limit 1.0) in the skirt/knee region, matching the accepted pre-existing stretch.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "verdict",
+      "stage": "motion:death",
+      "recorded_at": "2026-10-03T03:54:04+00:00",
+      "packet": "assets/manifests/player/judge/motion-death-2/packet.json",
+      "packet_sha256": "89a42843514c141ce74265da8150ae364dc626669f5f149be84366c14eb6f364",
+      "subject": {
+        "kind": "animation clip",
+        "clip": "death",
+        "source": "res://data/animations/player_library.tres:death",
+        "model": "res://assets/meshes/player.glb",
+        "metrics_file": {
+          "path": ".tripo-out/player/motion/death_metrics.json",
+          "sha256": "6963142508814a2438244635f615e5f720660c41ccb8a3b334660c10a4d9cf56"
+        }
+      },
+      "images": [
+        {
+          "role": "frame_strip",
+          "path": "assets/manifests/player/judge/motion-death-2/01_frame_strip.png",
+          "sha256": "c5666a91548b359a1d859b4525d2466d95a1d56fa053510575e3c47da16a7c40",
+          "source": ".tripo-out/player/motion/death_strip.png"
+        },
+        {
+          "role": "onion_skin",
+          "path": "assets/manifests/player/judge/motion-death-2/02_onion_skin.png",
+          "sha256": "4b7551a9e9b30aedf40a6614929c3828c033f7e529f6c3f85fbc8c26917cea91",
+          "source": ".tripo-out/player/motion/death_onion.png"
+        },
+        {
+          "role": "plots",
+          "path": "assets/manifests/player/judge/motion-death-2/03_plots.png",
+          "sha256": "6002ba1864fde6cef356e67779de296f508739a62f72c8766ae46fe85627b3da",
+          "source": ".tripo-out/player/motion/death_plots.png"
+        },
+        {
+          "role": "stretch_detail",
+          "path": "assets/manifests/player/judge/motion-death-2/04_stretch_detail.png",
+          "sha256": "53909f1380cb3a788cbc698d67da368c76f2663fc39fa4cf1d89f29927468d51",
+          "source": ".tripo-out/player/motion/death_stretch.png"
+        }
+      ],
+      "images_unseen": [
+        "assets/manifests/player/judge/motion-death-2/01_frame_strip.png",
+        "assets/manifests/player/judge/motion-death-2/02_onion_skin.png",
+        "assets/manifests/player/judge/motion-death-2/03_plots.png",
+        "assets/manifests/player/judge/motion-death-2/04_stretch_detail.png"
+      ],
+      "assertions_failed": [
+        "skin stretch (edge length vs bind pose)"
+      ],
+      "judge_verdict": "escalate",
+      "verdict": "escalate",
+      "override": null,
+      "action": "escalate",
+      "findings": [
+        {
+          "check": "motion",
+          "severity": "major",
+          "observation": "Skirt panels over both thighs while sitting down (t=0.93 s, edges up to 4.6x); ~1.8 lying down.",
+          "evidence": "assertion 'skin stretch (edge length vs bind pose)'; 04_stretch_detail.png; 03_plots.png"
+        }
+      ],
+      "revise": null,
+      "escalation_reason": "The only failing assertion is the player's pre-existing skirt skin stretch (tunic hem, inner thighs, knees and boot tops), which the user accepted on 2026-10-02; it isn't in the packet's design notes, so the judge can't pass it. No library change fixes stretch from the skin weights.",
+      "summary": "death plays in place with no broken poses or handover snaps; skin stretch fails at 3.61x (limit 1.0) in the skirt/knee region, matching the accepted pre-existing stretch.",
+      "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-idle",
+      "recorded_at": "2026-10-03T03:54:04+00:00",
+      "decision": "User 2026-10-02: the player's pre-existing skirt skin stretch (tunic hem, inner thighs, knees, boot tops; 3.0-5.0x, unchanged by B2) is accepted until the player-model rework"
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-run",
+      "recorded_at": "2026-10-03T03:54:04+00:00",
+      "decision": "User 2026-10-02: the player's pre-existing skirt skin stretch (tunic hem, inner thighs, knees, boot tops; 3.0-5.0x, unchanged by B2) is accepted until the player-model rework"
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-dodge_roll",
+      "recorded_at": "2026-10-03T03:54:04+00:00",
+      "decision": "User 2026-10-02: the player's pre-existing skirt skin stretch (tunic hem, inner thighs, knees, boot tops; 3.0-5.0x, unchanged by B2) is accepted until the player-model rework"
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-attack_light",
+      "recorded_at": "2026-10-03T03:54:04+00:00",
+      "decision": "User 2026-10-02: the player's pre-existing skirt skin stretch (tunic hem, inner thighs, knees, boot tops; 3.0-5.0x, unchanged by B2) is accepted until the player-model rework"
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-attack_heavy",
+      "recorded_at": "2026-10-03T03:54:04+00:00",
+      "decision": "User 2026-10-02: the player's pre-existing skirt skin stretch (tunic hem, inner thighs, knees, boot tops; 3.0-5.0x, unchanged by B2) is accepted until the player-model rework"
+    },
+    {
+      "kind": "resolution",
+      "stage": "motion-death",
+      "recorded_at": "2026-10-03T03:54:04+00:00",
+      "decision": "User 2026-10-02: the player's pre-existing skirt skin stretch (tunic hem, inner thighs, knees, boot tops; 3.0-5.0x, unchanged by B2) is accepted until the player-model rework"
     }
   ]
 }
