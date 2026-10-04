@@ -2318,7 +2318,7 @@
     "sha256": "837c11808ef109257bfb4f191cf7f4493303982daa4d50911aa3babc16ffd01c"
   },
   "total_cost_credits": 155,
-  "updated_at": "2026-10-03T03:54:04+00:00",
+  "updated_at": "2026-10-04T00:43:42+00:00",
   "concept_approval": {
     "attempt": "concept-3",
     "image": {
@@ -3338,6 +3338,12 @@
       "escalation_reason": "All 5 failures are colour assertions, partly misleading; 4 failed identically at 256 px. The fix is a clean-stage colour change or the user accepting the colours.",
       "summary": "Geometry, budget, texture size and rig pass, but 5 concept-colour assertions fail; partly the clustering method, partly a real shift (bone greyer and darker, harness near-black).",
       "next": "surface to the user: the escalation reason and findings"
+    },
+    {
+      "kind": "resolution",
+      "stage": "mesh",
+      "recorded_at": "2026-10-04T00:43:42+00:00",
+      "decision": "User 2026-10-03: accept the levy's colours for now (bone greyer/darker than the concept, harness near-black; 4 of 5 flags also at 256 px); revisit in the enemies' art-direction pass"
     }
   ]
 }
