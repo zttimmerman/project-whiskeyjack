@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://cc1jb2dledn71" path="res://scenes/player/Player.gd" id="1_wr5hl"]
 [ext_resource type="Script" uid="uid://dwaci7nqyra4a" path="res://scripts/combat/HurtboxComponent.gd" id="2_gfjak"]
-[ext_resource type="Script" uid="uid://bcharstats0001" path="res://scripts/stats/CharacterStats.gd" id="3_stats"]
-[ext_resource type="Script" uid="uid://hitboxcmp001" path="res://scripts/combat/HitboxComponent.gd" id="4_hitbox"]
+[ext_resource type="Script" uid="uid://lgxb5k27hssk" path="res://scripts/stats/CharacterStats.gd" id="3_stats"]
+[ext_resource type="Script" uid="uid://c1eqqmvh0fwtd" path="res://scripts/combat/HitboxComponent.gd" id="4_hitbox"]
 [ext_resource type="Script" uid="uid://dpncksi3hcov5" path="res://scripts/inventory/Inventory.gd" id="5_inv"]
 [ext_resource type="AudioStream" path="res://assets/audio/sfx_swing.ogg" id="6_swing"]
 [ext_resource type="AudioStream" path="res://assets/audio/sfx_footstep.ogg" id="7_step"]
@@ -71,7 +71,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.7)
 collision_layer = 8
 collision_mask = 4
 script = ExtResource("4_hitbox")
-metadata/_custom_type_script = "uid://hitboxcmp001"
+metadata/_custom_type_script = "uid://c1eqqmvh0fwtd"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="HitboxComponent" unique_id=456789012]
 shape = SubResource("SphereShape3D_hitbox")

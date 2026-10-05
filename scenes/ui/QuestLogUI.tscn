@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://berchd0glpiyy"]
 
-[ext_resource type="Script" uid="uid://questloguiscript1" path="res://scenes/ui/QuestLogUI.gd" id="1_qlui"]
+[ext_resource type="Script" uid="uid://bwvla4ppfra7u" path="res://scenes/ui/QuestLogUI.gd" id="1_qlui"]
 
 [node name="QuestLogUI" type="Control"]
 script = ExtResource("1_qlui")
