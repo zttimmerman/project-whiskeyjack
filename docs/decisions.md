@@ -4,10 +4,10 @@ Settled choices with their one-line reasons. Read this before re-opening any of 
 
 ## Session handoff (update at the end of every session)
 
-- **Last session (2026-10-01 – 10-02):** Phase B follow-ups (#34–#41: the dialogue interact fix, the JUnit summary, tooling hardening, animation blends, the Tripo P2.0 A/B, where P1 stays) and the home-grown backlog (`chore/backlog`). Main is on Godot 4.7.2.
-- **Running:** `backlog-system` (the backlog PR). Approved and ready to start: `spike-body-only-humanoid` Phase 0 (0 credits) and `spike-agent-animation`.
+- **Last session (2026-10-02 – 10-05):** PRs #43–#52: the attack-token hand-off delay, E = `camera_right`, texture import settling, the animation spike's steps 1–3 (limb maps, the Gobkit boar, the Tripo walk baseline), the body-only spike, the gait gates, the look-dev spikes A/B and C, and the B2 art rules shipped. Main is on Godot 4.7.2.
+- **Running:** nothing. Next up: `spike-target-look` (the user's Souls/Witcher reference; a direction change to settle first); `spike-agent-animation` step 4 waits on `fal-video-adapter`.
 - **Resume:** `python3 scripts/tools/backlog.py status`, then `next`. Spawn a `package-worker` per item and follow `docs/backlog/README.md`. Open questions are the `needs-user` items; ask them when their area comes up.
-- **Tripo:** the balance is 455 (545 spent on the project). The cap is 500 per session, starting at 0. Costs: concept 15, multiview 10, P1 model 50, P2 model 110, rig 25. Read the tripo skill before any spend.
+- **Tripo:** balance 365; last session spent 90 of its 500 (the cap resets to 0 each session). Costs: concept 15, multiview 10, P1 model 50, P2 model 110, v3.1 PBR model 30, rig 25, retarget 10 per preset (a failed combined retarget was refunded). Rig-check by task id when the GLB is large. Read the tripo skill before any spend.
 - **Permissions (2026-10-02):** in auto mode, ask only before spending credits or tearing down existing worlds or models wholesale.
 - **Where things are:** shipped work and its numbers are the `done` items in `docs/backlog/`; current target values are in the design bible's §9; rules are below (Settled, Decided, Learned); the tool list is under Tools.
 
@@ -73,6 +73,27 @@ Moved from the session handoff on 2026-10-02. Each one-off item it created is na
   - **Backlog:** home-grown, one file per item in `docs/backlog/`, with BMAD's ticket semantics (`decide-backlog-system`).
   - **Scripted keyframe clips** for motions the library can't supply, non-humanoids first: CLAUDE.md's third animation exception (`spike-agent-animation`).
   - **Weight transfer onto clothing shells:** CLAUDE.md's fourth animation exception; Phase 0 of `spike-body-only-humanoid` approved (0 credits).
+  - **E is `camera_right`;** F is the only keyboard interact key (`fix-e-double-binding`, #44).
+  - **Attack-token hand-off delay:** a dead or released melee holder keeps its token reserved until 2.0 s after its last attack start, so `enemy_attackers_max` holds (`attack-token-handoff-delay`, #43).
+  - **Texture import settling:** generated 3D textures get the editor's own detection (`compress/mode=2`, mipmaps) at validate time, per folder, not through `[importer_defaults]`; surfaces stay lossless (`import-pack-compress-mode`, #45).
+  - The Gobkit boar's mesh escalation is accepted: its near-white tusks and eye rings repainted to Old Bone read as bone.
+  - **Sourced rigged creatures are allowed:** a brief type keeps their own rig, validates bones and the limb map, and motion-reviews their clips; humanoids still use our rig flow (`sourced-rigged-creatures` → `sourced-creature-brief`).
+  - **P2 with weight transfer is not adopted; P1 stays the player.** The rework waits on the art direction (`decide-player-p2parts`).
+  - **Gait minimums** `motion_gait_lift_bh` 0.005 and `motion_gait_swing_bh` 0.05, and motion limits per body height instead of metres; raise the gait numbers if clips pass but still shuffle (`decide-gait-thresholds`, #49).
+  - **Art direction** (`decide-art-direction`): character albedo 1024 px (512 the floor), smooth shading on continuous-skin characters (30° flat stays for props, kit and rigid parts), the B2 lighting standard with fog and filmic allowed, stay on Compatibility, and move away from KayKit toward brush shells and a kit closer to the look (`art-rules-b2` #51, `kit-replacement`).
+- **2026-10-03:**
+  - The Barrow-levy's B2 colours are accepted for now (bone greyer than the concept, harness near-black); revisit in the enemies' art pass.
+  - The player's skirt stretch is accepted as a design note (judges don't re-flag it) until `player-model-rework`.
+  - **Look-dev C:** stay at B2. The model tier isn't the limit, the concept is: 1.43M PBR triangles barely show over B2 from the gameplay camera (`look-dev-c`, #52; a face-limited v3.1 is `look-dev-c-face-limit`).
+- **2026-10-05:** the user's reference games are the Souls series (especially Elden Ring) and The Witcher, "dark epic fantasy" fitting Malazan. That pulls against the art bible's PS1/PS2 "bold colours" line; it's researched and put to the user in `spike-target-look` before any rule changes. The user is opening a fal.ai account for reference videos (`fal-video-adapter`).
+
+## Learned 2026-10-02 – 10-05
+
+- **The P2 A/B misread its tearing:** most of it was `skirt_reweight` catching P2's boot cuffs, not the shells; the real tear was the harness (`spike-body-only-humanoid`).
+- **Tripo's rig-check can say "not riggable" and v2.5 still rigs it** (the Gobkit boar, 17 bones). Check by task id when the GLB is too large to upload.
+- **Combined retarget presets can fail** (walk + slash failed at 99%, refunded); run one preset per call.
+- **The judge misses frozen limbs:** Tripo's quadruped walk passed every numeric gate with both front legs locked, which is why the gait gate exists (#49).
+- **Concept art drives the look more than the model tier:** v3.1 at 1.43M triangles with PBR from the same concept read almost the same as B2 in play. A different look starts at the concept.
 
 ## Learned 2026-10-01 – 10-02
 
@@ -126,7 +147,8 @@ Moved from the session handoff on 2026-10-02. Each one-off item it created is na
 - P1 multiview-to-3D costs 50 at `face_limit` 1200 too (Levy Bow), so the price doesn't depend on `face_limit`. A generated prop costs about 75 in all (concept 15 + multiview 10 + model 50).
 - Not yet observed: seedream_v5. Add each to the tripo skill's table after its first run.
 - P2 multiview-to-3D (`P2-20260801`) at `face_limit` 5000: **110 credits**, matching the CLI (player attempt-2, the P2 A/B; plus rig v1.0 25).
-- Project spend so far: 545 (80 on the blade; Barrow-levy 155; player 100; Levy Bow 75: concept 15, multiview 10, model 50; the P2 A/B 135); balance 455.
+- v3.1 PBR multiview-to-3D (`v3.1-20260211`, no `face_limit`): **30 credits** (look-dev C, plus rig v1.0 25). Rig v2.5 quadruped 25; retarget `preset:quadruped:walk` 10; walk + slash in one retarget failed and was refunded (the Gobkit boar, 35).
+- Project spend so far: 635 (80 on the blade; Barrow-levy 155; player 100; Levy Bow 75; the P2 A/B 135; the Tripo boar baseline 35; look-dev C 55); balance 365.
 
 ## Open risks
 
