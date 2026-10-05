@@ -1,14 +1,14 @@
 ---
 id: stagger-starts-cooldown
 title: "Stagger cancels the enemy's attack and starts its cooldown"
-status: ready
+status: in-review
 kind: fix
 targets: []
 after: []
 phase: gameplay-2
-branch: null
-pr: null
-updated: 2026-10-02
+branch: fix/stagger-starts-cooldown
+pr: 55
+updated: 2026-10-05
 ---
 ## Goal
 
