@@ -22,7 +22,7 @@ func _change_state(new_state: State) -> void:
 			EventLog.log_event("attack_started", {"actor": EventLog.label(self), "kind": "ranged"})
 		state = State.ATTACK
 		_face_player()
-		_attack_cooldown_timer = SHOOT_COOLDOWN
+		_attack_cooldown_timer = _attack_cooldown()
 		_begin_windup()
 	else:
 		super._change_state(new_state)
@@ -38,6 +38,10 @@ func _tick_attack(delta: float) -> void:
 
 func _windup_time() -> float:
 	return DRAW_TIME
+
+
+func _attack_cooldown() -> float:
+	return SHOOT_COOLDOWN
 
 
 func _release_attack() -> void:

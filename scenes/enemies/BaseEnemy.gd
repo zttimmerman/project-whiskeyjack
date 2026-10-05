@@ -327,8 +327,13 @@ func _release_attack() -> void:
 ## The swing is over: back to the chase, after the cooldown
 func _finish_attack() -> void:
 	_hitbox.deactivate()
-	_attack_cooldown_timer = ATTACK_COOLDOWN
+	_attack_cooldown_timer = _attack_cooldown()
 	_change_state(State.CHASE)
+
+
+## Seconds between attacks; overridden by enemies with a different cadence
+func _attack_cooldown() -> float:
+	return ATTACK_COOLDOWN
 
 
 func _begin_windup() -> void:
@@ -444,6 +449,9 @@ func _change_state(new_state: State) -> void:
 		State.STAGGER:
 			_winding_up = false
 			_hitbox.deactivate()
+			# §3: a stagger cancels the attack and starts the cooldown, so the enemy can't swing straight
+			# back; a cooldown already running longer is kept
+			_attack_cooldown_timer = maxf(_attack_cooldown_timer, _attack_cooldown())
 			_stagger_timer = STAGGER_DURATION
 			_play_anim("stagger")
 		State.DEAD:
