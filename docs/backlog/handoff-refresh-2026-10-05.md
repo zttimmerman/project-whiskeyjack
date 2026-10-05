@@ -1,13 +1,13 @@
 ---
 id: handoff-refresh-2026-10-05
 title: "Refresh the handoff and decisions for PRs #43–#52"
-status: in-progress
+status: in-review
 kind: docs
 targets: []
 after: []
 phase: C
 branch: docs/handoff-2026-10-05
-pr: null
+pr: 54
 updated: 2026-10-05
 ---
 ## Goal
