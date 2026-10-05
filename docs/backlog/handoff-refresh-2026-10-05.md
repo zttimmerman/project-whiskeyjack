@@ -1,7 +1,7 @@
 ---
 id: handoff-refresh-2026-10-05
 title: "Refresh the handoff and decisions for PRs #43–#52"
-status: in-review
+status: done
 kind: docs
 targets: []
 after: []
@@ -27,3 +27,7 @@ Everything the orchestrator knows after PRs #43–#52 is recoverable from the re
 ## Serves
 
 The session handoff (`docs/decisions.md`).
+
+## Outcome
+
+Merged in PR #54: the handoff, Decided and Learned cover PRs #43-#52 and the 2026-10-02/03/05 decisions; new items spike-target-look and fal-video-adapter.
