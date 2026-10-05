@@ -4,7 +4,7 @@ title: "Spike: agent-authored keyframe clips for motions the library can't suppl
 status: in-progress
 kind: spike
 targets: []
-after: []
+after: [fal-video-adapter]
 phase: C
 branch: spike/agent-animation-baseline
 pr: 48
@@ -67,7 +67,7 @@ Non-humanoid enemies (the Sett-boar first); possibly humanoid gaps the packs don
 
    The strip shows the back legs shuffling and kicking, the front legs locked, a head bob that also waves the tail, and the face skin pulling round the eyes. **The Tripo walk passes every numeric gate but isn't a walk:** Tripo's preset drove only the back legs, the head chain and the root bob (6 tracks), so the frozen front feet read as planted with no slide. The gates use absolute metres, so a 1 m boar passes what a 4.6 m one fails; per body length the two slide about the same. Proposed: `motion-gates-gait-and-scale`. Judge packet: `assets/manifests/gobkit_boar_tripo/judge/motion-preset_quadruped_walk-1/packet.json` (the orchestrator runs the judge).
 
-**Step 4 needs:** the user's video account (Kling or Seedance) and their OK for about $1–3.
+**Step 4 needs:** the user's video account (Kling or Seedance) and their OK for about $1–3. The user is opening a fal.ai account (2026-10-05); step 4 waits on `fal-video-adapter`.
 
 **Earlier, step 3 needed:** the user's OK for the Tripo spend (about 10 credits, through the tripo skill). It also needs a decision on the subject. Tripo's `quadruped:walk` preset animates a Tripo-rigged model, so either the boar mesh gets rigged by Tripo (rig model `v2.5-20260210`, `--rig-type quadruped`; the dry run gives the price), producing a new skeleton that needs a second limb map, or a Tripo creature is generated instead. Separately, a game-sized subject needs a `source_scale` (about 0.3 for a 1 m boar). Open: `sourced-rigged-creatures`.
 
