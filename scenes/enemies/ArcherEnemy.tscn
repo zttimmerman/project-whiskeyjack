@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://archerenemy_sc"]
 
-[ext_resource type="Script" uid="uid://archerenemy_gd" path="res://scenes/enemies/ArcherEnemy.gd" id="1_archer"]
-[ext_resource type="Script" uid="uid://bcharstats0001" path="res://scripts/stats/CharacterStats.gd" id="2_stats"]
+[ext_resource type="Script" uid="uid://bhcyptky52dit" path="res://scenes/enemies/ArcherEnemy.gd" id="1_archer"]
+[ext_resource type="Script" uid="uid://lgxb5k27hssk" path="res://scripts/stats/CharacterStats.gd" id="2_stats"]
 [ext_resource type="Script" uid="uid://dwaci7nqyra4a" path="res://scripts/combat/HurtboxComponent.gd" id="3_hurtbox"]
-[ext_resource type="Script" uid="uid://hitboxcmp001" path="res://scripts/combat/HitboxComponent.gd" id="4_hitbox"]
+[ext_resource type="Script" uid="uid://c1eqqmvh0fwtd" path="res://scripts/combat/HitboxComponent.gd" id="4_hitbox"]
 [ext_resource type="PackedScene" uid="uid://projectile_sc1" path="res://scenes/enemies/Projectile.tscn" id="5_proj"]
 [ext_resource type="AudioStream" path="res://assets/audio/sfx_impact.ogg" id="6_impact"]
 [ext_resource type="PackedScene" path="res://assets/meshes/barrow_levy.glb" id="7_model"]
@@ -67,7 +67,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.6)
 collision_layer = 16
 collision_mask = 1
 script = ExtResource("4_hitbox")
-metadata/_custom_type_script = "uid://hitboxcmp001"
+metadata/_custom_type_script = "uid://c1eqqmvh0fwtd"
 damage = 14
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="HitboxComponent"]
