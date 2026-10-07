@@ -181,11 +181,12 @@ func test_stagger_starts_cooldown() -> void:
 	)
 
 
-# A stagger outside an attack starts the cooldown too: a levy hit while closing in can't swing straight back
-func test_stagger_starts_cooldown_from_chase() -> void:
+# Only a stagger that interrupts an attack starts the cooldown (user decision 2026-10-05): a levy staggered
+# while closing in keeps its cooldown as it was (here none), so hitting it steadily can't stun-lock it
+func test_stagger_while_chasing_keeps_the_cooldown() -> void:
 	var seconds := _seconds_to_next_attack(BaseEnemy.State.CHASE)
 	assert_float(seconds).override_failure_message("attacked %.2f s after the stagger" % seconds).is_between(
-		BaseEnemy.ATTACK_COOLDOWN - DT, BaseEnemy.ATTACK_COOLDOWN + 0.5
+		BaseEnemy.STAGGER_DURATION, BaseEnemy.STAGGER_DURATION + 0.2
 	)
 
 
