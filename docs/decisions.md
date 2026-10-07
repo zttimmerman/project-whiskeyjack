@@ -58,7 +58,7 @@ Moved from the session handoff on 2026-10-02. Each one-off item it created is na
   - Tool-script warnings count against §8: fix the 10 GDScript warnings in the baseline in a `chore/` PR (`fix-gdscript-warnings`).
   - Level scaling is a static `CharacterStats.level_scale(level)`; scaled integer stats round to nearest.
   - Enemy attack stats get raised to meet the 8–10% enemy-damage target; the target stays.
-  - The clearance check goes `--strict` once the level fixes land (`clearance-check-strict`).
+  - The clearance check runs `--strict` in CI since PR #62 (2026-10-07); a FAIL or DETOUR segment fails the navmesh job.
   - Sourced props have their own budget line in the art bible, textured from the kit's shared atlas. Kit scale stays 1.0 until pieces are first placed; any rescale is one factor per pack.
   - The per-footprint colour measurement stays for sourced assets only. The floor tile's slight brown drift is accepted.
 - **2026-09-30 – 10-01 (gameplay batch):** the user approved every default in the batch: the Front-file chase at 4.6 m/s (the player's escape margin is 0.4 m/s), denser torch spacing, and visual-only collision on skirting and plinths. Hearing needs sight; no alerting of nearby enemies; waiting levies hold until a strafe clip exists (`strafe-clip`); short pose holds are allowed in telegraphs; tell sounds wait for the audio pass (`enemy-tell-sounds`). The player's own sword waits until Tripo P2.0 is researched (don't spend on the P1 model); that research is now done (`decide-player-sword`).
