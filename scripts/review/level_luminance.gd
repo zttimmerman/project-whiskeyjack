@@ -8,22 +8,19 @@ extends Node
 #       --out <dir> [--shots 1]
 # The level is the critical path file's "scene" (tests/critical_paths/*.json). At every waypoint the player
 # stands on the floor facing the next waypoint, with his own CameraRig (and its fill light) placed as in play.
-# Per waypoint:
-#   floor     mean and 10th-percentile linear Rec. 709 luminance of the walkable floor pixels (a grid of
-#             camera rays that hit an upward-facing surface near the player's floor, his own pixels excluded)
-#   player    his pixels against the same pixels with him hidden: mean linear luminance of each and their
-#             contrast ratio (L_hi + 0.05) / (L_lo + 0.05)
+# The method is scripts/review/luminance_probe.gd's (scripts/review/capture_luminance.sh runs it during a
+# replay instead). Per waypoint:
+#   floor     mean and 10th-percentile luminance of the walkable floor pixels, his own pixels excluded
+#   player    his pixels against the same pixels with him hidden, and their contrast ratio
 # Per enemy in the level: the same contrast from a camera 5 m away at eye height, on the side facing the
 # nearest waypoint. Writes <out>/<level>_luminance.json, and with --shots the gameplay frames as PNGs.
 # Enemies and the player are frozen (process disabled) in their idle pose, so nothing moves between the paired
 # renders.
 
+const LuminanceProbe := preload("res://scripts/review/luminance_probe.gd")
 const SETTLE_FRAMES := 30
-const GRID_PX := 8  # floor ray grid spacing, in pixels
 const ENEMY_VIEW_M := 5.0
 const EYE_HEIGHT_M := 1.7
-const FLOOR_NORMAL_Y := 0.8
-const FLOOR_BAND_M := 0.3  # floor pixels within this of the player's floor height
 
 var _args := {}
 var _level: Node3D
@@ -131,9 +128,11 @@ func _measure_waypoint(at: Vector3, yaw: float) -> Dictionary:
 	var without := await _render()
 	_player.visible = true
 	_last_full = full
-	var mask := _diff_mask(full, without)
-	var pair := _pair_luminance(full, without, mask)
-	return {"floor": _floor_luminance(full, cam, floor_y, mask), "player": pair}
+	var mask := LuminanceProbe.diff_mask(full, without)
+	var pair := LuminanceProbe.subject_contrast(full, without, mask)
+	var space := _level.get_world_3d().direct_space_state
+	var exclude: Array[RID] = [(_player as CollisionObject3D).get_rid()]
+	return {"floor": LuminanceProbe.floor_luminance(full, cam, space, floor_y, exclude, mask), "player": pair}
 
 
 func _measure_enemy(enemy: Node3D, points: Array[Vector3]) -> Dictionary:
@@ -161,7 +160,7 @@ func _measure_enemy(enemy: Node3D, points: Array[Vector3]) -> Dictionary:
 	var without := await _render()
 	enemy.visible = true
 	_player.visible = true
-	var row := _pair_luminance(full, without, _diff_mask(full, without))
+	var row := LuminanceProbe.subject_contrast(full, without, LuminanceProbe.diff_mask(full, without))
 	row["name"] = String(_level.get_path_to(enemy))
 	row["view_m"] = snappedf(reach, 0.01)
 	return row
@@ -179,67 +178,3 @@ func _floor_height(at: Vector3) -> float:
 	q.exclude = [(_player as CollisionObject3D).get_rid()]
 	var hit := _level.get_world_3d().direct_space_state.intersect_ray(q)
 	return hit.position.y if hit else at.y
-
-
-func _floor_luminance(img: Image, cam: Camera3D, floor_y: float, player_mask: Dictionary) -> Dictionary:
-	var space := _level.get_world_3d().direct_space_state
-	var values: Array[float] = []
-	for y in range(GRID_PX >> 1, img.get_height(), GRID_PX):
-		for x in range(GRID_PX >> 1, img.get_width(), GRID_PX):
-			if player_mask.has(Vector2i(x, y)):
-				continue
-			var px := Vector2(x, y)
-			var from := cam.project_ray_origin(px)
-			var q := PhysicsRayQueryParameters3D.create(from, from + cam.project_ray_normal(px) * 60.0)
-			q.exclude = [(_player as CollisionObject3D).get_rid()]
-			var hit := space.intersect_ray(q)
-			if not hit or hit.normal.y < FLOOR_NORMAL_Y or absf(hit.position.y - floor_y) > FLOOR_BAND_M:
-				continue
-			values.append(_lum(img.get_pixel(x, y)))
-	values.sort()
-	if values.is_empty():
-		return {"mean": 0.0, "p10": 0.0, "n": 0}
-	var total := 0.0
-	for v in values:
-		total += v
-	return {
-		"mean": snappedf(total / values.size(), 0.0001),
-		"p10": snappedf(values[int(values.size() * 0.1)], 0.0001),
-		"n": values.size()
-	}
-
-
-# Pixels that differ between the two renders (the hidden subject's)
-func _diff_mask(a: Image, b: Image) -> Dictionary:
-	var mask := {}
-	for y in a.get_height():
-		for x in a.get_width():
-			var c := a.get_pixel(x, y)
-			var d := b.get_pixel(x, y)
-			if absf(c.r - d.r) + absf(c.g - d.g) + absf(c.b - d.b) >= 0.02:
-				mask[Vector2i(x, y)] = true
-	return mask
-
-
-func _pair_luminance(full: Image, without: Image, mask: Dictionary) -> Dictionary:
-	if mask.is_empty():
-		return {"lum": 0.0, "bg": 0.0, "contrast": 0.0, "px": 0}
-	var lum := 0.0
-	var bg := 0.0
-	for p: Vector2i in mask:
-		lum += _lum(full.get_pixel(p.x, p.y))
-		bg += _lum(without.get_pixel(p.x, p.y))
-	lum /= mask.size()
-	bg /= mask.size()
-	return {
-		"lum": snappedf(lum, 0.0001),
-		"bg": snappedf(bg, 0.0001),
-		"contrast": snappedf((maxf(lum, bg) + 0.05) / (minf(lum, bg) + 0.05), 0.01),
-		"px": mask.size()
-	}
-
-
-# Linear Rec. 709 luminance of an sRGB-encoded pixel
-static func _lum(c: Color) -> float:
-	var lin := c.srgb_to_linear()
-	return 0.2126 * lin.r + 0.7152 * lin.g + 0.0722 * lin.b
