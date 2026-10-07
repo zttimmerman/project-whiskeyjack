@@ -1,13 +1,13 @@
 ---
 id: enemy-corpse-collision
 title: "A dead enemy's body stops blocking the player"
-status: in-progress
+status: in-review
 kind: fix
 targets: []
 after: []
 phase: gameplay-2
 branch: fix/enemy-corpse-collision
-pr: null
+pr: 67
 updated: 2026-10-07
 ---
 ## Goal
@@ -27,3 +27,7 @@ A dead enemy keeps its body collision until it's freed, 2.4 s after death. Found
 ## Serves
 
 Design bible §3 (death), `enc_spacing_s` measurement.
+
+## Outcome
+
+PR #67. A dead enemy goes to `collision_layer = 0` with a collision exception for the player the frame it dies, keeping its floor mask; `two_fight_route` now walks straight east, `enc_spacing_s` baseline 4.917 → 3.75 s.
