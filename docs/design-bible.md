@@ -87,7 +87,8 @@ The third-person camera behind the player is the lens for everything else. Most 
   - Light hits stagger on the third combo hit, or when accumulated poise breaks (about 25 damage within 2 s).
   - Heavies always stagger.
   - Stagger cancels the enemy's attack **and** starts its cooldown.
-  - **Current:** every overlap staggers; stagger skips the cooldown, so an enemy can attack straight after.
+  - Only a stagger that interrupts an attack (windup or swing) starts the cooldown; one while idle, chasing or searching leaves it as it was, so steady hits can't stun-lock an enemy (user decision 2026-10-05).
+  - **Current:** every overlap staggers; the cooldown rule is met.
 
 ---
 

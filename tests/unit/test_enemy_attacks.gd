@@ -144,6 +144,52 @@ func test_stagger_cancels_the_windup() -> void:
 		assert_bool(_hitbox(levy).is_active()).is_false()
 
 
+# Stagger cancels the enemy's attack and starts its cooldown (§3 → Staggers). On a floor, with the player
+# in reach, a staggered levy's next attack waits out ATTACK_COOLDOWN from the stagger, and then it does attack.
+func _floor() -> void:
+	var body := StaticBody3D.new()
+	var shape := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(20, 1, 20)
+	shape.shape = box
+	body.add_child(shape)
+	body.position = Vector3(0, -0.5, 0)
+	add_child(auto_free(body))
+
+
+# Seconds from a stagger in `from_state` until the levy next starts an attack (-1 if it doesn't in 4 s)
+func _seconds_to_next_attack(from_state: int) -> float:
+	_floor()
+	_player.global_position = Vector3(0, 0.9, 0)
+	var levy := _spawn(LEVY_SCENE, Vector3(0, 0.9, -1.2))
+	levy._change_state(from_state)
+	if from_state == BaseEnemy.State.ATTACK:
+		_step(levy, 10)  # into the windup
+	levy._on_hurtbox_hit(auto_free(HitboxComponent.new()))
+	assert_int(levy.state).is_equal(BaseEnemy.State.STAGGER)
+	for f in 240:
+		_step(levy)
+		if levy.state == BaseEnemy.State.ATTACK:
+			return (f + 1) * DT
+	return -1.0
+
+
+func test_stagger_starts_cooldown() -> void:
+	var seconds := _seconds_to_next_attack(BaseEnemy.State.ATTACK)
+	assert_float(seconds).override_failure_message("attacked %.2f s after the stagger" % seconds).is_between(
+		BaseEnemy.ATTACK_COOLDOWN - DT, BaseEnemy.ATTACK_COOLDOWN + 0.5
+	)
+
+
+# Only a stagger that interrupts an attack starts the cooldown (user decision 2026-10-05): a levy staggered
+# while closing in keeps its cooldown as it was (here none), so hitting it steadily can't stun-lock it
+func test_stagger_while_chasing_keeps_the_cooldown() -> void:
+	var seconds := _seconds_to_next_attack(BaseEnemy.State.CHASE)
+	assert_float(seconds).override_failure_message("attacked %.2f s after the stagger" % seconds).is_between(
+		BaseEnemy.STAGGER_DURATION, BaseEnemy.STAGGER_DURATION + 0.2
+	)
+
+
 func test_enemy_ranged_telegraph() -> void:
 	var archer := _spawn(ARCHER_SCENE, Vector3(0, 0, -7))
 	archer._change_state(BaseEnemy.State.ATTACK)
