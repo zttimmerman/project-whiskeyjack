@@ -1,7 +1,7 @@
 ---
 id: enemy-corpse-collision
 title: "A dead enemy's body stops blocking the player"
-status: proposed
+status: ready
 kind: fix
 targets: []
 after: []
