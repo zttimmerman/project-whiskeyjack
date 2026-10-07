@@ -1,14 +1,14 @@
 ---
 id: scenario-two-fight-route
 title: "A two-fight route scenario for encounter spacing"
-status: ready
+status: in-review
 kind: chore
 targets: [enc_spacing_s]
 after: []
 phase: gameplay-2
-branch: null
-pr: null
-updated: 2026-10-02
+branch: chore/scenario-two-fight-route
+pr: 65
+updated: 2026-10-07
 ---
 ## Goal
 
