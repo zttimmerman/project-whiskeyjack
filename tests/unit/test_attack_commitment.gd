@@ -93,7 +93,8 @@ func test_attack_lunge_toward_locked_target() -> void:
 	# Backing away is ignored: the swing lunges toward the target regardless of input
 	Input.action_press("move_backward")
 	await _press("attack_light")
-	await _frames(int(0.5 * HZ))
+	# Measured inside the swing, past the lunge (its active frames), before the input frees him
+	await _frames(int(0.35 * HZ))
 	Input.action_release("move_backward")
 	var step := _flat(_player.global_position - start)
 	var toward := _flat(target.global_position - start).normalized()
