@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://w24cv0a7aaii"]
 
-[ext_resource type="Script" uid="uid://invuiscript001" path="res://scenes/ui/InventoryUI.gd" id="1_invui"]
+[ext_resource type="Script" uid="uid://bdgt410qv3nq3" path="res://scenes/ui/InventoryUI.gd" id="1_invui"]
 
 [node name="InventoryUI" type="Control"]
 script = ExtResource("1_invui")

@@ -1,14 +1,14 @@
 ---
 id: fix-invalid-uids
 title: "Fix the 13 invalid hand-written UIDs"
-status: ready
+status: in-review
 kind: fix
 targets: []
 after: []
 phase: gameplay-2
-branch: null
-pr: null
-updated: 2026-10-02
+branch: fix/invalid-uids
+pr: 53
+updated: 2026-10-05
 ---
 ## Goal
 

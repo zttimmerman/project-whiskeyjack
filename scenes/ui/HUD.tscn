@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bhud00tscn01"]
 
-[ext_resource type="Script" uid="uid://bhudscript001" path="res://scenes/ui/HUD.gd" id="1_hud"]
+[ext_resource type="Script" uid="uid://btv2toyis7ve1" path="res://scenes/ui/HUD.gd" id="1_hud"]
 [ext_resource type="AudioStream" path="res://assets/audio/sting_you_died.ogg" id="2_sting"]
 [ext_resource type="PackedScene" path="res://scenes/ui/LockOnReticle.tscn" id="3_reticle"]
 
