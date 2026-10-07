@@ -449,9 +449,11 @@ func _change_state(new_state: State) -> void:
 		State.STAGGER:
 			_winding_up = false
 			_hitbox.deactivate()
-			# §3: a stagger cancels the attack and starts the cooldown, so the enemy can't swing straight
-			# back; a cooldown already running longer is kept
-			_attack_cooldown_timer = maxf(_attack_cooldown_timer, _attack_cooldown())
+			# §3: a stagger that interrupts an attack (windup or swing) starts the cooldown, so the enemy
+			# can't swing straight back; one while idle, chasing or searching leaves it as it was, so steady
+			# hits can't stun-lock it (user decision 2026-10-05). A longer cooldown already running is kept
+			if old_state == State.ATTACK:
+				_attack_cooldown_timer = maxf(_attack_cooldown_timer, _attack_cooldown())
 			_stagger_timer = STAGGER_DURATION
 			_play_anim("stagger")
 		State.DEAD:
