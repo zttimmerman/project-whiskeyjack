@@ -1,14 +1,14 @@
 ---
 id: dialogue-questmanager-lint
 title: "Lint QuestManager method names used in .dialogue files"
-status: ready
+status: in-review
 kind: chore
 targets: []
 after: []
 phase: gameplay-2
-branch: null
-pr: null
-updated: 2026-10-02
+branch: chore/dialogue-questmanager-lint
+pr: 57
+updated: 2026-10-07
 ---
 ## Goal
 
