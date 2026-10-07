@@ -107,6 +107,8 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Lint data/dialogues (.dialogue) and data/quests (baseline ci/data-lint-baseline.txt)
         run: python3 ci/data_lint.py
+      - name: Test the dialogue lint's QuestManager member check (ci/data_lint.py)
+        run: python3 tests/tools/test_data_lint.py
       - name: Test the backlog tool (scripts/tools/backlog.py)
         run: python3 tests/tools/test_backlog.py
       - name: Lint docs/backlog (schema, after links and cycles, design-bible target IDs, PRs on finished items)
