@@ -22,10 +22,16 @@ extends Node
 # while is_action_pressed() changes at once. So this node runs last in every physics frame and, at
 # the end of frame N, applies the steps for N+1: presses (just-pressed) and holds (movement) both land
 # on the step's own frame, and the input event is logged on that frame.
+# Rendered only: --luminance <out.json> [--luminance-every N] samples the readability targets every N
+# frames (default 30) through scripts/review/luminance_probe.gd and writes them, with their summary, to
+# <out.json> (scripts/review/capture_luminance.sh); --luminance-shots <dir> also saves each sampled frame
+# and the player's pixel mask. The extra renders are drawn synchronously inside the
+# physics frame (RenderingServer.force_draw), so no physics frame passes and the event log is unchanged.
 # Exit code: 0 when the run completed, 1 when the scenario couldn't be loaded.
 
 const END_AFTER_DEATH_FRAMES := 30  # well before GameManager reloads the scene (3.2 s)
 const CameraProbe := preload("res://scripts/review/camera_probe.gd")
+const LuminanceProbe := preload("res://scripts/review/luminance_probe.gd")
 
 var _scenario: Dictionary = {}
 var _steps: Array[Dictionary] = []
@@ -38,6 +44,10 @@ var _held: Dictionary = {}  # action -> true while a step holds it
 var _level: Node = null
 var _player: CharacterBody3D = null
 var _camera_samples: bool = false
+var _luminance_out: String = ""
+var _luminance_every: int = 30
+var _luminance_samples: Array = []
+var _luminance_shots: String = ""  # a directory: each sample's frame and its subject mask as PNGs
 
 
 func _ready() -> void:
@@ -54,6 +64,14 @@ func _ready() -> void:
 		_fail("can't read scenario %s" % path)
 		return
 	_scenario = parsed
+	_luminance_out = _arg("--luminance")
+	if not _luminance_out.is_empty():
+		if DisplayServer.get_name() == "headless":
+			_fail("--luminance needs a rendered window (drop --headless)")
+			return
+		var every := _arg("--luminance-every")
+		_luminance_every = maxi(int(every), 1) if not every.is_empty() else _luminance_every
+		_luminance_shots = _arg("--luminance-shots")
 	if DisplayServer.get_name() == "headless":
 		# A headless root viewport is 64x64; the camera checks need the game's window shape (16:9)
 		get_tree().root.size = Vector2i(
@@ -145,6 +163,8 @@ func _physics_process(_delta: float) -> void:
 	while _next_step < _steps.size() and int(_steps[_next_step]["frame"]) <= _frame + 1:
 		_apply(_steps[_next_step], _frame + 1)
 		_next_step += 1
+	if not _luminance_out.is_empty() and _frame >= 0 and _frame % _luminance_every == 0:
+		_sample_luminance()
 
 
 func _apply(step: Dictionary, lands_on: int) -> void:
@@ -181,6 +201,100 @@ func _sample_camera() -> void:
 	EventLog.log_event("camera", data)
 
 
+# Paired renders of this frame (the subject shown, then hidden) for the floor and each character's contrast,
+# with the HUD hidden so it covers neither. Runs last in the physics frame, like the camera sample
+func _sample_luminance() -> void:
+	var camera := get_viewport().get_camera_3d()
+	if camera == null:
+		return
+	var layers: Array[CanvasLayer] = []
+	for node in _level.find_children("*", "CanvasLayer", true, false):
+		if (node as CanvasLayer).visible:
+			layers.append(node)
+			(node as CanvasLayer).visible = false
+	# The first draw of a frame can still show the previous frame's state; the second is the reference
+	_draw()
+	var full := _draw()
+	_player.visible = false
+	var no_player := _draw()
+	_player.visible = true
+	var mask := LuminanceProbe.diff_mask(full, no_player, _subject_rect(camera, _player, full.get_size()))
+	var space := camera.get_world_3d().direct_space_state
+	var exclude: Array[RID] = [_player.get_rid()]
+	var sample := {
+		"frame": _frame,
+		"floor": LuminanceProbe.floor_luminance(full, camera, space, _floor_height(space), exclude, mask),
+		"player": LuminanceProbe.subject_contrast(full, no_player, mask),
+		"enemies": []
+	}
+	for enemy in get_tree().get_nodes_in_group("enemy"):
+		var body := enemy as Node3D
+		if body == null or not body.visible or (enemy.has_method("is_dead") and enemy.call("is_dead")):
+			continue
+		var rect := _subject_rect(camera, body, full.get_size())
+		if not rect.has_area():
+			continue
+		# A fresh reference per subject: a mesh shown again after a hidden draw can differ for a draw
+		var shown := _draw()
+		body.visible = false
+		var without := _draw()
+		body.visible = true
+		var row := LuminanceProbe.subject_contrast(shown, without, LuminanceProbe.diff_mask(shown, without, rect))
+		row["name"] = EventLog.label(enemy)
+		row["distance_m"] = snappedf(camera.global_position.distance_to(body.global_position), 0.01)
+		sample.enemies.append(row)
+	for layer in layers:
+		layer.visible = true
+	_luminance_samples.append(sample)
+	if not _luminance_shots.is_empty():
+		full.save_png(_luminance_shots.path_join("f%04d.png" % _frame))
+		var shown := Image.create(full.get_width(), full.get_height(), false, Image.FORMAT_L8)
+		for p: Vector2i in mask:
+			shown.set_pixel(p.x, p.y, Color.WHITE)
+		shown.save_png(_luminance_shots.path_join("f%04d_player_mask.png" % _frame))
+
+
+func _subject_rect(camera: Camera3D, body: Node3D, size: Vector2i) -> Rect2i:
+	var c := CameraProbe.capsule(body)
+	return LuminanceProbe.screen_rect(camera, c.center, c.radius, c.height, size)
+
+
+# Draws the frame now, without a main-loop iteration (so no physics frame passes), and reads it back
+func _draw() -> Image:
+	RenderingServer.force_draw(false, 0.0)
+	return get_viewport().get_texture().get_image()
+
+
+# Height of the floor under the player: the walkable floor band the probe reads
+func _floor_height(space: PhysicsDirectSpaceState3D) -> float:
+	var at := _player.global_position
+	var q := PhysicsRayQueryParameters3D.create(at, at + Vector3.DOWN * 4.0)
+	q.exclude = [_player.get_rid()]
+	var hit := space.intersect_ray(q)
+	return hit.position.y if not hit.is_empty() else at.y - 0.9
+
+
+func _write_luminance() -> void:
+	var summary := LuminanceProbe.summarize(_luminance_samples)
+	var f := FileAccess.open(_luminance_out, FileAccess.WRITE)
+	if f == null:
+		push_error("replay: can't write %s" % _luminance_out)
+		return
+	f.store_string(
+		JSON.stringify(
+			{
+				"scenario": String(_scenario.get("name", "")),
+				"scene": String(_scenario.get("scene", "")),
+				"every_frames": _luminance_every,
+				"summary": summary,
+				"samples": _luminance_samples
+			},
+			"  "
+		)
+	)
+	f.close()
+
+
 func _on_player_died() -> void:
 	_end_frame = _frame + END_AFTER_DEATH_FRAMES
 
@@ -206,6 +320,8 @@ func _finish() -> void:
 		}
 	)
 	EventLog.close()
+	if not _luminance_out.is_empty():
+		_write_luminance()
 	print("replay: %s finished at frame %d" % [_scenario.get("name", ""), _frame])
 	get_tree().quit(0)
 
