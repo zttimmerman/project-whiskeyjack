@@ -1,14 +1,14 @@
 ---
 id: dodge-iframe-window
 title: "Dodge i-frames for the first 0.30 s, then a 0.15 s recovery"
-status: ready
+status: in-review
 kind: feature
 targets: []
 after: []
 phase: gameplay-2
-branch: null
-pr: null
-updated: 2026-10-02
+branch: feature/dodge-iframe-window
+pr: 58
+updated: 2026-10-07
 ---
 ## Goal
 
