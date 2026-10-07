@@ -236,6 +236,43 @@ class SyntheticLogs(unittest.TestCase):
             rm.compute({"id": "reach_distance_m"}, events)
 
 
+class SearchMetrics(unittest.TestCase):
+    A = "ArcherCorridorB"
+
+    def search(self, start, look_at, end_at, return_at, actor=A):
+        return [ev(start, "lost_sight", actor=actor, distance=10.0),
+                ev(look_at, "search_look", actor=actor, distance=0.4, reached=True),
+                ev(end_at, "search_end", actor=actor, outcome="gave_up"),
+                ev(return_at, "search_return", actor=actor, distance=0.3, reached=True)]
+
+    def test_search_look_s_runs_from_the_last_seen_spot_to_giving_up(self):
+        r = rm.compute({"id": "search_look_s", "enemy": self.A}, self.search(10, 100, 310, 500))
+        self.assertAlmostEqual(r["value"], 3.5)
+        self.assertEqual(r["detail"]["frames"]["search_return"], 500)
+
+    def test_search_legs_report_how_far_off_the_enemy_stopped(self):
+        events = self.search(10, 100, 310, 500)
+        self.assertEqual(rm.compute({"id": "search_last_seen_m", "enemy": self.A}, events)["value"], 0.4)
+        self.assertEqual(rm.compute({"id": "search_post_m", "enemy": self.A}, events)["value"], 0.3)
+
+    def test_a_regained_search_is_skipped_for_the_next_full_one(self):
+        events = [ev(5, "lost_sight", actor=self.A, distance=9.0),
+                  ev(40, "search_look", actor=self.A, distance=0.2, reached=True),
+                  ev(60, "search_end", actor=self.A, outcome="regained")]
+        events += self.search(100, 200, 410, 600)
+        r = rm.compute({"id": "search_look_s", "enemy": self.A}, events)
+        self.assertEqual(r["detail"]["frames"]["lost_sight"], 100)
+
+    def test_other_enemies_and_unfinished_searches_measure_nothing(self):
+        events = self.search(10, 100, 310, 500, actor="EnemyCentral1") + self.search(10, 100, 310, 500)[:3]
+        r = rm.compute({"id": "search_post_m", "enemy": self.A}, events)
+        self.assertIsNone(r["value"])
+
+    def test_search_checks_need_an_enemy(self):
+        with self.assertRaises(ValueError):
+            rm.compute({"id": "search_look_s"}, [])
+
+
 class Evaluate(unittest.TestCase):
     def setUp(self):
         self.events = rm.load_events(os.path.join(FIXTURES, "levy_1v1.jsonl"))
