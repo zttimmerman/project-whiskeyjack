@@ -78,8 +78,8 @@ func test_attack_locks_movement() -> void:
 	assert_float(moved).override_failure_message("moved %.3f m during the swing" % moved).is_less(0.05)
 	# The swing ends and forward input moves him again
 	await _frames(int(0.2 * HZ))
-	var after := _flat(_player.global_position).distance_to(start)
-	assert_float(after).override_failure_message("still locked after the swing").is_greater(0.3)
+	var moved_after := _flat(_player.global_position).distance_to(start)
+	assert_float(moved_after).override_failure_message("still locked after the swing").is_greater(0.3)
 
 
 func test_attack_lunge_toward_locked_target() -> void:
