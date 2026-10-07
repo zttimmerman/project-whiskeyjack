@@ -8,7 +8,9 @@ Structure (always fails; never baselined):
   compiler at import and by ci/check_dialogue.gd): a `~ start` cue (where DialogueRunner begins),
   every jump (`=> cue`) to a cue in the file or END, every other cue jumped to from somewhere, every QuestManager call naming a quest in
   data/quests/ (and a stage of it, in `get_quest_stage("q") == "stage"`), and every flag a
-  dialogue reads (`get_flag`/`has_flag`) set somewhere (`set_flag` in a dialogue or a script).
+  dialogue reads (`get_flag`/`has_flag`) set somewhere (`set_flag` in a dialogue or a script), and
+  every `QuestManager.<name>` a func, var, const or signal of autoloads/QuestManager.gd (Dialogue
+  Manager resolves it only at runtime, so a typo would otherwise ship).
   Legacy JSON dialogues (data/dialogues/*.json), if any come back: a list of nodes with unique
   string ids, a `start` node, every `next_id` null or an existing id, no node unreachable from
   `start`, and `set_quest` naming a quest in data/quests/.
@@ -30,6 +32,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DIALOGUES = ROOT / "data" / "dialogues"
 QUESTS = ROOT / "data" / "quests"
+QUEST_MANAGER = ROOT / "autoloads" / "QuestManager.gd"
 MAX_SENTENCES = 2
 MAX_OBJECTIVE_WORDS = 12
 # A sentence ends at . ! ? (or a run such as ?! or ...) followed by a space, a closing quote or the end.
@@ -125,6 +128,17 @@ QUEST_CALL = re.compile(
 STAGE_CHECK = re.compile(r"get_quest_stage\(\s*\"([^\"]*)\"\s*\)\s*[!=]=\s*\"([^\"]*)\"")
 FLAG_SET = re.compile(r"set_flag\(\s*\"([^\"]+)\"")
 FLAG_READ = re.compile(r"(?:get_flag|has_flag)\(\s*\"([^\"]+)\"")
+QUEST_MEMBER_USE = re.compile(r"\bQuestManager\.(\w+)")
+GD_MEMBER = re.compile(r"^(?:static\s+)?(?:func|var|const|signal)\s+(\w+)", re.M)
+_quest_manager_members = None
+
+
+def quest_manager_members():
+    """Names declared at the top level of the QuestManager autoload script."""
+    global _quest_manager_members
+    if _quest_manager_members is None:
+        _quest_manager_members = set(GD_MEMBER.findall(QUEST_MANAGER.read_text()))
+    return _quest_manager_members
 
 
 def flags_set_in_scripts():
@@ -147,6 +161,9 @@ def lint_dialogue_script(path, quests, flags_set, errors, limits):
         line = raw.strip()
         if not line or line.startswith("#"):
             continue
+        for name in QUEST_MEMBER_USE.findall(line):
+            if name not in quest_manager_members():
+                errors.append(f"{where}:{n}: QuestManager has no '{name}' (not in {rel(QUEST_MANAGER)})")
         for q in QUEST_CALL.findall(line):
             if q[1] not in quests:
                 errors.append(f"{where}:{n}: QuestManager.{q[0]} names unknown quest '{q[1]}'")
