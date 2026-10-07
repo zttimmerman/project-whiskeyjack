@@ -1,0 +1,23 @@
+{
+  "name": "search_lost_sight",
+  "description": "The SEARCH state (design bible §3): with the central room cleared, the Corridor B archer sees the player through the room's south doorway; the player steps west behind the south wall and leaves through the west doorway into Corridor A. The archer walks to the last-seen spot, looks around for 3.5 s, gives up and walks back to its post. The archer is used because, at 1.5 m/s, the player is out of sight and range before it reaches the spot, where a levy at 4.6 m/s would keep it in sight.",
+  "scene": "res://scenes/world/Level1.tscn",
+  "seed": 1,
+  "player": {"position": [23, 1, 6], "yaw_deg": 90, "pitch": -0.2},
+  "remove": ["EnemyCorridorA", "EnemyCentral1", "EnemyCentral2", "ArcherCentral", "EnemyExit1", "EnemyExit2"],
+  "duration_frames": 1500,
+  "steps": [
+    {"frame": 30, "action": "move_forward", "pressed": true},
+    {"frame": 90, "action": "move_forward", "pressed": false},
+    {"frame": 90, "action": "move_right", "pressed": true},
+    {"frame": 162, "action": "move_right", "pressed": false},
+    {"frame": 162, "action": "move_forward", "pressed": true},
+    {"frame": 262, "action": "move_forward", "pressed": false}
+  ],
+  "checks": [
+    {"id": "detect_through_walls", "target": [null, 0], "baseline": 0},
+    {"id": "search_look_s", "enemy": "ArcherCorridorB", "target": [3.4, 3.6]},
+    {"id": "search_last_seen_m", "enemy": "ArcherCorridorB", "target": [null, 0.5]},
+    {"id": "search_post_m", "enemy": "ArcherCorridorB", "target": [null, 0.5]}
+  ]
+}
