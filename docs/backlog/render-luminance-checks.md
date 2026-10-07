@@ -1,7 +1,7 @@
 ---
 id: render-luminance-checks
 title: "Render-based luminance checks in capture mode"
-status: in-review
+status: done
 kind: chore
 targets: [lvl_floor_luminance_min, read_char_contrast_min]
 after: []
@@ -26,3 +26,7 @@ Measure the two readability targets that are "not measured" or hand-measured (A2
 ## Serves
 
 `lvl_floor_luminance_min`, `read_char_contrast_min`.
+
+## Outcome
+
+scripts/review/luminance_probe.gd plus replay.gd --luminance (rendered frames inside the physics step; event logs match headless) and capture_luminance.sh (Mac only). Floor misses: crypt corridor 0.041, L2 tomb hall 0.021 (target 0.05). Player contrast 1.00-1.18 everywhere (target 1.3); levy 1.12-1.28 gameplay view, 1.45-1.70 at 5 m. Question filed as luminance-target-misses. Merged in PR #66.
