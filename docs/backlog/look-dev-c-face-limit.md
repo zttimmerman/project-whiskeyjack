@@ -1,14 +1,14 @@
 ---
 id: look-dev-c-face-limit
 title: "Look-dev: Tripo v3.1 at a game face_limit (paid, about 55 credits)"
-status: needs-user
+status: proposed
 kind: spike
 targets: []
-after: [look-dev-c]
+after: [spike-target-look]
 phase: C
 branch: null
 pr: null
-updated: 2026-10-03
+updated: 2026-10-07
 ---
 ## Goal
 
@@ -39,3 +39,7 @@ Skip it for now unless the face close-up (dialogue distance) is a priority: C's 
 ## Serves
 
 The art direction, `player-model-rework`.
+
+## Deferred
+
+User, 2026-10-07: don't run it now. Revisit after `spike-target-look` produces new concepts; the concept art, not the model tier, looked like the main limit.
