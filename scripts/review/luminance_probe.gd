@@ -23,6 +23,7 @@ const FLOOR_BAND_M := 0.3
 const DIFF_MIN := 0.02  # summed RGB difference for a pixel to count as the subject's
 const MIN_SUBJECT_PX := 200  # a subject smaller than this on screen (far, or nearly hidden) isn't judged
 const RAY_LENGTH := 60.0
+const SUBJECT_PAD := 0.25  # screen_rect grows by this fraction of its size on each side (arms, weapons, hair)
 
 
 ## Linear Rec. 709 luminance of an sRGB-encoded colour
@@ -35,16 +36,41 @@ static func contrast(a: float, b: float) -> float:
 	return (maxf(a, b) + 0.05) / (minf(a, b) + 0.05)
 
 
-## Pixels that differ between a render with the subject and one without it: {Vector2i: true}
-static func diff_mask(full: Image, without: Image) -> Dictionary:
+## Pixels that differ between a render with the subject and one without it: {Vector2i: true}, only inside
+## rect when one is given (the subject's screen_rect), so changes elsewhere aren't counted as the subject
+static func diff_mask(full: Image, without: Image, rect := Rect2i()) -> Dictionary:
+	var area := Rect2i(Vector2i.ZERO, full.get_size())
+	if rect.has_area():
+		area = area.intersection(rect)
 	var mask := {}
-	for y in full.get_height():
-		for x in full.get_width():
+	for y in range(area.position.y, area.end.y):
+		for x in range(area.position.x, area.end.x):
 			var c := full.get_pixel(x, y)
 			var d := without.get_pixel(x, y)
 			if absf(c.r - d.r) + absf(c.g - d.g) + absf(c.b - d.b) >= DIFF_MIN:
 				mask[Vector2i(x, y)] = true
 	return mask
+
+
+## The screen rect (in pixels of an image of image_size) around a capsule {center, radius, height}, padded by
+## SUBJECT_PAD and clipped to the image; empty when any of it is behind the camera
+static func screen_rect(cam: Camera3D, center: Vector3, radius: float, height: float, image_size: Vector2i) -> Rect2i:
+	var view := cam.get_viewport().get_visible_rect().size
+	var scale := Vector2(image_size.x / view.x, image_size.y / view.y)
+	var lo := Vector2(INF, INF)
+	var hi := Vector2(-INF, -INF)
+	for dx in [-radius, radius]:
+		for dy in [-height * 0.5, height * 0.5]:
+			for dz in [-radius, radius]:
+				var corner := center + Vector3(dx, dy, dz)
+				if cam.is_position_behind(corner):
+					return Rect2i()
+				var p := cam.unproject_position(corner) * scale
+				lo = lo.min(p)
+				hi = hi.max(p)
+	var pad := (hi - lo) * SUBJECT_PAD
+	var rect := Rect2i(Vector2i((lo - pad).floor()), Vector2i((hi - lo + pad * 2.0).ceil()))
+	return rect.intersection(Rect2i(Vector2i.ZERO, image_size))
 
 
 ## {lum, bg, contrast, px} of the masked pixels; px 0 (and contrast 0) when the subject isn't on screen
