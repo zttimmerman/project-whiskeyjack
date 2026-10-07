@@ -16,7 +16,8 @@ extends Node
 #   steps: [{frame, action, pressed}]   Input Map actions, pressed or released on that frame
 #   checks: [...]         read by scripts/review/replay_metrics.py, not here; any cam_* check turns on the
 #                         per-frame camera samples (scripts/review/camera_probe.gd, a "camera" event per frame)
-# Frame 0 is the second physics frame after the level is ready; EventLog frames count from it.
+# Frame 0 is the second physics frame after the level is ready; EventLog frames count from it, so the
+# level's _ready logs at -2 and the warm-up frame at -1 (tests/scenarios/replay_frame_stamps.json).
 # Timing: in Godot 4.7 an Input.action_press() during physics frame N reads as just-pressed on N+1,
 # while is_action_pressed() changes at once. So this node runs last in every physics frame and, at
 # the end of frame N, applies the steps for N+1: presses (just-pressed) and holds (movement) both land
@@ -80,6 +81,9 @@ func _ready() -> void:
 	if packed == null:
 		_fail("can't load scene %s" % _scenario.get("scene", ""))
 		return
+	# Set before the level enters the tree, so its _ready and the warm-up frame (where gameplay runs
+	# before this node) stamp -2 and -1, never frame counts from origin 0 that sort among frames 0 and up
+	EventLog.frame_origin = Engine.get_physics_frames() + 2
 	_level = packed.instantiate()
 	for node_path: String in _scenario.get("remove", []):
 		var node := _level.get_node_or_null(node_path)
@@ -118,9 +122,10 @@ func _physics_process(_delta: float) -> void:
 	if _player == null:
 		return
 	if not _started:
-		# A warm-up frame: frame 0 is the next one
+		# A warm-up frame (-1): frame 0 is the next one
 		_started = true
-		EventLog.frame_origin = Engine.get_physics_frames() + 1
+		if Engine.get_physics_frames() + 1 != EventLog.frame_origin:
+			push_error("replay: the warm-up frame isn't frame -1; frame stamps are off")
 		EventLog.log_event_at(
 			0,
 			"scenario_start",

@@ -221,6 +221,15 @@ class SyntheticLogs(unittest.TestCase):
         self.assertAlmostEqual(r["value"], 1.0)
         self.assertEqual(r["detail"]["end_position"], [0.0, 1.9, -8.0])
 
+    def test_frame_stamps_count_probes_off_their_tick(self):
+        check = {"id": "replay_frame_stamps"}
+        good = [ev(-2, "probe", tick=-1), ev(-1, "probe", tick=0), ev(0, "probe", tick=1)]
+        self.assertEqual(rm.compute(check, good)["value"], 0)
+        # The warm-up frame stamped from origin 0, as before the fix: an absolute frame count
+        stale = [ev(0, "probe", tick=-1), ev(1, "probe", tick=0), ev(0, "probe", tick=1)]
+        self.assertEqual(rm.compute(check, stale)["value"], 2)
+        self.assertIsNone(rm.compute(check, [])["value"])
+
     def test_reach_distance_needs_a_point(self):
         events = [ev(300, "scenario_end", player_position=[0.0, 0.0, 0.0])]
         with self.assertRaises(ValueError):

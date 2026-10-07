@@ -307,6 +307,15 @@ def _reach_distance(check, events):
     return {"value": math.dist(end, point), "detail": {"end_position": end, "point": point}}
 
 
+def _frame_stamps(check, events):
+    """Probe events (tests/replay/probe/frame_probe.gd) whose stamp isn't their tick minus one."""
+    probes = of(events, "probe")
+    if not probes:
+        return {"value": None, "detail": {"note": "no probe events"}}
+    wrong = [p for p in probes if p["frame"] != int(p["tick"]) - 1]
+    return {"value": len(wrong), "detail": {"probes": len(probes), "wrong": wrong[:10]}}
+
+
 METRICS = {
     "ttk_player_frontfile": _hits_to_kill,
     "ttk_player_backfile": _hits_to_kill,
@@ -326,6 +335,8 @@ METRICS = {
     "cam_lock_both_in_frame": _cam_lock_both_in_frame,
     # Not a §9 target ID: how far from "point" the player ends the run (a walk-through gets there)
     "reach_distance_m": _reach_distance,
+    # Not a design target: the harness's own frame stamps (tests/scenarios/replay_frame_stamps.json)
+    "replay_frame_stamps": _frame_stamps,
 }
 
 
