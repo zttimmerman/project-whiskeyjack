@@ -1,12 +1,12 @@
 ---
 id: enemy-corpse-collision
 title: "A dead enemy's body stops blocking the player"
-status: ready
+status: in-progress
 kind: fix
 targets: []
 after: []
 phase: gameplay-2
-branch: null
+branch: fix/enemy-corpse-collision
 pr: null
 updated: 2026-10-07
 ---
