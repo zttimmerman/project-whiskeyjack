@@ -1,7 +1,7 @@
 ---
 id: stagger-starts-cooldown
 title: "Stagger cancels the enemy's attack and starts its cooldown"
-status: in-review
+status: done
 kind: fix
 targets: []
 after: []
