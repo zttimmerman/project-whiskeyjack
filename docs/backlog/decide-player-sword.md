@@ -1,15 +1,19 @@
 ---
 id: decide-player-sword
 title: "When and on which model to generate the player's own sword"
-status: needs-user
+status: done
 kind: decision
 targets: []
 after: []
 phase: C
 branch: null
 pr: null
-updated: 2026-10-02
+updated: 2026-10-07
 ---
+## Goal
+
+Decide when, and on which model, the player's own sword is generated.
+
 ## Question
 
 The player reuses the Levy Blade. The sword waited for the Tripo P2.0 research (2026-09-30 decision: don't spend on the P1 model); that research is done (P1 stays for the player). A sword is a rigid prop, so P2's shell tearing doesn't apply. Generate it now, and on which model?
@@ -23,3 +27,7 @@ The player reuses the Levy Blade. The sword waited for the Tripo P2.0 research (
 ## Recommendation
 
 1: P1 is proven on the blade and the bow and the cheapest; generate after `held-prop-tip-check` lands.
+
+## Outcome
+
+User, 2026-10-07: option 3, wait for `player-model-rework`. The earlier P1 sword looked too low-quality, like the P1 player, so the sword is generated with or after the new player, in the target look.
