@@ -1,0 +1,12 @@
+{
+  "name": "replay_frame_stamps",
+  "description": "Harness self-test, not a design target: a probe node (tests/replay/probe/frame_probe.gd) logs in _ready and on each of its first physics frames, before the runner does. Every stamp must be its own tick minus one, so the level's ready (frame -2) and the warm-up frame (-1) never share stamps with frames 0 and up, and a scenario acting on frame 0 measures its windows in full.",
+  "scene": "res://tests/replay/probe/FrameProbeLevel.tscn",
+  "seed": 1,
+  "player": {"position": [0, 1, 0], "yaw_deg": 0, "pitch": -0.2},
+  "duration_frames": 10,
+  "steps": [],
+  "checks": [
+    {"id": "replay_frame_stamps", "target": [0, 0], "baseline": 0}
+  ]
+}
