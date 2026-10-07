@@ -329,3 +329,28 @@ Steps:
     - Whether `scene_manage save_as` onto an existing path overwrites (needed for the §6 scene_save replacement).
     - Whether autoloads load under our `-s` scripts.
 13. **Unrelated local changes:** the agent worktree already has uncommitted edits to `assets/manifests/{barrow_levy,player,prop_levy_blade,prop_levy_bow}.json`. Don't bundle them into the addon commit.
+
+---
+
+## 12. Update trial: v4.3.0 (2026-10-07)
+
+The update trial in CLAUDE.md → Godot MCP → Updates, on `chore/godot-ai-4.3.0`. Changelog: https://github.com/hi-godot/godot-ai/compare/v4.2.3...v4.3.0 (released 2026-10-03; no security fixes).
+
+- **Identity.** Tag `v4.3.0` = commit `b82b5c519b1b17228f70d8effce1626f391bd1dd`. Archive SHA-256 `dbc3d16e1aa7a5f3ae8038a150bf4191162112f4329c79611aa6f656e3ca4e58`.
+- **Signature.** `script/v4-release verify` from the v4.3.0 clone printed "OK: signed v4 release identity, archive, and exact tree verified". As an independent check, the clone's `PUBLIC_KEY_PEM` hashes (`openssl pkey -pubin -outform DER | shasum -a 256`) to the §1 SPKI fingerprint `84ebbd81…d21072`, and `openssl dgst -sha256 -verify` on the manifest prints "Verified OK". The key is unchanged.
+- **Install.** §1 steps 2 and 3: unzip into an absent `addons/godot_ai/`, then all 313 inventory entries re-hashed, with no extra files. The file set is the same as 4.2.3's (27 files changed, none added or removed). The PyPI `godot-ai==4.3.0` package matches the tag's `src/godot_ai/` file for file.
+- **Tool surface.** The server's `tools/` and `domains.py` are unchanged except a docstring on `node_set_property`. So there are no new tools, ops or parameters, and no changed defaults, and the guard's tables need no change. Behaviour changes inside already-classified ops:
+  - `node_set_property` (ask, needs `scene_file`) now assigns Node-typed exports from a node path. The target must be inside the edited scene and match the export's type.
+  - `node_manage.reparent` (ask) keeps instanced sub-scenes' owners instead of flattening them.
+  - The game helper drops queued log lines when no debugger is attached, and the game logger caps its queue at 4096 lines. This fixes §11 item 4's unbounded queue.
+- **Telemetry.** It now batches events and posts every 15 minutes to a new endpoint (`…-telemetry-v2-…`). The opt-out (`--disable-telemetry`, `GODOT_AI_DISABLE_TELEMETRY`) is unchanged, so with our config it still sends nothing.
+- **Regression set (4.3.0 vs the pinned 4.2.3).**
+  - Guard tests: 36/36.
+  - Import, dialogue and load_all: 0 errors and 0 new warnings.
+  - Validate: 19/19.
+  - gdUnit4: 198 cases, 0 failures (the movement and camera suites included).
+  - All 6 replay scenarios are deterministic, and all 37 checks equal their baselines.
+  - Motion review of the player library: every clip's `*_metrics.json` is byte-identical under 4.2.3 and 4.3.0.
+  - `godot_ai_update.py check --hook` is silent.
+- **Not run: the live MCP playtests** (`docs/playtests/brief-*.md`). The shared server on :8000/:9500 was a 4.2.3 one serving the human's open editor. A 4.3.0 agent editor attaching to it would mix versions on one backend, and the guard only admits the `project-whiskeyjack-agent` worktree. They wait for the backlog item `godot-ai-4-3-playtests`.
+- **After merge:** restart any open editor so its plugin and the shared server are both 4.3.0. An already-running 4.2.3 server keeps serving until every editor restarts.
