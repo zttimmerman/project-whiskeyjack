@@ -126,3 +126,28 @@ func test_summary_takes_each_minimum_and_its_frame() -> void:
 	assert_bool(s.floor_ok).is_true()
 	assert_bool(s.player_ok).is_false()
 	assert_bool(s.enemy_ok).is_true()
+
+
+func test_read_char_contrast_min_only_inside_subject_rect() -> void:
+	# A torch flame flickering elsewhere on screen between the paired renders isn't the subject's
+	var without := _gray(0.2, Vector2i(32, 16))
+	var full := without.duplicate() as Image
+	full.fill_rect(Rect2i(2, 2, 4, 4), Color(0.8, 0.8, 0.8))
+	full.fill_rect(Rect2i(24, 2, 4, 4), Color(0.9, 0.6, 0.2))
+	assert_int(LuminanceProbe.diff_mask(full, without).size()).is_equal(32)
+	assert_int(LuminanceProbe.diff_mask(full, without, Rect2i(0, 0, 16, 16)).size()).is_equal(16)
+
+
+func test_subject_screen_rect_covers_its_capsule() -> void:
+	var cam := Camera3D.new()
+	add_child(auto_free(cam))
+	cam.look_at_from_position(Vector3(0, 1.7, 5), Vector3(0, 1, 0), Vector3.UP)
+	cam.current = true
+	await await_idle_frame()
+	var size := Vector2i(cam.get_viewport().get_visible_rect().size)
+	var rect := LuminanceProbe.screen_rect(cam, Vector3(0, 0.9, 0), 0.4, 1.8, size)
+	assert_bool(rect.has_area()).is_true()
+	assert_bool(rect.has_point(Vector2i(cam.unproject_position(Vector3(0, 0.9, 0))))).is_true()
+	assert_bool(Rect2i(Vector2i.ZERO, size).encloses(rect)).is_true()
+	# Behind the camera: nothing to measure
+	assert_bool(LuminanceProbe.screen_rect(cam, Vector3(0, 0.9, 10), 0.4, 1.8, size).has_area()).is_false()
