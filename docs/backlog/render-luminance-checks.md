@@ -1,14 +1,14 @@
 ---
 id: render-luminance-checks
 title: "Render-based luminance checks in capture mode"
-status: ready
+status: in-progress
 kind: chore
 targets: [lvl_floor_luminance_min, read_char_contrast_min]
 after: []
 phase: gameplay-2
-branch: null
+branch: chore/render-luminance-checks
 pr: null
-updated: 2026-10-02
+updated: 2026-10-07
 ---
 ## Goal
 
