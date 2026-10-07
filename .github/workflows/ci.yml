@@ -252,10 +252,17 @@ jobs:
             echo "::error::A navmesh bake warning is back (design bible section 8)"
             exit 1
           fi
-      - name: Path clearance (lvl_path_clearance_min; report-only until the level fixes land)
+      - name: Path clearance (lvl_path_clearance_min, strict)
+        # --strict exits 1 when any critical-path segment is FAIL or DETOUR (under 1.0 m of clear width).
+        # The summary is written whatever the result, so a failing run still shows which segment broke.
         run: |
-          scripts/tools/godot_timeout.sh GODOT_TIMEOUT_RUN 600 "check_path_clearance" godot --headless --path . -s res://scripts/tools/check_path_clearance.gd -- --out=clearance.json < /dev/null 2>&1 | tee clearance.log
+          status=0
+          scripts/tools/godot_timeout.sh GODOT_TIMEOUT_RUN 600 "check_path_clearance" godot --headless --path . -s res://scripts/tools/check_path_clearance.gd -- --strict --out=clearance.json < /dev/null 2>&1 | tee clearance.log || status=$?
           { echo '### Path clearance (lvl_path_clearance_min >= 1.0 m)'; echo '```'; grep -E '^(res://|  )' clearance.log; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$status" != 0 ]; then
+            echo "::error::Path clearance failed (exit $status): a critical-path segment has under 1.0 m of clear navmesh width; see clearance.log"
+            exit "$status"
+          fi
       - name: Keep the logs and the clearance report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
