@@ -1,7 +1,7 @@
 ---
 id: scenario-search-state
 title: "A pillar or doorway replay for the SEARCH state"
-status: in-review
+status: done
 kind: chore
 targets: []
 after: []
