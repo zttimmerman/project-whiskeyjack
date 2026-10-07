@@ -1,7 +1,7 @@
 ---
 id: clearance-check-strict
 title: "Make the path-clearance check strict in CI"
-status: in-review
+status: done
 kind: chore
 targets: [lvl_path_clearance_min]
 after: []
