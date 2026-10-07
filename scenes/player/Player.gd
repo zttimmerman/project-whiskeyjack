@@ -30,6 +30,8 @@ const CHARACTER_LIGHT_LAYER := 2  # render layer of CameraRig/FillLight's cull m
 @export var combo_window: float = 0.6  # seconds before light combo resets
 @export var attack_active_time: float = 0.2  # light hitbox active duration (seconds)
 @export var heavy_active_time: float = 0.35  # heavy hitbox active duration (seconds)
+## Forward lunge toward a locked target on each swing, spread over its active frames (§3: 0.3-0.5 m)
+@export var attack_lunge_distance: float = 0.4
 
 # The camera (scenes/player/CameraRig.gd): top level on the head-height pivot, turned to the heading only
 @onready var camera_rig: Node3D = $CameraRig
@@ -59,6 +61,10 @@ var _cam_pitch: float = -0.2
 var _combo_index: int = 0
 var _combo_timer: float = 0.0
 var _attack_timer: float = 0.0
+# The swing (its attack clip) locks movement; a lunge toward a locked target runs over its active frames
+var _swing_timer: float = 0.0
+var _lunge_timer: float = 0.0
+var _lunge_velocity: Vector3 = Vector3.ZERO
 
 const FOOTSTEP_INTERVAL: float = 0.4
 var _footstep_timer: float = 0.0
@@ -119,7 +125,7 @@ func _poll_gameplay_actions() -> void:
 	if Input.is_action_just_pressed("lock_on"):
 		_toggle_lock_on()
 
-	if Input.is_action_just_pressed("dodge") and _can_act():
+	if Input.is_action_just_pressed("dodge") and _can_act() and _attack_timer <= 0.0:
 		_dodge()
 
 	if Input.is_action_just_pressed("interact") and DialogueRunner.accepts_interact():
@@ -139,6 +145,8 @@ func _physics_process(delta: float) -> void:
 
 	if _is_dodging:
 		_tick_dodge(delta)
+	elif _swing_timer > 0.0:
+		_tick_swing(delta)
 	else:
 		_recovery_timer = maxf(_recovery_timer - delta, 0.0)
 		_move(delta)
@@ -181,7 +189,11 @@ func _move(delta: float) -> void:
 		velocity.x = move_toward(velocity.x, 0.0, move_speed * 10.0 * delta)
 		velocity.z = move_toward(velocity.z, 0.0, move_speed * 10.0 * delta)
 
-	# Always face lock-on target regardless of movement
+	_face_lock_on_target(delta)
+
+
+# Always face lock-on target regardless of movement
+func _face_lock_on_target(delta: float) -> void:
 	if _lock_on_target:
 		var to_target := _lock_on_target.global_position - global_position
 		to_target.y = 0.0
@@ -209,6 +221,9 @@ func _dodge() -> void:
 	else:
 		_dodge_dir = -global_transform.basis.z
 
+	# A dodge past the active frames cancels the rest of the swing
+	_swing_timer = 0.0
+	_lunge_timer = 0.0
 	_is_dodging = true
 	_dodge_timer = dodge_duration
 	_dodge_elapsed = 0.0
@@ -476,6 +491,7 @@ func _attack_light() -> void:
 	if _sfx_swing.stream:
 		_sfx_swing.play()
 	_attack_timer = attack_active_time
+	_start_swing(attack_active_time)
 	_combo_timer = combo_window
 	_combo_index = (_combo_index + 1) % 3
 
@@ -500,6 +516,38 @@ func _attack_heavy() -> void:
 	if _sfx_swing.stream:
 		_sfx_swing.play()
 	_attack_timer = heavy_active_time
+	_start_swing(heavy_active_time)
+
+
+# Attacks commit (§3, §11 decision 3): input moves him nowhere until the attack clip ends, and with a
+# lock he lunges attack_lunge_distance toward the target over the active frames. Call after the clip plays.
+func _start_swing(active_time: float) -> void:
+	_swing_timer = active_time
+	if _anim_player and _anim_player.is_playing() and _anim_player.current_animation.begins_with("attack"):
+		_swing_timer = maxf(
+			_anim_player.current_animation_length / maxf(_anim_player.get_playing_speed(), 0.01), active_time
+		)
+	_lunge_timer = 0.0
+	_lunge_velocity = Vector3.ZERO
+	var target := get_lock_on_target()
+	if target and active_time > 0.0:
+		var to_target := target.global_position - global_position
+		to_target.y = 0.0
+		if to_target.length_squared() > 0.0001:
+			_lunge_velocity = to_target.normalized() * (attack_lunge_distance / active_time)
+			_lunge_timer = active_time
+
+
+func _tick_swing(delta: float) -> void:
+	_swing_timer -= delta
+	var lunge := _lunge_velocity if _lunge_timer > 0.0 else Vector3.ZERO
+	# The last lunge frame may be partial, so the distance lands on attack_lunge_distance
+	if _lunge_timer > 0.0 and _lunge_timer < delta:
+		lunge *= _lunge_timer / delta
+	_lunge_timer -= delta
+	velocity.x = lunge.x
+	velocity.z = lunge.z
+	_face_lock_on_target(delta)
 
 
 # ── Footsteps ─────────────────────────────────────────────────────────────────

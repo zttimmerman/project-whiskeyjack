@@ -62,7 +62,7 @@ The third-person camera behind the player is the lens for everything else. Most 
 - **Attacks commit (settled):**
   - Movement is locked for the swing, with a short forward lunge (0.3–0.5 m) toward a locked target.
   - A dodge can cancel an attack only after its active frames.
-  - **Current:** you can move freely while swinging, and there's no lunge.
+  - **Current:** met. The swing is the attack clip (light 0.43 s, heavy 2.0 s); the lunge is 0.4 m over the active frames, only with a lock (`test_attack_commitment.gd`).
 - **Hitboxes sync to the animation:** a swing's hitbox opens within ±2 physics frames of the clip's contact frame (`atk_hitbox_sync`). **Current:** it opens on the press frame, regardless of the clip.
 - **The light combo reads as three distinct hits:**
   - `Sword_Regular_A`, `B` and `C`, one per hit (already in the backlog);
