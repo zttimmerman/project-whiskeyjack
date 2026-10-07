@@ -1,7 +1,7 @@
 ---
 id: replay-first-frame-stamp
 title: "Fix the replay harness stamping first-frame events 1–2 frames early"
-status: in-review
+status: done
 kind: fix
 targets: []
 after: []
