@@ -476,6 +476,12 @@ func _change_state(new_state: State) -> void:
 			_hitbox.deactivate()
 			velocity = Vector3.ZERO
 			_nav_agent.target_position = global_position
+			# The corpse stops being an obstacle at once: off every layer, so nothing collides with it, and
+			# excepted from the player, so it isn't shoved aside as he walks through it. Its mask still
+			# holds the floor, so the death clip plays grounded until the fade frees it
+			collision_layer = 0
+			if is_instance_valid(_player):
+				add_collision_exception_with(_player)
 			_play_anim("death")
 
 
