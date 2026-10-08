@@ -263,6 +263,8 @@ func _tick_search(delta: float) -> void:
 	match _search_phase:
 		SearchPhase.GO:
 			if _flat_distance_to(_last_seen_position) <= SEARCH_ARRIVE_DISTANCE or _search_timer <= 0.0:
+				if EventLog.enabled:
+					_log_search_arrival("search_look", _last_seen_position)
 				_search_phase = SearchPhase.LOOK
 				_search_timer = SEARCH_LOOK_TIME
 				velocity.x = 0.0
@@ -281,12 +283,24 @@ func _tick_search(delta: float) -> void:
 				_search_timer = SEARCH_WALK_TIMEOUT
 		SearchPhase.RETURN:
 			if _flat_distance_to(_post.origin) <= SEARCH_ARRIVE_DISTANCE or _search_timer <= 0.0:
+				if EventLog.enabled:
+					_log_search_arrival("search_return", _post.origin)
 				velocity.x = 0.0
 				velocity.z = 0.0
 				global_basis = _post.basis  # face the way it stood guard
 				_change_state(State.IDLE)
 			else:
 				_navigate_toward(_post.origin)
+
+
+# A search leg's end (the last-seen spot, or the post): how far off it stopped, and whether it got there
+# or ran out of SEARCH_WALK_TIMEOUT
+func _log_search_arrival(event: String, point: Vector3) -> void:
+	var off := _flat_distance_to(point)
+	EventLog.log_event(
+		event,
+		{"actor": EventLog.label(self), "distance": EventLog.round3(off), "reached": off <= SEARCH_ARRIVE_DISTANCE}
+	)
 
 
 func _flat_distance_to(point: Vector3) -> float:
@@ -462,6 +476,12 @@ func _change_state(new_state: State) -> void:
 			_hitbox.deactivate()
 			velocity = Vector3.ZERO
 			_nav_agent.target_position = global_position
+			# The corpse stops being an obstacle at once: off every layer, so nothing collides with it, and
+			# excepted from the player, so it isn't shoved aside as he walks through it. Its mask still
+			# holds the floor, so the death clip plays grounded until the fade frees it
+			collision_layer = 0
+			if is_instance_valid(_player):
+				add_collision_exception_with(_player)
 			_play_anim("death")
 
 
