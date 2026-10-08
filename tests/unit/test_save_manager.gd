@@ -180,6 +180,37 @@ func test_runtime_spawned_enemy_is_not_recorded() -> void:
 	assert_array(_read_save().world.killed_enemies).is_empty()
 
 
+func test_taken_pickup_stays_taken_after_load() -> void:
+	# A pickup placed in the scene file and taken before the save is gone again after a load
+	var pickup := _add_pickup("PotionA")
+	saves.record_pickup_taken(pickup)
+	saves.save_game()
+	assert_array(_read_save().world.taken_pickups).contains_exactly(["PotionA"])
+	saves.load_game()
+	assert_bool(pickup.is_in_group("pickup")).is_false()
+	assert_bool(pickup.is_queued_for_deletion()).is_true()
+
+
+func test_save_without_taken_pickups_keeps_every_pickup() -> void:
+	# Saves from before pickups existed have no "taken_pickups" key
+	var pickup := _add_pickup("PotionA")
+	saves.save_game()
+	var data := _read_save()
+	data.world.erase("taken_pickups")
+	_write_save(data)
+	saves.load_game()
+	assert_bool(pickup.is_queued_for_deletion()).is_false()
+
+
+func _add_pickup(pickup_name: String) -> Node3D:
+	var pickup := Node3D.new()
+	pickup.name = pickup_name
+	pickup.add_to_group("pickup")
+	world.add_child(pickup)
+	pickup.owner = world
+	return pickup
+
+
 func _read_save() -> Dictionary:
 	return JSON.parse_string(FileAccess.get_file_as_string(saves.get_save_path()))
 
