@@ -1,13 +1,13 @@
 ---
 id: godot-ai-4-3-trial
 title: "Trial the godot-ai 4.3.0 update"
-status: ready
+status: in-review
 kind: chore
 targets: []
 after: []
 phase: gameplay-2
-branch: null
-pr: null
+branch: chore/godot-ai-4.3.0
+pr: 61
 updated: 2026-10-07
 ---
 ## Goal
