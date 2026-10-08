@@ -1,14 +1,14 @@
 ---
 id: level1-spoke-spacing
 title: "Lengthen Level 1's first spoke to 20–60 s between fights"
-status: proposed
+status: ready
 kind: feature
 targets: [enc_spacing_s]
-after: [scenario-two-fight-route]
+after: [player-attack-commitment]
 phase: gameplay-2
 branch: null
 pr: null
-updated: 2026-10-07
+updated: 2026-10-08
 ---
 ## Goal
 
@@ -16,7 +16,7 @@ updated: 2026-10-07
 
 ## Scope
 
-- a level design decision first (longer corridor, a side room or a payoff detour, or moving the central room's group); proposed until the user picks
+- Decided 2026-10-08 (user took the orchestrator's recommendation): a side room off the spoke between Corridor A and the central room, with a payoff in sight from the corridor (a chest or a lore item, per §4 rhythm), so the spacing comes from exploration rather than a longer empty walk. Local to that spoke: no wholesale changes to Level 1
 - then level geometry, the navmesh rebake and `two_fight_route`'s walk and baseline, dropping `pending`
 
 ## Acceptance

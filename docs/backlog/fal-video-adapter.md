@@ -8,7 +8,7 @@ after: []
 phase: C
 branch: null
 pr: null
-updated: 2026-10-05
+updated: 2026-10-08
 ---
 ## Question
 
@@ -24,3 +24,7 @@ Waiting on: the account and key exist, and the user sets the per-session cap and
 ## Recommendation
 
 Option 1 if more than the two spike videos are likely (later creatures, the bow and strafe clips). Option 2 unblocks step 4 at once if the user wants that first. Either way, step 4 of `spike-agent-animation` resumes once the videos exist.
+
+## Answer so far (user, 2026-10-08)
+
+Option 1, the adapter skill. Per-session cap $5; the skill may call Kling and Seedance (one test clip each, chosen on our results). Still waiting on: the account and `FAL_KEY` (setup steps were given in chat on 2026-10-07).
