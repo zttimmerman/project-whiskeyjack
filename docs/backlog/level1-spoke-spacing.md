@@ -1,7 +1,7 @@
 ---
 id: level1-spoke-spacing
 title: "Lengthen Level 1's first spoke to 20–60 s between fights"
-status: in-review
+status: done
 kind: feature
 targets: [enc_spacing_s]
 after: [player-attack-commitment]
@@ -26,3 +26,7 @@ updated: 2026-10-08
 ## Serves
 
 `enc_spacing_s`, design bible §4 (rhythm on a spoke).
+
+## Outcome
+
+A 4x12 m passage off Corridor A into a 16x16 m storeroom (existing kit, four torches), a health potion pickup in line of sight 29 m from the corridor (new ItemPickup; SaveManager keeps taken pickups). two_fight_route enc_spacing_s 22.783 s (target 20-60), pending dropped. Follow-ups: replay-stable-step-order, pickup-feedback. Merged in PR #72.
