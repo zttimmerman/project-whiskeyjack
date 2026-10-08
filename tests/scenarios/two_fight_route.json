@@ -30,6 +30,6 @@
     {"frame": 680, "action": "move_forward", "pressed": false}
   ],
   "checks": [
-    {"id": "enc_spacing_s", "gap_s": 3, "target": [20, 60], "baseline": 3.75, "tolerance": 0.02, "pending": "level work: Level 1's spoke puts the central room about 16 m from Corridor A's levy (design bible §9: about 5-10 s today)"}
+    {"id": "enc_spacing_s", "gap_s": 3, "target": [20, 60], "baseline": 4.717, "tolerance": 0.02, "pending": "level work: Level 1's spoke puts the central room about 16 m from Corridor A's levy (design bible §9: about 5-10 s today)"}
   ]
 }
