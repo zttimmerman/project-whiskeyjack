@@ -1,15 +1,19 @@
 ---
 id: luminance-target-misses
 title: "Floor and character luminance misses found by the rendered checks"
-status: needs-user
+status: done
 kind: decision
 targets: [lvl_floor_luminance_min, read_char_contrast_min]
 after: [render-luminance-checks]
 phase: gameplay-2
 branch: null
 pr: null
-updated: 2026-10-07
+updated: 2026-10-08
 ---
+## Goal
+
+Decide how to answer the floor and enemy-contrast luminance misses.
+
 ## Question
 
 The rendered checks (`scripts/review/capture_luminance.sh`, render-luminance-checks) put several places under
@@ -38,3 +42,7 @@ Measured on the Mac, gameplay camera, every 30 frames (minimums):
 
 1 for the floors (the art bible's levers), and 3 for enemies until playtests say the levy is hard to read,
 with the gameplay-view number recorded alongside.
+
+## Outcome
+
+User, 2026-10-08: the recommendation. Floors: option 1 (raise ambient or torch energy in the crypt corridor and Level 2's tomb hall until they clear 0.05), but only after `spike-target-look` settles the darker direction, so the lift is tuned to the new look. Enemies: option 3 (the 5 m critical-path view holds the target; the gameplay-view number is recorded alongside) until playtests say the levy is hard to read. Follow-up: `floor-luminance-b2`.
