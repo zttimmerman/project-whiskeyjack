@@ -1,25 +1,35 @@
 ---
 id: level2-burial-platform
-title: "Is Level 2's 0.5 m burial platform meant to be walkable?"
-status: needs-user
-kind: decision
+title: "Make Level 2's 0.5 m burial platform walkable"
+status: done
+kind: feature
 targets: []
 after: []
 phase: C
-branch: null
-pr: null
-updated: 2026-10-02
+branch: feature/level2-platform-steps
+pr: 70
+updated: 2026-10-08
 ---
-## Question
+## Goal
 
-The platform is 0.5 m high, above the 0.25 m climb limit, so enemies path around it. The user hasn't been in Level 2 in a while; ask when Level 2 is next worked on.
+The user decided (2026-10-08) that Level 2's burial platform is walkable (option 1 of the question below): steps, or an invisible clip ramp under visible steps as on the crypt trial's dais. Until now it stood 0.5 m high, over the navmesh's 0.25 m climb limit, so enemies pathed around it.
 
-## Options
+Question as asked: is the 0.5 m platform meant to be walkable? Options were 1 walkable (steps or a clip ramp), 2 a set piece as now, 3 lowered to 0.25 m or less; the recommendation was 2 until Level 2 got a brush shell.
 
-1. Walkable: add steps or an invisible clip ramp (as on the crypt trial's dais).
-2. A set piece: not walkable, as now.
-3. Lower it to 0.25 m or less.
+## Scope
 
-## Recommendation
+- Level 2 only, local to the platform: a visible 0.25 m step on its north and south faces and an invisible clip ramp (collision only, 26.6°, the crypt dais's slope) under each, so the player's capsule and the navmesh bake climb the ramp.
+- Rebake `scenes/world/Level2_navmesh.tres` with `scripts/tools/bake_navmeshes.gd`.
 
-2 for now (no change); revisit when Level 2 gets a brush shell, using a clip ramp if it should be walkable.
+## Acceptance
+
+- `tests/unit/test_level2_platform.gd`: paths from the vault floor north and south of the platform reach its top on the committed bake, and a player-sized capsule walks over it.
+- CI's navmesh job (stale bake, pathfinding, strict path clearance) stays green.
+
+## Serves
+
+Design bible §5 (terraces are the verticality: steps and ramps count) and §8 (edit-time navmesh).
+
+## Outcome
+
+User, 2026-10-08: walkable. 0.25 m steps on the platform's north and south faces (5 m wide) over an invisible 26.6 deg clip ramp; Level2_navmesh rebaked (203 to 227 polygons); enemies path onto the top from both sides (test_level2_platform.gd). Merged in PR #70.
