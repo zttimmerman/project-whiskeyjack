@@ -48,9 +48,9 @@ func test_pickup_stays_when_the_inventory_is_full() -> void:
 	var filler: Item = load("res://data/items/sword_iron.tres")
 	while not player.inventory.is_full():
 		player.inventory.add_item(filler)
-	var before: int = player.inventory.items.size()
+	var held: int = player.inventory.items.size()
 	pickup.interact()
-	assert_int(player.inventory.items.size()).is_equal(before)
+	assert_int(player.inventory.items.size()).is_equal(held)
 	assert_bool(pickup.is_queued_for_deletion()).is_false()
 
 
