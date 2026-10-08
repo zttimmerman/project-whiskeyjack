@@ -1,12 +1,12 @@
 ---
 id: level1-spoke-spacing
 title: "Lengthen Level 1's first spoke to 20–60 s between fights"
-status: ready
+status: in-progress
 kind: feature
 targets: [enc_spacing_s]
 after: [player-attack-commitment]
 phase: gameplay-2
-branch: null
+branch: feature/level1-side-room
 pr: null
 updated: 2026-10-08
 ---
