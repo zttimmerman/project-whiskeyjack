@@ -17,6 +17,8 @@ const CHARACTER_LIGHT_LAYER := 2  # render layer of CameraRig/FillLight's cull m
 @export var move_speed: float = 5.0
 @export var dodge_speed: float = 8.4  # 4.2 m over the dodge, as before
 @export var dodge_duration: float = 0.5  # fits the roll clip's core at 1.8x
+@export var dodge_iframe_time: float = 0.30  # i-frames cover only the roll's start: late dodges get hit
+@export var dodge_recovery: float = 0.15  # after the roll, before the next dodge or attack
 @export var gravity: float = 20.0
 @export var camera_sensitivity: float = 0.003  # radians per pixel (mouse)
 @export var camera_pad_speed: float = 2.0  # radians per second (keys/gamepad)
@@ -41,6 +43,8 @@ const CHARACTER_LIGHT_LAYER := 2  # render layer of CameraRig/FillLight's cull m
 var _is_dodging: bool = false
 var _dodge_timer: float = 0.0
 var _dodge_dir: Vector3 = Vector3.FORWARD
+var _dodge_elapsed: float = 0.0
+var _recovery_timer: float = 0.0
 
 var _lock_on_target: Node3D = null
 var _lock_on_candidates: Array[Node3D] = []
@@ -115,16 +119,16 @@ func _poll_gameplay_actions() -> void:
 	if Input.is_action_just_pressed("lock_on"):
 		_toggle_lock_on()
 
-	if Input.is_action_just_pressed("dodge") and not _is_dodging:
+	if Input.is_action_just_pressed("dodge") and _can_act():
 		_dodge()
 
 	if Input.is_action_just_pressed("interact") and DialogueRunner.accepts_interact():
 		interact()
 
-	if Input.is_action_just_pressed("attack_light") and not _is_dodging and _attack_timer <= 0.0:
+	if Input.is_action_just_pressed("attack_light") and _can_act() and _attack_timer <= 0.0:
 		_attack_light()
 
-	if Input.is_action_just_pressed("attack_heavy") and not _is_dodging and _attack_timer <= 0.0:
+	if Input.is_action_just_pressed("attack_heavy") and _can_act() and _attack_timer <= 0.0:
 		_attack_heavy()
 
 
@@ -136,6 +140,7 @@ func _physics_process(delta: float) -> void:
 	if _is_dodging:
 		_tick_dodge(delta)
 	else:
+		_recovery_timer = maxf(_recovery_timer - delta, 0.0)
 		_move(delta)
 
 	_tick_attack(delta)
@@ -206,6 +211,7 @@ func _dodge() -> void:
 
 	_is_dodging = true
 	_dodge_timer = dodge_duration
+	_dodge_elapsed = 0.0
 	_play_anim("dodge_roll", true)
 
 	if is_instance_valid(hurtbox):
@@ -225,12 +231,22 @@ func _tick_dodge(delta: float) -> void:
 	velocity.x = _dodge_dir.x * dodge_speed
 	velocity.z = _dodge_dir.z * dodge_speed
 	_dodge_timer -= delta
+	_dodge_elapsed += delta
+	# Small epsilon: float steps of 1/60 must not lose the frame that lands on the window's end
+	if _dodge_elapsed >= dodge_iframe_time - 0.0001 and is_instance_valid(hurtbox):
+		hurtbox.invincible = false
 	if _dodge_timer <= 0.0:
 		_is_dodging = false
+		_recovery_timer = dodge_recovery
 		if is_instance_valid(hurtbox):
 			hurtbox.invincible = false
 		if EventLog.enabled:
 			EventLog.log_event("dodge_end", {"actor": EventLog.label(self), "invincible": false})
+
+
+# Not mid-roll and past the recovery after it: a dodge or an attack may start
+func _can_act() -> bool:
+	return not _is_dodging and _recovery_timer <= 0.0
 
 
 # ── Camera ────────────────────────────────────────────────────────────────────

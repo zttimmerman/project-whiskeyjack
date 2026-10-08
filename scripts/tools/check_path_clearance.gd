@@ -1,7 +1,7 @@
 extends SceneTree
 
 # Checks lvl_path_clearance_min (design bible §7 and §9): the critical path keeps at least 1.0 m of
-# clear navmesh width. Report-only by default; --strict exits 1 when a segment fails.
+# clear navmesh width. Report-only by default; --strict (what CI runs) exits 1 when a segment fails.
 #   godot --headless --path . -s scripts/tools/check_path_clearance.gd [-- --strict] [-- --out=report.json]
 #
 # For each tests/critical_paths/*.json it bakes the level in memory (never saved) with a 0.5 m agent

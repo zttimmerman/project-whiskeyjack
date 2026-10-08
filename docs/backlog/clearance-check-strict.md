@@ -1,14 +1,14 @@
 ---
 id: clearance-check-strict
 title: "Make the path-clearance check strict in CI"
-status: ready
+status: done
 kind: chore
 targets: [lvl_path_clearance_min]
 after: []
 phase: gameplay-2
-branch: null
-pr: null
-updated: 2026-10-02
+branch: chore/clearance-check-strict
+pr: 62
+updated: 2026-10-07
 ---
 ## Goal
 
@@ -25,3 +25,7 @@ Decided 2026-09-30: the clearance check goes `--strict` once the level fixes lan
 ## Serves
 
 `lvl_path_clearance_min`.
+
+## Outcome
+
+CI's navmesh job runs the check with `--strict` (PR #62). All 14 segments pass (narrowest 1.5 m, Level 2 vault → corridor C); a throwaway 0.5 m gap in Level 1 corridor A failed strict with exit 1.

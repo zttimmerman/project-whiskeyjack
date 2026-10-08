@@ -1,0 +1,35 @@
+{
+  "name": "two_fight_route",
+  "description": "enc_spacing_s (design bible §4, \u00a79): walk Level 1's first spoke through two fights. Fight 1 is levy_1v1_sensible's script (lock on, dodge each windup, kill the Corridor A levy with four light hits, frame 453); the player then walks straight east through the levy's corpse (a dead enemy stops blocking the frame it dies) down Corridor A into the central room until its levy and archer engage (fight 2). gap_s is 3: fight 1's longest pause between combat events is 2.1 s, and the default 5 s would merge the two fights on today's short spoke. The value is the time from fight 1's last combat event to fight 2's first, walk plus the enemies' approach and windup.",
+  "scene": "res://scenes/world/Level1.tscn",
+  "seed": 1,
+  "player": {"position": [0, 1, 0], "yaw_deg": -90, "pitch": -0.2},
+  "duration_frames": 900,
+  "steps": [
+    {"frame": 0, "action": "move_forward", "pressed": true},
+    {"frame": 5, "action": "lock_on", "pressed": true},
+    {"frame": 6, "action": "lock_on", "pressed": false},
+    {"frame": 20, "action": "move_forward", "pressed": false},
+    {"frame": 127, "action": "move_backward", "pressed": true},
+    {"frame": 128, "action": "dodge", "pressed": true},
+    {"frame": 129, "action": "dodge", "pressed": false},
+    {"frame": 159, "action": "move_backward", "pressed": false},
+    {"frame": 240, "action": "attack_light", "pressed": true},
+    {"frame": 241, "action": "attack_light", "pressed": false},
+    {"frame": 268, "action": "attack_light", "pressed": true},
+    {"frame": 269, "action": "attack_light", "pressed": false},
+    {"frame": 296, "action": "attack_light", "pressed": true},
+    {"frame": 297, "action": "attack_light", "pressed": false},
+    {"frame": 357, "action": "move_backward", "pressed": true},
+    {"frame": 358, "action": "dodge", "pressed": true},
+    {"frame": 359, "action": "dodge", "pressed": false},
+    {"frame": 389, "action": "move_backward", "pressed": false},
+    {"frame": 452, "action": "attack_light", "pressed": true},
+    {"frame": 453, "action": "attack_light", "pressed": false},
+    {"frame": 460, "action": "move_forward", "pressed": true},
+    {"frame": 680, "action": "move_forward", "pressed": false}
+  ],
+  "checks": [
+    {"id": "enc_spacing_s", "gap_s": 3, "target": [20, 60], "baseline": 3.75, "tolerance": 0.02, "pending": "level work: Level 1's spoke puts the central room about 16 m from Corridor A's levy (design bible §9: about 5-10 s today)"}
+  ]
+}
