@@ -1,25 +1,33 @@
 ---
 id: godot-ai-4-3-playtests
 title: "Run the saved MCP playtests on godot-ai 4.3.0"
-status: needs-user
-kind: decision
+status: ready
+kind: chore
 targets: []
 after: [godot-ai-4-3-trial]
 phase: gameplay-2
 branch: null
 pr: null
-updated: 2026-10-07
+updated: 2026-10-08
 ---
-## Question
+## Goal
 
-The 4.3.0 trial ran everything headless: the guard tests, validate, the tests, the replays and the motion metrics, all matching 4.2.3. It didn't run the live MCP playtests (`docs/playtests/brief-combat-input-frame-timed.md`, `brief-level1-first-look.md`). The shared godot-ai server on :8000/:9500 was a 4.2.3 one serving your open editor. A 4.3.0 agent editor would have attached to it with mismatched versions. Also, the guard admits only the `project-whiskeyjack-agent` worktree, which doesn't exist right now. When should they run?
+Run the two saved MCP playtests on godot-ai 4.3.0 to finish the update trial's regression set. The trial (PR #61) ran everything headless, and all of it matched 4.2.3, but it skipped these. The shared server on :8000/:9500 was serving the user's 4.2.3 editor, and the guard only admits the `project-whiskeyjack-agent` worktree.
 
-## Options
+**Decided 2026-10-08 (user): option A.** Merge the trial first. The user then restarts their editor, so the shared server is 4.3.0, and an agent runs both briefs from a `project-whiskeyjack-agent` worktree off main. The user also OK'd relabelling the guard docstring to v4.3.0 (label only), which was done in PR #61.
 
-- **A. After merge.** You restart your editor, so the shared server becomes 4.3.0. Then an agent creates `project-whiskeyjack-agent` from main and runs both briefs.
-- **B. Before merge.** You close your editor for about 30 minutes, and an agent runs the briefs from a `project-whiskeyjack-agent` worktree on `chore/godot-ai-4.3.0`.
-- **C. Skip.** The headless regression set already matched, and the changed ops (`node_set_property`, `reparent`) aren't used by the playtest profile.
+## Scope
 
-## Recommendation
+- After #61 merges and the user confirms their editor has restarted, create the `project-whiskeyjack-agent` worktree off main.
+- Launch its editor as in CLAUDE.md → Godot MCP.
+- Run `docs/playtests/brief-combat-input-frame-timed.md` and `brief-level1-first-look.md` headless under `GODOT_AI_GUARD_PROFILE=playtest`.
+- Write their reports in `docs/playtests/`.
 
-A. The release changes nothing the playtest profile calls (run, stop, step, input), so merging first is low-risk, and it avoids interrupting your editor. A small related guard edit needs your OK: the guard's docstring still says "v4.2.3" (`.claude/hooks/godot_ai_guard.py:2`). It's a label only, and its tables need no change.
+## Acceptance
+
+- Both playtests' outcomes match their 2026-09-29 reports under 4.2.3, or each difference is explained.
+- Afterwards the agent's editor is closed and the worktree is removed.
+
+## Serves
+
+Tooling (CLAUDE.md → Godot MCP → Updates, step 4).
