@@ -15,7 +15,9 @@ const PLATFORM_TOP := Vector3(0, PLATFORM_TOP_Y, 45)
 const VAULT_NORTH := Vector3(0, 0, 40)  # the critical path's burial_vault waypoint
 const VAULT_SOUTH := Vector3(0, 0, 50.5)
 const REACH_TOLERANCE := 0.3  # metres between a path's end and its target, on the floor plane
-const HEIGHT_TOLERANCE := 0.3  # navmesh polygons sit within a cell or so of the surface
+# The bake lifts polygons a cell or two above the surface they cover, so the path is checked for its rise
+# from the floor (the platform height), not for an absolute height.
+const HEIGHT_TOLERANCE := 0.3
 const CAPSULE_CENTRE_ABOVE_FLOOR := 0.9
 const WALK_SPEED := 4.0
 const GRAVITY := 9.8
@@ -59,9 +61,10 @@ func test_enemies_path_onto_burial_platform() -> void:
 			. override_failure_message("path from %s ends at %s, short of the platform top" % [from, end])
 			. is_less_equal(REACH_TOLERANCE)
 		)
+		var rise: float = end.y - path[0].y
 		(
-			assert_float(end.y)
-			. override_failure_message("path from %s ends at y %.2f, not on the platform top" % [from, end.y])
+			assert_float(rise)
+			. override_failure_message("path from %s rises %.2f m, not onto the platform top" % [from, rise])
 			. is_between(PLATFORM_TOP_Y - HEIGHT_TOLERANCE, PLATFORM_TOP_Y + HEIGHT_TOLERANCE)
 		)
 
