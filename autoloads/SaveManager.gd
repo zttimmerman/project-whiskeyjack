@@ -17,6 +17,8 @@ var _save_path: String = SAVE_PATH
 # Enemies killed in the current scene instance, as paths relative to the scene root.
 # Tied to the scene instance: a reload or scene change starts a fresh list.
 var _killed_enemies: Array[String] = []
+# World pickups taken in the current scene instance (scenes/items/ItemPickup.gd), the same way.
+var _taken_pickups: Array[String] = []
 var _world_scene_id: int = 0
 
 
@@ -59,7 +61,7 @@ func save_game() -> void:
 		"scene": scene.scene_file_path,
 		"player": _serialize_player(player),
 		"quests": _serialize_quests(),
-		"world": {"killed_enemies": _killed_enemies.duplicate()},
+		"world": {"killed_enemies": _killed_enemies.duplicate(), "taken_pickups": _taken_pickups.duplicate()},
 	}
 
 	var file := FileAccess.open(_save_path, FileAccess.WRITE)
@@ -104,6 +106,18 @@ func record_enemy_killed(enemy: Node) -> void:
 	var key := str(scene.get_path_to(enemy))
 	if key not in _killed_enemies:
 		_killed_enemies.append(key)
+
+
+## Called by ItemPickup when the player takes it. Like kills, only pickups placed in the scene file
+## are persisted.
+func record_pickup_taken(pickup: Node) -> void:
+	var scene := get_tree().current_scene
+	if not scene or pickup.owner != scene:
+		return
+	_sync_world_scene()
+	var key := str(scene.get_path_to(pickup))
+	if key not in _taken_pickups:
+		_taken_pickups.append(key)
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -159,6 +173,7 @@ func _sync_world_scene() -> void:
 	if id != _world_scene_id:
 		_world_scene_id = id
 		_killed_enemies.clear()
+		_taken_pickups.clear()
 
 
 func _get_player() -> Node:
@@ -224,8 +239,8 @@ func _serialize_quests() -> Dictionary:
 # ── Deserialization ───────────────────────────────────────────────────────────
 
 
-# Removes the enemies the save lists as killed (quietly: no died signal, no XP) and makes the
-# save's list the current kill list, so the next save still includes them.
+# Removes the enemies the save lists as killed (quietly: no died signal, no XP) and the pickups it
+# lists as taken, and makes the save's lists the current ones, so the next save still includes them.
 func _deserialize_world(data: Dictionary) -> void:
 	_sync_world_scene()
 	_killed_enemies.clear()
@@ -238,6 +253,15 @@ func _deserialize_world(data: Dictionary) -> void:
 			# Leave the group now so lock-on and level kill counts skip it before the free lands
 			enemy.remove_from_group("enemy")
 			enemy.queue_free()
+	# Pickups taken before the save; saves from before pickups have no list
+	_taken_pickups.clear()
+	for raw_key in data.get("taken_pickups", []):
+		var key := str(raw_key)
+		_taken_pickups.append(key)
+		var pickup := scene.get_node_or_null(NodePath(key))
+		if pickup and pickup.is_in_group("pickup"):
+			pickup.remove_from_group("pickup")
+			pickup.queue_free()
 
 
 func _deserialize_player(player: Node, data: Dictionary) -> void:

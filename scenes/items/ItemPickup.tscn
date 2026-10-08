@@ -1,0 +1,57 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/items/ItemPickup.gd" id="1_script"]
+
+[sub_resource type="StandardMaterial3D" id="Material_liquid"]
+albedo_color = Color(0.78, 0.12, 0.08, 1)
+metallic_specular = 0.0
+
+[sub_resource type="StandardMaterial3D" id="Material_cork"]
+albedo_color = Color(0.55, 0.35, 0.2, 1)
+metallic_specular = 0.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_body"]
+material = SubResource("Material_liquid")
+top_radius = 0.1
+bottom_radius = 0.14
+height = 0.3
+radial_segments = 10
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_neck"]
+material = SubResource("Material_liquid")
+top_radius = 0.05
+bottom_radius = 0.06
+height = 0.12
+radial_segments = 8
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_cork"]
+material = SubResource("Material_cork")
+top_radius = 0.06
+bottom_radius = 0.055
+height = 0.07
+radial_segments = 8
+rings = 1
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_reach"]
+size = Vector3(0.5, 1, 0.5)
+
+[node name="ItemPickup" type="StaticBody3D" groups=["pickup"]]
+script = ExtResource("1_script")
+
+[node name="Body" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+mesh = SubResource("CylinderMesh_body")
+
+[node name="Neck" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.36, 0)
+mesh = SubResource("CylinderMesh_neck")
+
+[node name="Cork" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.455, 0)
+mesh = SubResource("CylinderMesh_cork")
+
+[node name="Reach" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("BoxShape3D_reach")

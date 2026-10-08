@@ -1,10 +1,10 @@
 {
   "name": "two_fight_route",
-  "description": "enc_spacing_s (design bible §4, \u00a79): walk Level 1's first spoke through two fights. Fight 1 is levy_1v1_sensible's script (lock on, dodge each windup, kill the Corridor A levy with four light hits, frame 453); the player then walks straight east through the levy's corpse (a dead enemy stops blocking the frame it dies) down Corridor A into the central room until its levy and archer engage (fight 2). gap_s is 3: fight 1's longest pause between combat events is 2.1 s, and the default 5 s would merge the two fights on today's short spoke. The value is the time from fight 1's last combat event to fight 2's first, walk plus the enemies' approach and windup.",
+  "description": "enc_spacing_s (design bible §4, §9): walk Level 1's first spoke through two fights, exploring the side room between them. Fight 1 is levy_1v1_sensible's script (lock on, dodge each windup, kill the Corridor A levy with four light hits, frame 453). The player then walks east through the levy's corpse (a dead enemy stops blocking the frame it dies) to the side passage, whose payoff (a potion on a torch-lit crate) is in sight up it, walks north into the side room, stops to look around it (3 s of camera pan, back to the same heading), crosses it up the east aisle to the payoff, takes it (interact) and pauses a second, comes back down the west aisle and the passage, and walks east down Corridor A into the central room until its levy and archer engage (fight 2). Movement is camera-relative with the camera heading east (yaw -90): forward east, left north. gap_s is 3: fight 1's longest pause between combat events is 2.1 s. The value is the time from fight 1's last combat event to fight 2's first: about 18 s of detour (4.3 of them standing) on top of the 4.7 s corridor walk and the enemies' approach and windup.",
   "scene": "res://scenes/world/Level1.tscn",
   "seed": 1,
   "player": {"position": [0, 1, 0], "yaw_deg": -90, "pitch": -0.2},
-  "duration_frames": 900,
+  "duration_frames": 2271,
   "steps": [
     {"frame": 0, "action": "move_forward", "pressed": true},
     {"frame": 5, "action": "lock_on", "pressed": true},
@@ -27,9 +27,37 @@
     {"frame": 452, "action": "attack_light", "pressed": true},
     {"frame": 453, "action": "attack_light", "pressed": false},
     {"frame": 460, "action": "move_forward", "pressed": true},
-    {"frame": 680, "action": "move_forward", "pressed": false}
+    {"frame": 646, "action": "move_forward", "pressed": false},
+    {"frame": 646, "action": "move_left", "pressed": true},
+    {"frame": 814, "action": "move_left", "pressed": false},
+    {"frame": 820, "action": "camera_left", "pressed": true},
+    {"frame": 865, "action": "camera_left", "pressed": false},
+    {"frame": 865, "action": "camera_right", "pressed": true},
+    {"frame": 955, "action": "camera_right", "pressed": false},
+    {"frame": 955, "action": "camera_left", "pressed": true},
+    {"frame": 1000, "action": "camera_left", "pressed": false},
+    {"frame": 1006, "action": "move_forward", "pressed": true},
+    {"frame": 1006, "action": "move_left", "pressed": true},
+    {"frame": 1091, "action": "move_forward", "pressed": false},
+    {"frame": 1187, "action": "move_left", "pressed": false},
+    {"frame": 1187, "action": "move_backward", "pressed": true},
+    {"frame": 1247, "action": "move_backward", "pressed": false},
+    {"frame": 1247, "action": "move_left", "pressed": true},
+    {"frame": 1277, "action": "move_left", "pressed": false},
+    {"frame": 1283, "action": "interact", "pressed": true},
+    {"frame": 1284, "action": "interact", "pressed": false},
+    {"frame": 1344, "action": "move_backward", "pressed": true},
+    {"frame": 1344, "action": "move_right", "pressed": true},
+    {"frame": 1429, "action": "move_backward", "pressed": false},
+    {"frame": 1507, "action": "move_right", "pressed": false},
+    {"frame": 1507, "action": "move_forward", "pressed": true},
+    {"frame": 1567, "action": "move_forward", "pressed": false},
+    {"frame": 1567, "action": "move_right", "pressed": true},
+    {"frame": 1771, "action": "move_right", "pressed": false},
+    {"frame": 1771, "action": "move_forward", "pressed": true},
+    {"frame": 2071, "action": "move_forward", "pressed": false}
   ],
   "checks": [
-    {"id": "enc_spacing_s", "gap_s": 3, "target": [20, 60], "baseline": 4.717, "tolerance": 0.02, "pending": "level work: Level 1's spoke puts the central room about 16 m from Corridor A's levy (design bible §9: about 5-10 s today)"}
+    {"id": "enc_spacing_s", "gap_s": 3, "target": [20, 60], "baseline": 22.783, "tolerance": 0.02}
   ]
 }

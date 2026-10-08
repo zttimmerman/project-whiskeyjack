@@ -8,7 +8,9 @@ extends GdUnitTestSuite
 # - lvl_dressing_density: 1–3 dressing props per 10 m² in each room;
 # - lvl_light_spacing: no stretch of the critical path longer than 12 m without a visible light source
 #   (the user accepted denser spacing than the band's 8 m, 2026-09-30), and every local light sits on a
-#   visible source (art bible → Rendering).
+#   visible source (art bible → Rendering);
+# - the side room off Corridor A (backlog level1-spoke-spacing, design bible §4 rhythm on a spoke): its
+#   payoff, a pickup, is in plain sight from the corridor, and the player's interact ray reaches it.
 # The level is instanced without entering the tree, so no gameplay script runs; transforms are composed
 # up to the level root by hand.
 
@@ -24,6 +26,7 @@ const ROOMS := {
 	"start": Rect2(-6, -6, 12, 12),
 	"central": Rect2(16, -8, 16, 16),
 	"exit": Rect2(18, 18, 12, 12),
+	"side": Rect2(0.5, -30, 16, 16),
 }
 const DRESSING_PER_10M2 := [1.0, 3.0]
 # Wall-mounted props sit in the wall's thickness, just outside the floor rectangle.
@@ -32,6 +35,11 @@ const LIGHT_SPACING_MAX_M := 12.0
 # A light counts for the path when it's within this distance of it (lights hang on room walls).
 const LIGHT_PATH_REACH_M := 7.0
 const LIGHT_SOURCE_REACH_M := 1.0
+const POTION := "res://data/items/potion_health.tres"
+# Eye height on Corridor A's centreline at the side passage's mouth: where the fight there ends.
+const SIDE_ROOM_SIGHT_FROM := Vector3(8.5, 1.6, 0.0)
+# Player.interact() casts forward from 0.8 m above the player's origin (0.95 m on the floor).
+const INTERACT_RAY_HEIGHT_M := 1.75
 
 var _level: Node3D
 
@@ -168,6 +176,39 @@ func test_level1_lights_on_visible_sources() -> void:
 			. override_failure_message("%s is %.2f m from the nearest torch" % [_level.get_path_to(light), nearest])
 			. is_less_equal(LIGHT_SOURCE_REACH_M)
 		)
+
+
+# The side room's payoff is a pickup holding a potion, inside the side room, in plain sight from
+# Corridor A (no wall, pillar or prop on the line from the corridor to it), and the player's interact
+# ray, cast at chest height, reaches its collision.
+func test_level1_side_room_payoff_in_sight() -> void:
+	var pickups := _level.find_children("*", "", true, false).filter(
+		func(n: Node) -> bool: return n.is_in_group("pickup")
+	)
+	assert_int(pickups.size()).override_failure_message("Level1 has %d pickups" % pickups.size()).is_equal(1)
+	if pickups.size() != 1:
+		return
+	var pickup: Node3D = pickups[0]
+	assert_str((pickup.get("item") as Item).resource_path if pickup.get("item") else "").is_equal(POTION)
+	var at := _level_xform(pickup).origin
+	assert_bool(ROOMS.side.has_point(Vector2(at.x, at.z))).override_failure_message("pickup at %s" % at).is_true()
+	var target := at + Vector3.UP * 0.15
+	var region: Node3D = _level.get_node(REGION)
+	for body: Node in region.find_children("*", "StaticBody3D", true, false):
+		var solid := _collision_bounds(body)
+		(
+			assert_bool(solid.intersects_segment(SIDE_ROOM_SIGHT_FROM, target) != null)
+			. override_failure_message("%s blocks the view of the pickup" % region.get_path_to(body))
+			. is_false()
+		)
+	var reach := _collision_bounds(pickup)
+	(
+		assert_bool(reach.position.y <= INTERACT_RAY_HEIGHT_M and reach.end.y >= INTERACT_RAY_HEIGHT_M)
+		. override_failure_message(
+			"pickup collision %s misses the interact ray at %.2f m" % [reach, INTERACT_RAY_HEIGHT_M]
+		)
+		. is_true()
+	)
 
 
 # The level's own local lights (not those inside instanced scenes, such as the player's fill light).
