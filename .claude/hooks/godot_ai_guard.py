@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""PreToolUse guard for the godot-ai MCP server (v4.2.3).
+"""PreToolUse guard for the godot-ai MCP server (v4.3.0).
 
 This is the enforcement layer for CLAUDE.md's determinism rules when an agent
 drives a live Godot editor: generated outputs (retargeted animation
