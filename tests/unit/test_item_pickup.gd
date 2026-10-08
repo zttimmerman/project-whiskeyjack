@@ -1,7 +1,4 @@
 extends GdUnitTestSuite
-# gdUnit4 signal asserts are coroutines behind an abstract interface, so the analyzer flags their
-# required await as redundant
-@warning_ignore_start("redundant_await")
 
 # A world pickup (scenes/items/ItemPickup.tscn): the payoff in sight after a fight (design bible §4,
 # rhythm on a spoke). The player's interact() calls its interact(); it hands its item to the player's
@@ -32,14 +29,17 @@ func before_test() -> void:
 func test_pickup_gives_its_item_and_leaves() -> void:
 	if pickup == null:
 		return
-	var watcher := monitor_signals(pickup, false)
+	var item: Item = pickup.item
+	# A plain connection: the pickup frees itself, so a signal monitor on it can't outlive it
+	var emitted: Array[Item] = []
+	pickup.picked_up.connect(func(taken: Item) -> void: emitted.append(taken))
 	pickup.interact()
-	await assert_signal(watcher).is_emitted("picked_up", [pickup.item])
-	assert_bool(player.inventory.has_item("potion_health")).is_true()
+	# Taking it twice before it's gone never duplicates the item
+	pickup.interact()
 	assert_bool(pickup.is_queued_for_deletion()).is_true()
-	# Taking it twice in one frame never duplicates the item
-	pickup.interact()
+	assert_bool(player.inventory.has_item("potion_health")).is_true()
 	assert_int(player.inventory.items.size()).is_equal(1)
+	assert_array(emitted).contains_exactly([item])
 
 
 func test_pickup_stays_when_the_inventory_is_full() -> void:
