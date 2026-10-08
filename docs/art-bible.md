@@ -2,7 +2,7 @@
 
 Derived from shipped assets and `CLAUDE.md` → Visual Style Rules. Faction groupings and design briefs build on `docs/world/`.
 
-**Style:** The look is stylized low-poly with generous budgets: bold colors, readable silhouettes, and simple albedo-only textures over realism.
+**Style:** The look is stylized low-poly with generous budgets: dark epic fantasy after the Souls series and The Witcher. Restrained, earthy colour with saturated accents saved for fire, gold, blood and magic; the read comes from value contrast and readable silhouettes; simple albedo-only textures, worn and lived-in, over realism. (Adopted 2026-10-08 from `docs/trials/target-look.md`; it replaced "bold colors".)
 
 ## Palette
 
@@ -22,7 +22,8 @@ Hex values are either set exactly in a scene or script, or sampled from a shippe
 | Blackened Iron | `#242424` | near-black charcoal | Torch iron (`prop_torch_material_diffuse.png`, sampled) | Iron, helms, fittings |
 | Torch Amber | `#FFCC80` | pale warm amber | Torch light `Color(1.0, 0.8, 0.5)` (Level scenes) | Firelight, warmth, the player's realm |
 | Signal Red | `#C71F14` | vivid scarlet red | HP bar fill (`HUD.gd:52`) | Blood, danger, rare accents |
-| Tarnished Gold | `#E6BF1A` | bright golden yellow | XP bar fill (`HUD.gd:55`) | Brass, rank marks, reward accents |
+| Tarnished Gold | `#9C7A2E` | dull dark antique gold | Target-look worn brass (`docs/trials/target-look.md`, adopted 2026-10-08) | Brass, rank marks, reward accents on assets |
+| XP Gold | `#E6BF1A` | bright golden yellow | XP bar fill (`HUD.gd:55`) | UI only (it was Tarnished Gold's value until 2026-10-08) |
 | Overcast Blue | `#8C8CCC` | muted lavender blue | UI panel border (`HUD.gd:40`) | Cold light, rain, the Sleet |
 
 **Balance:** scenes should be mostly the cool, muted colors (Wet Slate, Rain Stone, Peat Black), with Torch Amber marking wherever people live. Save Signal Red and Tarnished Gold for accents.
@@ -93,10 +94,10 @@ Generation prompts are built from these blocks plus the brief's own description,
 ### FORM block
 
 ```
-Stylized low-poly 3D game asset with a clean, readable silhouette and slightly
-exaggerated proportions. Flat color blocking with minimal fine surface detail,
-matte hand-painted albedo-only texture, restricted muted palette. No
-photorealism, no glossy PBR shine, no pixel art.
+Stylized low-poly 3D game asset for a dark fantasy game, with a clean, readable
+silhouette and naturalistic adult proportions. Large simple forms with minimal
+modelled detail; matte hand-painted albedo-only texture with worn, faded colour,
+restricted muted earthy palette. No photorealism, no glossy PBR shine, no pixel art.
 ```
 
 ### CONCEPT LIGHTING block
@@ -154,7 +155,7 @@ Every asset gets a brief before any generation spend. Fields:
 - **Rig / attachment:** skeleton or socket.
 - **Scale & pivot**
 - **Animation:** clip names the code plays, from the shared library.
-- **Prompt:** the visual description at silhouette level: the shapes that must read at gameplay distance, with colors given by palette name (the pipeline swaps in the plain colors). Wear, small marks and surface detail belong in the albedo, never in the prompt. At the `face_limit`, modelled fine detail either vanishes or eats the budget (the Levy Blade spent 84% of its triangles on the grip wrap). The pipeline prepends the FORM block, plus the CONCEPT LIGHTING block for concept images.
+- **Prompt:** the visual description at silhouette level: the shapes that must read at gameplay distance, with colors given by palette name (the pipeline swaps in the plain colors). Shape-level wear, small marks and surface detail (rips, dents, frayed edges) belong in the albedo, never in the prompt; colour-level wear words ("faded", "rain-darkened", "soot-darkened") are allowed, since the albedo is restored toward the concept's colours (adopted 2026-10-08). At the `face_limit`, modelled fine detail either vanishes or eats the budget (the Levy Blade spent 84% of its triangles on the grip wrap). The pipeline prepends the FORM block, plus the CONCEPT LIGHTING block for concept images.
 - **Accept when:** a checklist for commit.
 - **Cost:** the number of Tripo generations needed. Prices, estimates and confirmation live in the tripo skill (`.claude/skills/tripo/`).
 
