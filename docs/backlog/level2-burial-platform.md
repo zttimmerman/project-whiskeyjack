@@ -1,7 +1,7 @@
 ---
 id: level2-burial-platform
 title: "Make Level 2's 0.5 m burial platform walkable"
-status: in-review
+status: done
 kind: feature
 targets: []
 after: []
@@ -29,3 +29,7 @@ Question as asked: is the 0.5 m platform meant to be walkable? Options were 1 wa
 ## Serves
 
 Design bible §5 (terraces are the verticality: steps and ramps count) and §8 (edit-time navmesh).
+
+## Outcome
+
+User, 2026-10-08: walkable. 0.25 m steps on the platform's north and south faces (5 m wide) over an invisible 26.6 deg clip ramp; Level2_navmesh rebaked (203 to 227 polygons); enemies path onto the top from both sides (test_level2_platform.gd). Merged in PR #70.
