@@ -58,7 +58,7 @@ The third-person camera behind the player is the lens for everything else. Most 
 - **Dodge (settled):**
   - Keep 4.2 m over 0.5 s.
   - I-frames cover the first 0.30 s, not the whole roll, so late dodges are punished a little (Witcher).
-  - A 0.15 s recovery before the next dodge or attack. **Current:** i-frames for the whole 0.5 s, no recovery.
+  - A 0.15 s recovery before the next dodge or attack.
 - **Attacks commit (settled):**
   - Movement is locked for the swing, with a short forward lunge (0.3–0.5 m) toward a locked target.
   - A dodge can cancel an attack only after its active frames.

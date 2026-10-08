@@ -1,14 +1,14 @@
 ---
 id: dodge-iframe-window
 title: "Dodge i-frames for the first 0.30 s, then a 0.15 s recovery"
-status: ready
+status: done
 kind: feature
 targets: []
 after: []
 phase: gameplay-2
-branch: null
-pr: null
-updated: 2026-10-02
+branch: feature/dodge-iframe-window
+pr: 58
+updated: 2026-10-07
 ---
 ## Goal
 
@@ -28,3 +28,7 @@ The settled dodge (design bible §3, §11.2): late dodges are punished a little.
 ## Serves
 
 §3 dodge; §11 decision 2.
+
+## Outcome
+
+Dodge i-frames cover the first 0.30 s of the 0.5 s roll, then a 0.15 s recovery ignores dodge and attack presses (movement still allowed). Tests test_dodge_iframe_window plus two recovery tests; replays unchanged. Merged in PR #58.

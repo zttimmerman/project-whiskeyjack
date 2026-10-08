@@ -296,6 +296,51 @@ def _cam_lock_both_in_frame(check, events):
             "detail": {"samples": len(samples), "out_of_frame": len(out), "first_out": out[:10]}}
 
 
+# SEARCH (design bible §3): an enemy that loses sight (lost_sight) walks to the last-seen spot
+# (search_look), looks around for 3.5 s, gives up (search_end, outcome gave_up) and walks back to its post
+# (search_return). The checks read the enemy's first search that ran to the end.
+def _first_full_search(check, events):
+    enemy = check.get("enemy")
+    if not enemy:
+        raise ValueError("%s needs \"enemy\"" % check["id"])
+    mine = [e for e in events if e.get("actor") == enemy
+            and e["event"] in ("lost_sight", "search_look", "search_end", "search_return")]
+    search = {}
+    for e in mine:
+        name = e["event"]
+        if name == "lost_sight":
+            search = {"lost_sight": e}
+        elif name == "search_end" and e.get("outcome") != "gave_up":
+            search = {}  # regained sight: that search never finished
+        elif search and name not in search:
+            search[name] = e
+            if name == "search_return":
+                return search
+    return None
+
+
+def _search_detail(search):
+    return {name: e["frame"] for name, e in search.items()}
+
+
+def _search_look(check, events):
+    search = _first_full_search(check, events)
+    if not search:
+        return {"value": None, "detail": {"note": "no search ran to the end"}}
+    look_s = (search["search_end"]["frame"] - search["search_look"]["frame"]) / FPS
+    return {"value": look_s, "detail": {"frames": _search_detail(search)}}
+
+
+def _search_leg(event):
+    def metric(check, events):
+        search = _first_full_search(check, events)
+        if not search:
+            return {"value": None, "detail": {"note": "no search ran to the end"}}
+        leg = search[event]
+        return {"value": leg["distance"], "detail": {"reached": leg.get("reached"), "frames": _search_detail(search)}}
+    return metric
+
+
 def _reach_distance(check, events):
     point = check.get("point")
     if point is None or len(point) != 3:
@@ -305,6 +350,15 @@ def _reach_distance(check, events):
         return {"value": None, "detail": {"note": "no scenario_end with a player position"}}
     end = ends[-1]["player_position"]
     return {"value": math.dist(end, point), "detail": {"end_position": end, "point": point}}
+
+
+def _frame_stamps(check, events):
+    """Probe events (tests/replay/probe/frame_probe.gd) whose stamp isn't their tick minus one."""
+    probes = of(events, "probe")
+    if not probes:
+        return {"value": None, "detail": {"note": "no probe events"}}
+    wrong = [p for p in probes if p["frame"] != int(p["tick"]) - 1]
+    return {"value": len(wrong), "detail": {"probes": len(probes), "wrong": wrong[:10]}}
 
 
 METRICS = {
@@ -324,8 +378,15 @@ METRICS = {
     "cam_wall_fill": _cam_wall_fill,
     "cam_melee_occlusion": _cam_melee_occlusion,
     "cam_lock_both_in_frame": _cam_lock_both_in_frame,
+    # Not §9 target IDs: §3's SEARCH, as the look's length and how far off the last-seen spot and the post
+    # the enemy stopped (tests/scenarios/search_lost_sight.json)
+    "search_look_s": _search_look,
+    "search_last_seen_m": _search_leg("search_look"),
+    "search_post_m": _search_leg("search_return"),
     # Not a §9 target ID: how far from "point" the player ends the run (a walk-through gets there)
     "reach_distance_m": _reach_distance,
+    # Not a design target: the harness's own frame stamps (tests/scenarios/replay_frame_stamps.json)
+    "replay_frame_stamps": _frame_stamps,
 }
 
 
