@@ -86,6 +86,7 @@ Moved from the session handoff on 2026-10-02. Each one-off item it created is na
   - The player's skirt stretch is accepted as a design note (judges don't re-flag it) until `player-model-rework`.
   - **Look-dev C:** stay at B2. The model tier isn't the limit, the concept is: 1.43M PBR triangles barely show over B2 from the gameplay camera (`look-dev-c`, #52; a face-limited v3.1 is `look-dev-c-face-limit`).
 - **2026-10-05:** the user's reference games are the Souls series (especially Elden Ring) and The Witcher, "dark epic fantasy" fitting Malazan. That pulls against the art bible's PS1/PS2 "bold colours" line; it's researched and put to the user in `spike-target-look` before any rule changes. The user is opening a fal.ai account for reference videos (`fal-video-adapter`).
+- **2026-10-08:** the target look is adopted (`decide-target-look`, `docs/trials/target-look.md`): "bold colors" gives way to restrained earthy colour with saturated accents (fire, gold, blood, magic) and a value-led read, after the Souls series and The Witcher; FORM asks for naturalistic adult proportions and worn, faded colour; Tarnished Gold is a dull antique gold `#9C7A2E` on assets (the UI keeps `#E6BF1A` as XP Gold); colour-level wear words are allowed in prompts. The four `player_look_a`–`d` concepts run next (60 credits); the identity mark (spiky hair or half-helm) is left to the images.
 
 ## Learned 2026-10-02 – 10-05
 
