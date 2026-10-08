@@ -1,14 +1,14 @@
 ---
 id: spike-target-look
 title: "Spike: a target look from the Souls series and The Witcher (dark epic fantasy)"
-status: ready
+status: in-review
 kind: spike
 targets: []
 after: []
 phase: C
-branch: null
-pr: null
-updated: 2026-10-05
+branch: docs/target-look
+pr: 60
+updated: 2026-10-07
 ---
 ## Goal
 

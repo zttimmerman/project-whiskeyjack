@@ -1,0 +1,27 @@
+# spike-target-look concept variant B (docs/trials/target-look.md): Souls footsoldier: iron half-helm with a neck flap, mail shirt over a tabard, rounded pauldrons.
+# A look-dev brief: concepts only until the user picks a style anchor; the winner's model is built into the
+# gitignored assets/lookdev/ and never replaces the shipped player. Copied from assets/briefs/player.yaml.
+# The art bible is the only source for these numbers: change it there first, then copy here.
+asset_id: player_look_b
+type: character
+brief: |
+  The player, a Frontier Line soldier, in the target look (Souls series and The Witcher: dark epic
+  fantasy). The camera sits behind them, so the back and shoulders read most.
+prompt: |
+  A grim imperial footsoldier, heavy armoured silhouette. A rounded Blackened Iron half-helm with a
+  long leather neck flap, face visible. A Blackened Iron mail shirt to the hips over a knee-length
+  Garrison Teal wool tabard, wide rounded Blackened Iron pauldrons, a broad Saddle Leather belt with
+  one Tarnished Gold buckle, Saddle Leather gloves and boots. Matte, soot-darkened colours. Empty open
+  hands, T-pose.
+face_limit: 5000
+tripo_model: P1-20260311
+triangle_budget: 5500
+texture_size: 1024
+target_size_m: 1.8
+pivot: base
+palette: [Garrison Teal, Blackened Iron, Saddle Leather, Tarnished Gold]
+animations: [idle, run, dodge_roll, attack_light, attack_heavy, death]
+# Every variant keeps a knee-length skirt (gambeson, tabard, coat or tunic), so the standard skirt step applies.
+skirt_reweight: true
+smooth_shading: true
+bone_map: data/rigs/mixamorig_bone_map.tres

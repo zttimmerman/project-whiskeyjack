@@ -1,0 +1,26 @@
+# spike-target-look concept variant D (docs/trials/target-look.md): Control: the shipped design (tunic, vest, spiky hair) in grounded proportions and a darker, worn tone.
+# A look-dev brief: concepts only until the user picks a style anchor; the winner's model is built into the
+# gitignored assets/lookdev/ and never replaces the shipped player. Copied from assets/briefs/player.yaml.
+# The art bible is the only source for these numbers: change it there first, then copy here.
+asset_id: player_look_d
+type: character
+brief: |
+  The player, a Frontier Line soldier, in the target look (Souls series and The Witcher: dark epic
+  fantasy). The camera sits behind them, so the back and shoulders read most.
+prompt: |
+  A young frontier soldier, lean build, in a knee-length Garrison Teal wool tunic that flares at the
+  hem, a fitted Saddle Leather vest with two straps crossing the chest, a wide belt, Blackened Iron
+  bracers and tall Saddle Leather boots. Short spiky dark hair, damp and swept back, a serious, tired
+  face. Rain-darkened colours, dark overall, lighter face. Empty open hands, T-pose.
+face_limit: 5000
+tripo_model: P1-20260311
+triangle_budget: 5500
+texture_size: 1024
+target_size_m: 1.8
+pivot: base
+palette: [Garrison Teal, Saddle Leather, Blackened Iron]
+animations: [idle, run, dodge_roll, attack_light, attack_heavy, death]
+# Every variant keeps a knee-length skirt (gambeson, tabard, coat or tunic), so the standard skirt step applies.
+skirt_reweight: true
+smooth_shading: true
+bone_map: data/rigs/mixamorig_bone_map.tres
