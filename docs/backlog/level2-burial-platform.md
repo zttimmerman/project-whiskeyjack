@@ -1,13 +1,13 @@
 ---
 id: level2-burial-platform
 title: "Make Level 2's 0.5 m burial platform walkable"
-status: in-progress
+status: in-review
 kind: feature
 targets: []
 after: []
 phase: C
 branch: feature/level2-platform-steps
-pr: null
+pr: 70
 updated: 2026-10-08
 ---
 ## Goal
