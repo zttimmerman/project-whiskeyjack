@@ -1,14 +1,14 @@
 ---
 id: player-attack-commitment
 title: "Attacks commit: movement locked during swings, lunge to a locked target"
-status: in-review
+status: done
 kind: feature
 targets: []
 after: []
 phase: gameplay-2
 branch: feature/player-attack-commitment
 pr: 64
-updated: 2026-10-07
+updated: 2026-10-08
 ---
 ## Goal
 
