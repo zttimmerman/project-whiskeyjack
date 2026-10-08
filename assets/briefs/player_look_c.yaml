@@ -8,11 +8,11 @@ brief: |
   The player, a Frontier Line soldier, in the target look (Souls series and The Witcher: dark epic
   fantasy). The camera sits behind them, so the back and shoulders read most.
 prompt: |
-  A lone wandering soldier, natural adult proportions, tall and lean. A thick Peat Black wool shoulder
-  cape, hood lowered, over the shoulders and upper back. Beneath it a knee-length Garrison Teal padded
-  coat with a high collar and a wide Saddle Leather belt, Blackened Iron vambraces and greaves, Saddle
-  Leather boots. Dark hair tied back, a gaunt weathered face, one small Tarnished Gold collar clasp.
-  Muted, dark colours. Empty open hands, T-pose.
+  A lone wandering soldier, tall and lean. A thick Peat Black wool shoulder cape, hood lowered, over
+  the shoulders and upper back. Beneath it a knee-length Garrison Teal padded coat with a high collar
+  and a wide Saddle Leather belt, Blackened Iron vambraces and greaves, Saddle Leather boots. Dark
+  hair tied back, a gaunt weathered face, one small Tarnished Gold collar clasp. Muted, dark colours.
+  Empty open hands, T-pose.
 face_limit: 5000
 tripo_model: P1-20260311
 triangle_budget: 5500

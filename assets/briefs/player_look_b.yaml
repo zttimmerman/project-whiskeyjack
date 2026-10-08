@@ -8,11 +8,11 @@ brief: |
   The player, a Frontier Line soldier, in the target look (Souls series and The Witcher: dark epic
   fantasy). The camera sits behind them, so the back and shoulders read most.
 prompt: |
-  A grim imperial footsoldier, natural adult proportions, heavy armoured silhouette. A rounded
-  Blackened Iron half-helm with a long leather neck flap, face visible. A Blackened Iron mail shirt to
-  the hips over a knee-length Garrison Teal wool tabard, wide rounded Blackened Iron pauldrons, a
-  broad Saddle Leather belt with one Tarnished Gold buckle, Saddle Leather gloves and boots. Matte,
-  soot-darkened colours. Empty open hands, T-pose.
+  A grim imperial footsoldier, heavy armoured silhouette. A rounded Blackened Iron half-helm with a
+  long leather neck flap, face visible. A Blackened Iron mail shirt to the hips over a knee-length
+  Garrison Teal wool tabard, wide rounded Blackened Iron pauldrons, a broad Saddle Leather belt with
+  one Tarnished Gold buckle, Saddle Leather gloves and boots. Matte, soot-darkened colours. Empty open
+  hands, T-pose.
 face_limit: 5000
 tripo_model: P1-20260311
 triangle_budget: 5500

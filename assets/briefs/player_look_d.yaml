@@ -8,11 +8,10 @@ brief: |
   The player, a Frontier Line soldier, in the target look (Souls series and The Witcher: dark epic
   fantasy). The camera sits behind them, so the back and shoulders read most.
 prompt: |
-  A young frontier soldier, natural adult proportions, lean build, in a knee-length Garrison Teal wool
-  tunic that flares at the hem, a fitted Saddle Leather vest with two straps crossing the chest, a
-  wide belt, Blackened Iron bracers and tall Saddle Leather boots. Short spiky dark hair, damp and
-  swept back, a serious, tired face. Faded, rain-darkened colours, dark overall, lighter face. Empty
-  open hands, T-pose.
+  A young frontier soldier, lean build, in a knee-length Garrison Teal wool tunic that flares at the
+  hem, a fitted Saddle Leather vest with two straps crossing the chest, a wide belt, Blackened Iron
+  bracers and tall Saddle Leather boots. Short spiky dark hair, damp and swept back, a serious, tired
+  face. Rain-darkened colours, dark overall, lighter face. Empty open hands, T-pose.
 face_limit: 5000
 tripo_model: P1-20260311
 triangle_budget: 5500
