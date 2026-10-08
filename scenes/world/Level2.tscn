@@ -33,6 +33,9 @@ albedo_color = Color(0.4, 0.3, 0.2, 1)
 [sub_resource type="StandardMaterial3D" id="Mat_skull"]
 albedo_color = Color(0.7, 0.65, 0.55, 1)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_platform_ramp"]
+size = Vector3(5, 0.3, 1.118034)
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_end"]
 size = Vector3(4, 3, 1)
 
@@ -380,6 +383,30 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 45)
 use_collision = true
 size = Vector3(8, 0.5, 6)
 material = SubResource("Mat_platform")
+
+[node name="BurialPlatformStepN" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 41.75)
+use_collision = true
+size = Vector3(5, 0.25, 0.5)
+material = SubResource("Mat_platform")
+
+[node name="BurialPlatformStepS" type="CSGBox3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 48.25)
+use_collision = true
+size = Vector3(5, 0.25, 0.5)
+material = SubResource("Mat_platform")
+
+[node name="BurialPlatformRampN" type="StaticBody3D" parent="NavigationRegion3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/BurialPlatformRampN"]
+transform = Transform3D(1, 0, 0, 0, 0.894427, 0.447214, 0, -0.447214, 0.894427, 0, 0.115836, 41.567082)
+shape = SubResource("BoxShape3D_platform_ramp")
+
+[node name="BurialPlatformRampS" type="StaticBody3D" parent="NavigationRegion3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/BurialPlatformRampS"]
+transform = Transform3D(1, 0, 0, 0, 0.894427, -0.447214, 0, 0.447214, 0.894427, 0, 0.115836, 48.432918)
+shape = SubResource("BoxShape3D_platform_ramp")
 
 [node name="CorridorCFloor" type="CSGBox3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 56)
